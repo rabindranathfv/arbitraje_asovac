@@ -11,7 +11,7 @@ Sistema manejador de base de datos: PosgreSQL
 
 La aplicacion esta dividida en los siguientes modulos o apps 
 
-* "core_app" : Es la app principal donde trabajaremos, esta se encargará de la pagina principal, y funcionalidades basicas de la aplicacion
+* "core_app" : Es la app principal donde trabajaremos, esta se encargará del contenido general para todos los usuarios, y funcionalidades basicas de la aplicacion.
 
 * "administracion" : Se  manejara  toda  la  configuración  del  sitio  para  el  administrador  o  super  admin,  desde  configuración  básica  hasta  eliminación,  activación  y  archivado  de  procesos  anteriores.
 
@@ -27,25 +27,43 @@ La aplicacion esta dividida en los siguientes modulos o apps
 
 * "recursos" : Se  encargara  de  gestionar  todo  lo  referente  a  materiales  sobre  la  convención  como  los  certificados  de  asistencias,  de  postulantes,etc.
 
-
-
 ### Estructura de carpetas
 
+Mantener la siguiente estructura para los directorios
+
 ```
-├── app/
-│   ├── components/
-│   ├── performance/
-│   │  ├── components/
-│   │  ├── reporting/
-│   │  │     ├── components/
-│   │  │     ├── reporting-routing.config.js
-│   │  │     └── reporting.module.js
-│   │  ├── performance-routing.config.js
-│   │  └── performance.module.js
-│   ├── app-routing.config.js
-│   └── app.module.js
-└── index.html
+├── teg_asovac/
+│   ├── bin/
+│   ├── include/
+│   ├── lib/
+│   ├── Local/
+│   │  ├── teg_asovac_src/
+│   │  │     ├── administracion/
+│   │  │     ├── autores/
+│   │  │     ├── sesiones/
+│   │  │     ├── trabajos_resumenes/
+│   │  │     ├── seguimiento/
+│   │  │     ├── arbitrajes/
+│   │  │     ├── recursos/
+│   │  │     ├── core_app/
+│   │  ├── templates
+│   │  └── static_env
+│   │  │     ├── media_root/
+│   │  │     ├── static_rooot/
+│   │  └── static_pro
+│   │  │     ├── static/
+│   │  │     │   ├── css/
+│   │  │     │   ├── fonts/
+│   │  │     │   ├── imagenes/
+│   │  │     │   ├── js/
+│   │  ├── .gitignore
+│   │  ├── manage.py
+│   │  ├── .env
+└── 
 ```
+
+Static_pro --> Define los estilos para ambiente de desarrollo (local)
+static_env --> Define los estilos para Produccion incluyendo static_root y media_root
 
 ### Forma de escritura
 
