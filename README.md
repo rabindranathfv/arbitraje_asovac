@@ -46,16 +46,16 @@ Mantener la siguiente estructura para los directorios
 │   │  │     ├── arbitrajes/
 │   │  │     ├── recursos/
 │   │  │     ├── core_app/
-│   │  ├── templates
-│   │  └── static_env
-│   │  │     ├── media_root/
-│   │  │     ├── static_rooot/
-│   │  └── static_pro
-│   │  │     ├── static/
-│   │  │     │   ├── css/
-│   │  │     │   ├── fonts/
-│   │  │     │   ├── imagenes/
-│   │  │     │   ├── js/
+│   │  │     ├── templates
+│   │  │     └── static_env
+│   │  │     │  ├── media_root/
+│   │  │     │  ├── static_rooot/
+│   │  │     └── static_pro
+│   │  │     │  ├── static/
+│   │  │     │  │   ├── css/
+│   │  │     │  │   ├── fonts/
+│   │  │     │  │   ├── imagenes/
+│   │  │     │  │   ├── js/
 │   │  ├── .gitignore
 │   │  ├── manage.py
 │   │  ├── .env
