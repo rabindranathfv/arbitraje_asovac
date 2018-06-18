@@ -11,7 +11,7 @@ Sistema manejador de base de datos: PosgreSQL
 
 La aplicacion esta dividida en los siguientes modulos o apps 
 
-* "core_app" : Es la app principal donde trabajaremos, esta se encargará de la pagina principal, el registro de los Usuarios sus perfiles, habilidades y atender solicitudes de contato(User, Request, Profile & Skill).
+* "core_app" : Es la app principal donde trabajaremos, esta se encargará de la pagina principal, y funcionalidades basicas de la aplicacion
 
 * "administracion" : Se  manejara  toda  la  configuración  del  sitio  para  el  administrador  o  super  admin,  desde  configuración  básica  hasta  eliminación,  activación  y  archivado  de  procesos  anteriores.
 
