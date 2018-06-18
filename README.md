@@ -70,6 +70,25 @@ Mantener la siguiente estructura para los directorios
 
 Se manejara via include en core_app y posterior se manejaran todas las rutas internamente en cada app individualmente en su urls.py
 
+Ejemplo
+
+```
+urls.py core_app
+
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    url(r'^', include('<name_app>.urls')),
+]
+
+urls.py en las apps
+
+urlpatterns = [
+    url(r'^$', views.home, name= 'home'),
+    url(r'^contacto/$', views.<view_function>, name= '<view_function>'),
+]
+
+```
+
 ### Forma de escritura
 
 Para la implementacion del codigo se utilizara la convecion de **snake_case** respetando las buenas practicas para el nombre de las funciones,parametros, clases, formularios, variables y constantes
