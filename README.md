@@ -38,27 +38,31 @@ Mantener la siguiente estructura para los directorios
 │   ├── lib/
 │   ├── Local/
 │   │  ├── teg_asovac_src/
-│   │  │     ├── administracion/
-│   │  │     ├── autores/
-│   │  │     ├── sesiones/
-│   │  │     ├── trabajos_resumenes/
-│   │  │     ├── seguimiento/
-│   │  │     ├── arbitrajes/
-│   │  │     ├── recursos/
-│   │  │     ├── core_app/
-│   │  │     ├── templates
-│   │  │     └── static_env
-│   │  │     │  ├── media_root/
-│   │  │     │  ├── static_rooot/
-│   │  │     └── static_pro
-│   │  │     │  ├── static/
-│   │  │     │  │   ├── css/
-│   │  │     │  │   ├── fonts/
-│   │  │     │  │   ├── imagenes/
-│   │  │     │  │   ├── js/
-│   │  ├── .gitignore
-│   │  ├── manage.py
-│   │  ├── .env
+│   │  │  ├── administracion/
+│   │  │  ├── autores/
+│   │  │  ├── sesiones/
+│   │  │  ├── trabajos_resumenes/
+│   │  │  ├── seguimiento/
+│   │  │  ├── arbitrajes/
+│   │  │  ├── recursos/
+│   │  │  ├── core_app/
+│   │  │  │  ├── __init__.py
+│   │  │  │  ├── settings.py
+│   │  │  │  ├── urls.py
+│   │  │  │  ├── wsgi.py
+│   │  │  ├── templates
+│   │  │  └── static_env
+│   │  │  │  ├── media_root/
+│   │  │  │  ├── static_rooot/
+│   │  │  └── static_pro
+│   │  │  │  ├── static/
+│   │  │  │  │   ├── css/
+│   │  │  │  │   ├── fonts/
+│   │  │  │  │   ├── imagenes/
+│   │  │  │  │   ├── js/
+│   │  │  ├── .gitignore
+│   │  │  ├── manage.py
+│   │  │  ├── .env
 └── 
 ```
 
