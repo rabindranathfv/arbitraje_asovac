@@ -7,7 +7,27 @@ Adaptador para conexión con PostgreSQL: psycopg2 2.7.4
 Lenguaje servidor: python 2.7.6
 Sistema manejador de base de datos: PosgreSQL
 
-## Estructura de los directorios
+## Contenido
+
+La aplicacion esta dividida en los siguientes modulos o apps 
+
+* "core_app" : Es la app principal donde trabajaremos, esta se encargará de la pagina principal, el registro de los Usuarios sus perfiles, habilidades y atender solicitudes de contato(User, Request, Profile & Skill).
+
+* "administracion" : Se  manejara  toda  la  configuración  del  sitio  para  el  administrador  o  super  admin,  desde  configuración  básica  hasta  eliminación,  activación  y  archivado  de  procesos  anteriores.
+
+* "autores" : Se  almacenara  y  manipulara  toda  la  información  de  los  postulantes  de  los  resúmenes,  papers,etc.
+
+* "sesiones" : Se  utilizara  para  controlar  la  asignación  de  lugares  físicos  donde  serán  expuestos  y/o  defendidos  los  resúmenes  científicos.  Consiste  en  llevar  el  control  de  todas  las  actividades  físicas  o  virtuales  según  sea  el  caso.
+
+* "trabajos_resumenes" : Se  almacenara,  controlara  y  manipulara  toda  la  información  referente  a  los  resúmenes  científicos.
+
+* "Seguimiento" : Facilitara  manejar  lo  involucrado  a  los  estados  de:  En  Asignación  de  trabajas  a  áreas,  En  Arbitraje  y  En  Cierre  de  Arbitraje.
+
+* "arbitraje" : Control  de  todos  los  estados  del  proceso  de  arbitraje  en  conjunto  con  el  módulo  de  seguimiento,  accesos  flujos  de  todos  los  procesos  más  importantes  de  la  aplicación.  Manejo,  control  y  generación  de  resultados  parciales  y  totales.  Incluso  se  manejaran  las  memorias  de  AsoVAC. 
+
+* "recursos" : Se  encargara  de  gestionar  todo  lo  referente  a  materiales  sobre  la  convención  como  los  certificados  de  asistencias,  de  postulantes,etc.
+
+
 
 ### Estructura de carpetas
 
@@ -34,13 +54,8 @@ Para la implementacion del codigo se utilizara la convecion de **snake_case** re
 ### Configuracion del .env (usando Decouple)
 
 ```
-API_URL = http://api-local.rankmi.lo:3000/v1
-API_REPORTS_URL = http://api-local.rankmi.lo:3002/v1
-APP_URL = http://app-local.rankmi.lo:9000/
-ASSET_PATH = https://rankmi-prod.s3.amazonaws.com/
-AVATAR_PATH = users/avatars/medium/
-DEFAULT_AVATAR_PATH = default/icono-persona-01.png
-ENV = local
+DB_NAME = 'teg_asovac'
+DB_HOSTNAME = ''
 ```
 
 ### Forma de trabajo utilizando branch
