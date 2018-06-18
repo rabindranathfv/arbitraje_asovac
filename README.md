@@ -62,8 +62,13 @@ Mantener la siguiente estructura para los directorios
 └── 
 ```
 
-Static_pro --> Define los estilos para ambiente de desarrollo (local)
-static_env --> Define los estilos para Produccion incluyendo static_root y media_root
+* "Static_pro" --> Define los estilos para ambiente de desarrollo (local)
+* "static_env" --> Define los estilos para Produccion incluyendo static_root y media_root
+* "templates" --> contendra todos los template del proyecto, respetando el formato de snake_case
+
+### url's dispatcher
+
+Se manejara via include en core_app y posterior se manejaran todas las rutas internamente en cada app individualmente en su urls.py
 
 ### Forma de escritura
 
