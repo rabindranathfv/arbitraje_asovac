@@ -29,14 +29,9 @@ La aplicacion esta dividida en los siguientes modulos o apps
 
 ### Estructura de carpetas
 
-Mantener la siguiente estructura para los directorios
+Mantener la siguiente estructura para los directorios, y debe estar justo dentro del virtualenv el cual debe llamar **teg_asovac_env**
 
 ```
-├── teg_asovac/
-│   ├── bin/
-│   ├── include/
-│   ├── lib/
-│   ├── Local/
 │   │  ├── teg_asovac_src/
 │   │  │  ├── administracion/
 │   │  │  ├── autores/
