@@ -23,6 +23,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 #import for use include
 from django.conf.urls import include
+#import para collect static y usar media
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
