@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+#Agregarla como variable del .env
 SECRET_KEY = '!b#&6z=zhxw!2@8&59g0f$q9j)5tku7@(yg1x)zp&fj=@!ijqx'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -37,6 +38,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    ## add all aps
+    'administracion',
+    'autores',
+    'arbitrajes',
+    'recursos',
+    'seguimiento',
+    'sesiones',
+    'trabajos',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +64,7 @@ ROOT_URLCONF = 'core_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,6 +89,19 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+#Configuracion para Postgres 
+#DATABASES = {
+#     'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': os.environ["DB_NAME"],
+#        'USER': os.environ["DB_USER"],
+#        'PASSWORD': os.environ["DB_PASSWORD"],
+#        'HOST':os.environ["DB_HOST"],
+#        'PORT':''
+#    }
+#}
+
 
 
 # Password validation
@@ -118,3 +141,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static_pro","static")
+]
+
+# CONFIG to production
+STATIC_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","static_root")
+MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","media_root")

@@ -16,6 +16,26 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from django.shortcuts import render
+#import settings
+from django.conf import settings
+# import para envio de correo
+from django.core.mail import send_mail
+#import for use include
+from django.conf.urls import include
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    ## add routing using include in apps
+    url(r'^', include('administracion.urls')),
+    url(r'^', include('arbitrajes.urls')),
+    url(r'^', include('recursos.urls')),
+    url(r'^', include('seguimiento.urls')),
+    url(r'^', include('sesiones.urls')),
+    url(r'^', include('trabajos.urls')),
 ]
+
+#add config for link styles, for collectstatic
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
