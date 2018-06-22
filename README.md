@@ -95,8 +95,15 @@ Para la implementacion del codigo se utilizara la convecion de **snake_case** re
 ### Configuracion del .env (usando Decouple)
 
 ```
-DB_NAME = 'teg_asovac'
-DB_HOSTNAME = ''
+SECRET_KEY=xxxx
+DEBUG=xxx
+DB_NAME=xxxxx
+DB_USER=xxxxxx
+DB_PASSWORD=xxxxx
+DB_HOST=xxxx
+
+...
+
 ```
 
 ### Forma de trabajo utilizando branch
