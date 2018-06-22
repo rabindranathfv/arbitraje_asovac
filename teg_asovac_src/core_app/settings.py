@@ -28,6 +28,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#Configuracion para envio de correo con gmail
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'add-email-here'
+# EMAIL_HOST_PASSWORD = 'add-passwd'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
 
 # Application definition
 
