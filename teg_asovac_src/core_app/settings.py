@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,19 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 #Agregarla como variable del .env
-SECRET_KEY = '!b#&6z=zhxw!2@8&59g0f$q9j)5tku7@(yg1x)zp&fj=@!ijqx'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
-
-#Configuracion para envio de correo con gmail
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'add-email-here'
-# EMAIL_HOST_PASSWORD = 'add-passwd'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
 
 
 # Application definition
@@ -90,25 +84,32 @@ WSGI_APPLICATION = 'core_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+# Postgresql Database config
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT':''
     }
 }
 
-#Configuracion para Postgres 
 #DATABASES = {
-#     'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': os.environ["DB_NAME"],
-#        'USER': os.environ["DB_USER"],
-#        'PASSWORD': os.environ["DB_PASSWORD"],
-#        'HOST':os.environ["DB_HOST"],
-#        'PORT':''
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #    }
 #}
 
+
+# Email Configuration (GMAIL)
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'add-email-here'
+# EMAIL_HOST_PASSWORD = 'add-passwd'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
 
 
 # Password validation
