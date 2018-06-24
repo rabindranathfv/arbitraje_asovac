@@ -1,4 +1,4 @@
-# TEG_asovac
+# Arbitraje AsoVAC
 
 Este sistema esta desarrollado en Django y fueron usadas las siguientes herramientas para su desarrollo:
 
