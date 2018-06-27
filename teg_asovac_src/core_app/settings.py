@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'administracion',
     'autores',
     'arbitrajes',
+    'main_app',
     'recursos',
     'seguimiento',
     'sesiones',
