@@ -11,7 +11,9 @@ Este sistema esta desarrollado en Django y fueron usadas las siguientes herramie
 
 La aplicacion esta dividida en los siguientes modulos o apps 
 
-* "core_app" : Es la app principal donde trabajaremos, esta se encargará del contenido general para todos los usuarios, y funcionalidades basicas de la aplicacion.
+* "core_app" : App por defecto al crear el projecto de django
+
+* "main_app" : Es la app principal donde trabajaremos, esta se encargará del contenido general para todos los usuarios, y funcionalidades basicas de la aplicacion.
 
 * "administracion" : Se  manejara  toda  la  configuración  del  sitio  para  el  administrador  o  super  admin,  desde  configuración  básica  hasta  eliminación,  activación  y  archivado  de  procesos  anteriores.
 
@@ -26,6 +28,8 @@ La aplicacion esta dividida en los siguientes modulos o apps
 * "arbitraje" : Control  de  todos  los  estados  del  proceso  de  arbitraje  en  conjunto  con  el  módulo  de  seguimiento,  accesos  flujos  de  todos  los  procesos  más  importantes  de  la  aplicación.  Manejo,  control  y  generación  de  resultados  parciales  y  totales.  Incluso  se  manejaran  las  memorias  de  AsoVAC. 
 
 * "recursos" : Se  encargara  de  gestionar  todo  lo  referente  a  materiales  sobre  la  convención  como  los  certificados  de  asistencias,  de  postulantes,etc.
+
+* "evento" : Se encarga de manejar todo lo relacionado con los eventos durante la convecion asovac
 
 ### Estructura de carpetas
 
