@@ -12,4 +12,4 @@ def administracion_pag(request):
     context = {
         "nombre_vista": 'administracion'
     }
-    return render(request,"test_views.html",context)
+    return render(request,"base.html",context)

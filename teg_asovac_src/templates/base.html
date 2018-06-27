@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+  <head>
+
+    {% include "head.html" %}
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Main Navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="main-navbar">
+      <div class="container-fluid">
+        <!-- Navbar Brand or Logo -->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            <strong>ASOVAC</strong>
+          </a>
+        </div>
+
+        <!-- Navbar buttons -->
+        <ul class="nav navbar-nav">
+          <li class="active">
+            <a  href="#"><i class="fas fa-cogs"></i> Configuraci&oacute;n<span class="sr-only">(current)</span></a>
+          </li>
+          <li><a  href="#"><i class="fas fa-eye"></i> Monitoreo</a></li>
+          <li><a  href="#"><i class="fas fa-chart-area"></i> Resultados</a></li>
+          <li><a  href="#"><i class="fas fa-archive"></i> Administraci&oacute;n</a></li>
+        </ul>
+
+        <!-- Username logged in -->
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <p class="navbar-text">
+              Sesión de <a href="#" class="navbar-link">Rafael V</a>
+            </p>
+          </li>
+        </ul>
+
+      </div>
+    </nav>
+
+    <!-- Fixed Secondary Navbar -->
+    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav ">
+            <li>
+              <p class="navbar-text">
+                Opciones secundarias.
+              </p>
+            </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Fixed Sidebar & Content-->
+    <div class="wrapper">
+
+      <!-- Sidebar -->
+      <nav id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand">
+            <a href="#">
+              Sidebar Header
+            </a>
+          </li>
+          <li class ="active">
+            <a href="#">Dashboard</a>
+          </li>
+          <li>
+            <a href="#">Shortcuts</a>
+          </li>
+          <li>
+            <a href="#">Overview</a>
+          </li>
+          <li>
+            <a href="#">Events</a>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+          <li>
+            <a href="#">Services</a>
+          </li>
+          <li>
+            <a href="#">Contact</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page Content -->
+      <div class="container" id="content">
+
+          <!-- First Row -->
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="jumbotron RLcard">
+                <h1>{{ nombre_vista }}</h1>
+                <h3>Full Card</h3>
+                <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+                <p>To see the difference between static and fixed top navbars, just scroll.</p>
+                <p>
+                  <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Second Row -->
+          <div class="row row-eq-height">
+            <div class="col-sm-6">
+              <div class="jumbotron RLcard">
+                  <h3>Half Card</h3>
+                  <p>Esto es un ejemplo de una carta pequeña para anuncios o graficos que no requieran de todo el ancho de la pagina web.</p>
+                  <p>
+                    <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+                  </p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="jumbotron RLcard">
+                  <h3>Half Card</h3>
+                  <p>
+                    Este es otro ejemplo de una carta de tamaño pequeño para colocar información puntual.
+                  </p>
+                  <p>
+                    <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+                  </p>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="container-fluid" id="footer">
+    <div class="row">
+      <div class="col-sm-4">
+        <p class="text-center">Asociaci&oacute;n Venezolana de Autores y Compositores</p>
+      </div>
+      <div class="col-sm-4 col-sm-offset-4">
+        <p class="text-center">Powered by Django</p>
+      </div>
+    </div>
+
+  </div>
+
+
+
+    {% include "booststrap_js.html" %}
+
+  </body>
+</html>
