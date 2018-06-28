@@ -11,7 +11,8 @@ Trabajo Model
 """""""""""""""""""""""""""
 class Trabajo(models.Model):
 
-	autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
+	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
+	autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro')
 
 	titulo_espanol = models.CharField(max_length=40)

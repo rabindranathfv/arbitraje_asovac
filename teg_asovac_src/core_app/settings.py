@@ -41,14 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     ## add all aps
-    'administracion',
+    'main_app',
+    'trabajos',
     'autores',
     'arbitrajes',
-    'main_app',
+    'sesiones',
     'recursos',
     'seguimiento',
-    'sesiones',
-    'trabajos',
     'eventos',
 
     ## another apps,plugings and package
@@ -98,7 +97,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT':''
+        'PORT':5432,
     }
 }
 
