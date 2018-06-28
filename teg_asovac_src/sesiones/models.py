@@ -17,6 +17,9 @@ class Espacio_fisico(models.Model):
 	portatil = models.BooleanField(default=False)
 	turno = models.CharField(max_length=50)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Espacio_virtual Model
@@ -26,6 +29,9 @@ class Espacio_virtual(models.Model):
 	url_virtual = models.CharField(max_length=100)
 	capacidad_url = models.IntegerField()
 	turno = models.CharField(max_length=50)
+
+	def __str__(self):
+		return self.url_virtual#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -38,6 +44,9 @@ class Espacio(models.Model):
 
 	fecha_ocupacion = models.DateTimeField()
 	tipo_espacio = models.CharField(max_length=50)
+
+	def __str__(self):
+		return self.tipo_espacio#.encode('utf-8', errors='replace')
 
 
 
@@ -57,6 +66,9 @@ class Sesion(models.Model):
 	modalidad = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=100, blank = True)
 	fecha_presentacion = models.DateTimeField()
+
+	def __str__(self):
+		return self.Sesion#.encode('utf-8', errors='replace')
 
 
 
