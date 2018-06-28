@@ -17,6 +17,9 @@ class Arbitraje(models.Model):
 	razones_rechazo = models.TextField(max_length=100, blank = True)
 	observaciones = models.TextField(max_length=100, blank = True)
 	estatus = models.SmallIntegerField(default=0)
+	
+	def __str__(self):
+		return self.correcciones#.encode('utf-8', errors='replace')
 
 
 
@@ -27,6 +30,9 @@ class Area(models.Model):
 	
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=100, blank = True)
+	
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -39,6 +45,8 @@ class Sub_area(models.Model):
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=100, blank = True)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 
@@ -65,3 +73,5 @@ class Arbitro(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 	clave_arbitro = models.CharField(max_length=100)
 
+	def __str__(self):
+		return self.nombres#.encode('utf-8', errors='replace')
