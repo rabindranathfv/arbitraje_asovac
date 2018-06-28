@@ -44,17 +44,20 @@
     <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
       <div class="container-fluid">
         <ul class="nav navbar-nav ">
-            <li>
-              <p class="navbar-text">
-                Opciones secundarias.
-              </p>
-            </li>
+          <li>
+            <a href="#menu-toggle" class="btn" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
+          </li>
+          <li>
+            <p class="navbar-text">
+              Opciones secundarias.
+            </p>
+          </li>
         </ul>
       </div>
     </nav>
 
     <!-- Fixed Sidebar & Content-->
-    <div class="wrapper">
+    <div id="wrapper" class="toggled">
 
       <!-- Sidebar -->
       <nav id="sidebar-wrapper">
@@ -89,7 +92,7 @@
       </nav>
 
       <!-- Page Content -->
-      <div class="container" id="content">
+      <div class="container" id="content-wrapper">
 
           <!-- First Row -->
           <div class="row">
@@ -144,10 +147,15 @@
     </div>
 
   </div>
-
-
-
-    {% include "booststrap_js.html" %}
-
+    {% include "js_scripts.html" %}
+    <!-- Sidebar Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+            $("#menu-toggle-icon").toggleClass("fa-angle-double-left");
+            $("#menu-toggle-icon").toggleClass("fa-angle-double-right");
+        });
+    </script>
   </body>
 </html>
