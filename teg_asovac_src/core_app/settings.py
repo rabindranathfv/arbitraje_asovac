@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'seguimiento',
     'sesiones',
     'trabajos',
+    'eventos',
 ]
 
 MIDDLEWARE = [
