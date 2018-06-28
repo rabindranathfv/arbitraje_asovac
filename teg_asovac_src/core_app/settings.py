@@ -41,15 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     ## add all aps
-    'administracion',
+    'main_app',
+    'trabajos',
     'autores',
     'arbitrajes',
-    'main_app',
+    'sesiones',
     'recursos',
     'seguimiento',
-    'sesiones',
-    'trabajos',
     'eventos',
+    'administracion',
 ]
 
 MIDDLEWARE = [
