@@ -62,7 +62,7 @@ class Usuario_asovac(models.Model):
 
 
 
-#Esta seccion de codigo nos permite crear un objeto Profile
+#Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
 
