@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'sesiones',
     'trabajos',
     'eventos',
+
+    ## another apps,plugings and package
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core_app.wsgi.application'
 
+CRISPY_TEMPLATE_PACK = 'booststrap3'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
