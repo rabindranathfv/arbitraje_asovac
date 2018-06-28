@@ -32,8 +32,8 @@ body {
 /*==== Main Navbar colors ====*/
 
 .navbar-default {
-    background-color: #2869bc;
-    border-color: #bbb;
+    background-color: #2869BC;
+    border-color: #BBBBBB;
 }
 
 /* Title */
@@ -126,6 +126,18 @@ body {
 #menu-toggle-icon{
     font-size: 18px;
     color: #E7E7E7;
+}
+
+#menu-toggle{
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    padding-top: 11px;
+    padding-left: 11px;
+    background-color: #2869BC;
+    width: 45px;
+    height: 45px;
 }
 
 /*==== Fixed Sidebar & Content ====*/
@@ -228,7 +240,7 @@ body {
 }
 
 #content-wrapper {
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .RLcard {
