@@ -223,6 +223,12 @@ body {
     background: none;
 }
 
+.sidebar-submenu li{
+    font-size: 14px;
+    padding-left: 15px;
+    line-height: 30px
+}
+
 /* Content styling */
 
 #content-wrapper {
