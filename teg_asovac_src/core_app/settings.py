@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'eventos',
 
     ## another apps,plugings and package
-    'crispy_forms',
+    #'crispy_forms',
 ]
 
 MIDDLEWARE = [
