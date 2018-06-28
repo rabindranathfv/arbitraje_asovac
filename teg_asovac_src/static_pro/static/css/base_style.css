@@ -123,22 +123,6 @@ body {
     ;
 }
 
-#menu-toggle-icon{
-    font-size: 18px;
-    color: #E7E7E7;
-}
-
-#menu-toggle{
-    margin-bottom: 15px;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 50%;
-    padding-top: 11px;
-    padding-left: 11px;
-    background-color: #2869BC;
-    width: 45px;
-    height: 45px;
-}
 
 /*==== Fixed Sidebar & Content ====*/
 
@@ -239,8 +223,42 @@ body {
     background: none;
 }
 
+.sidebar-submenu li{
+    font-size: 14px;
+    padding-left: 15px;
+    line-height: 30px
+}
+
+/* Content styling */
+
 #content-wrapper {
     margin-top: 15px;
+}
+
+#menu-toggle-icon{
+    font-size: 18px;
+    color: #E7E7E7;
+}
+
+#menu-toggle {
+    margin-bottom: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    padding-top: 11px;
+    padding-left: 11px;
+    background-color: #2869BC;
+    width: 45px;
+    height: 45px;
+}
+
+#menu-toggle:focus {
+    outline: none;
+}
+
+.user-title{
+    display: inline;
+    margin-left: 10px;
 }
 
 .RLcard {
