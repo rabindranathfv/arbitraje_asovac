@@ -62,6 +62,10 @@ class Autores_trabajos(models.Model):
 	monto_total = models.FloatField()
 	pagado = models.BooleanField(default=False)
 
+	def __str__(self):
+
+		return "{} autor trabajo".format(self.autor_id.nombres)#.encode('utf-8', errors='replace')
+
 """""""""""""""""""""""""""
 Datos_pagador Model
 """""""""""""""""""""""""""
@@ -74,6 +78,8 @@ class Datos_pagador(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
+	def __str__(self):
+		return self.cedula#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Pagador Model
@@ -85,6 +91,8 @@ class Pagador(models.Model):
 
 	categorias_pago = models.CharField(max_length=20)
 
+	def __str__(self):
+		return self.categorias_pago#.encode('utf-8', errors='replace')
 
 
 
@@ -102,6 +110,9 @@ class Pago(models.Model):
 	observaciones = models.TextField(max_length=100)
 	comprobante_pago = models.TextField(max_length=100)
 
+	def __str__(self):
+		return self.numero_transferencia#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Factura Model
@@ -115,5 +126,7 @@ class Factura(models.Model):
 	fecha_emision = models.DateTimeField()
 	monto_total = models.FloatField()
 	iva = models.FloatField()
+	def __str__(self):
+		return self.monto_subtotal#.encode('utf-8', errors='replace')
 
 
