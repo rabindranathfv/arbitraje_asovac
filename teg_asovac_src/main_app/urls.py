@@ -30,6 +30,7 @@ from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
+    url(r'^$',views.login,name='login'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     #url(r'^', include('eventos.urls')),
     #url(r'^', include('autores.urls')),

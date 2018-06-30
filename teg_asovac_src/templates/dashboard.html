@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Fixed Sidebar & Content-->
+    <div id="wrapper" class="toggled">
+
+      <!-- Sidebar -->
+      <nav id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+          <li class="sidebar-brand">
+            <a href="#">
+              Sidebar Header
+            </a>
+          </li>
+          <li class ="active">
+            <a href="#">Dashboard</a>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Shortcuts <i class="fas fa-angle-right"></i></a>
+              <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
+                  <li>
+                      <a href="#" class ="submenu-item">Shortcut 1</a>
+                  </li>
+                  <li>
+                      <a href="#" class ="submenu-item">Shortcut 2</a>
+                  </li>
+                  <li>
+                      <a href="#" class ="submenu-item">Shortcut 3</a>
+                  </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="#">Overview</a>
+          </li>
+          <li>
+            <a href="#">Events</a>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Services <i class="fas fa-angle-right"></i></a>
+              <ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
+                  <li>
+                      <a href="#" class ="submenu-item">Service 1</a>
+                  </li>
+                  <li>
+                      <a href="#" class ="submenu-item">Service 2</a>
+                  </li>
+                  <li>
+                      <a href="#" class ="submenu-item">Service 3</a>
+                  </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="#">Contact</a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Page Content -->
+      <div class="container-fluid" id="content-wrapper">
+          <div class="row">
+            <div class="col-sm-12">
+              <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
+              <h3 class="user-title">Coordinador de Area Biolog&iacute;a</h3>
+            </div>
+          </div>
+          <!-- First Row -->
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="jumbotron RLcard">
+                <h1>{{ nombre_vista }}</h1>
+                <h3>Full Card</h3>
+                <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
+                <p>To see the difference between static and fixed top navbars, just scroll.</p>
+                <p>
+                  <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+                </p>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Second Row -->
+          <div class="row row-eq-height">
+            <div class="col-sm-6">
+              <div class="jumbotron RLcard">
+                  <h3>Half Card</h3>
+                  <p>Esto es un ejemplo de una carta pequeña para anuncios o graficos que no requieran de todo el ancho de la pagina web.</p>
+                  <p>
+                    <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs</a>
+                  </p>
+                </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="jumbotron RLcard">
+                  <h3>Half Card</h3>
+                  <p>
+                    Este es otro ejemplo de una carta de tamaño pequeño para colocar información puntual.
+                  </p>
+                  <p>
+                    <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+                  </p>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+{% endblock %}

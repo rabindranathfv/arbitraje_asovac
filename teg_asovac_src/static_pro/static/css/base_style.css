@@ -269,6 +269,10 @@ body {
     background-color: #FFFFFF;
 }
 
+.jumbotron {
+    padding: 24px 30px !important;
+}
+
 /* On mouse-over, add a deeper shadow */
 .RLcard:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -279,6 +283,10 @@ body {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+}
+
+.login-content {
+    min-height: calc(100vh - 130px);
 }
 
 /*==== Footer ====*/
