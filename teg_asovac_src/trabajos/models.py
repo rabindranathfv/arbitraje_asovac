@@ -23,7 +23,14 @@ class Trabajo(models.Model):
 	subarea1 = models.CharField(max_length=20)
 	subarea2 = models.CharField(max_length=20)
 	subarea3 = models.CharField(max_length=20)
+	resumen = models.TextField(max_length=255,default='')
+	documento_inscrito=  models.CharField(max_length=100,default='')
+	observaciones = models.TextField(max_length=255, blank = True)
+	url_trabajo = models.CharField(max_length=255,default='')
+	version= models.CharField(max_length=20,default='')
 
+	def __str__(self):
+    		return self.titulo_espanol#.encode('utf-8', errors='replace')
 
 
 
@@ -43,3 +50,5 @@ class Detalle_version_final(models.Model):
 	se_recibio_version_final_presentacion = models.BooleanField(default=False)
 	url_version_final_presentacion = models.CharField(max_length=35)
 	fecha_envio_version_final_presentacion = models.DateTimeField()
+	def __str__(self):
+		return self.url_version_final_trabajo#.encode('utf-8', errors='replace')

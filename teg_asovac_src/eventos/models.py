@@ -27,6 +27,9 @@ class Organizador(models.Model):
 	url_organizador = models.CharField(max_length=100)
 	observaciones = models.TextField(max_length=100)
 
+	def __str__(self):
+		return self.nombres#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Locacion_evento Model
@@ -38,6 +41,10 @@ class Locacion_evento(models.Model):
 	capacidad_de_asistentes = models.IntegerField()
 	observaciones = models.TextField(max_length=100)
 	equipo_requerido = models.TextField(max_length=50)
+	
+	def __str__(self):
+		return self.lugar#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Evento Model
@@ -60,6 +67,9 @@ class Evento(models.Model):
 	observaciones = models.TextField(max_length=100)
 	url_anuncio_evento = models.CharField(max_length=100)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
+
 """""""""""""""""""""""""""
 Organizador_evento Model
 """""""""""""""""""""""""""
@@ -69,6 +79,8 @@ class Organizador_evento(models.Model):
 	organizador_id = models.ForeignKey(Organizador)
 
 	locacion_preferida = models.CharField(max_length=50)
+	def __str__(self):
+		return self.locacion_preferida#.encode('utf-8', errors='replace')
 
 
 
