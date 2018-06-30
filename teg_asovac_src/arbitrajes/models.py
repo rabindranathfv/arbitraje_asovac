@@ -40,7 +40,7 @@ Sub_area Model
 """""""""""""""""""""""""""
 class Sub_area(models.Model):
 	
-	area_id = models.ForeignKey(Area)
+	area_id = models.ForeignKey(Area, on_delete = models.CASCADE)
 
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=100, blank = True)

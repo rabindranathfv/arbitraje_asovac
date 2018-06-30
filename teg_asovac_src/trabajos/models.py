@@ -12,7 +12,7 @@ Trabajo Model
 class Trabajo(models.Model):
 
 	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
-	autor_id = models.ManyToManyField('autores.Autor')
+	# autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
 
 	titulo_espanol = models.CharField(max_length=40)
@@ -28,7 +28,6 @@ class Trabajo(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	url_trabajo = models.CharField(max_length=255,blank=True)
 	version= models.CharField(max_length=20,blank=True)
-
 	def __str__(self):
     		return self.titulo_espanol#.encode('utf-8', errors='replace')
 

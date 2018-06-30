@@ -53,8 +53,8 @@ Autores_trabajos Model - Es la tabla intermedia entre Trabajo, Autor y Pagador
 """""""""""""""""""""""""""
 class Autores_trabajos(models.Model):
 	
-	autor_id = models.ForeignKey(Autor)
-	trabajo_id = models.ForeignKey('trabajos.Trabajo')
+	autor_id = models.ForeignKey(Autor, on_delete = models.CASCADE)
+	trabajo_id = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
