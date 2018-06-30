@@ -28,7 +28,7 @@ class Autor(models.Model):
 	usuario_id = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
 	universidad_id = models.ForeignKey(Universidad)
 
-	marca_temporal = models.DateTimeField()
+	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	genero = models.CharField(max_length=1)
@@ -37,9 +37,9 @@ class Autor(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular= models.CharField(max_length=20)
 	# Constancia de estudio no se sabe qué será
-	direccion_envio_correspondencia = models.TextField(max_length=100)
+	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
-	capitulo_perteneciente = models.CharField(max_length=20)
+	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
 	nivel_intruccion = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
