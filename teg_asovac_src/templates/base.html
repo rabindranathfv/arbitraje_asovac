@@ -69,7 +69,7 @@
           </li>
           <li>
             <div class="dropdown">
-              <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle">Shortcuts <i class="fas fa-angle-down" id="submenu-toggle-icon"></i></a>
+              <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Shortcuts <i class="fas fa-angle-right"></i></a>
               <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
                   <li>
                       <a href="#" class ="submenu-item">Shortcut 1</a>
@@ -94,7 +94,7 @@
           </li>
           <li>
             <div class="dropdown">
-              <a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle">Services <i class="fas fa-angle-down" id="submenu-toggle-icon"></i></a>
+              <a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Services <i class="fas fa-angle-right"></i></a>
               <ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
                   <li>
                       <a href="#" class ="submenu-item">Service 1</a>
@@ -183,6 +183,12 @@
             $("#wrapper").toggleClass("toggled");
             $("#menu-toggle-icon").toggleClass("fa-angle-double-left");
             $("#menu-toggle-icon").toggleClass("fa-angle-double-right");
+        });
+
+        $(".submenu-toggle").click(function(e) {
+            //e.preventDefault();
+            $(this).find("i").toggleClass("fa-angle-down");
+            $(this).find("i").toggleClass("fa-angle-right");
         });
     </script>
   </body>
