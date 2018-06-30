@@ -86,7 +86,7 @@ Pagador Model
 """""""""""""""""""""""""""
 class Pagador(models.Model):
 	
-	autor_trabajo_id = models.ForeignKey(Autores_trabajos)
+	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
 	categorias_pago = models.CharField(max_length=20)
@@ -107,7 +107,7 @@ class Pago(models.Model):
 	numero_transferencia = models.CharField(max_length=50)
 	numero_cheque = models.CharField(max_length=50)
 	fecha_pago = models.DateTimeField()
-	observaciones = models.TextField(max_length=100)
+	observaciones = models.TextField(max_length=100,blank=True)
 	comprobante_pago = models.TextField(max_length=100)
 
 	def __str__(self):
@@ -119,8 +119,8 @@ Factura Model
 """""""""""""""""""""""""""
 class Factura(models.Model):
 
-	pagador_id = models.ForeignKey(Pagador)
-	pago_id = models.OneToOneField(Pago)
+	pagador = models.ForeignKey(Pagador)
+	pago = models.OneToOneField(Pago)
 
 	monto_subtotal = models.FloatField()
 	fecha_emision = models.DateTimeField()
