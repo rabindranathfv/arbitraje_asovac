@@ -28,7 +28,7 @@ class Autor(models.Model):
 	usuario_id = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
 	universidad_id = models.ForeignKey(Universidad)
 
-	marca_temporal = models.DateTimeField()
+	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	genero = models.CharField(max_length=1)
@@ -37,9 +37,9 @@ class Autor(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular= models.CharField(max_length=20)
 	# Constancia de estudio no se sabe qué será
-	direccion_envio_correspondencia = models.TextField(max_length=100)
+	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
-	capitulo_perteneciente = models.CharField(max_length=20)
+	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
 	nivel_intruccion = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
@@ -53,8 +53,8 @@ Autores_trabajos Model - Es la tabla intermedia entre Trabajo, Autor y Pagador
 """""""""""""""""""""""""""
 class Autores_trabajos(models.Model):
 	
-	autor_id = models.ForeignKey(Autor)
-	trabajo_id = models.ForeignKey('trabajos.Trabajo')
+	autor_id = models.ForeignKey(Autor, on_delete = models.CASCADE)
+	trabajo_id = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
@@ -86,7 +86,7 @@ Pagador Model
 """""""""""""""""""""""""""
 class Pagador(models.Model):
 	
-	autor_trabajo_id = models.ForeignKey(Autores_trabajos)
+	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
 	categorias_pago = models.CharField(max_length=20)
@@ -107,7 +107,7 @@ class Pago(models.Model):
 	numero_transferencia = models.CharField(max_length=50)
 	numero_cheque = models.CharField(max_length=50)
 	fecha_pago = models.DateTimeField()
-	observaciones = models.TextField(max_length=100)
+	observaciones = models.TextField(max_length=100,blank=True)
 	comprobante_pago = models.TextField(max_length=100)
 
 	def __str__(self):
@@ -119,8 +119,8 @@ Factura Model
 """""""""""""""""""""""""""
 class Factura(models.Model):
 
-	pagador_id = models.ForeignKey(Pagador)
-	pago_id = models.OneToOneField(Pago)
+	pagador = models.ForeignKey(Pagador)
+	pago = models.OneToOneField(Pago)
 
 	monto_subtotal = models.FloatField()
 	fecha_emision = models.DateTimeField()
