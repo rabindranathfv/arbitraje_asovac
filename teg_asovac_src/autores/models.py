@@ -25,8 +25,9 @@ Autor Model
 """""""""""""""""""""""""""
 class Autor(models.Model):
 
-	usuario_id = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
-	universidad_id = models.ForeignKey(Universidad)
+	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
+	universidad = models.ForeignKey(Universidad)
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
@@ -53,8 +54,8 @@ Autores_trabajos Model - Es la tabla intermedia entre Trabajo, Autor y Pagador
 """""""""""""""""""""""""""
 class Autores_trabajos(models.Model):
 	
-	autor_id = models.ForeignKey(Autor, on_delete = models.CASCADE)
-	trabajo_id = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
+	autor = models.ForeignKey(Autor, on_delete = models.CASCADE)
+	trabajo = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
@@ -70,6 +71,8 @@ class Autores_trabajos(models.Model):
 Datos_pagador Model
 """""""""""""""""""""""""""
 class Datos_pagador(models.Model):
+    	
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 	
 	cedula = models.CharField(max_length=10) 
 	nombre = models.CharField(max_length=50)
@@ -126,7 +129,10 @@ class Factura(models.Model):
 	fecha_emision = models.DateTimeField()
 	monto_total = models.FloatField()
 	iva = models.FloatField()
+	
 	def __str__(self):
-		return self.monto_subtotal#.encode('utf-8', errors='replace')
+		return '{}'.format(self.monto_total)
+	# def __str__(self):
+	# 	return self.fecha_emision#.encode('utf-8', errors='replace')
 
 

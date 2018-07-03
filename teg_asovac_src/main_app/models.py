@@ -47,12 +47,12 @@ Usuario_asovac Model
 """""""""""""""""""""""""""
 class Usuario_asovac(models.Model):
 
-	usuario_id = models.OneToOneField(User, on_delete = models.CASCADE)
+	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
 	rol = models.ManyToManyField(Rol)
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac)
 
-
 	estado_arbitraje = models.SmallIntegerField(default=0)
+	usuario_activo = models.BooleanField(default=True)
 	
 
 	def __str__(self):

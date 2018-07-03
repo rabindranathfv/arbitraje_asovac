@@ -39,8 +39,8 @@ Espacio Model
 """""""""""""""""""""""""""
 class Espacio(models.Model):
 
-	espacio_fisico_id = models.OneToOneField(Espacio_fisico)
-	espacio_virtual_id = models.OneToOneField(Espacio_virtual)
+	espacio_fisico = models.OneToOneField(Espacio_fisico)
+	espacio_virtual = models.OneToOneField(Espacio_virtual)
 
 	fecha_ocupacion = models.DateTimeField()
 	tipo_espacio = models.CharField(max_length=50)
@@ -56,8 +56,8 @@ Sesion Model
 """""""""""""""""""""""""""
 class Sesion(models.Model):
 	
-	arbitraje_id = models.ForeignKey('arbitrajes.Arbitraje')
-	espacio_id = models.OneToOneField('sesiones.Espacio')
+	arbitraje = models.ForeignKey('arbitrajes.Arbitraje')
+	espacio = models.OneToOneField('sesiones.Espacio')
 
 	Sesion = models.CharField(max_length=15)
 	fecha_sesion = models.DateTimeField()

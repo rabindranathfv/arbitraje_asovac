@@ -12,6 +12,7 @@ Organizador Model
 class Organizador(models.Model):
 
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
@@ -52,7 +53,7 @@ Evento Model
 class Evento(models.Model):
 
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento')
-	locacion_evento_id = models.ForeignKey(Locacion_evento)
+	locacion_evento= models.ForeignKey(Locacion_evento)
 
 	nombre = models.CharField(max_length=50)
 	categoria = models.CharField(max_length=50)
@@ -75,8 +76,8 @@ Organizador_evento Model
 """""""""""""""""""""""""""
 class Organizador_evento(models.Model):
 
-	evento_id = models.ForeignKey(Evento)
-	organizador_id = models.ForeignKey(Organizador)
+	evento = models.ForeignKey(Evento)
+	organizador = models.ForeignKey(Organizador)
 
 	locacion_preferida = models.CharField(max_length=50)
 	def __str__(self):
