@@ -38,8 +38,8 @@ Detalle_version_final Model
 """""""""""""""""""""""""""
 class Detalle_version_final(models.Model):
 	
-	arbitraje_id = models.OneToOneField('arbitrajes.Arbitraje')
-	trabajo_id = models.OneToOneField(Trabajo, on_delete = models.CASCADE)
+	arbitraje = models.OneToOneField('arbitrajes.Arbitraje')
+	trabajo= models.OneToOneField(Trabajo, on_delete = models.CASCADE)
 
 	estatus = models.CharField(max_length=20)
 	observaciones = models.TextField(max_length=255, blank = True)
