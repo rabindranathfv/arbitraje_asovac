@@ -8,13 +8,23 @@ from .forms import MyLoginForm
 def login(request):
     form = MyLoginForm()
     context = {
-        "nombre_vista" : 'Login',
-        "form" : form,
+        'nombre_vista' : 'Login',
+        'form' : form,
     }
-    return render(request, "login.html", context)
+    return render(request, 'login.html', context)
 
 def dashboard(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
     context = {
-        "nombre_vista" : 'Administracion',
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
     }
-    return render(request, "dashboard.html", context)
+    return render(request, 'dashboard.html', context)
