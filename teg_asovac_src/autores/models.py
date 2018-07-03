@@ -25,10 +25,11 @@ Autor Model
 """""""""""""""""""""""""""
 class Autor(models.Model):
 
-	usuario_id = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
-	universidad_id = models.ForeignKey(Universidad)
+	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
+	universidad = models.ForeignKey(Universidad)
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
-	marca_temporal = models.DateTimeField()
+	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
 	genero = models.CharField(max_length=1)
@@ -37,9 +38,9 @@ class Autor(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular= models.CharField(max_length=20)
 	# Constancia de estudio no se sabe qué será
-	direccion_envio_correspondencia = models.TextField(max_length=100)
+	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
-	capitulo_perteneciente = models.CharField(max_length=20)
+	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
 	nivel_intruccion = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
@@ -53,8 +54,8 @@ Autores_trabajos Model - Es la tabla intermedia entre Trabajo, Autor y Pagador
 """""""""""""""""""""""""""
 class Autores_trabajos(models.Model):
 	
-	autor_id = models.ForeignKey(Autor)
-	trabajo_id = models.ForeignKey('trabajos.Trabajo')
+	autor = models.ForeignKey(Autor, on_delete = models.CASCADE)
+	trabajo = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
@@ -62,10 +63,16 @@ class Autores_trabajos(models.Model):
 	monto_total = models.FloatField()
 	pagado = models.BooleanField(default=False)
 
+	def __str__(self):
+
+		return "{} autor trabajo".format(self.autor_id.nombres)#.encode('utf-8', errors='replace')
+
 """""""""""""""""""""""""""
 Datos_pagador Model
 """""""""""""""""""""""""""
 class Datos_pagador(models.Model):
+    	
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 	
 	cedula = models.CharField(max_length=10) 
 	nombre = models.CharField(max_length=50)
@@ -74,17 +81,21 @@ class Datos_pagador(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
+	def __str__(self):
+		return self.cedula#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Pagador Model
 """""""""""""""""""""""""""
 class Pagador(models.Model):
 	
-	autor_trabajo_id = models.ForeignKey(Autores_trabajos)
+	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
 	categorias_pago = models.CharField(max_length=20)
 
+	def __str__(self):
+		return self.categorias_pago#.encode('utf-8', errors='replace')
 
 
 
@@ -99,8 +110,11 @@ class Pago(models.Model):
 	numero_transferencia = models.CharField(max_length=50)
 	numero_cheque = models.CharField(max_length=50)
 	fecha_pago = models.DateTimeField()
-	observaciones = models.TextField(max_length=100)
+	observaciones = models.TextField(max_length=100,blank=True)
 	comprobante_pago = models.TextField(max_length=100)
+
+	def __str__(self):
+		return self.numero_transferencia#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -108,12 +122,17 @@ Factura Model
 """""""""""""""""""""""""""
 class Factura(models.Model):
 
-	pagador_id = models.ForeignKey(Pagador)
-	pago_id = models.OneToOneField(Pago)
+	pagador = models.ForeignKey(Pagador)
+	pago = models.OneToOneField(Pago)
 
 	monto_subtotal = models.FloatField()
 	fecha_emision = models.DateTimeField()
 	monto_total = models.FloatField()
 	iva = models.FloatField()
+	
+	def __str__(self):
+		return '{}'.format(self.monto_total)
+	# def __str__(self):
+	# 	return self.fecha_emision#.encode('utf-8', errors='replace')
 
 

@@ -11,12 +11,15 @@ Arbitraje Model
 """""""""""""""""""""""""""
 class Arbitraje(models.Model):
 
-	marca_temporal = models.DateTimeField()
+	marca_temporal = models.DateTimeField(auto_now=True)
 	correcciones = models.TextField(max_length=100, blank = True)
 	resultado_del_arbitraje = models.TextField(max_length=50, blank = True)
 	razones_rechazo = models.TextField(max_length=100, blank = True)
 	observaciones = models.TextField(max_length=100, blank = True)
 	estatus = models.SmallIntegerField(default=0)
+	
+	def __str__(self):
+		return self.correcciones#.encode('utf-8', errors='replace')
 
 
 
@@ -27,6 +30,9 @@ class Area(models.Model):
 	
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=100, blank = True)
+	
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -34,11 +40,13 @@ Sub_area Model
 """""""""""""""""""""""""""
 class Sub_area(models.Model):
 	
-	area_id = models.ForeignKey(Area)
+	area_id = models.ForeignKey(Area, on_delete = models.CASCADE)
 
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=100, blank = True)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 
@@ -47,9 +55,10 @@ Arbitro Model
 """""""""""""""""""""""""""
 class Arbitro(models.Model):
 
-	usuario_id = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
-	arbitraje_id = models.ManyToManyField(Arbitraje)
+	usuario= models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
+	arbitraje_id = models.ManyToManyField(Arbitraje,blank=True)
 	subarea_id = models.ManyToManyField(Sub_area)
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
@@ -65,3 +74,5 @@ class Arbitro(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 	clave_arbitro = models.CharField(max_length=100)
 
+	def __str__(self):
+		return self.nombres#.encode('utf-8', errors='replace')

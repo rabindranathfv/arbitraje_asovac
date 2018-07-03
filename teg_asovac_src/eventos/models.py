@@ -12,6 +12,7 @@ Organizador Model
 class Organizador(models.Model):
 
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
@@ -27,6 +28,9 @@ class Organizador(models.Model):
 	url_organizador = models.CharField(max_length=100)
 	observaciones = models.TextField(max_length=100)
 
+	def __str__(self):
+		return self.nombres#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Locacion_evento Model
@@ -38,6 +42,10 @@ class Locacion_evento(models.Model):
 	capacidad_de_asistentes = models.IntegerField()
 	observaciones = models.TextField(max_length=100)
 	equipo_requerido = models.TextField(max_length=50)
+	
+	def __str__(self):
+		return self.lugar#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Evento Model
@@ -45,7 +53,7 @@ Evento Model
 class Evento(models.Model):
 
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento')
-	locacion_evento_id = models.ForeignKey(Locacion_evento)
+	locacion_evento= models.ForeignKey(Locacion_evento)
 
 	nombre = models.CharField(max_length=50)
 	categoria = models.CharField(max_length=50)
@@ -60,15 +68,20 @@ class Evento(models.Model):
 	observaciones = models.TextField(max_length=100)
 	url_anuncio_evento = models.CharField(max_length=100)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
+
 """""""""""""""""""""""""""
 Organizador_evento Model
 """""""""""""""""""""""""""
 class Organizador_evento(models.Model):
 
-	evento_id = models.ForeignKey(Evento)
-	organizador_id = models.ForeignKey(Organizador)
+	evento = models.ForeignKey(Evento)
+	organizador = models.ForeignKey(Organizador)
 
 	locacion_preferida = models.CharField(max_length=50)
+	def __str__(self):
+		return self.locacion_preferida#.encode('utf-8', errors='replace')
 
 
 

@@ -47,22 +47,32 @@ Usuario_asovac Model
 """""""""""""""""""""""""""
 class Usuario_asovac(models.Model):
 
-	usuario_id = models.OneToOneField(User, on_delete = models.CASCADE)
+	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
 	rol = models.ManyToManyField(Rol)
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac)
 
-
 	estado_arbitraje = models.SmallIntegerField(default=0)
+	usuario_activo = models.BooleanField(default=True)
 	
 
 	def __str__(self):
 
-		return "{} usuario asovac".format(self.user.get_username())#.encode('utf-8', errors='replace')
+		return "{} usuario asovac".format(self.usuario_id.get_username())#.encode('utf-8', errors='replace')
 
 
 
 
+#Esta seccion de codigo nos permite crear un objeto Usuario_asovac
+#Por cada objeto User creado en el sistema automaticamente.
+def crear_usuario_asovac(sender, **kwargs):
 
+
+	user = kwargs["instance"]
+	if kwargs["created"]:
+		usuario_asovac = Usuario_asovac(usuario_id=user)
+		usuario_asovac.save()
+
+post_save.connect(crear_usuario_asovac, sender=User)
 
 
 

@@ -27,21 +27,12 @@ from django.conf.urls import include
 from django.conf.urls.static import static
 
 
+from . import views
+
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    ## add routing using include in apps
-    url(r'^', include('main_app.urls')),
-    url(r'^', include('arbitrajes.urls')),
-    url(r'^', include('recursos.urls')),
-    url(r'^', include('seguimiento.urls')),
-    url(r'^', include('sesiones.urls')),
-    url(r'^', include('trabajos.urls')),
-    url(r'^', include('eventos.urls')),
-    url(r'^', include('autores.urls')),
+    url(r'^$',views.login,name='login'),
+    url(r'^dashboard/$',views.dashboard,name='dasboard'),
+    #url(r'^', include('eventos.urls')),
+    #url(r'^', include('autores.urls')),
     
 ]
-
-# add config for link styles, for collectstatic
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

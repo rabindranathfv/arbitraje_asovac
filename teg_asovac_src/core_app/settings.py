@@ -41,14 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     ## add all aps
-    'administracion',
+    'main_app',
+    'trabajos',
     'autores',
     'arbitrajes',
-    'main_app',
+    'sesiones',
     'recursos',
     'seguimiento',
-    'sesiones',
-    'trabajos',
     'eventos',
 
     ## another apps,plugings and package
@@ -85,7 +84,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core_app.wsgi.application'
 
-CRISPY_TEMPLATE_PACK = 'booststrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -98,7 +97,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT':''
+        'PORT':5432,
     }
 }
 
@@ -140,7 +139,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 

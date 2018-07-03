@@ -17,6 +17,9 @@ class Espacio_fisico(models.Model):
 	portatil = models.BooleanField(default=False)
 	turno = models.CharField(max_length=50)
 
+	def __str__(self):
+		return self.nombre#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Espacio_virtual Model
@@ -27,17 +30,23 @@ class Espacio_virtual(models.Model):
 	capacidad_url = models.IntegerField()
 	turno = models.CharField(max_length=50)
 
+	def __str__(self):
+		return self.url_virtual#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Espacio Model
 """""""""""""""""""""""""""
 class Espacio(models.Model):
 
-	espacio_fisico_id = models.OneToOneField(Espacio_fisico)
-	espacio_virtual_id = models.OneToOneField(Espacio_virtual)
+	espacio_fisico = models.OneToOneField(Espacio_fisico)
+	espacio_virtual = models.OneToOneField(Espacio_virtual)
 
 	fecha_ocupacion = models.DateTimeField()
 	tipo_espacio = models.CharField(max_length=50)
+
+	def __str__(self):
+		return self.tipo_espacio#.encode('utf-8', errors='replace')
 
 
 
@@ -47,8 +56,8 @@ Sesion Model
 """""""""""""""""""""""""""
 class Sesion(models.Model):
 	
-	arbitraje_id = models.ForeignKey('arbitrajes.Arbitraje')
-	espacio_id = models.OneToOneField('sesiones.Espacio')
+	arbitraje = models.ForeignKey('arbitrajes.Arbitraje')
+	espacio = models.OneToOneField('sesiones.Espacio')
 
 	Sesion = models.CharField(max_length=15)
 	fecha_sesion = models.DateTimeField()
@@ -57,6 +66,9 @@ class Sesion(models.Model):
 	modalidad = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=100, blank = True)
 	fecha_presentacion = models.DateTimeField()
+
+	def __str__(self):
+		return self.Sesion#.encode('utf-8', errors='replace')
 
 
 
