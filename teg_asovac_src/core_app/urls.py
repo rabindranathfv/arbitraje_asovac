@@ -29,15 +29,15 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    ## add routing using include in apps
-    url(r'^', include('main_app.urls')),
-    url(r'^', include('arbitrajes.urls')),
-    url(r'^', include('recursos.urls')),
-    url(r'^', include('seguimiento.urls')),
-    url(r'^', include('sesiones.urls')),
-    url(r'^', include('trabajos.urls')),
-    url(r'^', include('eventos.urls')),
-    url(r'^', include('autores.urls')),
+    ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
+    url(r'^', include('main_app.urls',      namespace='main_app')),
+    url(r'^', include('arbitrajes.urls',    namespace='arbitrajes')),
+    url(r'^', include('recursos.urls',      namespace='recursos')),
+    url(r'^', include('seguimiento.urls',   namespace='seguimiento')),
+    url(r'^', include('sesiones.urls',      namespace='sesiones')),
+    url(r'^', include('trabajos.urls',      namespace='trabajos')),
+    url(r'^', include('eventos.urls',       namespace='eventos')),
+    url(r'^', include('autores.urls',       namespace='autores')),
     
 ]
 
