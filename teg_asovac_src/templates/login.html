@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
+{% extends "base_users.html" %}
 
-    {% include "head.html" %}
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-  </head>
-  <body>
-    {% include "navbar.html"%}
-<!--
-    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
-      <div class="container-fluid">
-        <ul class="nav navbar-nav ">
-          <li>
-            <p class="navbar-text">
-              Por favor ingrese sus credenciales.
-            </p>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  -->
+    {% block content %}
+         
     <div class="login-content">
       <div class="container-fluid">
         <div class="row">
@@ -34,8 +17,5 @@
         </div>
       </div>
     </div>
-    {% include "footer.html" %}
 
-    {% include "js_scripts.html" %}
-  </body>
-</html>
+    {% endblock %}
