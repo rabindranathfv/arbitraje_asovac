@@ -13,7 +13,7 @@ class MyLoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
        super(MyLoginForm, self).__init__(*args, **kwargs)
        self.helper = FormHelper()
-       self.helper.form_id = 'id-login-form'
+       self.helper.form_id = 'login-form'
        self.helper.form_method = 'post'
-       self.helper.form_action = reverse('login') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+       #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
        self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))

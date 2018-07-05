@@ -25,7 +25,7 @@ def home(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'username' : 'Username',
+        'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'home.html', context)
 
