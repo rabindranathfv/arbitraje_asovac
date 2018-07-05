@@ -290,6 +290,10 @@ body {
     padding-top: 40px;
 }
 
+.btn-primary{
+    background-color: #2869BC;
+}
+
 .btn-warning {
     background-color: #FF7E46;
     border-color: #FF7040;
