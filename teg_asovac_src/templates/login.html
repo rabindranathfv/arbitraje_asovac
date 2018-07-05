@@ -1,19 +1,21 @@
+{% extends "base_users.html" %}
 
-{% extends "base.html" %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-  <div class="login-content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-4 col-sm-offset-4">
-          <div class="jumbotron RLcard">
-            <h3 class="text-center">ASOVAC</h3>
-            {% crispy form %}
-            <a href="#" class="btn btn-block btn-warning" role="button">¿Olvidaste tu contraseña?</a>
+    {% block content %}
+         
+    <div class="login-content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-4 col-sm-offset-4">
+            <div class="jumbotron RLcard">
+              <h3 class="text-center">ASOVAC</h3>
+              {% crispy form %}
+              <a href="#" class="btn btn-block btn-warning" role="button">¿Olvidaste tu contraseña?</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-{% endblock %}
+
+    {% endblock %}
