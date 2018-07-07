@@ -6,14 +6,23 @@
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1">
                 <div class="jumbotron RLcard">
-                    <h2>HOME</h2>
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-3">
+                                <h2>HOME</h2>
+                            </div>
+                            <div class="col-sm-2 col-sm-offset-7">
+                                <a href="#" class="btn btn-warning btn-block">Crear Arbitraje</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Panel de Arbitraje</h4>
                         </div>
                         <div class="panel-body">
                             <div class="container-fluid">
-                                <div class="row">
+                                <div class="row middle-content">
                                     <div class="col-sm-4">
                                         <p>Nombre_arbitraje</p>
                                     </div>
@@ -21,18 +30,18 @@
                                         <span class="">Estado:</span>
                                         <p class="text-primary">En Arbitraje</p>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <a class="btn btn-primary btn-lg" role="button" href="{% url 'main_app:dasboard' %} "> Entrar</a>
+                                    <div class="col-sm-3 text-center">
+                                        <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dasboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <p>Fecha inicio: XX-XX-XXX</p>
+                                        <h4>Fecha inicio: XX-XX-XXX</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <p>Fecha fin: XX-XX-XXX</p>
+                                        <h4>Fecha fin: XX-XX-XXX</h4>
                                     </div>
                                 </div>
                             </div>
