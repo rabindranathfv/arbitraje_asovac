@@ -303,6 +303,10 @@ body {
     background-color: #FF7040;
 }
 
+.row.middle-content{
+   display: flex;
+   align-items: center;
+}
 /*==== Footer ====*/
 
 #footer{
