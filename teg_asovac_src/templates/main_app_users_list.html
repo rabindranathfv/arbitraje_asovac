@@ -1,0 +1,107 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+         <!-- Page Content -->
+         <div class="container login-content" id="content-wrapper">
+             <div class="row">
+   
+               <div class="col-sm-12">
+                 <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
+                 <h3 class="user-title">Usuarios</h3>
+               </div>
+             </div>
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                   <!-- <div class="panel panel-default"> -->
+                       <!-- <div class="panel-heading">
+                           <h4>Lista de usuarios</h4>
+                       </div> -->
+                       <!-- <div class="panel-body"> -->
+                           <!-- Init table  -->
+
+                           <h2 class="text-center">Lista de usuarios</h2>
+                            <div>
+                               <form class="form-inline">
+                                   <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                                   <button class="btn btn-primary" type="submit">Buscar</button>
+                               </form>
+                            </div>
+                            <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th>Nombres</th>
+                                   <th>Apellidos</th>
+                                   <th>Nombre de usuario</th>
+                                   <th>Correo</th>
+                                   <th class="text-center">Acciones</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td>Pedro Manuel</th>
+                                   <td>Camacho Rodriguez</td>
+                                   <td>PedroManuel</td>
+                                   <td>PedroManuel@gmail.com</td>
+                                   <td class="text-center">
+                                        <a class="" href="">
+                                                <i class="fas fa-pencil-alt fa-lg"></i>
+                                           </a>
+                                           <a href="">
+                                                <i class="fas fa-trash-alt fa-lg"></i>
+                                           </a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td>Pedro Manuel</th>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                   <td class="text-center">
+                                        <a class="" href="">
+                                                <i class="fas fa-pencil-alt fa-lg"></i>
+                                           </a>
+                                           <a href="">
+                                                <i class="fas fa-trash-alt fa-lg"></i>
+                                           </a>
+                                   </td>
+                                 </tr>
+                                 <tr>
+                                    <td>Pedro Manuel</th>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                   <td class="text-center">
+                                       <a class="" href="">
+                                            <i class="fas fa-pencil-alt fa-lg"></i>
+                                       </a>
+                                       <a href="">
+                                            <i class="fas fa-trash-alt fa-lg"></i>
+                                       </a>
+                                   </td>
+                                 </tr>
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+                           
+                       </div>
+                   <!-- </div>
+                   </div> -->
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+             </div>
+         </div>
+</div>
+{% endblock %}

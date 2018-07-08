@@ -34,6 +34,9 @@ urlpatterns = [
     url(r'^$',views.login,name='login'),
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
+    url(r'^dashboard/admin/data_basic$',views.data_basic,name='data_basic'),
+    url(r'^dashboard/admin/state_arbitration$',views.state_arbitration,name='state_arbitration'),
+    url(r'^dashboard/admin/users/list$',views.users_list,name='users_list'),
     #url(r'^', include('eventos.urls')),
     #url(r'^', include('autores.urls')),
     
