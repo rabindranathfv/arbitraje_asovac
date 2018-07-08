@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from .forms import MyLoginForm
+from .forms import MyLoginForm, CreateArbitrajeForm
 
 # Create your views here.
 def login(request):
@@ -14,20 +14,24 @@ def login(request):
     return render(request, 'login.html', context)
 
 def home(request):
-    main_navbar_options = [ {'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                            {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                            {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                            {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     secondary_navbar_options = ['Bienvenido']
 
     context = {
-        'nombre_vista' : 'Administración',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'home.html', context)
+
+def create_arbitraje(request):
+    form = CreateArbitrajeForm()
+    context = {
+        'nombre_vista' : 'Crear Arbitraje',
+        'username' : 'Rabindranath Ferreira',
+        'form' : form,
+    }
+    return render(request, 'create_arbitraje.html', context)
+
 
 def dashboard(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -38,7 +42,7 @@ def dashboard(request):
     secondary_navbar_options = ['Opciones Secundarias']
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',

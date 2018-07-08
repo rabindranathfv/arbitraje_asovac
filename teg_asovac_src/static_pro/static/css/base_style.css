@@ -294,6 +294,10 @@ body {
     background-color: #2869BC;
 }
 
+.btn-success{
+    background-color: #5CB85C;
+}
+
 .btn-warning {
     background-color: #FF7E46;
     border-color: #FF7040;
@@ -307,6 +311,11 @@ body {
    display: flex;
    align-items: center;
 }
+
+textarea{
+    resize: none;
+}
+
 /*==== Footer ====*/
 
 #footer{
