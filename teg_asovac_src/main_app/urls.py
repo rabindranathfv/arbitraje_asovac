@@ -31,7 +31,7 @@ from django.contrib.auth.views import login, logout_then_login, password_reset, 
 from . import views
 
 urlpatterns = [
-    url(r'^$',views.login,name='login'),
+    # url(r'^$',views.login,name='login'),
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     #url(r'^', include('eventos.urls')),

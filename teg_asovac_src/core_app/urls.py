@@ -42,6 +42,7 @@ urlpatterns = [
      ## password and login 
     # url(r'^accounts/login/', login,{'template_name':'login.html'},name="login"),
     # url(r'^logout/', logout_then_login, name='logout'),
+    url(r'^$',login,{'template_name':'login.html'},name='login'),
     url(r'^reset/password_reset$', password_reset, 
         {'template_name':'password_reset_form.html',
         'email_template_name': 'password_reset_email.html'}, 
