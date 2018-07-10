@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^$',views.login,name='login'),
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
+    url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
     #url(r'^', include('eventos.urls')),
-    #url(r'^', include('autores.urls')),
-    
 ]
