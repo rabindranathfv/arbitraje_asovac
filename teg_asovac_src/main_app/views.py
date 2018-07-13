@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm
 
 from django.contrib.auth.models import User
@@ -61,7 +61,8 @@ def register(request):
             form.save()
             messages.success(request, 'Se ha registrado de manera exitosa.')
             context={"form":form,}
-            return render(request,'login.html',context)
+            return redirect('login')
+
         else:
             context={"form":form,}
             return render(request,'main_app_register.html',context)
