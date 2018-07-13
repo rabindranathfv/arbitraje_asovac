@@ -69,7 +69,7 @@ def crear_usuario_asovac(sender, **kwargs):
     	
 	user = kwargs["instance"]
 	if kwargs["created"]:
-		usuario_asovac = Usuario_asovac(usuario_id=user)
+		usuario_asovac = Usuario_asovac(usuario=user)
 		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
