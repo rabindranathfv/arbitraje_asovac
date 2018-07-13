@@ -2,7 +2,12 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from .forms import MyLoginForm, CreateArbitrajeForm
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm
+
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.core.urlresolvers import reverse_lazy
 
 # Create your views here.
 def login(request):
@@ -48,3 +53,20 @@ def dashboard(request):
         'username' : 'Username',
     }
     return render(request, 'dashboard.html', context)
+
+def register(request):
+    if request.method == 'POST':
+        form= RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Se ha registrado de manera exitosa.')
+            context={"form":form,}
+            return render(request,'login.html',context)
+        else:
+            context={"form":form,}
+            return render(request,'main_app_register.html',context)
+            
+    else:
+        form = RegisterForm()
+        context={"form":form,}
+        return render(request,'main_app_register.html',context)

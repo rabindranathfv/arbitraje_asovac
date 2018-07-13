@@ -8,6 +8,16 @@ from django.core.urlresolvers import reverse
 
 from .models import Sistema_asovac
 
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
+class RegisterForm(UserCreationForm):
+
+    class Meta:
+        model= User
+        fields=['username','first_name','last_name','email',]
+
+
 class MyLoginForm(forms.Form):
     username = forms.CharField(label="Usuario", max_length=100)
     password = forms.CharField(label="Contraseña", max_length=100, widget=forms.PasswordInput)
