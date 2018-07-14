@@ -13,6 +13,7 @@
               <!-- init form -->
               <!-- {% crispy form %} -->
               {% include "success_messages.html" %}
+              {% include "errors_form.html" %}
               <form id="login-form" method="post"> 
                 {% csrf_token %}
                 <div id="div_id_username" class="form-group"> 
