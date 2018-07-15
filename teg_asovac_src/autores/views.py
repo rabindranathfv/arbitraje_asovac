@@ -12,4 +12,4 @@ def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
     }
-    return render(request,"test_views.html",context)
+    return render(request,"autor.html",context)
