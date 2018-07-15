@@ -1,5 +1,7 @@
 {% extends "base_users.html" %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
 <div class="login-content">
     <div class="container-fluid">
@@ -42,7 +44,7 @@
                                         <p>Estatus</p>
                                     </div>
                                     <div class="col-sm-1">
-                                        <p>Estatus</p>
+                                        <p>Versión</p>
                                     </div>
                                     <div class="col-sm-1">
                                         <p>Acciones</p>
@@ -64,6 +66,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Crear Trabajo</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <div class="row middle-content">
+                                    <div class="col-sm-12">
+                                        {% crispy form %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
