@@ -9,16 +9,16 @@ from django.core.urlresolvers import reverse
 from trabajos.models import Trabajo
 
 
-class CreateTrabajoForm(forms.ModelForm):
+class TrabajoForm(forms.ModelForm):
 
 	class Meta:
 		model = Trabajo
 		fields = ['titulo_espanol', 'titulo_ingles', 'palabras_clave', 'forma_presentacion', 'area', 'subarea1', 'subarea2', 'subarea3', 'resumen', 'documento_inscrito', 'observaciones', 'url_trabajo', 'version']
 
 	def __init__(self, *args, **kwargs):
-		super(CreateTrabajoForm,self).__init__(*args, **kwargs)
+		super(TrabajoForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
-		self.helper.form_id = 'create-trabajo-form'
+		self.helper.form_id = 'trabajo-form'
 		self.helper.form_method = 'post'
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-3'

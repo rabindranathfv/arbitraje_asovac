@@ -20,4 +20,5 @@ from . import views
 
 urlpatterns = [
     url(r'^autores/$', views.autores_pag, name= 'autores'),
+    url(r'^autores/editar$', views.edit_trabajo, name= 'editar-trabajo'),
 ]

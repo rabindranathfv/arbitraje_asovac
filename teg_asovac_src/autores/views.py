@@ -6,12 +6,20 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
-from .forms import CreateTrabajoForm
+from .forms import TrabajoForm
 # Create your views here.
 def autores_pag(request):
-    form = CreateTrabajoForm()
+    form = TrabajoForm()
     context = {
-        "nombre_vista": 'autores',
+        "nombre_vista": 'Autores',
         "form": form,
     }
     return render(request,"autor.html",context)
+
+def edit_trabajo(request):
+	form = TrabajoForm()
+	context = {
+		"nombre_vista": 'Editar Trabajo',
+		"form": form,
+    }
+	return render(request,"autor-editar-trabajo.html",context)
