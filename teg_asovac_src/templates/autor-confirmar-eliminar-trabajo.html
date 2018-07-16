@@ -1,0 +1,31 @@
+{% extends "base_users.html" %}
+
+{% block content %}
+         
+<div class="login-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <div class="jumbotron RLcard">
+          <h3 class="text-center">Confirmar eliminación</h3>
+          <div class="panel panel-default">
+            <div class="panel-heading text-center">
+              <h5>¿Está seguro que desea eliminar el trabajo?</h5>
+            </div>
+            <div class="panel-body">
+              <div class="container-fluid">
+                  <div class="row middle-content">
+                      <div class="col-sm-12">
+                        <a href="{% url 'autores:autores'%}" class="btn btn-block btn-success" role="button">Confirmar</a>
+                        <a href="{% url 'autores:autores'%}" class="btn btn-block btn-warning" role="button">Cancelar</a>
+                      </div>
+                  </div>
+              </div>
+            </div>          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

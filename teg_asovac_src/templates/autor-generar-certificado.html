@@ -1,0 +1,52 @@
+{% extends "base_users.html" %}
+{% block content %}
+<div class="login-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-3">
+                                <h2>Autor</h2>
+                            </div>
+                            <div class="col-sm-2 col-sm-offset-7">
+                                <a href="{% url 'autores:autores' %}" class="btn btn-warning btn-block">Atrás</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Generar Certificado</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <div class="row middle-content">
+                                    <div class="col-sm-4">
+                                        <p>Seleccionar tipo de certificado:</p>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="dropdown">
+                                          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Tipos de certificados
+                                          </button>
+                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#">Tipo 1</a>
+                                            <a class="dropdown-item" href="#">Tipo 2 </a>
+                                            <a class="dropdown-item" href="#">Tipo 3</a>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 col-sm-offset-3">
+                                        <a href="#" class="btn btn-success btn-block">Generar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

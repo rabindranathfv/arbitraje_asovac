@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
-from .forms import TrabajoForm
+from .forms import TrabajoForm, DatosPagadorForm, PagoForm, FacturaForm
 # Create your views here.
 def autores_pag(request):
     form = TrabajoForm()
@@ -23,3 +23,39 @@ def edit_trabajo(request):
 		"form": form,
     }
 	return render(request,"autor-editar-trabajo.html",context)
+
+def confirm_edit_trabajo(request):
+	context = {
+		"nombre_vista": 'Confirmar edición' 
+	}
+	return render(request,"autor-confirmar-editar-trabajo.html",context)
+
+def confirm_delete_trabajo(request):
+	context = {
+		"nombre_vista": 'Confirmar eliminación' 
+	}
+	return render(request,"autor-confirmar-eliminar-trabajo.html",context)
+
+def trabajos_evaluados(request):
+	context = {
+		"nombre_vista": 'Trabajos Evaluados'
+	}
+	return render(request,"autor-trabajos-evaluados.html",context)
+
+def generar_certificado(request):
+	context={
+		"nombre_vista": 'Generar Certificado'
+	}
+	return render(request,"autor-generar-certificado.html", context)
+
+def postular_trabajo(request):
+	pagadorform = DatosPagadorForm()
+	pagoform = PagoForm()
+	facturaform = FacturaForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo',
+		"pagadorform": pagadorform,
+		"pagoform": pagoform,
+		"facturaform": facturaform,
+	}
+	return render(request,"autor-postular-trabajo.html",context)
