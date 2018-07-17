@@ -37,6 +37,13 @@ def create_arbitraje(request):
     }
     return render(request, 'create_arbitraje.html', context)
 
+def listado_trabajos(request):
+    context = {
+        'nombre_vista' : 'Lista de Trabajos',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'resumenes_trabajos_list.html', context)
+
 
 def dashboard(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},

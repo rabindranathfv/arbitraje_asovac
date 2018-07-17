@@ -312,6 +312,14 @@ body {
    align-items: center;
 }
 
+.lb-md {
+  font-size: 14px;
+}
+
+.gray-header th{
+    background-color: #DDD;
+}
+
 textarea{
     resize: none;
 }
