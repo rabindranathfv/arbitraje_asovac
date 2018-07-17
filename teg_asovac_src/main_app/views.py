@@ -44,6 +44,13 @@ def listado_trabajos(request):
     }
     return render(request, 'resumenes_trabajos_list.html', context)
 
+def detalles_resumen(request):
+    context = {
+        'nombre_vista' : 'Detalles de Resumen',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'detalle_resumen.html', context)
+
 
 def dashboard(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},

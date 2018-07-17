@@ -313,11 +313,31 @@ body {
 }
 
 .lb-md {
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.p-md {
+  font-size: 16px !important;
 }
 
 .gray-header th{
     background-color: #DDD;
+}
+
+.top-margin-18{
+    margin-top: 18px;
+}
+
+.preview-resumen{
+    height: 400px;
+    width: 300px;
+    border: 1px solid #DDDDDD;
+    line-height: 440px;
+}
+
+.observations-space{
+    min-height: 250px;
+    overflow: auto;
 }
 
 textarea{

@@ -36,7 +36,8 @@ urlpatterns = [
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
-    url(r'^listado/$',views.listado_trabajos, name='listado'),
+    url(r'^listado-trabajos/$',views.listado_trabajos, name='listado'),
+    url(r'^listado-trabajos/detalles/$',views.detalles_resumen, name='detalles_resumen'),
     url(r'^register/$',views.register, name='register'), 
     #url(r'^', include('eventos.urls')),
 ]
