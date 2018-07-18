@@ -135,10 +135,10 @@ class FacturaForm(forms.ModelForm):
 		self.helper.form_class =  'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['monto_subtotal'] = "Monto Subtotal"
-		self.fields['fecha_emsion'] = "Fecha de emisión"
-		self.fields['monto_total'] = "Monto Total"
-		self.fields['iva'] = "IVA"
+		self.fields['monto_subtotal'].label = "Monto Subtotal"
+		self.fields['fecha_emision'].label = "Fecha de emisión"
+		self.fields['monto_total'].label = "Monto Total"
+		self.fields['iva'].label = "IVA"
 		self.helper.layout = Layout(
 			'monto_subtotal',
 			'fecha_emision',
