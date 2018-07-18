@@ -1,0 +1,94 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Recursos</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                   
+                    <h2 class="text-center">Documentos digitales para AsoVAC</h2>
+                    <br>
+                    <!-- init content -->
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <div class="col-sm-9">
+                            <form class="form-inline">
+                                <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                                <button class="btn btn-primary" type="submit">Buscar</button>
+                            </form>
+                        </div>
+                        <div class="form-group col-sm-3">
+                            <a href="" class="btn btn-block btn-success" role="button">Generar</a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 col-sm-offset-2">
+                            <div class="col-md-12">
+                                <select class="form-control">
+                                    <option>Seleccione un tipo de documento</option>
+                                    <option>Certificado para comisión organizadora</option>
+                                    <option>Normativa y evento</option>
+                                    <option>Libro resumen</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 col-sm-offset-2">
+                            <h3 class="text-center">
+                                Documento a generar
+                            </h3>
+                            
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nombres</th>
+                                        <th>Apellidos</th>
+                                        <th>Correo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Pedro Manuel</td>
+                                        <td>Camacho Rodriguez</td>
+                                        <td>CamachoR@gmail.com</td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- end content -->
+                           
+                    </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

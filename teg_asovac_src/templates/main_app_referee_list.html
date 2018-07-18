@@ -1,5 +1,6 @@
 
 
+
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
@@ -17,7 +18,7 @@
                     <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
                         <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
                     </a>
-                    <h3 class="user-title">Usuarios</h3>
+                    <h3 class="user-title">{{nombre_vista}}</h3>
                 </div>
             </div>
              <!-- EndTitle content-->
@@ -27,7 +28,7 @@
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
                    
-                    <h2 class="text-center">Lista de usuarios</h2>
+                    <h2 class="text-center">Lista de arbitros</h2>
                     <div>
                         <form class="form-inline">
                             <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
@@ -40,8 +41,9 @@
                                  <tr>
                                    <th>Nombres</th>
                                    <th>Apellidos</th>
-                                   <th>Nombre de usuario</th>
-                                   <th>Correo</th>
+                                   <th>Correo electrónico</th>
+                                   <th>Cedula</th>
+                                   
                                    <th class="text-center">Acciones</th>
                                  </tr>
                                </thead>
@@ -49,10 +51,11 @@
                                  <tr>
                                    <td>Pedro Manuel</td>
                                    <td>Camacho Rodriguez</td>
-                                   <td>PedroManuel</td>
                                    <td>PedroManuel@gmail.com</td>
+                                   <td>30687908</td>
+                                   
                                    <td class="text-center">
-                                        <a class="" href="{% url 'main_app:user_edit' %}">
+                                        <a class="" href="{% url 'main_app:referee_edit' %}">
                                                 <i class="fas fa-pencil-alt fa-lg"></i>
                                            </a>
                                            <a href="">
@@ -63,35 +66,38 @@
                                  <tr>
                                     <td>Pedro Manuel</td>
                                     <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel</td>
                                     <td>PedroManuel@gmail.com</td>
-                                   <td class="text-center">
-                                        <a class="" href="{% url 'main_app:user_edit' %}">
-                                                <i class="fas fa-pencil-alt fa-lg"></i>
-                                           </a>
-                                           <a href="">
-                                                <i class="fas fa-trash-alt fa-lg"></i>
-                                           </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
+                                    <td>30687908</td>
+                                    
+                                    <td class="text-center">
+                                         <a class="" href="{% url 'main_app:referee_edit' %}">
+                                                 <i class="fas fa-pencil-alt fa-lg"></i>
+                                            </a>
+                                            <a href="">
+                                                 <i class="fas fa-trash-alt fa-lg"></i>
+                                            </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
                                     <td>Pedro Manuel</td>
                                     <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel</td>
                                     <td>PedroManuel@gmail.com</td>
-                                   <td class="text-center">
-                                       <a class="" href="{% url 'main_app:user_edit' %}">
-                                            <i class="fas fa-pencil-alt fa-lg"></i>
-                                       </a>
-                                       <a href="">
-                                            <i class="fas fa-trash-alt fa-lg"></i>
-                                       </a>
-                                   </td>
-                                 </tr>
+                                    <td>30687908</td>
+                                    
+                                    <td class="text-center">
+                                         <a class="" href="{% url 'main_app:referee_edit' %}">
+                                                 <i class="fas fa-pencil-alt fa-lg"></i>
+                                            </a>
+                                            <a href="">
+                                                 <i class="fas fa-trash-alt fa-lg"></i>
+                                            </a>
+                                    </td>
+                                  </tr>
+                                 
                                </tbody>
                              </table>
                            <!-- End table  -->
-                           
+
                        </div>
                </div>
              </div>

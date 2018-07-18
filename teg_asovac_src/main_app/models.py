@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 #from .views import cod_generator
 import uuid
 
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -57,7 +58,7 @@ class Usuario_asovac(models.Model):
 
 	def __str__(self):
 
-		return "{} usuario asovac".format(self.usuario_id.get_username())#.encode('utf-8', errors='replace')
+		return "{}".format(self.usuario.get_username())#.encode('utf-8', errors='replace')
 
 
 
@@ -65,11 +66,10 @@ class Usuario_asovac(models.Model):
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
-
-
+    	
 	user = kwargs["instance"]
 	if kwargs["created"]:
-		usuario_asovac = Usuario_asovac(usuario_id=user)
+		usuario_asovac = Usuario_asovac(usuario=user)
 		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
