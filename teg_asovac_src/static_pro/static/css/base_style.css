@@ -328,6 +328,10 @@ body {
     margin-top: 18px;
 }
 
+.top-margin-128{
+    margin-top: 128px;
+}
+
 .preview-resumen{
     height: 400px;
     width: 300px;
