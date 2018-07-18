@@ -47,12 +47,12 @@ class TrabajoForm(forms.ModelForm):
 			'version',
 			 Div(
 			 	Div(
-					HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+					HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a> "),
 				css_class='col-sm-2 col-sm-offset-8'),
                 Div(
-                    Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),
-                css_class='col-sm-2'),
-            css_class='row')
+                    #Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
+                    HTML("<button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button>"),css_class='col-sm-2'),
+            css_class='row'),
 			)
 
 
