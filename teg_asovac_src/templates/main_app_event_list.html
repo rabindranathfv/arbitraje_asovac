@@ -1,0 +1,91 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Eventos</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                   
+                    <h2 class="text-center">Lista de eventos</h2>
+                    <div>
+                        <form class="form-inline">
+                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                            <button class="btn btn-primary" type="submit">Buscar</button>
+                        </form>
+                    </div>
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th>Organizador</th>
+                                   <th>Nombre</th>
+                                   <th>Categoria</th>
+                                   <th>Lugar</th>
+                                   <th>Capacidad</th>
+                                   <th>Fecha inicio</th>
+                                   <th>Fecha fin</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td>Pedro Manuel Camacho Rodriguez</td>
+                                   <td>Fin de clases</td>
+                                   <td>Fiestas</td>
+                                   <td>Caracas</td>
+                                   <td>300</td>
+                                   <td>12/10/2018</td>
+                                   <td>15/11/2018</td>
+                                 </tr>
+                                 <tr>
+                                    <td>Pedro Manuel Camacho Rodriguez</td>
+                                    <td>Fin de clases</td>
+                                    <td>Fiestas</td>
+                                    <td>Caracas</td>
+                                   <td>300</td>
+                                    <td>12/10/2018</td>
+                                    <td>15/11/2018</td>
+                                  </tr>
+                                  <tr>
+                                    <td>Pedro Manuel Camacho Rodriguez</td>
+                                    <td>Fin de clases</td>
+                                    <td>Fiestas</td>
+                                    <td>Caracas</td>
+                                   <td>300</td>
+                                    <td>12/10/2018</td>
+                                    <td>15/11/2018</td>
+                                  </tr>
+                                 
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

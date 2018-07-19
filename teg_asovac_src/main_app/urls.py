@@ -46,6 +46,8 @@ urlpatterns = [
     url(r'^dashboard/admin/referee/list$',views.referee_list,name='referee_list'),
     url(r'^dashboard/admin/referee/edit$',views.referee_edit,name='referee_edit'),
 
+    url(r'^dashboard/admin/event/list$',views.event_list,name='event_list'),
+
     url(r'^dashboard/admin/resources/author$',views.resources_author,name='resources_author'),
     url(r'^dashboard/admin/resources/referee$',views.resources_referee,name='resources_referee'),
     url(r'^dashboard/admin/resources/event$',views.resources_event,name='resources_event'),

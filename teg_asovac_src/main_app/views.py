@@ -300,3 +300,19 @@ def resources_asovac(request):
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_asovac.html', context)
+
+def event_list(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['']
+
+    context = {
+        'nombre_vista' : 'Arbitros',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_event_list.html', context)
