@@ -32,20 +32,29 @@ class TrabajoForm(forms.ModelForm):
 		self.fields['subarea3'].label = "Subárea 3"
 		self.fields['version'].label = "Versión"
 		self.helper.layout = Layout(
-			'titulo_espanol',
-			'titulo_ingles',
-			'palabras_clave',
-			'forma_presentacion',
-			'area',
-			'subarea1',
-			'subarea2',
-			'subarea3',
-			Field('resumen', rows="4"),
-			'documento_inscrito',
-			Field('observaciones', rows="4"),
-			'url_trabajo',
-			'version',
-			 Div(
+			Div(	
+				Div(
+					'titulo_espanol',
+					'titulo_ingles',
+					'palabras_clave',
+					'forma_presentacion',
+					'area',
+					'subarea1',
+					'subarea2',
+					'subarea3',
+					'version',
+					'url_trabajo',
+					'documento_inscrito',
+					css_class='col-sm-6',
+					),
+				Div(
+					Field('resumen', rows="4"),			
+					Field('observaciones', rows="4"),
+					css_class='col-sm-6',
+				),
+				css_class='row'
+			),
+			Div(
 			 	Div(
 					HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a> "),
 				css_class='col-sm-2 col-sm-offset-8'),
