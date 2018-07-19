@@ -24,18 +24,6 @@ def edit_trabajo(request):
     }
 	return render(request,"autor-editar-trabajo.html",context)
 
-def confirm_edit_trabajo(request):
-	context = {
-		"nombre_vista": 'Confirmar edición' 
-	}
-	return render(request,"autor-confirmar-editar-trabajo.html",context)
-
-def confirm_delete_trabajo(request):
-	context = {
-		"nombre_vista": 'Confirmar eliminación' 
-	}
-	return render(request,"autor-confirmar-eliminar-trabajo.html",context)
-
 def trabajos_evaluados(request):
 	context = {
 		"nombre_vista": 'Trabajos Evaluados'

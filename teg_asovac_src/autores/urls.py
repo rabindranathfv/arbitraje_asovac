@@ -21,8 +21,6 @@ from . import views
 urlpatterns = [
     url(r'^autores/$', views.autores_pag, name= 'autores'),
     url(r'^autores/editar$', views.edit_trabajo, name= 'editar-trabajo'),
-    url(r'^autores/editar/confirmar$', views.confirm_edit_trabajo, name = 'confirmar-editado-trabajo'),
-    url(r'^autores/eliminar/confirmar$', views.confirm_delete_trabajo, name = 'confirmar-eliminacion-trabajo'),
     url(r'^autores/trabajos-evaluados$', views.trabajos_evaluados, name = 'trabajos-evaluados'),
     url(r'^autores/generar-certificado$', views.generar_certificado, name = 'generar-certificado'),
     url(r'^autores/postular-trabajo$', views.postular_trabajo, name= 'postular-trabajo'),
