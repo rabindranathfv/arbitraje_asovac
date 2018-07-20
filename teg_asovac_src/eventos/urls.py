@@ -18,4 +18,5 @@ from . import views
 
 urlpatterns = [
     url(r'^eventos/$', views.eventos_pag, name= 'eventos'),
+    url(r'^dashboard/admin/event/list$',views.event_list,name='event_list'),
 ]

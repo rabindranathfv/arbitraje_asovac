@@ -20,4 +20,7 @@ from . import views
 
 urlpatterns = [
     url(r'^autores/$', views.autores_pag, name= 'autores'),
+
+    url(r'^dashboard/admin/authors/list$',views.authors_list,name='authors_list'),
+    url(r'^dashboard/admin/author/edit$',views.author_edit,name='author_edit'),
 ]

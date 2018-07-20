@@ -36,26 +36,11 @@ urlpatterns = [
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     url(r'^dashboard/admin/data_basic$',views.data_basic,name='data_basic'),
-    url(r'^dashboard/admin/state_arbitration$',views.state_arbitration,name='state_arbitration'),
+    url(r'^dashboard/admin/arbitration/state$',views.state_arbitration,name='arbitration_state'),
     url(r'^dashboard/admin/users/list$',views.users_list,name='users_list'),
     url(r'^dashboard/admin/user/edit$',views.user_edit,name='user_edit'),
-
-    url(r'^dashboard/admin/authors/list$',views.authors_list,name='authors_list'),
-    url(r'^dashboard/admin/author/edit$',views.author_edit,name='author_edit'),
-
-    url(r'^dashboard/admin/referee/list$',views.referee_list,name='referee_list'),
-    url(r'^dashboard/admin/referee/edit$',views.referee_edit,name='referee_edit'),
-
-    url(r'^dashboard/admin/event/list$',views.event_list,name='event_list'),
-
-    url(r'^dashboard/admin/resources/author$',views.resources_author,name='resources_author'),
-    url(r'^dashboard/admin/resources/referee$',views.resources_referee,name='resources_referee'),
-    url(r'^dashboard/admin/resources/event$',views.resources_event,name='resources_event'),
-    url(r'^dashboard/admin/resources/sesion$',views.resources_sesion,name='resources_sesion'),
-    url(r'^dashboard/admin/resources/asovac$',views.resources_asovac,name='resources_asovac'),
-
-
     url(r'^dashboard/admin/user/roles$',views.user_roles,name='user_roles'),
+    
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'), 
     url(r'^register/$',views.register, name='register'), 
     #url(r'^', include('eventos.urls')),
