@@ -52,3 +52,19 @@ def referee_edit(request):
         'username' : 'Username',
     }
     return render(request, 'main_app_referee_edit.html', context)
+
+def areas_subareas(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['']
+
+    context = {
+        'nombre_vista' : 'Arbitros',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'arbitrations_areas_subareas.html', context)

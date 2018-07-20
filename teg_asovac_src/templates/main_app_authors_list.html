@@ -27,15 +27,15 @@
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
                    
-                    <h2 class="text-center">Lista de autores</h2>
+                    <h2 class="text-left">Lista de autores</h2>
                     <div>
-                        <form class="form-inline">
+                        <form class="form-inline text-right">
                             <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
                             <button class="btn btn-primary" type="submit">Buscar</button>
                         </form>
                     </div>
                     <br>
-                           <table class="table table-bordered">
+                           <table class="table table-bordered gray-header">
                                <thead>
                                  <tr>
                                    <th>Nombres</th>
@@ -43,7 +43,7 @@
                                    <th>Correo electrónico</th>
                                    <th>Cedula</th>
                                    <th>Universidad</th>
-                                   <th class="text-center">Acciones</th>
+                                   <th >Acciones</th>
                                  </tr>
                                </thead>
                                <tbody>
@@ -53,13 +53,19 @@
                                    <td>PedroManuel@gmail.com</td>
                                    <td>30687908</td>
                                    <td>UCAB</td>
-                                   <td class="text-center">
-                                        <a class="" href="{% url 'main_app:author_edit' %}">
-                                                <i class="fas fa-pencil-alt fa-lg"></i>
-                                           </a>
-                                           <a href="">
-                                                <i class="fas fa-trash-alt fa-lg"></i>
-                                           </a>
+                                   <td >
+                                      <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
+                                          <i class="fas fa-edit"></i>
+                                      </a>
+                                      <a href="#" class="btn btn-info" role="button">
+                                          <i class="fas fa-times"></i>
+                                      </a>
+                                      <a href="#" class="btn btn-info" role="button">
+                                          <i class="fas fa-envelope"></i>
+                                      </a>
+                                      <a href="" class="btn btn-info" role="button">
+                                          <i class="fas fa-door-open"></i>
+                                      </a>
                                    </td>
                                  </tr>
                                  <tr>
@@ -68,13 +74,19 @@
                                     <td>PedroManuel@gmail.com</td>
                                     <td>30687908</td>
                                     <td>UCAB</td>
-                                    <td class="text-center">
-                                         <a class="" href="{% url 'main_app:user_edit' %}">
-                                                 <i class="fas fa-pencil-alt fa-lg"></i>
-                                            </a>
-                                            <a href="">
-                                                 <i class="fas fa-trash-alt fa-lg"></i>
-                                            </a>
+                                    <td >
+                                        <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="" class="btn btn-info" role="button">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
                                     </td>
                                   </tr>
                                   <tr>
@@ -83,13 +95,19 @@
                                     <td>PedroManuel@gmail.com</td>
                                     <td>30687908</td>
                                     <td>UCAB</td>
-                                    <td class="text-center">
-                                         <a class="" href="{% url 'main_app:user_edit' %}">
-                                                 <i class="fas fa-pencil-alt fa-lg"></i>
-                                            </a>
-                                            <a href="">
-                                                 <i class="fas fa-trash-alt fa-lg"></i>
-                                            </a>
+                                    <td >
+                                        <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="" class="btn btn-info" role="button">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
                                     </td>
                                   </tr>
                                  
@@ -106,3 +124,5 @@
 </div>
 
 {% endblock %}
+
+

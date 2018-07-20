@@ -23,4 +23,5 @@ urlpatterns = [
 
     url(r'^dashboard/admin/referee/list$',views.referee_list,name='referee_list'),
     url(r'^dashboard/admin/referee/edit$',views.referee_edit,name='referee_edit'),
+    url(r'^dashboard/admin/arbitrations/areas/subareas$',views.areas_subareas,name='arbitrations_areas/subareas'),
 ]
