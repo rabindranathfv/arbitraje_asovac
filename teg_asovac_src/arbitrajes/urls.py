@@ -19,5 +19,6 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^arbitrajes/$', views.arbitrajes_pag, name= 'arbitrajes'),
+    url(r'^listado-trabajos/$',views.listado_trabajos, name='listado'),
+    url(r'^listado-trabajos/detalles/$',views.detalles_resumen, name='detalles_resumen'),
 ]

@@ -54,11 +54,15 @@ class CreateArbitrajeForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-2 col-sm-offset-8'),
+                css_class='col-sm-2 col-sm-offset-7'),
 
                 Div(
-                    Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),
+                    Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-2'),
+
+                Div(
+                    HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
+                css_class='col-sm-1'),
 
             css_class='row')
         )

@@ -3,7 +3,7 @@ body {
     background-color: #EEEEEE;
 }
 
-/*==== Main Navbar structure ====*/
+/*============================ Main Navbar structure ============================*/
 .navbar{
     margin :0;
     font-family: 'Raleway';
@@ -29,8 +29,7 @@ body {
     min-height:30px !important
 }
 
-/*==== Main Navbar colors ====*/
-
+/*============================ Main Navbar colors ============================*/
 .navbar-default {
     background-color: #2869BC;
     border-color: #BBBBBB;
@@ -85,7 +84,7 @@ body {
     border-bottom-color: #555;
 }
 
-/*==== Secondary Navbar structure ====*/
+/*============================ Secondary Navbar structure ============================*/
 .secondary-navbar{
     margin-top: 41px;
     font-size: 16px;
@@ -111,8 +110,7 @@ body {
     height: 40px;
 }
 
-/*==== Secondary Navbar colors ====*/
-
+/*============================ Secondary Navbar colors ============================*/
 .secondary-navbar{
     background-color: #FF7E46 ; /*#F2672A; */
     border-color: #E7E7E7;
@@ -123,9 +121,7 @@ body {
     ;
 }
 
-
-/*==== Fixed Sidebar & Content ====*/
-
+/*============================ Fixed Sidebar & Content ============================*/
 #wrapper {
     display: flex;
     width: 100%;
@@ -229,8 +225,9 @@ body {
     line-height: 30px
 }
 
-/* Content styling */
+/*============================ Content styling ============================*/
 
+/*================= Dashboard content spacing =================*/
 #content-wrapper {
     margin-top: 15px;
 }
@@ -261,6 +258,8 @@ body {
     margin-left: 10px;
 }
 
+/*================= Card Styles =================*/
+
 .RLcard {
     /* Add shadows to create the "card" effect */
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
@@ -278,18 +277,13 @@ body {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-.row-eq-height{
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-}
-
+/*================= Login content box =================*/
 .login-content {
     min-height: calc(100vh - 130px);
     padding-top: 40px;
 }
 
+/*================= Bootstrap button colors override =================*/
 .btn-primary{
     background-color: #2869BC;
 }
@@ -307,16 +301,53 @@ body {
     background-color: #FF7040;
 }
 
+/*================= Bootrstrap align center rows =================*/
 .row.middle-content{
    display: flex;
    align-items: center;
+}
+
+/*================= Typography styling =================*/
+.lb-md {
+  font-size: 18px;
+}
+
+.p-md {
+  font-size: 16px !important;
+}
+
+/*================= Table Styles =================*/
+.gray-header th{
+    background-color: #DDD;
+}
+
+/*================= Defined margin classes =================*/
+.top-margin-18{
+    margin-top: 18px;
+}
+
+.top-margin-128{
+    margin-top: 128px;
+}
+
+/*================= Filler spaces =================*/
+.preview-resumen{
+    height: 400px;
+    width: 300px;
+    border: 1px solid #DDDDDD;
+    line-height: 440px;
+}
+
+.observations-space{
+    min-height: 250px;
+    overflow: auto;
 }
 
 textarea{
     resize: none;
 }
 
-/*==== Footer ====*/
+/*============================ Footer ============================*/
 
 #footer{
     width: 100%;
