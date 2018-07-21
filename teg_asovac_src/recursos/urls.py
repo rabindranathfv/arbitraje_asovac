@@ -20,4 +20,5 @@ from . import views
 
 urlpatterns = [
     url(r'^recursos/$', views.recursos_pag, name= 'recursos'),
+    url(r'^recursos/pdf/$', views.generate_pdf, name= 'generate_pdf'),
 ]
