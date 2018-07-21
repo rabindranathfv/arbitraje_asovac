@@ -153,4 +153,8 @@ class FacturaForm(forms.ModelForm):
 			'fecha_emision',
 			'monto_total',
 			'iva',
+			Div(
+                Div(
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
 			)
+			

@@ -19,9 +19,9 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^autores/$', views.autores_pag, name= 'autores'),
-    url(r'^autores/editar$', views.edit_trabajo, name= 'editar-trabajo'),
-    url(r'^autores/trabajos-evaluados$', views.trabajos_evaluados, name = 'trabajos-evaluados'),
-    url(r'^autores/generar-certificado$', views.generar_certificado, name = 'generar-certificado'),
-    url(r'^autores/postular-trabajo$', views.postular_trabajo, name= 'postular-trabajo'),
+    url(r'^autores/$', views.autores, name= 'autores'),
+    url(r'^autores/editar$', views.edit_trabajo, name= 'edit_trabajo'),
+    url(r'^autores/trabajos-evaluados$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
+    url(r'^autores/generar-certificado$', views.generar_certificado, name = 'generar_certificado'),
+    url(r'^autores/postular-trabajo$', views.postular_trabajo, name= 'postular_trabajo'),
 ]
