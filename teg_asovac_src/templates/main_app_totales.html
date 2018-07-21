@@ -1,0 +1,84 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Totales</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                   
+                    <h2 class="text-left">Resultados</h2>
+                    <div>
+                        <form class="form-inline text-right">
+                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                            <button class="btn btn-primary" type="submit">Buscar</button>
+                        </form>
+                    </div>
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th>Área</th>
+                                   <th>Subarea</th>
+                                   <th>Trabajos inscritos</th>
+                                   <th>Rechazados</th>
+                                   <th>Aprobados</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 
+                                  <tr>
+                                    <td>Biologia</td>
+                                    <td>Crecimiento de las plantas</td>
+                                    <td>20</td>
+                                    <td>5</td>
+                                    <td>15</td>
+                                  </tr>
+                                  <tr>
+                                        <td>Biologia</td>
+                                        <td>Crecimiento de las plantas</td>
+                                        <td>20</td>
+                                        <td>5</td>
+                                        <td>15</td>
+                                      </tr>
+                                      <tr>
+                                            <td>Biologia</td>
+                                            <td>Crecimiento de las plantas</td>
+                                            <td>20</td>
+                                            <td>5</td>
+                                            <td>15</td>
+                                          </tr>
+                                 
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

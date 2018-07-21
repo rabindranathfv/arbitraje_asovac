@@ -155,3 +155,51 @@ def user_roles(request):
         'username' : 'Username',
     }
     return render(request, 'main_app_user_roles.html', context)
+
+def coord_general(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_coord_general.html', context)
+
+def coord_area(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_coord_area.html', context)
+
+def total(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_totales.html', context)

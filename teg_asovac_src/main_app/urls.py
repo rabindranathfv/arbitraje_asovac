@@ -40,6 +40,9 @@ urlpatterns = [
     url(r'^dashboard/admin/users/list$',views.users_list,name='users_list'),
     url(r'^dashboard/admin/user/edit$',views.user_edit,name='user_edit'),
     url(r'^dashboard/admin/user/roles$',views.user_roles,name='user_roles'),
+    url(r'^dashboard/admin/coord/general$',views.coord_general,name='coord_general'),
+    url(r'^dashboard/admin/coord/area$',views.coord_area,name='coord_area'),
+    url(r'^dashboard/admin/total$',views.total,name='total'),
     
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'), 
     url(r'^register/$',views.register, name='register'), 
