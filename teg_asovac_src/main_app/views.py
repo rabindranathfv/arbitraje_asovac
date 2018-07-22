@@ -41,9 +41,10 @@ def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
-        'new_role' : 'Coordinador de Área - Biología'
+        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño experimental',
+        'authors': ['Karla Calo', 'Luis Henríquez']
     }
-    return render(request, 'new_role_email.html', context)
+    return render(request, 'resumen_accepted_email.html', context)
 
 def listado_trabajos(request):
     context = {
