@@ -55,7 +55,7 @@ class TrabajoForm(forms.ModelForm):
 			),
 			Div(
 			 	Div(
-					HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a> "),
+					HTML("<a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a> "),
 				css_class='col-sm-2 col-sm-offset-8'),
                 Div(
                     #Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
