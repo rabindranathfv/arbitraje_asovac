@@ -6,13 +6,15 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
+from .forms import TrabajoForm
 
-# Create your views here.
-def trabajos_pag(request):
+def trabajos(request):
+    form = TrabajoForm()
     context = {
-        "nombre_vista": 'trabajos'
+        "nombre_vista": 'Autores',
+        "form": form,
     }
-    return render(request,"test_views.html",context)
+    return render(request,"trabajos.html",context)
 
 def jobs_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -45,3 +47,19 @@ def jobs_edit(request):
         'username' : 'Username',
     }
     return render(request, 'trabajos_jobs_edit.html', context)
+   
+
+def edit_trabajo(request):
+	form = TrabajoForm()
+	context = {
+		"nombre_vista": 'Editar Trabajo',
+		"form": form,
+    }
+	return render(request,"trabajos_edit_trabajo.html",context)
+
+def trabajos_evaluados(request):
+	context = {
+		"nombre_vista": 'Trabajos Evaluados'
+	}
+	return render(request,"trabajos_trabajos_evaluados.html",context)
+

@@ -64,8 +64,8 @@ class Autores_trabajos(models.Model):
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-
 		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Datos_pagador Model
@@ -131,8 +131,8 @@ class Factura(models.Model):
 	iva = models.FloatField()
 	
 	def __str__(self):
-		return '{}'.format(self.monto_total)
-	# def __str__(self):
-	# 	return self.fecha_emision#.encode('utf-8', errors='replace')
+		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
+	#def __str__(self):
+	 	#return self.fecha_emision#.encode('utf-8', errors='replace')
 
 
