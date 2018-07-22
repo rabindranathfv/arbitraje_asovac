@@ -19,5 +19,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^trabajos/$', views.trabajos_pag, name= 'trabajos'),
+    url(r'^autores/$', views.trabajos, name= 'trabajos'),
+    url(r'^autores/editar$', views.edit_trabajo, name= 'edit_trabajo'),
+    url(r'^autores/trabajos-evaluados$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
 ]
