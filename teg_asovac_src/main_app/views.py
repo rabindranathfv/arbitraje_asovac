@@ -41,8 +41,9 @@ def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
+        'new_role' : 'Coordinador de Área - Biología'
     }
-    return render(request, 'password_reset_email.html', context)
+    return render(request, 'new_role_email.html', context)
 
 def listado_trabajos(request):
     context = {
