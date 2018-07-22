@@ -21,6 +21,20 @@ def arbitrajes_pag(request):
     return render(request,"test_views.html",context)
 
 
+def listado_trabajos(request):
+    context = {
+        'nombre_vista' : 'Lista de Trabajos',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'arbitrajes_trabajos_list.html', context)
+
+def detalles_resumen(request):
+    context = {
+        'nombre_vista' : 'Detalles de Resumen',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'arbitrajes_detalle_resumen.html', context)
+
 def referee_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},

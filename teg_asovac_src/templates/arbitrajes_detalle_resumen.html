@@ -1,0 +1,186 @@
+{% extends "base_users.html" %}
+
+{% block content %}
+<div class="login-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-5">
+                                <h2>Datos del Resumen</h2>
+                            </div>
+                            <div class="col-sm-2 col-sm-offset-5">
+                                <div class="row middle-content">
+                                    <div class="col-sm-10">
+                                        <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid top-margin-18">
+                        <div class="row middle-content">
+                            <div class="col-sm-6">
+                                <p class="p-md">
+                                    <strong>Título Español:</strong> Cálculo de Ecuaciones Diferenciales Mediante Métodos Aleatorios
+                                </p>
+                                <p class="p-md">
+                                    <strong>Título Inglés:</strong> Calculation of Diferential Ecuations Using Random Methods
+                                </p>
+                                <p class="p-md">
+                                    <strong>Palabras Clave:</strong> Diferenciales, Aleatorios, Cálculo
+                                </p>
+                                <p class="p-md">
+                                    <strong>Forma de Presentación:</strong> Charla
+                                </p>
+                                <p class="p-md">
+                                    <strong>Versión:</strong> 1.0
+                                </p>
+                                <p class="p-md">
+                                    <strong>Estatus:</strong> <span class="label label-warning lb-md">Pendiente</span>
+                                </p>
+                                <p class="p-md">
+                                    <strong>Resumen:</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                    consequat.
+                                </p>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="center-block preview-resumen">
+                                    <p class="text-center">Vista Previa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-5">
+                                <h2>Observaciones y/o Correcciones</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container-fluid top-margin-18">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <select name="opciones" class="form-control">
+                                    <option value="new-observation">Agregar Observaciones</option>
+                                </select>
+                                <div class="row top-margin-18">
+                                    <div class="col-sm-2 col-sm-offset-6">
+                                        <a href="{% url 'main_app:home' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Cancelar</a>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a href="#" class="btn btn-danger btn-block btn-lg" data-toggle="modal" data-target="#modal-rejected"><i class="fas fa-times-circle"></i> Rechazar</a>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <a href="#" class="btn btn-success btn-block btn-lg" data-toggle="modal" data-target="#modal-approve"><i class="fas fa-check-circle"></i> Aprobar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-approve" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="text-center"> Aprobación del Trabajo</h3>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-center">¿Desea aprobar el siguiente trabajo?</h4>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <p>
+                                <strong>Título Español:</strong> Cálculo de Ecuaciones Diferenciales Mediante Métodos Aleatorios
+                            </p>
+                            <p>
+                                <strong>Título Inglés:</strong> Calculation of Diferential Ecuations Using Random Methods
+                            </p>
+                            <p>
+                                <strong>Palabras Clave:</strong> Diferenciales, Aleatorios, Cálculo
+                            </p>
+                            <p>
+                                <strong>Forma de Presentación:</strong> Charla
+                            </p>
+                            <p>
+                                <strong>Versión:</strong> 1.0
+                            </p>
+                            <p class="text-justify">
+                                <strong>Resumen:</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                consequat.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-error" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sucess" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-rejected" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="text-center"> Rechazo del Trabajo</h3>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-10">
+                            <h4>Para rechazar el siguiente trabajo:</h4>
+                            <p>
+                                <strong>Título Español:</strong> Cálculo de Ecuaciones Diferenciales Mediante Métodos Aleatorios
+                            </p>
+                            <p>
+                                <strong>Título Inglés:</strong> Calculation of Diferential Ecuations Using Random Methods
+                            </p>
+                            <p>
+                                <strong>Palabras Clave:</strong> Diferenciales, Aleatorios, Cálculo
+                            </p>
+                            <p>
+                                <strong>Forma de Presentación:</strong> Charla
+                            </p>
+                            <p>
+                                <strong>Versión:</strong> 1.0
+                            </p>
+                            <p class="text-justify">
+                                <strong>Resumen:</strong> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                consequat.
+                            </p>
+                             <h4>Es necesario que ingrese a continuación una o más observaciones:</h4>
+                            <textarea class="form-control" placeholder="Observaciones" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-error" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-sucess" data-dismiss="modal">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

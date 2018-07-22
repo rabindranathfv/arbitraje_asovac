@@ -16,7 +16,7 @@ def login(request):
         'nombre_vista' : 'Login',
         'form' : form,
     }
-    return render(request, 'login.html', context)
+    return render(request, 'main_app_login.html', context)
 
 def home(request):
     secondary_navbar_options = ['Bienvenido']
@@ -26,7 +26,7 @@ def home(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Rabindranath Ferreira',
     }
-    return render(request, 'home.html', context)
+    return render(request, 'main_app_home.html', context)
 
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
@@ -35,7 +35,21 @@ def create_arbitraje(request):
         'username' : 'Rabindranath Ferreira',
         'form' : form,
     }
-    return render(request, 'create_arbitraje.html', context)
+    return render(request, 'main_app_create_arbitraje.html', context)
+
+def listado_trabajos(request):
+    context = {
+        'nombre_vista' : 'Lista de Trabajos',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'main_app_resumenes_trabajos_list.html', context)
+
+def detalles_resumen(request):
+    context = {
+        'nombre_vista' : 'Detalles de Resumen',
+        'username' : 'Rabindranath Ferreira',
+    }
+    return render(request, 'main_app_detalle_resumen.html', context)
 
 
 def dashboard(request):
@@ -52,7 +66,7 @@ def dashboard(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
     }
-    return render(request, 'dashboard.html', context)
+    return render(request, 'main_app_dashboard.html', context)
 
 def data_basic(request):
     form= DataBasicForm()
