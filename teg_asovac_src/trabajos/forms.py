@@ -22,8 +22,8 @@ class TrabajoForm(forms.ModelForm):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['titulo_espanol'].label = "Titulo español"
-		self.fields['titulo_ingles'].label = "Titulo inglés"
+		self.fields['titulo_espanol'].label = "Título español"
+		self.fields['titulo_ingles'].label = "Título inglés"
 		self.fields['forma_presentacion'].label = "Forma de presentación"
 		self.fields['area'].label = "Área"
 		self.fields['subarea1'].label = "Subárea 1"
@@ -53,12 +53,4 @@ class TrabajoForm(forms.ModelForm):
 				),
 				css_class='row'
 			),
-			#Div(
-			 #	Div(
-			#		HTML("<a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a> "),
-			#	css_class='col-sm-2 col-sm-offset-8'),
-             #   Div(
-                    #Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
-              #      HTML("<button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button>"),css_class='col-sm-2'),
-            #css_class='row'),
 			)

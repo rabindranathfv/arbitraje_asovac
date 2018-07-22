@@ -39,7 +39,11 @@ class DatosPagadorForm(forms.ModelForm):
 			'telefono_oficina',
 			'telefono_habitacion_celular',
 			'direccion_fiscal',
-		)
+			Div(
+                Div(
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
+			)
+		
 
 
 class PagoForm(forms.ModelForm):
@@ -73,7 +77,11 @@ class PagoForm(forms.ModelForm):
 			'fecha_pago',
 			'observaciones',
 			'comprobante_pago',
-		)
+			Div(
+                Div(
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
+			)
+		
 
 class FacturaForm(forms.ModelForm):
 	

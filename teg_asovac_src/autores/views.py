@@ -25,3 +25,27 @@ def postular_trabajo(request):
 		"facturaform": facturaform,
 	}
 	return render(request,"autores_postular_trabajo.html",context)
+
+def postular_trabajo_pagador(request):
+	pagadorform = DatosPagadorForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Pagador',
+		"pagadorform": pagadorform,
+	}
+	return render(request,"autores_postular_trabajo_pagador.html",context)
+
+def postular_trabajo_pago(request):
+	pagoform = PagoForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Pago',
+		"pagoform": pagoform,
+	}
+	return render(request,"autores_postular_trabajo_pago.html",context)
+
+def postular_trabajo_factura(request):
+	facturaform = FacturaForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Factura',
+		"facturaform": facturaform,
+	}
+	return render(request,"autores_postular_trabajo_factura.html",context)

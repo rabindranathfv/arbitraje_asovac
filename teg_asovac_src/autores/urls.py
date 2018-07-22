@@ -21,4 +21,7 @@ from . import views
 urlpatterns = [
     url(r'^autores/generar-certificado$', views.generar_certificado, name = 'generar_certificado'),
     url(r'^autores/postular-trabajo$', views.postular_trabajo, name= 'postular_trabajo'),
+    url(r'^autores/postular-trabajo/pagador$', views.postular_trabajo_pagador, name= 'postular_trabajo_pagador'),
+    url(r'^autores/postular-trabajo/pago$', views.postular_trabajo_pago, name= 'postular_trabajo_pago'),
+    url(r'^autores/postular-trabajo/factura$', views.postular_trabajo_factura, name= 'postular_trabajo_factura'),
 ]
