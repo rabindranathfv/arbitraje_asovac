@@ -1,5 +1,6 @@
 
 
+
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
@@ -38,7 +39,7 @@
                     <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
                         <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
                     </a>
-                    <h3 class="user-title">Editar autores</h3>
+                    <h3 class="user-title">Editar espacio</h3>
                 </div>
             </div>
              <!-- EndTitle content-->
@@ -48,68 +49,68 @@
                 <div class="col-sm-12">
                     <div class="jumbotron RLcard">
 
-                        <h2 class="text-left">Datos del autor</h2>
+                        <h2 class="text-left">Datos del espacio</h2>
                         {% include "errors_form.html" %}
                     <!-- init form -->
                         <form id="login-form" method="post">
                             {% csrf_token %}
 
                             <div class="row">
-                                <div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="first_name" class="control-label  requiredField">
-                                    Nombres
+                                <div id="div_id_type" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="type" class="control-label  requiredField">
+                                    Tipo
                                     <span class="asteriskField">*</span>
                                     </label>
                                     <div class="controls ">
-                                        <input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
+                                        <input type="text" name="type" id="type" required="" class="textinput textInput form-control" maxlength="100">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="last_name" class="control-label  requiredField">
-                                        Apellidos
+                                <div id="div_id_occupation_date" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="occupation_date" class="control-label  requiredField">
+                                        Fecha de ocupación
                                         <span class="asteriskField">*</span>
                                     </label>
                                     <div class="controls ">
-                                        <input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
+                                        <input type="text" name="occupation_date" id="occupation_date" required="" class="textinput textInput form-control" maxlength="100">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="email" class="control-label  requiredField">
-                                        Correo electrónico
+                                <div id="div_id_capacity" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="capacity" class="control-label  requiredField">
+                                        Capacidad
                                         <span class="asteriskField">*</span>
                                     </label>
                                     <div class="controls ">
-                                        <input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
+                                        <input type="text" name="capacity" id="capacity" required="" class="textinput textInput form-control" maxlength="100">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="identifier" class="control-label  requiredField">
-                                        Cedula
+                                <div id="div_id_turn" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="turn" class="control-label  requiredField">
+                                        Turno
                                         <span class="asteriskField">*</span>
                                     </label>
                                     <div class="controls ">
-                                        <input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
+                                        <input type="text" name="turn" id="turn" required="" class="textinput textInput form-control" maxlength="100">
                                     </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div id="div_id_institution" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="id_institution" class="control-label  requiredField">
-                                        Universidad
+                                <div id="div_id_date_name_route" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="date_name_route" class="control-label  requiredField">
+                                        Nombre/Url
                                         <span class="asteriskField">*</span>
                                     </label>
                                     <div class="controls ">
-                                        <input type="text" name="institution" required="" id="institution" class="form-control">
+                                        <input type="text" name="date_name_route" id="date_name_route" required="" class="textinput textInput form-control" maxlength="100">
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +126,7 @@
                     <!-- end form -->
                         <div class="row">
                             <div class="form-group col-sm-6 col-sm-offset-3">
-                                <a href="{% url 'autores:authors_list' %}" class="btn btn-block btn-danger" role="button">Cancelar</a>
+                                <a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
                             </div>
                         </div>
                     </div>

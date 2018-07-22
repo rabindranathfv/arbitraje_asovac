@@ -189,9 +189,9 @@ def coord_area(request):
     return render(request, 'main_app_coord_area.html', context)
 
 def total(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': True},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['Opciones Secundarias']

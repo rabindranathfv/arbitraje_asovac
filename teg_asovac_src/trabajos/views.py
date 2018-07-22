@@ -13,3 +13,35 @@ def trabajos_pag(request):
         "nombre_vista": 'trabajos'
     }
     return render(request,"test_views.html",context)
+
+def jobs_list(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'trabajos_jobs_list.html', context)
+
+def jobs_edit(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'trabajos_jobs_edit.html', context)
