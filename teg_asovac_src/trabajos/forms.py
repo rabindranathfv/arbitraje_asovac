@@ -41,24 +41,24 @@ class TrabajoForm(forms.ModelForm):
 					'subarea1',
 					'subarea2',
 					'subarea3',
-					'version',
-					'url_trabajo',
-					'documento_inscrito',
 					css_class='col-sm-6',
 					),
 				Div(
+					'version',
+					'url_trabajo',
+					'documento_inscrito',
 					Field('resumen', rows="4"),			
 					Field('observaciones', rows="4"),
 					css_class='col-sm-6',
 				),
 				css_class='row'
 			),
-			Div(
-			 	Div(
-					HTML("<a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a> "),
-				css_class='col-sm-2 col-sm-offset-8'),
-                Div(
+			#Div(
+			 #	Div(
+			#		HTML("<a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a> "),
+			#	css_class='col-sm-2 col-sm-offset-8'),
+             #   Div(
                     #Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
-                    HTML("<button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button>"),css_class='col-sm-2'),
-            css_class='row'),
+              #      HTML("<button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button>"),css_class='col-sm-2'),
+            #css_class='row'),
 			)
