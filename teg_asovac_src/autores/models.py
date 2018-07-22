@@ -65,7 +65,7 @@ class Autores_trabajos(models.Model):
 
 	def __str__(self):
 
-		return "{} autor trabajo".format(self.autor_id.nombres)#.encode('utf-8', errors='replace')
+		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Datos_pagador Model

@@ -18,4 +18,7 @@ from . import views
 
 urlpatterns = [
     url(r'^eventos/$', views.eventos_pag, name= 'eventos'),
+    url(r'^dashboard/admin/event/list$',views.event_list,name='event_list'),
+    url(r'^dashboard/admin/event/edit$',views.event_edit,name='event_edit'),
+    url(r'^dashboard/admin/event/create$',views.event_create,name='event_create'),
 ]

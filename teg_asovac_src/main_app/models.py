@@ -58,7 +58,7 @@ class Usuario_asovac(models.Model):
 
 	def __str__(self):
 
-		return "{} usuario asovac".format(self.usuario_id.get_username())#.encode('utf-8', errors='replace')
+		return "{}".format(self.usuario.get_username())#.encode('utf-8', errors='replace')
 
 
 
