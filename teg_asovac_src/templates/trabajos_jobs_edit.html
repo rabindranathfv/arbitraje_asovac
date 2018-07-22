@@ -1,0 +1,119 @@
+
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Editar sesión</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="jumbotron RLcard">
+
+                        <h2 class="text-left">Datos de la sesión</h2>
+                        {% include "errors_form.html" %}
+                    <!-- init form -->
+                        <form id="login-form" method="post">
+                            {% csrf_token %}
+
+                            <div class="row">
+                                <div id="div_id_author" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="author" class="control-label  requiredField">
+                                    Autor principal
+                                    <span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="controls ">
+                                        <input type="text" name="author" id="author" required="" class="textinput textInput form-control" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div id="div_id_title" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="title" class="control-label  requiredField">
+                                        Título
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="controls ">
+                                        <input type="text" name="title" id="title" required="" class="textinput textInput form-control" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div id="div_id_presentation_format" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="presentation_format" class="control-label  requiredField">
+                                        Formato de presentación
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="controls ">
+                                        <input type="text" name="presentation_format" id="presentation_format" required="" class="textinput textInput form-control" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div id="div_id_area" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="area" class="control-label  requiredField">
+                                        Area
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="controls ">
+                                        <input type="text" name="area" id="area" required="" class="textinput textInput form-control" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div id="div_id_date_subarea" class="form-group col-sm-6 col-sm-offset-3">
+                                    <label for="date_subarea" class="control-label  requiredField">
+                                        Subarea
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    <div class="controls ">
+                                        <input type="text" name="date_subarea" id="date_subarea" required="" class="textinput textInput form-control" maxlength="100">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-sm-6 col-sm-offset-3">
+                                    <div class="controls ">
+                                        <input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    <!-- end form -->
+                        <div class="row">
+                            <div class="form-group col-sm-6 col-sm-offset-3">
+                                <a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

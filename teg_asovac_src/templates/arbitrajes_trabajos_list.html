@@ -1,0 +1,111 @@
+{% extends "base_users.html" %}
+
+{% block content %}
+<div class="login-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-5">
+                                <h2>Listado de Res&uacute;menes</h2>
+                            </div>
+                            <div class="col-sm-2 col-sm-offset-5">
+                                <div class="row middle-content">
+                                    <div class="col-sm-10">
+                                        <a href="{% url 'main_app:home' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table table-bordered gray-header">
+                        <tr>
+                            <th>T&iacute;tulo</th>
+                            <th>&Aacute;rea</th>
+                            <th>Subárea</th>
+                            <th>Autor(es)</th>
+                            <th>Estatus</th>
+                            <th class="col-sm-1">Versi&oacute;n</th>
+                            <th class="col-sm-2">Acciones</th>
+                        </tr>
+                        <tr>
+                            <td>Este es un T&iacute;tulo</td>
+                            <td>Computaci&oacute;n</td>
+                            <td>Computaci&oacute;n001</td>
+                            <td>
+                                Rabindranath Ferreira
+                            </td>
+                            <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                            <td class="col-sm-1">2.0</td>
+                            <td class="col-sm-2">
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Un título interesante</td>
+                            <td>Biología</td>
+                            <td>Animales</td>
+                            <td>
+                                Fulanito Zambrano
+                            </td>
+                            <td><span class="label label-warning lb-md center-block">Pendiente</span></td>
+                            <td class="col-sm-1">1.0</td>
+                            <td class="col-sm-2">
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Funciones Diferenciales</td>
+                            <td>Matemática</td>
+                            <td>Cálculo</td>
+                            <td>
+                                Rodrigo Montoya
+                            </td>
+                            <td><span class="label label-danger lb-md center-block">Rechazado</span></td>
+                            <td class="col-sm-1">1.0</td>
+                            <td class="col-sm-2">
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                                <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
