@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
-    url(r'^register/$',views.register, name='register'), 
+    url(r'^register/$',views.register, name='register'),
+    url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
 ]
