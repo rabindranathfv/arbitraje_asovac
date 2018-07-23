@@ -43,10 +43,14 @@ urlpatterns = [
 
     url(r'^logout/', logout_then_login, name='logout'),
     url(r'^$',login,{'template_name':'main_app_login.html'},name='login'),
-    url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
+
+    #url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
+
     url(r'^reset/password_reset$', password_reset, 
         {'template_name':'password_reset_form.html',
-        'email_template_name': 'password_reset_email.html'}, 
+        'email_template_name': 'password_reset_email_txt.html',
+        'html_email_template_name': 'password_reset_email.html',
+        'subject_template_name': 'password_reset_subject.txt'},
         name='password_reset'), 
     url(r'^password_reset_done$', password_reset_done, 
         {'template_name': 'password_reset_done.html'}, 

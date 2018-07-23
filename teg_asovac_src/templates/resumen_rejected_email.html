@@ -1,0 +1,39 @@
+{% extends "email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Rechazo de Resumen
+{% endblock %}
+
+{% block banner %}
+<img src="https://i.imgur.com/KKb0W4q.jpg" alt="Su resumen ha sido arbitrado y rechazado" style="display: block;border:0;" height="100%" width="600"/>
+{% endblock %}
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Mediante el presente mensaje se le notifica a usted que el resumen de título:
+        </p>
+        <p style="text-align: center;">
+            <strong>{{ resumen_title }}</strong>
+        </p>
+        <p style="text-align: justify;">
+            De autores:
+        </p>
+        <p style="text-align: center;">
+            <strong>{% for author in authors %}
+                {% if forloop.first %}
+                    {{ author }}
+                {% else %}
+                    , {{ author }}
+                {% endif %}
+            {% endfor %}</strong>
+        </p>
+        <p style="text-align: justify;">
+            Ha sido debidamente arbitrado y los miembros del jurado han manifestado que presenta algunas deficiencias, por lo que el resumen <strong>no fue aceptado</strong>. Se incluye en este correo adjuntada una carta formal que establece las observaciones y detalles pertinentes.
+        </p>
+    </td>
+</tr>
+{% endblock %}
