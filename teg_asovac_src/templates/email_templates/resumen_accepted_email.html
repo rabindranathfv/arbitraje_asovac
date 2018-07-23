@@ -1,12 +1,12 @@
-{% extends "email_base_template.html" %}
+{% extends "email_templates/email_base_template.html" %}
 {% load static %}
 
 {% block title %}
-Sistema ASOVAC: Rechazo de Resumen
+Sistema ASOVAC: Aprobación de Resumen
 {% endblock %}
 
 {% block banner %}
-<img src="https://i.imgur.com/KKb0W4q.jpg" alt="Su resumen ha sido arbitrado y rechazado" style="display: block;border:0;" height="100%" width="600"/>
+<img src="https://i.imgur.com/xyaCUru.jpg" alt="Su resumen ha sido arbitrado y aceptado" style="display: block;border:0;" height="100%" width="600"/>
 {% endblock %}
 
 {% block content %}
@@ -32,7 +32,7 @@ Sistema ASOVAC: Rechazo de Resumen
             {% endfor %}</strong>
         </p>
         <p style="text-align: justify;">
-            Ha sido debidamente arbitrado y los miembros del jurado han manifestado que presenta algunas deficiencias, por lo que el resumen <strong>no fue aceptado</strong>. Se incluye en este correo adjuntada una carta formal que establece las observaciones y detalles pertinentes.
+            Ha sido debidamente arbitrado y <strong>aceptado para su presentación</strong>. Se incluye en este correo adjuntada una carta formal de aceptación.
         </p>
     </td>
 </tr>
