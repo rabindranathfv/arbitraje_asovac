@@ -65,6 +65,8 @@ def dashboard(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
+        'estado' : '0',
+        'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -83,6 +85,8 @@ def data_basic(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
+        'estado' : '0',
+        'item_active' : '1',
         'form' : form
     }
     return render(request, 'main_app_data_basic.html', context)
@@ -99,6 +103,8 @@ def state_arbitration(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_status_arbitration.html', context)
@@ -116,6 +122,8 @@ def users_list(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_users_list.html', context)
@@ -150,6 +158,8 @@ def user_edit(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_edit_user.html', context)
@@ -166,6 +176,8 @@ def user_roles(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_user_roles.html', context)
@@ -182,6 +194,8 @@ def coord_general(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_coord_general.html', context)
@@ -198,6 +212,8 @@ def coord_area(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_coord_area.html', context)
@@ -214,6 +230,8 @@ def total(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '3',
         'username' : 'Username',
     }
     return render(request, 'main_app_totales.html', context)

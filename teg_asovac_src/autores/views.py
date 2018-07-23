@@ -27,6 +27,8 @@ def authors_list(request):
         'nombre_vista' : 'Autores',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+		'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'main_app_authors_list.html', context)
@@ -43,6 +45,8 @@ def author_edit(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+		'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'main_app_author_edit.html', context)

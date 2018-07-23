@@ -26,6 +26,8 @@ def sesions_list(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'sesiones_sesions_list.html', context)
@@ -42,6 +44,8 @@ def sesions_edit(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'sesiones_sesions_edit.html', context)
@@ -58,6 +62,8 @@ def sesions_space_list(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'sesiones_space_list.html', context)
@@ -74,6 +80,8 @@ def sesions_space_edit(request):
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'sesiones_space_edit.html', context)

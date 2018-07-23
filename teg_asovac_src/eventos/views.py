@@ -22,6 +22,8 @@ def event_list(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '4',
         'username' : 'Username',
     }
     return render(request, 'main_app_event_list.html', context)
@@ -39,6 +41,8 @@ def event_edit(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '4',
         'username' : 'Username',
     }
     return render(request, 'main_app_event_edit.html', context)
@@ -55,6 +59,8 @@ def event_create(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '4',
         'username' : 'Username',
     }
     return render(request, 'event_create.html', context)

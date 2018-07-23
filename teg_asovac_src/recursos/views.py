@@ -38,8 +38,8 @@ def generate_pdf(request,*args , **kwargs):
     return HttpResponse("Crear pagina de Error 404")
 
 def resources_author(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -49,13 +49,15 @@ def resources_author(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_author.html', context)
 
 def resources_referee(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -65,13 +67,15 @@ def resources_referee(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_referee.html', context)
 
 def resources_event(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -81,13 +85,15 @@ def resources_event(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_event.html', context)
 
 def resources_sesion(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -97,13 +103,15 @@ def resources_sesion(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
 def resources_asovac(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -113,6 +121,8 @@ def resources_asovac(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_asovac.html', context)

@@ -47,6 +47,8 @@ def referee_list(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'main_app_referee_list.html', context)
@@ -63,13 +65,15 @@ def referee_edit(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
         'username' : 'Username',
     }
     return render(request, 'main_app_referee_edit.html', context)
 
 def areas_subareas(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
@@ -79,6 +83,8 @@ def areas_subareas(request):
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'arbitrations_areas_subareas.html', context)
