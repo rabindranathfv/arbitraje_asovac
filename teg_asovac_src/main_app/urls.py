@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^home/$',views.home,name='home'),
     url(r'^dashboard/$',views.dashboard,name='dasboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
+
     url(r'^dashboard/admin/data_basic$',views.data_basic,name='data_basic'),
     url(r'^dashboard/admin/arbitration/state$',views.state_arbitration,name='arbitration_state'),
     url(r'^dashboard/admin/users/list$',views.users_list,name='users_list'),
@@ -46,5 +47,7 @@ urlpatterns = [
     url(r'^dashboard/admin/total$',views.total,name='total'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'), 
     url(r'^register/$',views.register, name='register'), 
+
+    url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
 ]

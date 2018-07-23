@@ -1,0 +1,29 @@
+{% extends "email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Asignación de Nuevo Rol
+{% endblock %}
+
+{% block banner %}
+<img src="https://i.imgur.com/FHkZ3YL.jpg" alt="Se le ha asignado un nuevo rol" style="display: block;border:0;" height="100%" width="600"/>
+{% endblock %}
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Mediante el presente mensaje se le notifica a usted que un Administrador del Sistema ASOVAC le ha asignado un nuevo rol en el mismo.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Su nuevo rol asignado es: <strong>{{ new_role }}</strong>
+        </p>
+    </td>
+</tr>
+{% endblock %}

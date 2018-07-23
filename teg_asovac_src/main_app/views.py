@@ -37,6 +37,15 @@ def create_arbitraje(request):
     }
     return render(request, 'main_app_create_arbitraje.html', context)
 
+def email_test(request):
+    context = {
+        'nombre_vista' : 'Email-Test',
+        'username' : 'Rabindranath Ferreira',
+        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño experimental',
+        'authors': ['Karla Calo', 'Luis Henríquez']
+    }
+    return render(request, 'resumen_rejected_email.html', context)
+
 def listado_trabajos(request):
     context = {
         'nombre_vista' : 'Lista de Trabajos',

@@ -18,133 +18,71 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <div class="row middle-content">
-                                <div class="col-sm-2">
-                                    <p>Titulo Inglés</p>
-                                </div>
-                                <div class="col-sm-1">
-                                    <p>Postulado</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Área</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Subárea</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Autores</p>
-                                </div>
-                                <div class="col-sm-1">
-                                    <p>Estatus</p>
-                                </div>
-                                <div class="col-sm-1">
-                                    <p>Versión</p>
-                                </div>
-                                <div class="col-sm-1">
-                                    <p>Acciones</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-2">
-                                        <p>Title 1</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p>Sí</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Computación</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Gráfica</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Juanito Peréz</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p style="color: yellow;">Pendiente</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <p>1.0</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row middle-content">
-                                    <div class="col-sm-2">
-                                        <p>Title 2</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p>Sí</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Química</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Orgánica</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Camila Rodriguez</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p style="color: red;">Rechazado</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <p>2.0</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row middle-content">
-                                    <div class="col-sm-2">
-                                        <p>Title 3</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p>Sí</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Física</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Cuántica</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Victor Caballero</p>
-                                    </div>
-                                    <div class="col-sm-1">
-                                        <p style="color: green;">Aprobado</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <p>1.0</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <table class="table table-bordered gray-header">
+                        <tr>
+                            <th class="col-sm-3">T&iacute;tulo</th>
+                            <th>&Aacute;rea</th>
+                            <th>Subárea</th>
+                            <th>Autor(es)</th>
+                            <th>Estatus</th>
+                            <th class="col-sm-1">Versi&oacute;n</th>
+                            <th class="col-sm-1">Acciones</th>
+                        </tr>
+                        <tr>
+                            <td>Este es un T&iacute;tulo</td>
+                            <td>Computaci&oacute;n</td>
+                            <td>Computaci&oacute;n001</td>
+                            <td>
+                                Rabindranath Ferreira
+                            </td>
+                            <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                            <td class="col-sm-1">2.0</td>
+                            <td class="col-sm-1">
+                                <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Un título interesante</td>
+                            <td>Biología</td>
+                            <td>Animales</td>
+                            <td>
+                                Fulanito Zambrano
+                            </td>
+                            <td><span class="label label-warning lb-md center-block">Pendiente</span></td>
+                            <td class="col-sm-1">1.0</td>
+                            <td class="col-sm-1">
+                                <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Funciones Diferenciales</td>
+                            <td>Matemática</td>
+                            <td>Cálculo</td>
+                            <td>
+                                Rodrigo Montoya
+                            </td>
+                            <td><span class="label label-danger lb-md center-block">Rechazado</span></td>
+                            <td class="col-sm-1">1.0</td>
+                            <td class="col-sm-1">
+                                <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>
@@ -181,7 +119,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body text-center">
+      <div class="modal-body text-center content-modal">
         ¿Está seguro que desea postular el trabajo?
       </div>
       <div class="modal-footer">
@@ -202,7 +140,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <div class="modal-body text-center">
+      <div class="modal-body text-center content-modal">
         ¿Está seguro que desea ELIMINAR el trabajo?
       </div>
       <div class="modal-footer">
