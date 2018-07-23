@@ -41,7 +41,10 @@ class DatosPagadorForm(forms.ModelForm):
 			'direccion_fiscal',
 			Div(
                 Div(
-					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-8'),
+                Div(
+                	HTML("<a href=\"{% url 'autores:postular_trabajo' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2',),
+                css_class="row"),
 			)
 		
 
@@ -79,7 +82,10 @@ class PagoForm(forms.ModelForm):
 			'comprobante_pago',
 			Div(
                 Div(
-					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-8'),
+                Div(
+                	HTML("<a href=\"{% url 'autores:postular_trabajo_pagador' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2',),
+                css_class="row"),
 			)
 		
 
@@ -108,6 +114,10 @@ class FacturaForm(forms.ModelForm):
 			'iva',
 			Div(
                 Div(
-					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-10'),css_class="row"),
+					Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 col-sm-offset-8'),
+                Div(
+                	HTML("<a href=\"{% url 'autores:postular_trabajo_pago' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2',),
+                css_class="row"),
+			
 			)
 			

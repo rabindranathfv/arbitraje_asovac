@@ -25,86 +25,62 @@
                                 <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-primary btn-block">Añadir Pago</a>
                             </div>
                         </div>
-
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <div class="row middle-content">
-                                <div class="col-sm-2">
-                                    <p>Nombre</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Cédula</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Banco Origen</p>
-                                </div>
-                                <div class="col-sm-3">
-                                    <p>Número de transferencia</p>
-                                </div>
-                                <div class="col-sm-1">
-                                    <p>Total</p>
-                                </div>
-                                <div class="col-sm-2">
-                                    <p>Acciones</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-2">
-                                        <p>Juanito Pérez</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>1234567</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Banesco</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <p>3242324232</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <p>100</p>
-                                    </div>
-                                    <div class="col-sm-2 text-center">
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="row middle-content">
-                                    <div class="col-sm-2">
-                                        <p>María José</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>1244567</p>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <p>Banco Provincial</p>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <p>52442348324232</p>
-                                    </div>
-                                    <div class="col-sm-1 text-center">
-                                        <p>500</p>
-                                    </div>
-                                    <div class="col-sm-2 text-center">
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>                      
+                    <table class="table table-bordered gray-header">
+                        <tr>
+                            <th class="col-sm-3">Nombre</th>
+                            <th class="col-sm-2">Cedula</th>                 
+                            <th class="col-sm-2">Banco Origen</th>
+                            <th class="col-sm-2">N° de Transferencia</th>
+                            <th class="col-sm-2">Total</th>
+                            <th class="col-sm-1">Acciones</th>
+                        </tr>
+                        <tr>
+                            <td>Juanito Perez</td>
+                            <td>1323234</td>
+                            <td>Venezolano de Crédito</td>
+                            <td>121324344</td>
+                            <td>100</td>
+                            <td>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Milagros del cielo</td>
+                            <td>124345</td>
+                            <td>Banco de Venezuela</td>
+                            <td>5467764564</td>
+                            <td>500</td>
+                            <td>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Un Desconocido</td>
+                            <td>34636356</td>
+                            <td>Banesco</td>
+                            <td>32543453</td>
+                            <td>200</td>
+                            <td>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                    <i class="fas fa-door-open"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>                    
                 </div>
             </div>
         </div>
