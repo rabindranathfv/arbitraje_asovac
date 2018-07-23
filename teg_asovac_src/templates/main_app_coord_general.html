@@ -1,0 +1,70 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Configuración general</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                   
+                    <h2 class="text-left">Coordinador general</h2>
+                    <br>
+                    <!-- init content -->
+                    
+                    <br>
+                    <div class="row">
+                        <div class="col-md-8 col-sm-offset-2">
+                            <div class="col-md-12">
+                                <select class="form-control">
+                                    <option>Seleccione un coordinador</option>
+                                    <option>Coordinador 1</option>
+                                    <option>Coordinador 2</option>
+                                    <option>Coordinador 3</option>
+                                    <option>Coordinador 4</option>
+                                    <option>Coordinador 5</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div class="form-inline col-sm-3 col-sm-offset-6">
+                        <a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
+                    </div>
+                    <div class="form-inline col-sm-3">
+                        <a href="" class="btn btn-block btn-success" role="button">Guardar</a>
+                    </div>
+                    <br>
+                    <br>
+
+                    <!-- end content -->
+                           
+                    </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

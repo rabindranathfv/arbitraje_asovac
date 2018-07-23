@@ -20,4 +20,10 @@ from . import views
 
 urlpatterns = [
     url(r'^recursos/$', views.recursos_pag, name= 'recursos'),
+    url(r'^recursos/pdf/$', views.generate_pdf, name= 'generate_pdf'),
+    url(r'^dashboard/admin/resources/author$',views.resources_author,name='resources_author'),
+    url(r'^dashboard/admin/resources/referee$',views.resources_referee,name='resources_referee'),
+    url(r'^dashboard/admin/resources/event$',views.resources_event,name='resources_event'),
+    url(r'^dashboard/admin/resources/sesion$',views.resources_sesion,name='resources_sesion'),
+    url(r'^dashboard/admin/resources/asovac$',views.resources_asovac,name='resources_asovac'),
 ]

@@ -6,10 +6,86 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
-
+from .forms import DatosPagadorForm, PagoForm, FacturaForm
 # Create your views here.
 def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
     }
     return render(request,"test_views.html",context)
+
+def authors_list(request):
+    
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Autores',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_authors_list.html', context)
+
+def author_edit(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_author_edit.html', context)
+
+def generar_certificado(request):
+	context={
+		"nombre_vista": 'Generar Certificado'
+	}
+	return render(request,"autores_generar_certificado.html", context)
+
+def postular_trabajo(request):
+	pagadorform = DatosPagadorForm()
+	pagoform = PagoForm()
+	facturaform = FacturaForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo',
+		"pagadorform": pagadorform,
+		"pagoform": pagoform,
+		"facturaform": facturaform,
+	}
+	return render(request,"autores_postular_trabajo.html",context)
+
+def postular_trabajo_pagador(request):
+	pagadorform = DatosPagadorForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Pagador',
+		"pagadorform": pagadorform,
+	}
+	return render(request,"autores_postular_trabajo_pagador.html",context)
+
+def postular_trabajo_pago(request):
+	pagoform = PagoForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Pago',
+		"pagoform": pagoform,
+	}
+	return render(request,"autores_postular_trabajo_pago.html",context)
+
+def postular_trabajo_factura(request):
+	facturaform = FacturaForm()
+	context = {
+		"nombre_vista": 'Postular Trabajo - Factura',
+		"facturaform": facturaform,
+	}
+	return render(request,"autores_postular_trabajo_factura.html",context)
+
