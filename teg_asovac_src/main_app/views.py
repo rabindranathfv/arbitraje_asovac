@@ -25,11 +25,11 @@ def home(request):
     arbitraje_data = Sistema_asovac.objects.all()
 
     secondary_navbar_options = ['Bienvenido']
-
+    print(arbitraje_data)
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
-        'arb_context' : arbitraje_data,
+        'arb_data' : arbitraje_data,
     }
     return render(request, 'main_app_home.html', context)
 
@@ -45,9 +45,11 @@ def create_arbitraje(request):
         if form.is_valid():
             form.save()
             #print(form)
+            arbitraje_data = Sistema_asovac.objects.all()
             context = {        
                 'username' : request.user.username,
                 'form' : form,
+                'arb_data': arbitraje_data,
                 }
             return render(request, 'main_app_home.html', context)        
         

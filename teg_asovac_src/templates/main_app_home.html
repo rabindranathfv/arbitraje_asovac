@@ -16,67 +16,55 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Panel de Arbitraje</h4>
                         </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-4">
-                                        <p>Nombre_arbitraje</p>
-                                        <h5>Fecha inicio: XX-XX-XXX</h5>
-                                        <h5>Fecha fin: XX-XX-XXX</h5>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="">Estado:</span>
-                                        <p class="text-primary">En Arbitraje</p>
-                                    </div>
-                                    <div class="col-sm-3 text-center">
-                                        <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
+
+                        <!-- dynamic content-->
+                        {% if arb_data %}
+                            {% for arb in arb_data %}
+                            <div class="panel-body">
+                                <div class="container-fluid">
+                                    <div class="row middle-content">
+                                        <div class="col-sm-4">
+                                            <p>{{ arb.nombre }}</p>
+                                            <h5>{{ arb.fecha_inicio_arbitraje }}</h5>
+                                            <h5>{{ arb.fecha_fin_arbitraje }}</h5>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <span class="">Estado:</span>
+                                            {% if arb.estado_arbitraje == 0 %}
+                                                <p class="text-primary">Desactivado</p>
+                                            {% elif arb.estado_arbitraje == 1 %}
+                                                <p class="text-primary">Iniciado</p>
+                                            {% elif arb.estado_arbitraje == 2 %}
+                                                <p class="text-primary">En Selección y Asignación de Coordinadores</p>
+                                            {% elif arb.estado_arbitraje == 3 %}
+                                                <p class="text-primary">En Carga de Trabajos</p>
+                                            {% elif arb.estado_arbitraje == 4 %}
+                                                <p class="text-primary">En Asignación de Trabajos a las Áreas</p>
+                                            {% elif arb.estado_arbitraje == 5 %}
+                                                <p class="text-primary">En Arbitraje</p>
+                                            {% elif arb.estado_arbitraje == 6 %}
+                                                <p class="text-primary">En Cierre de Arbitraje</p>
+                                            {% elif arb.estado_arbitraje == 7 %}
+                                                <p class="text-primary">En Asignación de Sesiones</p>
+                                            {% elif arb.estado_arbitraje == 8 %}
+                                                <p class="text-primary">En Resumen</p>
+                                            {% endif %}
+                                            
+                                        </div>
+                                        <div class="col-sm-3 text-center">
+                                            <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            {% endfor %}
+                        {% endif %}
 
-
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-4">
-                                        <p>Nombre_arbitraje</p>
-                                        <h5>Fecha inicio: XX-XX-XXX</h5>
-                                        <h5>Fecha fin: XX-XX-XXX</h5>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="">Estado:</span>
-                                        <p class="text-primary">Iniciado</p>
-                                    </div>
-                                    <div class="col-sm-3 text-center">
-                                        <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-4">
-                                        <p>Nombre_arbitraje</p>
-                                        <h5>Fecha inicio: XX-XX-XXX</h5>
-                                        <h5>Fecha fin: XX-XX-XXX</h5>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <span class="">Estado:</span>
-                                        <p class="text-primary">En Carga de Trabajos</p>
-                                    </div>
-                                    <div class="col-sm-3 text-center">
-                                        <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
