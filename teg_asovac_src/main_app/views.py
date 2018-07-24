@@ -9,6 +9,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 
+from .models import Rol,Sistema_asovac,Usuario_asovac
+
 # Create your views here.
 def login(request):
     form = MyLoginForm()
@@ -19,12 +21,15 @@ def login(request):
     return render(request, 'main_app_login.html', context)
 
 def home(request):
+    # queryset
+    arbitraje_data = Sistema_asovac.objects.all()
+
     secondary_navbar_options = ['Bienvenido']
 
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
-        'username' : 'Rabindranath Ferreira',
+        'arb_context' : arbitraje_data,
     }
     return render(request, 'main_app_home.html', context)
 
@@ -61,20 +66,21 @@ def detalles_resumen(request):
     return render(request, 'main_app_detalle_resumen.html', context)
 
 
-def dashboard(request):
+def dashboard(request,arb_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+    print("DEBAJO ESTA EL USERNAME")
+    print(request.user.username)
+    # queryset del estado del proceso
+    data = Sistema_asovac.objects.get(pk=arb_id)
 
-    secondary_navbar_options = ['Opciones Secundarias']
 
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
-        'secondary_navbar_options' : secondary_navbar_options,
-        'username' : 'Username',
-        'estado' : '0',
+        'estado' : data.estado_arbitraje,
         'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)
