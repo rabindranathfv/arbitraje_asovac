@@ -31,13 +31,13 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
     url(r'^dashboard/', include('main_app.urls',      namespace='main_app')),
-    url(r'^', include('arbitrajes.urls',    namespace='arbitrajes')),
-    url(r'^', include('recursos.urls',      namespace='recursos')),
-    url(r'^', include('seguimiento.urls',   namespace='seguimiento')),
-    url(r'^', include('sesiones.urls',      namespace='sesiones')),
-    url(r'^', include('trabajos.urls',      namespace='trabajos')),
-    url(r'^', include('eventos.urls',       namespace='eventos')),
-    url(r'^', include('autores.urls',       namespace='autores')),
+    url(r'^arbitrajes/', include('arbitrajes.urls',    namespace='arbitrajes')),
+    url(r'^recursos/', include('recursos.urls',      namespace='recursos')),
+    url(r'^seguimiento/', include('seguimiento.urls',   namespace='seguimiento')),
+    url(r'^sesiones/', include('sesiones.urls',      namespace='sesiones')),
+    url(r'^trabajos/', include('trabajos.urls',      namespace='trabajos')),
+    url(r'^eventos/', include('eventos.urls',       namespace='eventos')),
+    url(r'^autores/', include('autores.urls',       namespace='autores')),
 
      ## password and login 
 
@@ -45,7 +45,7 @@ urlpatterns = [
     url(r'^$',login,{'template_name':'main_app_login.html'},name='login'),
 
     #url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
-
+    
     url(r'^reset/password_reset$', password_reset, 
         {'template_name':'password_reset_form.html',
         'email_template_name': 'email_templates/password_reset_email_txt.html',
