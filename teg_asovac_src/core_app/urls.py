@@ -30,7 +30,7 @@ from django.contrib.auth.views import login, logout_then_login, password_reset, 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
-    url(r'^', include('main_app.urls',      namespace='main_app')),
+    url(r'^dashboard/', include('main_app.urls',      namespace='main_app')),
     url(r'^', include('arbitrajes.urls',    namespace='arbitrajes')),
     url(r'^', include('recursos.urls',      namespace='recursos')),
     url(r'^', include('seguimiento.urls',   namespace='seguimiento')),

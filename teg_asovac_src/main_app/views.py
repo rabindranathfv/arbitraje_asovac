@@ -37,7 +37,7 @@ def create_arbitraje(request):
     form = CreateArbitrajeForm()
     context = {
         'nombre_vista' : 'Crear Arbitraje',
-        'username' : 'Rabindranath Ferreira',
+        'username' : request.user.username,
         'form' : form,
     }
     return render(request, 'main_app_create_arbitraje.html', context)
