@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from trabajos.models import Trabajo
 from .models import Datos_pagador, Pago, Factura
 
-
+# Form para datos del pagador
 class DatosPagadorForm(forms.ModelForm):
 
 	class Meta:
@@ -49,7 +49,7 @@ class DatosPagadorForm(forms.ModelForm):
 			)
 		
 
-
+# Form para vista de pago
 class PagoForm(forms.ModelForm):
 
 	class Meta:
@@ -91,6 +91,8 @@ class PagoForm(forms.ModelForm):
 			)
 		
 
+
+# Form para vista de Factura
 class FacturaForm(forms.ModelForm):
 	
 	class Meta:
