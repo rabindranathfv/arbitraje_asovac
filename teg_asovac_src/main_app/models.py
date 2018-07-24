@@ -7,6 +7,7 @@ from django.db.models.signals import post_save
 #from .views import cod_generator
 import uuid
 
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -34,10 +35,10 @@ class Sistema_asovac(models.Model):
 	estado_arbitraje = models.SmallIntegerField(default=0)
 	fecha_inicio_arbitraje = models.DateTimeField()
 	fecha_fin_arbitraje = models.DateTimeField()
-	clave_maestra_coordinador_area = models.TextField(max_length=100)
-	clave_maestra_arbitro_area = models.TextField(max_length=100)
-	clave_maestra_coordinador_general = models.TextField(max_length=100)
-	clave_maestra_arbitro_subarea = models.TextField(max_length=100)
+	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
+	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
+	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
+	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
@@ -56,8 +57,8 @@ class Usuario_asovac(models.Model):
 	
 
 	def __str__(self):
+		return "{}".format(self.usuario.get_username())#.encode('utf-8', errors='replace')
 
-		return "{} usuario asovac".format(self.usuario_id.get_username())#.encode('utf-8', errors='replace')
 
 
 
@@ -65,11 +66,10 @@ class Usuario_asovac(models.Model):
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
-
-
+    	
 	user = kwargs["instance"]
 	if kwargs["created"]:
-		usuario_asovac = Usuario_asovac(usuario_id=user)
+		usuario_asovac = Usuario_asovac(usuario=user)
 		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)

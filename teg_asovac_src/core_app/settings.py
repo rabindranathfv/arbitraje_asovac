@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 from decouple import config
+from django.core.urlresolvers import reverse_lazy
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -97,7 +98,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT':5432,
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -111,11 +112,11 @@ DATABASES = {
 
 # Email Configuration (GMAIL)
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
@@ -165,3 +166,6 @@ STATICFILES_DIRS = [
 # CONFIG to production
 STATIC_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","static_root")
 MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","media_root")
+LOGIN_URL = '/'
+LOGIN_REDIRECT_URL= reverse_lazy('main_app:home')
+LOGOUT_REDIRECT_URL = reverse_lazy('login')

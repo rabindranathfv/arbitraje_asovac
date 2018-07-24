@@ -11,3 +11,14 @@ $(".submenu-toggle").click(function(e) {
     $(this).find("i").toggleClass("fa-angle-down");
     $(this).find("i").toggleClass("fa-angle-right");
 });
+
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+
+$('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+

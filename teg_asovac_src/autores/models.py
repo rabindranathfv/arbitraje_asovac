@@ -36,8 +36,8 @@ class Autor(models.Model):
 	cedula_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	telefono_oficina = models.CharField(max_length=20)
-	telefono_habitacion_celular= models.CharField(max_length=20)
-	# Constancia de estudio no se sabe qué será
+	telefono_habitacion_celular = models.CharField(max_length=20)
+	constancia_estudio = models.CharField(max_length=255,blank=True)
 	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
 	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
@@ -64,8 +64,8 @@ class Autores_trabajos(models.Model):
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
+		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
 
-		return "{} autor trabajo".format(self.autor_id.nombres)#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Datos_pagador Model
@@ -131,8 +131,8 @@ class Factura(models.Model):
 	iva = models.FloatField()
 	
 	def __str__(self):
-		return '{}'.format(self.monto_total)
-	# def __str__(self):
-	# 	return self.fecha_emision#.encode('utf-8', errors='replace')
+		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
+	#def __str__(self):
+	 	#return self.fecha_emision#.encode('utf-8', errors='replace')
 
 

@@ -36,12 +36,17 @@
         </ul>
         {% endif %}
 
-        {% if username %}
+        {% if user.username %}
         <!-- Username logged in -->
         <ul class="nav navbar-nav navbar-right">
           <li>
             <p class="navbar-text">
-              Sesión de <a href="#" class="navbar-link">{{ username }}</a>
+              <a href="#" class="navbar-link"><i class="fas fa-user"></i> {{ user.username }}</a>
+            </p>
+          </li>
+          <li>
+            <p class="navbar-text">
+              <a href="{% url 'logout' %}" class="navbar-link"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
             </p>
           </li>
         </ul>

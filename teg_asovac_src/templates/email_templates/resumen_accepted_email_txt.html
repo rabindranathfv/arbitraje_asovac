@@ -1,0 +1,20 @@
+Mediante el presente mensaje se le notifica a usted que el resumen de título:
+
+{{ resumen_title }}
+
+De autores:
+
+{% for author in authors %}
+    {% if forloop.first %}
+        {{ author }}
+    {% else %}
+        , {{ author }}
+    {% endif %}
+{% endfor %}
+
+Ha sido debidamente arbitrado y aceptado para su presentación. Se incluye en este correo adjuntada una carta formal de aceptación.
+
+Atentamente
+Sistema ASOVAC
+
+Este es un correo electrónico autogenerado por el sistema ASOVAC, por favor no responder a estos mensajes.

@@ -30,7 +30,7 @@ from django.contrib.auth.views import login, logout_then_login, password_reset, 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
-    url(r'^', include('main_app.urls',      namespace='main_app')),
+    url(r'^dashboard/', include('main_app.urls',      namespace='main_app')),
     url(r'^', include('arbitrajes.urls',    namespace='arbitrajes')),
     url(r'^', include('recursos.urls',      namespace='recursos')),
     url(r'^', include('seguimiento.urls',   namespace='seguimiento')),
@@ -40,12 +40,18 @@ urlpatterns = [
     url(r'^', include('autores.urls',       namespace='autores')),
 
      ## password and login 
-    # url(r'^accounts/login/', login,{'template_name':'login.html'},name="login"),
-    # url(r'^logout/', logout_then_login, name='logout'),
+
+    url(r'^logout/', logout_then_login, name='logout'),
+    url(r'^$',login,{'template_name':'main_app_login.html'},name='login'),
+
+    #url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
+
     url(r'^reset/password_reset$', password_reset, 
         {'template_name':'password_reset_form.html',
-        'email_template_name': 'password_reset_email.html'}, 
-        name='password_reset'), 
+        'email_template_name': 'email_templates/password_reset_email_txt.html',
+        'html_email_template_name': 'email_templates/password_reset_email.html',
+        'subject_template_name': 'email_templates/password_reset_subject.txt'},
+        name='password_reset'),
     url(r'^password_reset_done$', password_reset_done, 
         {'template_name': 'password_reset_done.html'}, 
         name='password_reset_done'),

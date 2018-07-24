@@ -13,3 +13,75 @@ def sesiones_pag(request):
         "nombre_vista": 'sesiones'
     }
     return render(request,"test_views.html",context)
+
+def sesions_list(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
+        'username' : 'Username',
+    }
+    return render(request, 'sesiones_sesions_list.html', context)
+
+def sesions_edit(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
+        'username' : 'Username',
+    }
+    return render(request, 'sesiones_sesions_edit.html', context)
+
+def sesions_space_list(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
+        'username' : 'Username',
+    }
+    return render(request, 'sesiones_space_list.html', context)
+
+def sesions_space_edit(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['Opciones Secundarias']
+
+    context = {
+        'nombre_vista' : 'Administración',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : '0',
+        'item_active' : '2',
+        'username' : 'Username',
+    }
+    return render(request, 'sesiones_space_edit.html', context)
