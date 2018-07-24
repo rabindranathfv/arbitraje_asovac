@@ -6,6 +6,8 @@
 
   </head>
   <body>
+    
+    <!-- Fixed Main Navbar -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="main-navbar">
       <div class="container-fluid">
         <!-- Navbar Brand or Logo -->
@@ -14,6 +16,40 @@
             <strong>ASOVAC</strong>
           </a>
         </div>
+
+        <!-- Navbar buttons: Passed by context in the view -->
+        {% if main_navbar_options %}
+        <ul class="nav navbar-nav">
+          {% for option in main_navbar_options %}
+            {% if option.active %}
+              <li class="active">
+                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
+                <span class="sr-only">(current)</span>
+              </li>
+            {% else %}
+              <li>
+                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if user.username %}
+        <!-- Username logged in -->
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <p class="navbar-text">
+              <a href="#" class="navbar-link"><i class="fas fa-user"></i> {{ user.username }}</a>
+            </p>
+          </li>
+          <li>
+            <p class="navbar-text">
+              <a href="{% url 'logout' %}" class="navbar-link"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
+            </p>
+          </li>
+        </ul>
+        {% endif %}
       </div>
     </nav>
 
