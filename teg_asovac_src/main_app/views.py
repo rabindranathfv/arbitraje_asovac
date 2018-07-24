@@ -36,10 +36,21 @@ def home(request):
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
     context = {
-        'nombre_vista' : 'Crear Arbitraje',
-        'username' : request.user.username,
-        'form' : form,
-    }
+                    'nombre_vista' : 'Crear Arbitraje',
+                    'username' : request.user.username,
+                    'form' : form,
+                }
+    if request.method == 'POST':
+        form = CreateArbitrajeForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+            #print(form)
+            context = {        
+                'username' : request.user.username,
+                'form' : form,
+                }
+            return render(request, 'main_app_home.html', context)        
+        
     return render(request, 'main_app_create_arbitraje.html', context)
 
 def email_test(request):
