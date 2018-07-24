@@ -8,6 +8,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from .forms import TrabajoForm
 
+
+#Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
     form = TrabajoForm()
     context = {
@@ -53,6 +55,7 @@ def jobs_edit(request):
     return render(request, 'trabajos_jobs_edit.html', context)
    
 
+# Vista para editar trabajos
 def edit_trabajo(request):
 	form = TrabajoForm()
 	context = {
@@ -61,6 +64,7 @@ def edit_trabajo(request):
     }
 	return render(request,"trabajos_edit_trabajo.html",context)
 
+#Vista donde aparecen los trabajos evaluados
 def trabajos_evaluados(request):
 	context = {
 		"nombre_vista": 'Trabajos Evaluados'

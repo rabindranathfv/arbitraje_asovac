@@ -51,12 +51,16 @@ def author_edit(request):
     }
     return render(request, 'main_app_author_edit.html', context)
 
+
+#Vista para generar certificado
 def generar_certificado(request):
 	context={
 		"nombre_vista": 'Generar Certificado'
 	}
 	return render(request,"autores_generar_certificado.html", context)
 
+
+#Vista donde el autor ve los pagadores de sus trabajos y tiene opción de añadir nuevos
 def postular_trabajo(request):
 	pagadorform = DatosPagadorForm()
 	pagoform = PagoForm()
@@ -69,6 +73,8 @@ def postular_trabajo(request):
 	}
 	return render(request,"autores_postular_trabajo.html",context)
 
+
+# Vista donde el autor introduce los datos del pagador
 def postular_trabajo_pagador(request):
 	pagadorform = DatosPagadorForm()
 	context = {
@@ -77,6 +83,8 @@ def postular_trabajo_pagador(request):
 	}
 	return render(request,"autores_postular_trabajo_pagador.html",context)
 
+
+#Vista donde el autor introduce los datos del pago
 def postular_trabajo_pago(request):
 	pagoform = PagoForm()
 	context = {
@@ -85,6 +93,8 @@ def postular_trabajo_pago(request):
 	}
 	return render(request,"autores_postular_trabajo_pago.html",context)
 
+
+#Vista donde el autor introduce datos de la factura
 def postular_trabajo_factura(request):
 	facturaform = FacturaForm()
 	context = {

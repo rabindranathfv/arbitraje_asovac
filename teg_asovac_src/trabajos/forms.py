@@ -8,6 +8,8 @@ from django.core.urlresolvers import reverse
 
 from .models import Trabajo
 
+
+#Form para introducir datos de un trabajo, sea para editar o para crear
 class TrabajoForm(forms.ModelForm):
 
 	class Meta:
