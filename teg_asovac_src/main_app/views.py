@@ -66,7 +66,7 @@ def detalles_resumen(request):
     return render(request, 'main_app_detalle_resumen.html', context)
 
 
-def dashboard(request,arb_id):
+def dashboard(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -74,13 +74,13 @@ def dashboard(request,arb_id):
     print("DEBAJO ESTA EL USERNAME")
     print(request.user.username)
     # queryset del estado del proceso
-    data = Sistema_asovac.objects.get(pk=arb_id)
+    #data = Sistema_asovac.objects.get(pk=arb_id)
 
 
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
-        'estado' : data.estado_arbitraje,
+        #'estado' : data.estado_arbitraje,
         'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)

@@ -167,5 +167,5 @@ STATICFILES_DIRS = [
 STATIC_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","static_root")
 MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","media_root")
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL= reverse_lazy('main_app:dasboard')
+LOGIN_REDIRECT_URL= reverse_lazy('main_app:home')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')

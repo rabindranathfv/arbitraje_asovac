@@ -35,10 +35,10 @@ class Sistema_asovac(models.Model):
 	estado_arbitraje = models.SmallIntegerField(default=0)
 	fecha_inicio_arbitraje = models.DateTimeField()
 	fecha_fin_arbitraje = models.DateTimeField()
-	clave_maestra_coordinador_area = models.TextField(max_length=100)
-	clave_maestra_arbitro_area = models.TextField(max_length=100)
-	clave_maestra_coordinador_general = models.TextField(max_length=100)
-	clave_maestra_arbitro_subarea = models.TextField(max_length=100)
+	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
+	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
+	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
+	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
