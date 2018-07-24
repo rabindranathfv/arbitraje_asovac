@@ -57,7 +57,11 @@
                                             
                                         </div>
                                         <div class="col-sm-3 text-center">
-                                            <a class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</a>
+                                            <form method="post" >
+                                                    {% csrf_token %}
+                                                <input class="" type='hidden' value="{{ arb.id }}">
+                                                    <button class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
