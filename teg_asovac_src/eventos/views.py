@@ -17,12 +17,16 @@ def event_list(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0 
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '4',
         'username' : 'Username',
     }
@@ -36,12 +40,16 @@ def event_edit(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '4',
         'username' : 'Username',
     }
@@ -54,12 +62,16 @@ def event_create(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '4',
         'username' : 'Username',
     }

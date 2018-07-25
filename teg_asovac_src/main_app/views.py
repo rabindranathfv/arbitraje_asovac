@@ -23,9 +23,8 @@ def login(request):
 def home(request):
     # queryset
     arbitraje_data = Sistema_asovac.objects.all()
-
     secondary_navbar_options = ['Bienvenido']
-    print(arbitraje_data)
+    # print(arbitraje_data)
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
@@ -84,8 +83,13 @@ def dashboard(request):
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-    print("DEBAJO ESTA EL USERNAME")
-    print(request.user.username)
+    
+    secondary_navbar_options = ['']
+
+    # print("DEBAJO ESTA EL USERNAME")
+    # print(request.user.username)
+    print "Esta del arbitraje en dashboard"
+    print (request.POST['estado'])
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
 
@@ -93,7 +97,8 @@ def dashboard(request):
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
-        #'estado' : data.estado_arbitraje,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : request.POST['estado'],
         'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)
@@ -101,19 +106,24 @@ def dashboard(request):
 def data_basic(request):
     form= DataBasicForm()
 
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
 
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
+        
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'form' : form
     }
@@ -125,13 +135,18 @@ def state_arbitration(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -144,13 +159,18 @@ def users_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -180,13 +200,17 @@ def user_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -198,13 +222,17 @@ def user_roles(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -216,13 +244,17 @@ def coord_general(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -234,13 +266,17 @@ def coord_area(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -252,13 +288,17 @@ def total(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': True},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '3',
         'username' : 'Username',
     }

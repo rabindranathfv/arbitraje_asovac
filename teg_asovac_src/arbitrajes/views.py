@@ -42,12 +42,16 @@ def referee_list(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -60,12 +64,16 @@ def referee_edit(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -78,12 +86,16 @@ def areas_subareas(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }

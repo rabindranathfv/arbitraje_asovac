@@ -24,7 +24,7 @@
           {% for option in main_navbar_options %}
             {% if option.active %}
               <li class="active">
-                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
+                <a  href="{{option.route}}"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
                 <span class="sr-only">(current)</span>
               </li>
             {% else %}

@@ -44,12 +44,16 @@ def resources_author(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -62,12 +66,16 @@ def resources_referee(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -80,12 +88,16 @@ def resources_event(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -98,12 +110,16 @@ def resources_sesion(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -116,14 +132,40 @@ def resources_asovac(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '1',
         'username' : 'Username',
     }
     return render(request, 'main_app_resources_asovac.html', context)
+
+def resources_arbitration(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
+
+    context = {
+        'nombre_vista' : 'Arbitros',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+        'estado' : estado,
+        'item_active' : '1',
+        'username' : 'Username',
+    }
+    return render(request, 'main_app_resources_arbitrations.html', context)
 

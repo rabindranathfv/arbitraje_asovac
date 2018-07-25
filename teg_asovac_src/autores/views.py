@@ -16,40 +16,48 @@ def autores_pag(request):
 
 def authors_list(request):
     
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+							{'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+							{'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+							{'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+	
+	secondary_navbar_options = ['']
 
-    secondary_navbar_options = ['Opciones Secundarias']
+	if request.POST:
+		estado= request.POST['estado']
+	else:
+		estado=0
 
-    context = {
+	context = {
         'nombre_vista' : 'Autores',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-		'estado' : '0',
+		'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
-    return render(request, 'main_app_authors_list.html', context)
+	return render(request, 'main_app_authors_list.html', context)
 
 def author_edit(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+	secondary_navbar_options = ['']
+	if request.POST:
+		estado= request.POST['estado']
+	else:
+		estado=0
 
-    secondary_navbar_options = ['']
-
-    context = {
+	context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-		'estado' : '0',
+		'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
-    return render(request, 'main_app_author_edit.html', context)
+	return render(request, 'main_app_author_edit.html', context)
 
 
 #Vista para generar certificado

@@ -20,13 +20,17 @@ def sesions_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -38,13 +42,17 @@ def sesions_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -56,7 +64,7 @@ def sesions_space_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
 
     context = {
         'nombre_vista' : 'Administración',
@@ -74,13 +82,17 @@ def sesions_space_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    secondary_navbar_options = ['Opciones Secundarias']
+    secondary_navbar_options = ['']
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
         'item_active' : '2',
         'username' : 'Username',
     }

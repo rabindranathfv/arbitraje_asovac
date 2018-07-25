@@ -57,10 +57,10 @@
                                             
                                         </div>
                                         <div class="col-sm-3 text-center">
-                                            <form method="post" >
-                                                    {% csrf_token %}
-                                                <input class="" type='hidden' value="{{ arb.id }}">
-                                                    <button class="btn btn-primary btn-lg btn-block" role="button" href="{% url 'main_app:dashboard' %}"><i class="fas fa-door-open"></i> Entrar</button>
+                                            <form method="post" action="{% url 'main_app:dashboard' %}">
+                                                {% csrf_token %}
+                                                <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
+                                                <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
                                             </form>
                                         </div>
                                     </div>
