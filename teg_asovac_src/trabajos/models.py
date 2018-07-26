@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from autores.models import Autores_trabajos
+from .validators import validate_file_extension
 # Create your models here.
 
 
@@ -37,7 +38,7 @@ class Trabajo(models.Model):
 	url_trabajo = models.CharField(max_length=255,blank=True)
 	version = models.CharField(max_length=20,blank=True)
 	# add field to storage work in pdf
-	archivo_trabajo = models.FileField(upload_to = job_directory_path)
+	archivo_trabajo = models.FileField(upload_to = job_directory_path, validators=[validate_file_extension])
 	def __str__(self):
     		return self.titulo_espanol#.encode('utf-8', errors='replace')
 
