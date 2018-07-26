@@ -14,8 +14,8 @@ class Organizador(models.Model):
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
-	nombres = models.CharField(max_length=50)
-	apellidos = models.CharField(max_length=50)
+	nombre = models.CharField(max_length=50)
+	apellido = models.CharField(max_length=50)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico= models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
