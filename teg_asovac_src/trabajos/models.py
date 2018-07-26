@@ -2,13 +2,21 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
+from autores.models import Autores_trabajos
 # Create your models here.
 
 
 """""""""""""""""""""""""""
 Trabajo Model
 """""""""""""""""""""""""""
+def job_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/trabajos/<trabajo_id>.pdf
+    if(instance.id):
+    	return 'trabajos/{0}.pdf'.format(instance.id)
+    else:
+    	future_id = Trabajo.objects.latest('id').id + 1
+    	return 'trabajos/' + str(future_id) + '.pdf'
+
 class Trabajo(models.Model):
 
 	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
@@ -29,6 +37,7 @@ class Trabajo(models.Model):
 	url_trabajo = models.CharField(max_length=255,blank=True)
 	version = models.CharField(max_length=20,blank=True)
 	# add field to storage work in pdf
+	archivo_trabajo = models.FileField(upload_to = job_directory_path)
 	def __str__(self):
     		return self.titulo_espanol#.encode('utf-8', errors='replace')
 

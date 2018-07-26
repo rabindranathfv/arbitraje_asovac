@@ -45,7 +45,7 @@ class Autor(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 
@@ -64,7 +64,7 @@ class Autores_trabajos(models.Model):
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
+		return "{}".format(self.autor.nombre)#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""

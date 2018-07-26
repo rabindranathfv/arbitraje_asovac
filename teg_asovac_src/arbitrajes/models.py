@@ -76,4 +76,4 @@ class Arbitro(models.Model):
 	clave_arbitro = models.CharField(max_length=100)
 
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return self.nombre#.encode('utf-8', errors='replace')

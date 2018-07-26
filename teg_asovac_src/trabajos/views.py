@@ -11,6 +11,12 @@ from .forms import TrabajoForm
 
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
+    if request.method =='POST':
+        form = TrabajoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+
+            
     form = TrabajoForm()
     context = {
         "nombre_vista": 'Autores',
