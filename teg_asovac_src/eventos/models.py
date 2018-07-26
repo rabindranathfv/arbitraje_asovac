@@ -16,6 +16,7 @@ class Organizador(models.Model):
 
 	nombre = models.CharField(max_length=50)
 	apellido = models.CharField(max_length=50)
+	genero = models.CharField(max_length=5)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico= models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
