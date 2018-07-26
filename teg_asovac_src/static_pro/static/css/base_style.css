@@ -347,6 +347,11 @@ textarea{
     resize: none;
 }
 
+.preview-pdf{
+    height: 500px;
+    border: 1px solid #DDDDDD;
+    line-height: 440px;
+}
 /*============================ Footer ============================*/
 
 #footer{

@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^dashboard/admin/jobs/edit/$', views.jobs_edit, name= 'jobs_edit'),
   
     url(r'^$', views.trabajos, name= 'trabajos'),
+    url(r'^details/$', views.job_details, name= 'job-details'),
     url(r'^editar/$', views.edit_trabajo, name= 'edit_trabajo'),
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
 ]
