@@ -60,8 +60,8 @@ class Arbitro(models.Model):
 	subarea_id = models.ManyToManyField(Sub_area)
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
-	nombres = models.CharField(max_length=40)
-	apellidos = models.CharField(max_length=40)
+	nombre = models.CharField(max_length=40)
+	apellido = models.CharField(max_length=40)
 	cedula_pasaporte = models.CharField(max_length=20)
 	titulo = models.CharField(max_length=50)
 	correo_electronico = models.EmailField(max_length=254)
