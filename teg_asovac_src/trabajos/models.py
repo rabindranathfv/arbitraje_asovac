@@ -10,15 +10,16 @@ from .validators import validate_file_extension
 Trabajo Model
 """""""""""""""""""""""""""
 #Estaba en el modelo
-#def job_directory_path(instance, filename):
+def job_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/trabajos/<trabajo_id>.pdf
-#	if(instance.id):
-#		return 'trabajos/{0}.pdf'.format(instance.id)
-#	elif not Trabajo:
-#		return 'trabajos/1.pdf'	
-#	else:
-#		future_id = Trabajo.objects.latest('id').id + 1
-#		return 'trabajos/' + str(future_id) + '.pdf'
+	if(instance.id):
+		return 'trabajos/{0}.pdf'.format(instance.id)
+	#elif Trabajo:
+	#	return 'trabajos/1.pdf'	
+	else:
+		
+		future_id = Trabajo.objects.count()+ 1
+		return 'trabajos/' + str(future_id) + '.pdf'
 		
 
 class Trabajo(models.Model):
@@ -40,7 +41,7 @@ class Trabajo(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	url_trabajo = models.CharField(max_length=255,blank=True)
 	version = models.CharField(max_length=20,blank=True)
-	archivo_trabajo = models.FileField(validators=[validate_file_extension])#upload_to = job_directory_path,
+	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
 	def __str__(self):
     		return self.titulo_espanol#.encode('utf-8', errors='replace')
 
