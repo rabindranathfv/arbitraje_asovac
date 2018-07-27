@@ -33,8 +33,8 @@ class Sistema_asovac(models.Model):
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=255)
 	estado_arbitraje = models.SmallIntegerField(default=0)
-	fecha_inicio_arbitraje = models.DateTimeField()
-	fecha_fin_arbitraje = models.DateTimeField()
+	fecha_inicio_arbitraje = models.DateField()
+	fecha_fin_arbitraje = models.DateField()
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
@@ -70,6 +70,8 @@ def crear_usuario_asovac(sender, **kwargs):
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)
+		usuario_asovac.save()
+		usuario_asovac.rol.add(Rol.objects.get(id=1)) #Los roles se crean en base a la tabla de roles, autor es id=5
 		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)

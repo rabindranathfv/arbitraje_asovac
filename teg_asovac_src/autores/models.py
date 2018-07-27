@@ -45,7 +45,7 @@ class Autor(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 
@@ -64,7 +64,7 @@ class Autores_trabajos(models.Model):
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
+		return "{}".format(self.autor.nombre)#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -77,8 +77,8 @@ class Datos_pagador(models.Model):
 	cedula = models.CharField(max_length=10) 
 	nombre = models.CharField(max_length=50)
 	apellido = models.CharField(max_length=50)
-	pasaporte_rif = models.CharField(max_length=20)
-	telefono_oficina = models.CharField(max_length=20)
+	pasaporte_rif = models.CharField(max_length=20, blank = True)
+	telefono_oficina = models.CharField(max_length=20, blank = True)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
 	def __str__(self):
@@ -107,11 +107,11 @@ class Pago(models.Model):
 	tipo_pago = models.CharField(max_length=50)
 	numero_cuenta_origen = models.CharField(max_length=50)
 	banco_origen = models.CharField(max_length=50)
-	numero_transferencia = models.CharField(max_length=50)
-	numero_cheque = models.CharField(max_length=50)
+	numero_transferencia = models.CharField(max_length=50, blank = True)
+	numero_cheque = models.CharField(max_length=50, blank = True)
 	fecha_pago = models.DateTimeField()
 	observaciones = models.TextField(max_length=100,blank=True)
-	comprobante_pago = models.TextField(max_length=100)
+	comprobante_pago = models.FileField(upload_to = 'comprobantes_de_pago/') # Hacer validacion y path
 
 	def __str__(self):
 		return self.numero_transferencia#.encode('utf-8', errors='replace')
@@ -127,7 +127,6 @@ class Factura(models.Model):
 
 	monto_subtotal = models.FloatField()
 	fecha_emision = models.DateTimeField()
-	monto_total = models.FloatField()
 	iva = models.FloatField()
 	
 	def __str__(self):
