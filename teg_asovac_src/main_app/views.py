@@ -86,9 +86,18 @@ def dashboard(request):
     
     secondary_navbar_options = ['']
 
+    if request.POST:
+        estado= request.POST['estado']
+    else:
+        estado=0
+
+    print (request.user.id)
+    query=Usuario_asovac.objects.order_by('id').first()
+    print "Query result:"
+    print (query)
     # print("DEBAJO ESTA EL USERNAME")
     # print(request.user.username)
-    print "Esta del arbitraje en dashboard"
+    print "Estado del arbitraje en dashboard"
     print (request.POST['estado'])
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
@@ -98,7 +107,7 @@ def dashboard(request):
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : request.POST['estado'],
+        'estado' : estado,
         'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)
@@ -112,7 +121,6 @@ def data_basic(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-
     if request.POST:
         estado= request.POST['estado']
     else:
