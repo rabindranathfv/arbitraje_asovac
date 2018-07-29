@@ -11,6 +11,16 @@ from django.core.urlresolvers import reverse_lazy
 
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
+# Global functions 
+def get_type_user(rol):
+    tipo_usuario = 0 # Donde 1 es admin, coordinador general o coordinador de area
+    for item in rol:
+        if item.id == 1 or item.id == 2 or item.id == 3:
+            tipo_usuario = 1 # Donde 1 es admin, coordinador general o coordinador de area
+            break
+    return tipo_usuario
+
+
 # Create your views here.
 def login(request):
     form = MyLoginForm()
@@ -94,7 +104,6 @@ def dashboard(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    # rol= usuario.rol.all()
    
     print "Rol:"
     print (rol)
@@ -105,9 +114,7 @@ def dashboard(request):
     print "Evento id:"
     print (event_id)
     
-    # for item in rol:
-    #         print (item.id)
-            
+    type_user = get_type_user(rol) 
         
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
@@ -121,6 +128,7 @@ def dashboard(request):
         'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -141,6 +149,7 @@ def data_basic(request):
         event_id= -1
     
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -151,7 +160,8 @@ def data_basic(request):
         'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
-        'form' : form
+        'form' : form,
+        'type_user' : type_user,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -171,6 +181,7 @@ def state_arbitration(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -181,6 +192,7 @@ def state_arbitration(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -201,6 +213,7 @@ def users_list(request):
         event_id= -1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -211,6 +224,7 @@ def users_list(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -247,6 +261,7 @@ def user_edit(request):
         event_id= -1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -257,6 +272,7 @@ def user_edit(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -275,6 +291,7 @@ def user_roles(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -285,6 +302,7 @@ def user_roles(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -303,6 +321,7 @@ def coord_general(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -313,6 +332,7 @@ def coord_general(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -331,6 +351,7 @@ def coord_area(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol)
 
     context = {
         'nombre_vista' : 'Administración',
@@ -341,6 +362,7 @@ def coord_area(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -359,6 +381,7 @@ def total(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol) 
 
     context = {
         'nombre_vista' : 'Administración',
@@ -369,5 +392,6 @@ def total(request):
         'event_id' : event_id,
         'item_active' : '3',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_totales.html', context)

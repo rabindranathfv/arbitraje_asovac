@@ -19,43 +19,43 @@
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-
-        <ul class="nav navbar-nav">
-          <li>
-            <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
-                {% csrf_token %}
-                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-            </form>
-            <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
-          </li>
-          <li>
-              <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
+        {% if type_user == 1 %}
+          <ul class="nav navbar-nav">
+            <li>
+              <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
                   {% csrf_token %}
                   <input class="" name="estado" type='hidden' value="{{ estado }}">
                   <input class="" name="event_id" type='hidden' value="{{ event_id }}">
               </form>
-            <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
-          </li>
-          <li>
-            <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
-                {% csrf_token %}
-                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-            </form>
-            <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
-          
-          </li>
-          <li>
-              <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
+              <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
+            </li>
+            <li>
+                <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+              <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
+            </li>
+            <li>
+              <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
                   {% csrf_token %}
                   <input class="" name="estado" type='hidden' value="{{ estado }}">
                   <input class="" name="event_id" type='hidden' value="{{ event_id }}">
               </form>
-            <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
-          </li>
-        </ul> 
-  
+              <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
+            
+            </li>
+            <li>
+                <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+              <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
+            </li>
+          </ul> 
+        {% endif %}
 
         {% if user.username %}
         <!-- Username logged in -->
