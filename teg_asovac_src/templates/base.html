@@ -13,28 +13,49 @@
       <div class="container-fluid">
         <!-- Navbar Brand or Logo -->
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="{% url 'main_app:home' %}">
             <strong>ASOVAC</strong>
           </a>
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-        {% if main_navbar_options %}
+
         <ul class="nav navbar-nav">
-          {% for option in main_navbar_options %}
-            {% if option.active %}
-              <li class="active">
-                <a  href="{{option.route}}"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
-                <span class="sr-only">(current)</span>
-              </li>
-            {% else %}
-              <li>
-                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
-              </li>
-            {% endif %}
-          {% endfor %}
-        </ul>
-        {% endif %}
+          <li>
+            <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
+                {% csrf_token %}
+                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+            </form>
+            <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
+          </li>
+          <li>
+              <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
+                  {% csrf_token %}
+                  <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+              </form>
+            <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
+          </li>
+          <li>
+            <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
+                {% csrf_token %}
+                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+            </form>
+            <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
+          
+          </li>
+          <li>
+              <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
+                  {% csrf_token %}
+                  <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+              </form>
+            <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
+          </li>
+        </ul> 
+  
 
         {% if user.username %}
         <!-- Username logged in -->

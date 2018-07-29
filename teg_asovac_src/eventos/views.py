@@ -19,14 +19,17 @@ def event_list(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0 
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
     }
@@ -42,14 +45,17 @@ def event_edit(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
     }
@@ -64,14 +70,17 @@ def event_create(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
     }
