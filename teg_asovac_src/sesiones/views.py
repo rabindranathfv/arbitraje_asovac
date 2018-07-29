@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
 # Create your views here.
 def sesiones_pag(request):
@@ -26,11 +27,14 @@ def sesions_list(request):
     else:
         estado=0
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'item_active' : '2',
         'username' : 'Username',
     }

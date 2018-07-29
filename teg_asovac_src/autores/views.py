@@ -7,6 +7,7 @@ from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
 from .forms import DatosPagadorForm, PagoForm, FacturaForm
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 # Create your views here.
 def autores_pag(request):
     context = {
@@ -30,11 +31,14 @@ def authors_list(request):
 		estado=-1
 		event_id=-1
 
+	rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
 	context = {
         'nombre_vista' : 'Autores',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
 		'estado' : estado,
+		'rol' : rol,
 		'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
@@ -54,11 +58,14 @@ def author_edit(request):
 		estado=-1
 		event_id=-1
 
+	rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
 	context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
 		'estado' : estado,
+		'rol' : rol,
 		'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',

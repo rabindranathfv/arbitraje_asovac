@@ -200,11 +200,14 @@ def users_list(request):
         estado=-1
         event_id= -1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -243,11 +246,14 @@ def user_edit(request):
         estado=0
         event_id= -1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -268,11 +274,14 @@ def user_roles(request):
         estado=0
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -293,11 +302,14 @@ def coord_general(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -318,11 +330,14 @@ def coord_area(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -343,11 +358,14 @@ def total(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '3',
         'username' : 'Username',
