@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
 # Create your views here.
 def eventos_pag(request):
@@ -24,11 +25,14 @@ def event_list(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
@@ -50,11 +54,14 @@ def event_edit(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
@@ -75,11 +82,14 @@ def event_create(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',

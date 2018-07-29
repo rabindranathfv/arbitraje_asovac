@@ -155,56 +155,56 @@
     {% if item_active == '2' %}
     
         {% if estado == '0' %}
-                {% if rol %}
-                    {% for item in rol %}
-                        {% if item.id == 1 %}
+            {% if rol %}
+                {% for item in rol %}
+                    {% if item.id == 1 %}
+                        <li>
+                            <form method="post" action="{% url 'autores:authors_list' %}"  name="authors_list">
+                                {% csrf_token %}
+                                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                                <a class ="submenu-item" href="javascript:document.authors_list.submit();">Autores</a>
+                            </form>
+                        </li>
+
+                        <li>
+                            <form method="post" action="{% url 'arbitrajes:referee_list' %}"  name="referee_list">
+                                {% csrf_token %}
+                                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                                <a class ="submenu-item" href="javascript:document.referee_list.submit();">Arbitros</a>
+                            </form>
+                        </li>
+
+                        {% if estado != '0' and estado != '1' and estado != '2' %}
                             <li>
-                                <form method="post" action="{% url 'autores:authors_list' %}"  name="authors_list">
+                                <form method="post" action="{% url 'trabajos:jobs_list' %}"  name="jobs_list">
                                     {% csrf_token %}
                                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                    <a class ="submenu-item" href="javascript:document.authors_list.submit();">Autores</a>
-                                </form>
-                            </li>
-
-                            <li>
-                                <form method="post" action="{% url 'arbitrajes:referee_list' %}"  name="referee_list">
-                                    {% csrf_token %}
-                                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                    <a class ="submenu-item" href="javascript:document.referee_list.submit();">Arbitros</a>
-                                </form>
-                            </li>
-
-                            {% if estado != '0' and estado != '1' and estado != '2' %}
-                                <li>
-                                    <form method="post" action="{% url 'trabajos:jobs_list' %}"  name="jobs_list">
-                                        {% csrf_token %}
-                                        <input class="" name="estado" type='hidden' value="{{ estado }}">
-                                        <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                        <a class ="submenu-item" href="javascript:document.jobs_list.submit();">Trabajos</a>
-                                    </form>
-                                </li>
-                            {% endif %}
-
-                            <li>
-                                <form method="post" action="{% url 'sesiones:sesions_list' %}"  name="sesions_list">
-                                    {% csrf_token %}
-                                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                    <a class ="submenu-item" href="javascript:document.sesions_list.submit();">Sesión de arbitraje</a>
-                                </form>
-                            </li>
-
-                            <li>
-                                <form method="post" action="{% url 'arbitrajes:listado' %}"  name="listado">
-                                    {% csrf_token %}
-                                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                    <a class ="submenu-item" href="javascript:document.listado.submit();"> Arbitraje</a>
+                                    <a class ="submenu-item" href="javascript:document.jobs_list.submit();">Trabajos</a>
                                 </form>
                             </li>
                         {% endif %}
+
+                        <li>
+                            <form method="post" action="{% url 'sesiones:sesions_list' %}"  name="sesions_list">
+                                {% csrf_token %}
+                                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                                <a class ="submenu-item" href="javascript:document.sesions_list.submit();">Sesión de arbitraje</a>
+                            </form>
+                        </li>
+
+                        <li>
+                            <form method="post" action="{% url 'arbitrajes:listado' %}"  name="listado">
+                                {% csrf_token %}
+                                <input class="" name="estado" type='hidden' value="{{ estado }}">
+                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                                <a class ="submenu-item" href="javascript:document.listado.submit();"> Arbitraje</a>
+                            </form>
+                        </li>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
         {% endif %}
@@ -218,34 +218,43 @@
     {% endif %}
 
     {% if item_active == '4' %}
-        <li>
-            <form method="post" action="{% url 'eventos:event_create' %}"  name="event_create">
-                {% csrf_token %}
-                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                <a class ="submenu-item" href="javascript:document.event_create.submit();">Organizar evento</a>
-            </form>
-        </li>
 
-        {% if estado == '7' or estado == '8' %}
-        <li>
-            <form method="post" action="{% url 'sesiones:sesions_space_list' %}"  name="sesions_space_list">
-                {% csrf_token %}
-                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                <a class ="submenu-item" href="javascript:document.sesions_space_list.submit();">Espacio</a>
-            </form>
-        </li>
+    {% if estado == '0' %}
+        {% if rol %}
+            {% for item in rol %}
+                {% if item.id == 1 %}
+                    <li>
+                        <form method="post" action="{% url 'eventos:event_create' %}"  name="event_create">
+                            {% csrf_token %}
+                            <input class="" name="estado" type='hidden' value="{{ estado }}">
+                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                            <a class ="submenu-item" href="javascript:document.event_create.submit();">Organizar evento</a>
+                        </form>
+                    </li>
+
+                    {% if estado == '7' or estado == '8' %}
+                    <li>
+                        <form method="post" action="{% url 'sesiones:sesions_space_list' %}"  name="sesions_space_list">
+                            {% csrf_token %}
+                            <input class="" name="estado" type='hidden' value="{{ estado }}">
+                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                            <a class ="submenu-item" href="javascript:document.sesions_space_list.submit();">Espacio</a>
+                        </form>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                        <form method="post" action="{% url 'eventos:event_list' %}"  name="event_list">
+                            {% csrf_token %}
+                            <input class="" name="estado" type='hidden' value="{{ estado }}">
+                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                            <a class ="submenu-item" href="javascript:document.event_list.submit();">Lista de eventos</a>
+                        </form>
+                    </li>
+                {% endif %}
+            {% endfor %}
         {% endif %}
-
-        <li>
-            <form method="post" action="{% url 'eventos:event_list' %}"  name="event_list">
-                {% csrf_token %}
-                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                <a class ="submenu-item" href="javascript:document.event_list.submit();">Lista de eventos</a>
-            </form>
-        </li>
+    {% endif %}
 
     {% endif %}
   </ul>

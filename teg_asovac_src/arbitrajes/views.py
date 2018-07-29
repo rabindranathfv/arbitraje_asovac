@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.conf.urls import include
 from django.conf.urls import url
 from django.contrib import admin
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
 # Create your views here.
 def arbitrajes_pag(request):
@@ -49,11 +50,14 @@ def referee_list(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
@@ -74,11 +78,14 @@ def referee_edit(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
@@ -99,11 +106,14 @@ def areas_subareas(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',

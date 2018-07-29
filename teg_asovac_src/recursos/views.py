@@ -14,6 +14,8 @@ from .utils import render_to_pdf
 # for load template to render to pdf
 from django.template.loader import get_template
 
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+
 # Create your views here.
 def recursos_pag(request):
     context = {
@@ -51,11 +53,14 @@ def resources_author(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -67,6 +72,8 @@ def resources_referee(request):
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     secondary_navbar_options = ['']
     if request.POST:
@@ -81,6 +88,7 @@ def resources_referee(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -100,11 +108,14 @@ def resources_event(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -125,11 +136,14 @@ def resources_sesion(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -150,11 +164,14 @@ def resources_asovac(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -175,11 +192,14 @@ def resources_arbitration(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
