@@ -92,10 +92,23 @@ def dashboard(request):
     else:
         estado=-1
         event_id=-1
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    # rol= usuario.rol.all()
+   
+    print "Rol:"
+    print (rol)
+    print "User ID:"
+    print (request.user.id)
+    print "Estado:"
+    print (estado)
+    print "Evento id:"
+    print (event_id)
+    
+    # for item in rol:
+    #         print (item.id)
+            
         
-    query=Usuario_asovac.objects.order_by('id').first()
-    print "Query result:"
-    print (query)
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
 
@@ -105,6 +118,7 @@ def dashboard(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
     }
@@ -125,13 +139,16 @@ def data_basic(request):
     else:
         estado=-1
         event_id= -1
-        
+    
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'form' : form
@@ -153,11 +170,14 @@ def state_arbitration(request):
         estado=-1
         event_id=-1
 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
