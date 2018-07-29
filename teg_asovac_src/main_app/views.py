@@ -13,12 +13,12 @@ from .models import Rol,Sistema_asovac,Usuario_asovac
 
 # Global functions 
 def get_type_user(rol):
-    tipo_usuario = 0 # Donde 1 es admin, coordinador general o coordinador de area
+    type_user = 0 # Donde 1 es admin, coordinador general o coordinador de area
     for item in rol:
         if item.id == 1 or item.id == 2 or item.id == 3:
-            tipo_usuario = 1 # Donde 1 es admin, coordinador general o coordinador de area
+            type_user = 1 # Donde 1 es admin, coordinador general o coordinador de area
             break
-    return tipo_usuario
+    return type_user
 
 
 # Create your views here.
