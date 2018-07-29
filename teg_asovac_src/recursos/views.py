@@ -46,14 +46,17 @@ def resources_author(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -68,8 +71,10 @@ def resources_referee(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
@@ -90,14 +95,17 @@ def resources_event(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -112,14 +120,17 @@ def resources_sesion(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -134,14 +145,17 @@ def resources_asovac(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -156,14 +170,17 @@ def resources_arbitration(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }

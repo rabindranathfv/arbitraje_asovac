@@ -44,14 +44,17 @@ def referee_list(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -66,14 +69,17 @@ def referee_edit(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -88,14 +94,17 @@ def areas_subareas(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }

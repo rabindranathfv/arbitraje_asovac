@@ -13,7 +13,7 @@
       <div class="container-fluid">
         <!-- Navbar Brand or Logo -->
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="{% url 'main_app:home' %}">
             <strong>ASOVAC</strong>
           </a>
         </div>
@@ -25,20 +25,23 @@
             <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
                 {% csrf_token %}
                 <input class="" name="estado" type='hidden' value="{{ estado }}">
+                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             </form>
             <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
           </li>
           <li>
-              <form method="post" action="{% url 'recursos:resources_author' %}"  name="nav_resources_author">
+              <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
                   {% csrf_token %}
                   <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
               </form>
-            <a href="javascript:document.nav_resources_author.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
+            <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
           </li>
           <li>
             <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
                 {% csrf_token %}
                 <input class="" name="estado" type='hidden' value="{{ estado }}">
+                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             </form>
             <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
           
@@ -47,6 +50,7 @@
               <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
                   {% csrf_token %}
                   <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
               </form>
             <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
           </li>

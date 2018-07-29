@@ -26,11 +26,19 @@ def jobs_list(request):
 
     secondary_navbar_options = ['Opciones Secundarias']
 
+    if request.POST:
+    	estado= request.POST['estado']
+        event_id= request.POST['event_id']
+    else:
+		estado=-1
+		event_id=-1
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -44,11 +52,19 @@ def jobs_edit(request):
 
     secondary_navbar_options = ['Opciones Secundarias']
 
+    if request.POST:
+        estado= request.POST['estado']
+        event_id= request.POST['event_id']
+    else:
+        estado=-1
+        event_id=-1
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
     }

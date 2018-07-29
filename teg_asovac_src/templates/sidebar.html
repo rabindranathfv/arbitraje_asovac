@@ -15,6 +15,7 @@
                 <form method="post" action="{% url 'main_app:data_basic' %}"  name="data_basic">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.data_basic.submit();">Datos básicos </a>
                 </form>
             </li>
@@ -22,6 +23,7 @@
                 <form method="post" action="{% url 'main_app:arbitration_state' %}"  name="arbitration_state">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.arbitration_state.submit();">Estado arbitraje</a>
                 </form>
             </li>
@@ -37,6 +39,7 @@
                 <form method="post" action="{% url 'main_app:users_list' %}"  name="users_list">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.users_list.submit();">Lista de usuarios</a>
                 </form>
             </li>
@@ -44,6 +47,7 @@
                 <form method="post" action="{% url 'main_app:user_roles' %}"  name="user_roles">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.user_roles.submit();">Acceso de usuarios</a>
                 </form>
             </li>
@@ -52,6 +56,7 @@
                   <form method="post" action="{% url 'main_app:coord_general' %}"  name="coord_general">
                       {% csrf_token %}
                       <input class="" name="estado" type='hidden' value="{{ estado }}">
+                      <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                       <a class ="submenu-item" href="javascript:document.coord_general.submit();">Asignar coordinador general</a>
                   </form>
               </li>
@@ -61,6 +66,7 @@
                   <form method="post" action="{% url 'main_app:coord_area' %}"  name="coord_area">
                       {% csrf_token %}
                       <input class="" name="estado" type='hidden' value="{{ estado }}">
+                      <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                       <a class ="submenu-item" href="javascript:document.coord_area.submit();">Asignar coordinador de área</a>
                   </form>
               </li>
@@ -77,6 +83,7 @@
                 <form method="post" action="{% url 'recursos:resources_author' %}"  name="resources_author">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.resources_author.submit();">Autores</a>
                 </form>
             </li>
@@ -84,6 +91,7 @@
                 <form method="post" action="{% url 'recursos:resources_referee' %}"  name="resources_referee">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.resources_referee.submit();">Arbitros</a>
                 </form>
             </li>
@@ -91,6 +99,7 @@
                 <form method="post" action="{% url 'recursos:resources_event' %}"  name="resources_event">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                     <a class ="submenu-item" href="javascript:document.resources_event.submit();">Eventos</a>
                 </form>
           </li>
@@ -98,6 +107,7 @@
               <form method="post" action="{% url 'recursos:resources_arbitration' %}"  name="resources_arbitration">
                   {% csrf_token %}
                   <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                   <a class ="submenu-item" href="javascript:document.resources_arbitration.submit();">Arbitraje</a>
               </form>
         </li>
@@ -105,6 +115,7 @@
             <form method="post" action="{% url 'recursos:resources_sesion' %}"  name="resources_sesion">
                 {% csrf_token %}
                 <input class="" name="estado" type='hidden' value="{{ estado }}">
+                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                 <a class ="submenu-item" href="javascript:document.resources_sesion.submit();">Sesión</a>
             </form>
       </li>
@@ -112,6 +123,7 @@
           <form method="post" action="{% url 'recursos:resources_asovac' %}"  name="resources_asovac">
               {% csrf_token %}
               <input class="" name="estado" type='hidden' value="{{ estado }}">
+              <input class="" name="event_id" type='hidden' value="{{ event_id }}">
               <a class ="submenu-item" href="javascript:document.resources_asovac.submit();">AsoVAC</a>
           </form>
     </li>
@@ -122,6 +134,7 @@
         <form method="post" action="{% url 'arbitrajes:arbitrations_areas_subareas' %}"  name="arbitrations_areas_subareas">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.arbitrations_areas_subareas.submit();">Areas y Subáreas</a>
         </form>
     </li>
@@ -132,6 +145,7 @@
         <form method="post" action="{% url 'autores:authors_list' %}"  name="authors_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.authors_list.submit();">Autores</a>
         </form>
     </li>
@@ -139,6 +153,7 @@
         <form method="post" action="{% url 'arbitrajes:referee_list' %}"  name="referee_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.referee_list.submit();">Arbitros</a>
         </form>
     </li>
@@ -147,6 +162,7 @@
         <form method="post" action="{% url 'trabajos:jobs_list' %}"  name="jobs_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.jobs_list.submit();">Trabajos</a>
         </form>
     </li>
@@ -155,6 +171,7 @@
         <form method="post" action="{% url 'sesiones:sesions_list' %}"  name="sesions_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.sesions_list.submit();">Sesión de arbitraje</a>
         </form>
     </li>
@@ -162,6 +179,7 @@
         <form method="post" action="{% url 'arbitrajes:listado' %}"  name="listado">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.listado.submit();"> Arbitraje</a>
         </form>
     </li>
@@ -178,6 +196,7 @@
         <form method="post" action="{% url 'eventos:event_create' %}"  name="event_create">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.event_create.submit();">Organizar evento</a>
         </form>
     </li>
@@ -186,6 +205,7 @@
         <form method="post" action="{% url 'sesiones:sesions_space_list' %}"  name="sesions_space_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.sesions_space_list.submit();">Espacio</a>
         </form>
     </li>
@@ -194,6 +214,7 @@
         <form method="post" action="{% url 'eventos:event_list' %}"  name="event_list">
             {% csrf_token %}
             <input class="" name="estado" type='hidden' value="{{ estado }}">
+            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
             <a class ="submenu-item" href="javascript:document.event_list.submit();">Lista de eventos</a>
         </form>
     </li>

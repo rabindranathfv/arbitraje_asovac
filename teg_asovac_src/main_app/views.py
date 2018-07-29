@@ -24,7 +24,7 @@ def home(request):
     # queryset
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
-    # print(arbitraje_data)
+    print(arbitraje_data)
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
@@ -88,17 +88,14 @@ def dashboard(request):
 
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
-
-    print (request.user.id)
+        estado=-1
+        event_id=-1
+        
     query=Usuario_asovac.objects.order_by('id').first()
     print "Query result:"
     print (query)
-    # print("DEBAJO ESTA EL USERNAME")
-    # print(request.user.username)
-    print "Estado del arbitraje en dashboard"
-    print (request.POST['estado'])
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
 
@@ -108,6 +105,7 @@ def dashboard(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
     }
     return render(request, 'main_app_dashboard.html', context)
@@ -123,8 +121,10 @@ def data_basic(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id= -1
         
     context = {
         'nombre_vista' : 'Administración',
@@ -132,6 +132,7 @@ def data_basic(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'username' : 'Username',
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'form' : form
     }
@@ -147,14 +148,17 @@ def state_arbitration(request):
 
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -171,14 +175,17 @@ def users_list(request):
 
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id= -1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -211,14 +218,17 @@ def user_edit(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
         estado=0
+        event_id= -1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -233,14 +243,17 @@ def user_roles(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
         estado=0
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -255,14 +268,17 @@ def coord_general(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -277,14 +293,17 @@ def coord_area(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -299,14 +318,17 @@ def total(request):
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
         'item_active' : '3',
         'username' : 'Username',
     }
