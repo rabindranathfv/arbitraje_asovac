@@ -14,6 +14,16 @@ from django.conf.urls import url
 from django.contrib import admin
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
+# Global functions 
+def get_type_user(rol):
+    type_user = 0 # Donde 1 es admin, coordinador general o coordinador de area
+    for item in rol:
+        if item.id == 1 or item.id == 2 or item.id == 3:
+            type_user = 1 # Donde 1 es admin, coordinador general o coordinador de area
+            break
+    return type_user
+
+
 # Create your views here.
 def arbitrajes_pag(request):
     context = {
@@ -51,6 +61,7 @@ def referee_list(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol)
 
     rol_id=[]
     for item in rol:
@@ -66,6 +77,7 @@ def referee_list(request):
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_referee_list.html', context)
 
@@ -84,6 +96,7 @@ def referee_edit(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol)
 
     rol_id=[]
     for item in rol:
@@ -99,6 +112,7 @@ def referee_edit(request):
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'main_app_referee_edit.html', context)
 
@@ -117,6 +131,7 @@ def areas_subareas(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    type_user = get_type_user(rol)
 
     rol_id=[]
     for item in rol:
@@ -132,5 +147,6 @@ def areas_subareas(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'type_user' : type_user,
     }
     return render(request, 'arbitrations_areas_subareas.html', context)

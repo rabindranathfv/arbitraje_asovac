@@ -97,7 +97,7 @@ class FacturaForm(forms.ModelForm):
 	
 	class Meta:
 		model = Factura
-		fields = ['monto_subtotal','fecha_emision','monto_total', 'iva']
+		fields = ['monto_subtotal','fecha_emision', 'iva']
 
 	def __init__(self, *args, **kwargs):
 		super(FacturaForm,self).__init__(*args, **kwargs)
@@ -109,12 +109,10 @@ class FacturaForm(forms.ModelForm):
 		self.helper.field_class = 'col-sm-8'
 		self.fields['monto_subtotal'].label = "Monto Subtotal"
 		self.fields['fecha_emision'].label = "Fecha de emisión"
-		self.fields['monto_total'].label = "Monto Total"
 		self.fields['iva'].label = "IVA"
 		self.helper.layout = Layout(
 			'monto_subtotal',
 			'fecha_emision',
-			'monto_total',
 			'iva',
 			Div(
                 Div(

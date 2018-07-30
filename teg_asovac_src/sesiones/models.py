@@ -39,8 +39,8 @@ Espacio Model
 """""""""""""""""""""""""""
 class Espacio(models.Model):
 
-	espacio_fisico = models.OneToOneField(Espacio_fisico)
-	espacio_virtual = models.OneToOneField(Espacio_virtual)
+	espacio_fisico = models.ForeignKey(Espacio_fisico,null = True, blank = True)#Se deben validar con front-end
+	espacio_virtual = models.ForeignKey(Espacio_virtual, null = True, blank = True)
 
 	fecha_ocupacion = models.DateTimeField()
 	tipo_espacio = models.CharField(max_length=50)
