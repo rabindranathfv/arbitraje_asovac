@@ -19,7 +19,7 @@
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-        {% if type_user == 1 %}
+        {% if 1 in rol_id or 2 in rol_id or 3 in rol_id %}
           <ul class="nav navbar-nav">
             <li>
               <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">

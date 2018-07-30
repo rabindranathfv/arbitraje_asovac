@@ -16,14 +16,6 @@ from django.template.loader import get_template
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
-# Global functions 
-def get_type_user(rol):
-    type_user = 0 # Donde 1 es admin, coordinador general o coordinador de area
-    for item in rol:
-        if item.id == 1 or item.id == 2 or item.id == 3:
-            type_user = 1 # Donde 1 es admin, coordinador general o coordinador de area
-            break
-    return type_user
 
 # Create your views here.
 def recursos_pag(request):
@@ -62,8 +54,7 @@ def resources_author(request):
         estado=-1
         event_id=-1
 
-    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    type_user = get_type_user(rol) 
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all() 
 
     rol_id=[]
     for item in rol:
@@ -81,7 +72,6 @@ def resources_author(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_author.html', context)
 
@@ -99,7 +89,6 @@ def resources_referee(request):
 
     print (rol_id)
 
-    type_user = get_type_user(rol) 
     secondary_navbar_options = ['']
     if request.POST:
         estado= request.POST['estado']
@@ -117,7 +106,6 @@ def resources_referee(request):
         'rol_id' : rol_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_referee.html', context)
 
@@ -136,7 +124,6 @@ def resources_event(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    type_user = get_type_user(rol) 
 
     rol_id=[]
     for item in rol:
@@ -152,7 +139,6 @@ def resources_event(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_event.html', context)
 
@@ -171,7 +157,6 @@ def resources_sesion(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    type_user = get_type_user(rol) 
 
     rol_id=[]
     for item in rol:
@@ -187,7 +172,6 @@ def resources_sesion(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
@@ -206,7 +190,6 @@ def resources_asovac(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    type_user = get_type_user(rol) 
 
     rol_id=[]
     for item in rol:
@@ -222,7 +205,6 @@ def resources_asovac(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_asovac.html', context)
 
@@ -241,7 +223,6 @@ def resources_arbitration(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-    type_user = get_type_user(rol) 
 
     rol_id=[]
     for item in rol:
@@ -257,7 +238,6 @@ def resources_arbitration(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
-        'type_user' : type_user,
     }
     return render(request, 'main_app_resources_arbitrations.html', context)
 
