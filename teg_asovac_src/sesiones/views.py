@@ -22,12 +22,19 @@ def sesions_list(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
 
     context = {
         'nombre_vista' : 'Administración',
@@ -35,6 +42,7 @@ def sesions_list(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -47,16 +55,27 @@ def sesions_edit(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'rol' : rol,
+        'rol_id' : rol_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -70,11 +89,27 @@ def sesions_space_list(request):
 
     secondary_navbar_options = ['']
 
+    if request.POST:
+        estado= request.POST['estado']
+        event_id= request.POST['event_id']
+    else:
+        estado=-1
+        event_id=-1
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'estado' : '0',
+        'estado' : estado,
+        'event_id' : event_id,
+        'rol' : rol,
+        'rol_id' : rol_id,
         'item_active' : '2',
         'username' : 'Username',
     }
@@ -87,16 +122,28 @@ def sesions_space_edit(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
+    
     if request.POST:
         estado= request.POST['estado']
+        event_id= request.POST['event_id']
     else:
-        estado=0
+        estado=-1
+        event_id=-1
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
 
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'event_id' : event_id,
+        'rol' : rol,
+        'rol_id' : rol_id,
         'item_active' : '2',
         'username' : 'Username',
     }

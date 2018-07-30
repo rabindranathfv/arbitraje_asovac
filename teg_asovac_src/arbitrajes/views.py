@@ -52,12 +52,17 @@ def referee_list(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
@@ -80,12 +85,17 @@ def referee_edit(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '2',
         'username' : 'Username',
@@ -108,12 +118,17 @@ def areas_subareas(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',

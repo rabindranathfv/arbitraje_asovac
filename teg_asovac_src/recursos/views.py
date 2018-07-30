@@ -55,12 +55,19 @@ def resources_author(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -74,6 +81,12 @@ def resources_referee(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
 
     secondary_navbar_options = ['']
     if request.POST:
@@ -89,6 +102,7 @@ def resources_referee(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'item_active' : '1',
         'username' : 'Username',
     }
@@ -110,12 +124,17 @@ def resources_event(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -138,12 +157,17 @@ def resources_sesion(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -166,12 +190,17 @@ def resources_asovac(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -194,12 +223,17 @@ def resources_arbitration(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',

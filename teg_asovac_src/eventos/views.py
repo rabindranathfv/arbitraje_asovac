@@ -27,12 +27,19 @@ def event_list(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
@@ -56,12 +63,19 @@ def event_edit(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',
@@ -84,12 +98,19 @@ def event_create(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '4',
         'username' : 'Username',

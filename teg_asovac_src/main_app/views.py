@@ -96,22 +96,24 @@ def dashboard(request):
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
     # rol= usuario.rol.all()
    
-    print "Rol:"
-    print (rol)
-    print "User ID:"
-    print (request.user.id)
-    print "Estado:"
-    print (estado)
-    print "Evento id:"
-    print (event_id)
+    # print "Rol:"
+    # print (rol)
+    # print "User ID:"
+    # print (request.user.id)
+    # print "Estado:"
+    # print (estado)
+    # print "Evento id:"
+    # print (event_id)
     
-    # for item in rol:
-    #         print (item.id)
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
             
         
     # queryset del estado del proceso
     #data = Sistema_asovac.objects.get(pk=arb_id)
-
 
     context = {
         'nombre_vista' : 'Dashboard',
@@ -119,6 +121,7 @@ def dashboard(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
     }
@@ -142,6 +145,12 @@ def data_basic(request):
     
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -149,6 +158,7 @@ def data_basic(request):
         'username' : 'Username',
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'form' : form
@@ -172,12 +182,19 @@ def state_arbitration(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -201,6 +218,11 @@ def users_list(request):
         event_id= -1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
 
     context = {
         'nombre_vista' : 'Administración',
@@ -208,6 +230,7 @@ def users_list(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -247,6 +270,11 @@ def user_edit(request):
         event_id= -1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
 
     context = {
         'nombre_vista' : 'Administración',
@@ -254,6 +282,7 @@ def user_edit(request):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -276,12 +305,19 @@ def user_roles(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -304,12 +340,19 @@ def coord_general(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -332,12 +375,19 @@ def coord_area(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
@@ -360,12 +410,19 @@ def total(request):
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    print (rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
+        'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : '3',
         'username' : 'Username',
