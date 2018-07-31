@@ -11,7 +11,7 @@ from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if ((estado == '0' or estado =='1' or estado =='3' or estado =='5' or estado =='6') and 1 in rol_id and item_active == 1) or ((estado =='2' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 1):
+    if ((estado == '0' or estado =='1' or estado =='3' or estado =='5' or estado =='6' or estado =='7' or estado == '8') and 1 in rol_id and item_active == 1) or ((estado =='2' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 1):
         return 1
     return 0
 
@@ -27,19 +27,19 @@ def verify_estado_arbitrajes_option(estado,rol_id,item_active):
 
 
 def verify_usuario_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado == '6') and 1 in rol_id and item_active == 1):
+    if ((estado == '0' or estado =='1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado == '6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_general_option(estado,rol_id,item_active):
-    if((estado == '1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado =='6') and  1 in rol_id and item_active == 1):
+    if((estado == '1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and  1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
-    if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1) or((estado == '3' or estado == '4' or estado == '5' or estado =='6') and 1 in rol_id and item_active == 1):
+    if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1) or((estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1):
         return 1
     return 0
 
@@ -47,45 +47,51 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
 
 
 def verify_recursos_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado == '1' or estado == '2' or estado == '3' or estado == '4' or estado == '5' or estado =='6') and 1 in rol_id and item_active == 1):
+    if ((estado == '0' or estado == '1' or estado == '2' or estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7') and 1 in rol_id and item_active == 1) or (estado =='8' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active==1):
         return 1
     return 0
 
 def verify_areas_subareas_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='3' or estado == '4' or estado == '5' or estado =='6') and 1 in rol_id and item_active == 1) or (estado == '1' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and (1 in rol_id or 2 in rol_id) and item_active ==1):
+    if ((estado == '0' or estado =='3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1) or (estado == '1' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and (1 in rol_id or 2 in rol_id) and item_active ==1):
         return 1
     return 0
 
 
 def verify_autores_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='5' or estado =='6') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 2):
+    if ((estado == '0' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_arbitros_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='5' or estado =='6') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if ((estado == '0' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_sesions_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado =='5' or estado =='6') and 1 in rol_id and item_active == 2) or (estado == '4' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado =='5' or estado =='6' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '4' or estado =='7') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5') and 1 in rol_id and item_active == 2) or (estado =='6' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or (estado =='6' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5')and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='6' and 1 in rol_id and item_active ==2):
+    if((estado =='3' or estado =='4' or estado =='5')and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2) or ((estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active ==2):
         return 1
     return 0
 
 def verify_eventos_sidebar_full(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5' or estado =='6') and 1 in rol_id and item_active == 4):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 4):
         return 1
     return 0
+
+def verify_espacio_option(estado,rol_id,item_active):
+    if((estado =='7' or estado =='8') and 1 in rol_id and item_active == 4):
+        return 1
+    return 0
+
 
 # Create your views here.
 def sesiones_pag(request):
@@ -135,6 +141,8 @@ def sesions_list(request):
     trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
 
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+
+    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -158,6 +166,7 @@ def sesions_list(request):
         'datos_basicos_sidebar' : datos_basicos_sidebar,
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
+        'espacio_sidebar':espacio_sidebar,
     }
     return render(request, 'sesiones_sesions_list.html', context)
 
@@ -202,6 +211,8 @@ def sesions_edit(request):
     trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
 
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+
+    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -225,6 +236,7 @@ def sesions_edit(request):
         'datos_basicos_sidebar' : datos_basicos_sidebar,
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
+        'espacio_sidebar':espacio_sidebar,
     }
     return render(request, 'sesiones_sesions_edit.html', context)
 
@@ -269,6 +281,8 @@ def sesions_space_list(request):
     trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
 
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+
+    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -293,6 +307,7 @@ def sesions_space_list(request):
         'datos_basicos_sidebar' : datos_basicos_sidebar,
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
+        'espacio_sidebar':espacio_sidebar,
     }
     return render(request, 'sesiones_space_list.html', context)
 
@@ -337,6 +352,8 @@ def sesions_space_edit(request):
     trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
 
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+
+    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -361,5 +378,6 @@ def sesions_space_edit(request):
         'datos_basicos_sidebar' : datos_basicos_sidebar,
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
+        'espacio_sidebar':espacio_sidebar,
     }
     return render(request, 'sesiones_space_edit.html', context)

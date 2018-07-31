@@ -212,7 +212,7 @@
 	    {% endif %}
 
 
-	    {% if eventos_sidebar_full == 1%}
+	    {% if eventos_sidebar_full == 1 %}
 		    <li>
 	            <form method="post" action="{% url 'eventos:event_create' %}"  name="event_create">
 	                {% csrf_token %}
@@ -222,15 +222,17 @@
 	            </form>
 	        </li>
 
-	        <li>
-	            <form method="post" action="{% url 'sesiones:sesions_space_list' %}"  name="sesions_space_list">
-	                {% csrf_token %}
-	                <input class="" name="estado" type='hidden' value="{{ estado }}">
-	                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-	                <a class ="submenu-item" href="javascript:document.sesions_space_list.submit();">Espacio</a>
-	            </form>
-	        </li>
-
+            {% if espacio_sidebar == 1%}
+    	        <li>
+    	            <form method="post" action="{% url 'sesiones:sesions_space_list' %}"  name="sesions_space_list">
+    	                {% csrf_token %}
+    	                <input class="" name="estado" type='hidden' value="{{ estado }}">
+    	                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+    	                <a class ="submenu-item" href="javascript:document.sesions_space_list.submit();">Espacio</a>
+    	            </form>
+    	        </li>
+            {% endif %}
+            
 	        <li>
 	            <form method="post" action="{% url 'eventos:event_list' %}"  name="event_list">
 	                {% csrf_token %}
