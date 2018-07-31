@@ -7,7 +7,7 @@ from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if ((estado == '0' or estado =='1') and 1 in rol_id and item_active == 1) or (estado =='2' and (1 in rol_id or 2 in rol_id) and item_active == 1):
+    if ((estado == '0' or estado =='1' or estado =='3') and 1 in rol_id and item_active == 1) or (estado =='2' and (1 in rol_id or 2 in rol_id) and item_active == 1):
         return 1
     return 0
 
@@ -18,19 +18,19 @@ def verify_datos_basicos_option(estado,rol_id,item_active):
 
 
 def verify_usuario_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado =='2') and 1 in rol_id and item_active == 1):
+    if ((estado == '0' or estado =='1' or estado =='2' or estado == '3') and 1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_general_option(estado,rol_id,item_active):
-    if((estado == '1' or estado =='2') and  1 in rol_id and item_active ==1):
+    if((estado == '1' or estado =='2' or estado == '3') and  1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
-    if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1):
+    if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1) or(estado == '3' and 1 in rol_id and item_active == 1):
         return 1
     return 0
 
@@ -38,39 +38,43 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
 
 
 def verify_recursos_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado == '1' or estado == '2') and 1 in rol_id and item_active == 1):
+    if ((estado == '0' or estado == '1' or estado == '2' or estado == '3') and 1 in rol_id and item_active == 1):
         return 1
     return 0
 
 def verify_areas_subareas_option(estado,rol_id,item_active):
-    if (estado == '0' and 1 in rol_id and item_active == 1) or (estado == '1' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and (1 in rol_id or 2 in rol_id) and item_active ==1):
+    if ((estado == '0' or estado =='3') and 1 in rol_id and item_active == 1) or (estado == '1' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and (1 in rol_id or 2 in rol_id) and item_active ==1):
         return 1
     return 0
 
 
 def verify_autores_option(estado,rol_id,item_active):
-    if (estado == '0' and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2') and (1 in rol_id or 2 in rol_id) and item_active == 2):
+    if (estado == '0' and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3') and (1 in rol_id or 2 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_arbitros_option(estado,rol_id, item_active):
-    if (estado == '0' and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active ==2):
+    if (estado == '0' and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active ==2):
         return 1
     return 0
 
 def verify_sesions_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2') and 1 in rol_id and item_active == 2):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3') and 1 in rol_id and item_active == 2):
         return 1
     return 0
 
 def verify_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2') and 1 in rol_id and item_active == 2):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3') and 1 in rol_id and item_active == 2):
         return 1
     return 0
 
+def verify_trabajo_option(estado, rol_id,item_active):
+    if(estado =='3' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+        return 1
+    return 0
 
 def verify_eventos_sidebar_full(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='1' or estado == '2') and 1 in rol_id and item_active == 4):
+    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3') and 1 in rol_id and item_active == 4):
         return 1
     return 0
 
@@ -120,6 +124,8 @@ def event_list(request):
 
     asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
     datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
+
+    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -142,6 +148,7 @@ def event_list(request):
         'asignacion_coordinador_general': asignacion_coordinador_general,
         'asignacion_coordinador_area': asignacion_coordinador_area,
         'datos_basicos_sidebar' : datos_basicos_sidebar,
+        'trabajos_sidebar':trabajos_sidebar,
     }
     return render(request, 'main_app_event_list.html', context)
 
@@ -184,6 +191,8 @@ def event_edit(request):
 
     asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
     datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
+
+    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -206,6 +215,7 @@ def event_edit(request):
         'asignacion_coordinador_general': asignacion_coordinador_general,
         'asignacion_coordinador_area': asignacion_coordinador_area,
         'datos_basicos_sidebar' : datos_basicos_sidebar,
+        'trabajos_sidebar':trabajos_sidebar,
     }
     return render(request, 'main_app_event_edit.html', context)
 
@@ -247,6 +257,8 @@ def event_create(request):
 
     asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
     datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
+
+    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -269,5 +281,6 @@ def event_create(request):
         'asignacion_coordinador_general': asignacion_coordinador_general,
         'asignacion_coordinador_area': asignacion_coordinador_area,
         'datos_basicos_sidebar' : datos_basicos_sidebar,
+        'trabajos_sidebar':trabajos_sidebar,
     }
     return render(request, 'event_create.html', context)

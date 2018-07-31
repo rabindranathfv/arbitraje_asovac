@@ -175,6 +175,17 @@
 	            </form>
 	        </li>
 	    {% endif %}
+
+        {% if trabajos_sidebar == 1 %}
+            <li>
+                <form method="post" action="{% url 'arbitrajes:listado' %}"  name="listado">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                    <a class ="submenu-item" href="javascript:document.listado.submit();"> Trabajo</a>
+                </form>
+            </li>
+        {% endif %}
 	        
 	    {% if sesion_arbitraje_sidebar == 1%}
 	        <li>
@@ -197,6 +208,7 @@
 	            </form>
 	        </li>
 	    {% endif %}
+
 
 	    {% if eventos_sidebar_full == 1%}
 		    <li>
