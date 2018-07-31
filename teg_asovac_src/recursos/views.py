@@ -16,6 +16,53 @@ from django.template.loader import get_template
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
+# Global functions
+# Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
+def verify_configuracion_general_option(estado, rol_id, item_active): 
+    if (estado == '0' and 1 in rol_id and item_active == 1):
+        return 1
+    return 0
+
+def verify_usuario_option(estado,rol_id, item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 1):
+        return 1
+    return 0
+
+def verify_recursos_option(estado,rol_id,item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 1):
+        return 1
+    return 0
+
+def verify_areas_subareas_option(estado,rol_id,item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 1):
+        return 1
+    return 0
+
+
+def verify_autores_option(estado,rol_id,item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 2):
+        return 1
+    return 0
+
+def verify_arbitros_option(estado,rol_id, item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 2):
+        return 1
+    return 0
+
+def verify_sesions_arbitraje_option(estado,rol_id, item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 2):
+        return 1
+    return 0
+
+def verify_arbitraje_option(estado,rol_id, item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 2):
+        return 1
+    return 0
+
+def verify_eventos_sidebar_full(estado,rol_id,item_active):
+    if (estado == '0' and 1 in rol_id and item_active == 4):
+        return 1
+    return 0
 
 # Create your views here.
 def recursos_pag(request):
@@ -62,6 +109,17 @@ def resources_author(request):
 
     print (rol_id)
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -72,6 +130,15 @@ def resources_author(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_author.html', context)
 
@@ -97,6 +164,17 @@ def resources_referee(request):
         estado=-1
         event_id=-1
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -106,6 +184,15 @@ def resources_referee(request):
         'rol_id' : rol_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_referee.html', context)
 
@@ -129,6 +216,17 @@ def resources_event(request):
     for item in rol:
         rol_id.append(item.id)
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -139,6 +237,15 @@ def resources_event(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_event.html', context)
 
@@ -162,6 +269,17 @@ def resources_sesion(request):
     for item in rol:
         rol_id.append(item.id)
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -172,6 +290,15 @@ def resources_sesion(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
@@ -195,6 +322,17 @@ def resources_asovac(request):
     for item in rol:
         rol_id.append(item.id)
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -205,6 +343,15 @@ def resources_asovac(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_asovac.html', context)
 
@@ -228,6 +375,17 @@ def resources_arbitration(request):
     for item in rol:
         rol_id.append(item.id)
 
+    item_active = 1
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -238,6 +396,15 @@ def resources_arbitration(request):
         'event_id' : event_id,
         'item_active' : '1',
         'username' : 'Username',
+        'configuracion_general_sidebar': configuracion_general_sidebar,
+        'usuarios_sidebar' : usuarios_sidebar,
+        'recursos_sidebar' : recursos_sidebar,
+        'areas_subareas_sidebar' : areas_subareas_sidebar,
+        'autores_sidebar' : autores_sidebar,
+        'arbitros_sidebar' : arbitros_sidebar,
+        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
+        'arbitraje_sidebar' : arbitraje_sidebar,
+        'eventos_sidebar_full' : eventos_sidebar_full,
     }
     return render(request, 'main_app_resources_arbitrations.html', context)
 
