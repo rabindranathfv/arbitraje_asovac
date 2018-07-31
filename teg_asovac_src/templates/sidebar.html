@@ -12,15 +12,18 @@
 	            <div class="dropdown">
 	                <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
 	                <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
-	                    <li>
-	                        <form method="post" action="{% url 'main_app:data_basic' %}"  name="data_basic">
-	                            {% csrf_token %}
-	                            <input class="" name="estado" type='hidden' value="{{ estado }}">
-	                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-	                            <a class ="submenu-item" href="javascript:document.data_basic.submit();">Datos básicos </a>
-	                        </form>
-	                    </li>
 	                    
+                        {% if datos_basicos_sidebar == 1 %}
+                            <li>
+    	                        <form method="post" action="{% url 'main_app:data_basic' %}"  name="data_basic">
+    	                            {% csrf_token %}
+    	                            <input class="" name="estado" type='hidden' value="{{ estado }}">
+    	                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+    	                            <a class ="submenu-item" href="javascript:document.data_basic.submit();">Datos básicos </a>
+    	                        </form>
+    	                    </li>
+    	                {% endif %} 
+
 	                    <li>
 	                        <form method="post" action="{% url 'main_app:arbitration_state' %}"  name="arbitration_state">
 	                            {% csrf_token %}
@@ -67,15 +70,15 @@
 	                        </li>
                         {% endif %}
 
-                        {% if estado != '0' and estado != '1' %}
-                        <li>
-                            <form method="post" action="{% url 'main_app:coord_area' %}"  name="coord_area">
-                                {% csrf_token %}
-                                <input class="" name="estado" type='hidden' value="{{ estado }}">
-                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                                <a class ="submenu-item" href="javascript:document.coord_area.submit();">Asignar coordinador de área</a>
-                            </form>
-                        </li>
+                        {% if asignacion_coordinador_area == 1 %}
+                            <li>
+                                <form method="post" action="{% url 'main_app:coord_area' %}"  name="coord_area">
+                                    {% csrf_token %}
+                                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                                    <a class ="submenu-item" href="javascript:document.coord_area.submit();">Asignar coordinador de área</a>
+                                </form>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
