@@ -95,6 +95,27 @@ def verify_espacio_option(estado,rol_id,item_active):
         return 1
     return 0
 
+# Funciones para verificar los campos del navbar
+def verify_configuration(estado,rol_id):
+    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' or estado == '8') and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id)):
+        return 0 
+    return 1
+
+def verify_arbitration(estado,rol_id):
+    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' and estado == '8') and 3 in rol_id) or ((estado != '5' or estado != '6') and 4 in rol_id)):
+        return 0 
+    return 1
+
+def verify_result(estado,rol_id):
+    if ( ((estado !='6' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id)):
+        return 0 
+    return 1
+
+def verify_event(estado,rol_id):
+    if (  1 not in rol_id):
+        return 0 
+    return 1
+
 # Create your views here.
 def login(request):
     form = MyLoginForm()
@@ -205,9 +226,11 @@ def dashboard(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-    # queryset del estado del proceso
-    #data = Sistema_asovac.objects.get(pk=arb_id)
-    print(configuracion_general_sidebar)
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+    
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
@@ -232,6 +255,10 @@ def dashboard(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_dashboard.html', context)
 

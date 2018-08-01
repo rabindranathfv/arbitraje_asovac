@@ -19,16 +19,19 @@
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-        {% if 1 in rol_id or 2 in rol_id or 3 in rol_id %}
+     
           <ul class="nav navbar-nav">
-            <li>
-              <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
-                  {% csrf_token %}
-                  <input class="" name="estado" type='hidden' value="{{ estado }}">
-                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-              </form>
-              <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
-            </li>
+            {% if verify_configuration == 1 %}
+              <li>
+                <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+                <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
+              </li>
+            {% endif %}
+            {% if verify_arbitration == 1 %}
             <li>
                 <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
                     {% csrf_token %}
@@ -37,6 +40,8 @@
                 </form>
               <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
             </li>
+            {% endif %}
+            {% if verify_result == 1 %}
             <li>
               <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
                   {% csrf_token %}
@@ -46,6 +51,8 @@
               <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
             
             </li>
+            {% endif %}
+            {% if verify_event == 1 %}
             <li>
                 <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
                     {% csrf_token %}
@@ -54,8 +61,8 @@
                 </form>
               <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
             </li>
+            {% endif %}
           </ul> 
-        {% endif %}
 
         {% if user.username %}
         <!-- Username logged in -->
