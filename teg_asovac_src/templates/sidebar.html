@@ -180,11 +180,11 @@
 
         {% if trabajos_sidebar == 1 %}
             <li>
-                <form method="post" action="{% url 'arbitrajes:listado' %}"  name="listado">
+                <form method="post" action="{% url 'trabajos:jobs_list' %}"  name="jobs_list">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                    <a class ="submenu-item" href="javascript:document.listado.submit();"> Trabajo</a>
+                    <a class ="submenu-item" href="javascript:document.jobs_list.submit();"> Trabajos</a>
                 </form>
             </li>
         {% endif %}

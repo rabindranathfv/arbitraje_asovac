@@ -178,15 +178,6 @@ def dashboard(request):
         event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-   
-    # print "Rol:"
-    # print (rol)
-    # print "User ID:"
-    # print (request.user.id)
-    # print "Estado:"
-    # print (estado)
-    # print "Evento id:"
-    # print (event_id)
     
     rol_id=[]
     for item in rol:

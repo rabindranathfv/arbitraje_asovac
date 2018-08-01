@@ -261,7 +261,7 @@ def sesions_space_list(request):
     for item in rol:
         rol_id.append(item.id)
 
-    item_active = 2
+    item_active = 4
     configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
     usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
     recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
