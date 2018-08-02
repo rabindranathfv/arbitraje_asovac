@@ -97,7 +97,7 @@ def verify_espacio_option(estado,rol_id,item_active):
 
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
-    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' or estado == '8') and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id)):
+    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id)):
         return 0 
     return 1
 
@@ -226,6 +226,7 @@ def dashboard(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
     configuration= verify_configuration(estado,rol_id)
     arbitration= verify_arbitration(estado,rol_id)
     result=  verify_result(estado,rol_id)
@@ -308,6 +309,12 @@ def data_basic(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -334,6 +341,10 @@ def data_basic(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -381,6 +392,11 @@ def state_arbitration(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -406,6 +422,10 @@ def state_arbitration(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -453,6 +473,11 @@ def users_list(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -478,6 +503,10 @@ def users_list(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -541,6 +570,12 @@ def user_edit(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+    
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -566,6 +601,10 @@ def user_edit(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -612,6 +651,12 @@ def user_roles(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -637,6 +682,10 @@ def user_roles(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -683,6 +732,12 @@ def coord_general(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -708,6 +763,10 @@ def coord_general(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -754,6 +813,12 @@ def coord_area(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -779,6 +844,10 @@ def coord_area(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -825,6 +894,12 @@ def total(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -850,5 +925,9 @@ def total(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_totales.html', context)

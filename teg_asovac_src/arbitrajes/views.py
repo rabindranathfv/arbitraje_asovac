@@ -13,6 +13,7 @@ from django.conf.urls import include
 from django.conf.urls import url
 from django.contrib import admin
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event
 
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
@@ -163,6 +164,12 @@ def referee_list(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -188,6 +195,10 @@ def referee_list(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_referee_list.html', context)
 
@@ -233,6 +244,12 @@ def referee_edit(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -258,6 +275,10 @@ def referee_edit(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_referee_edit.html', context)
 
@@ -303,6 +324,12 @@ def areas_subareas(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -328,5 +355,9 @@ def areas_subareas(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'arbitrations_areas_subareas.html', context)

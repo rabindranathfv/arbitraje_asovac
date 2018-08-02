@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from .forms import DatosPagadorForm, PagoForm, FacturaForm
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event
 
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
@@ -147,6 +148,12 @@ def authors_list(request):
 	estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
 	espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+	configuration= verify_configuration(estado,rol_id)
+	arbitration= verify_arbitration(estado,rol_id)
+	result=  verify_result(estado,rol_id)
+	event= verify_event(estado,rol_id)
+
 	context = {
         'nombre_vista' : 'Autores',
         'main_navbar_options' : main_navbar_options,
@@ -172,6 +179,10 @@ def authors_list(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+		'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
 	return render(request, 'main_app_authors_list.html', context)
 
@@ -217,6 +228,12 @@ def author_edit(request):
 	estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
 	espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+	configuration= verify_configuration(estado,rol_id)
+	arbitration= verify_arbitration(estado,rol_id)
+	result=  verify_result(estado,rol_id)
+	event= verify_event(estado,rol_id)
+
 	context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -242,6 +259,10 @@ def author_edit(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+		'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
 	return render(request, 'main_app_author_edit.html', context)
 

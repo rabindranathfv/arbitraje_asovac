@@ -7,6 +7,7 @@ from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event
 
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
@@ -143,6 +144,12 @@ def sesions_list(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -167,6 +174,10 @@ def sesions_list(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'sesiones_sesions_list.html', context)
 
@@ -213,6 +224,12 @@ def sesions_edit(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -237,6 +254,10 @@ def sesions_edit(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'sesiones_sesions_edit.html', context)
 
@@ -283,6 +304,12 @@ def sesions_space_list(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -308,6 +335,10 @@ def sesions_space_list(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'sesiones_space_list.html', context)
 
@@ -354,6 +385,12 @@ def sesions_space_edit(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Administración',
         'main_navbar_options' : main_navbar_options,
@@ -379,5 +416,9 @@ def sesions_space_edit(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'sesiones_space_edit.html', context)

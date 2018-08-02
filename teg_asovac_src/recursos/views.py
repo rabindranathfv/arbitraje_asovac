@@ -15,6 +15,7 @@ from .utils import render_to_pdf
 from django.template.loader import get_template
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event
 
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
@@ -50,9 +51,6 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
     if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1) or((estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1):
         return 1
     return 0
-
-
-
 
 def verify_recursos_option(estado,rol_id,item_active):
     if ((estado == '0' or estado == '1' or estado == '2' or estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7') and 1 in rol_id and item_active == 1) or (estado =='8' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active==1):
@@ -168,6 +166,12 @@ def resources_author(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -193,6 +197,10 @@ def resources_author(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_resources_author.html', context)
 
@@ -240,6 +248,12 @@ def resources_referee(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -264,6 +278,10 @@ def resources_referee(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_resources_referee.html', context)
 
@@ -309,6 +327,12 @@ def resources_event(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -334,6 +358,10 @@ def resources_event(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_resources_event.html', context)
 
@@ -379,6 +407,12 @@ def resources_sesion(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -404,6 +438,10 @@ def resources_sesion(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
@@ -449,6 +487,12 @@ def resources_asovac(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -474,6 +518,10 @@ def resources_asovac(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
     }
     return render(request, 'main_app_resources_asovac.html', context)
 
@@ -519,6 +567,12 @@ def resources_arbitration(request):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
 
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
     context = {
         'nombre_vista' : 'Arbitros',
         'main_navbar_options' : main_navbar_options,
@@ -544,6 +598,10 @@ def resources_arbitration(request):
         'trabajos_sidebar':trabajos_sidebar,
         'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
         'espacio_sidebar':espacio_sidebar,
+        'verify_configuration':configuration,
+        'verify_arbitration':arbitration,
+        'verify_result':result,
+        'verify_event':event,
 
     }
     return render(request, 'main_app_resources_arbitrations.html', context)
