@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
-
+from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
 # Global functions
@@ -116,6 +116,58 @@ def verify_event(estado,rol_id):
         return 0 
     return 1
 
+def validate_rol_status(estado,rol_id,item_active):
+    items={}
+    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
+    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
+    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
+    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+    
+    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
+    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
+    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
+    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
+
+    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
+    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
+    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
+
+    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
+    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+
+    configuration= verify_configuration(estado,rol_id)
+    arbitration= verify_arbitration(estado,rol_id)
+    result=  verify_result(estado,rol_id)
+    event= verify_event(estado,rol_id)
+
+    items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('main_app:data_basic')])
+
+    items.setdefault("autores_sidebar",[autores_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("arbitros_sidebar",[arbitros_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("sesion_arbitraje_sidebar",[sesion_arbitraje_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("arbitraje_sidebar",[arbitraje_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('main_app:data_basic')])
+
+    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:data_basic')])
+    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:data_basic')])
+    items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('main_app:data_basic')])
+
+    items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic')])
+
+    items.setdefault("configuration",[configuration,reverse('main_app:data_basic')])
+    items.setdefault("arbitration",[arbitration,reverse('main_app:data_basic')])
+    items.setdefault("result",[result,reverse('main_app:data_basic')])
+    items.setdefault("event",[event,reverse('main_app:data_basic')])
+
+    return items
+
 # Create your views here.
 def login(request):
     form = MyLoginForm()
@@ -205,33 +257,10 @@ def dashboard(request):
         rol_id.append(item.id)
 
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-    
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
 
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
-    
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
@@ -240,26 +269,27 @@ def dashboard(request):
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -288,63 +318,38 @@ def data_basic(request):
     print (rol_id)
 
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Configuracion general',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
-        'username' : 'Username',
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'form' : form,
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -371,61 +376,38 @@ def state_arbitration(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Configuracion general',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -452,61 +434,38 @@ def users_list(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -549,62 +508,38 @@ def user_edit(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-    
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -630,62 +565,38 @@ def user_roles(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -711,62 +622,38 @@ def coord_general(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -792,62 +679,38 @@ def coord_area(request):
 
     print (rol_id)
     item_active = 1
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '1',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -873,61 +736,37 @@ def total(request):
 
     print (rol_id)
     item_active = 3
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    items=validate_rol_status(estado,rol_id,item_active)
+    print items
 
     context = {
-        'nombre_vista' : 'Administración',
+        'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : '3',
-        'username' : 'Username',
-        'configuracion_general_sidebar': configuracion_general_sidebar,
-        'usuarios_sidebar' : usuarios_sidebar,
-        'recursos_sidebar' : recursos_sidebar,
-        'areas_subareas_sidebar' : areas_subareas_sidebar,
-        'autores_sidebar' : autores_sidebar,
-        'arbitros_sidebar' : arbitros_sidebar,
-        'sesion_arbitraje_sidebar' : sesion_arbitraje_sidebar,
-        'arbitraje_sidebar' : arbitraje_sidebar,
-        'eventos_sidebar_full' : eventos_sidebar_full,
-        'asignacion_coordinador_general': asignacion_coordinador_general,
-        'asignacion_coordinador_area': asignacion_coordinador_area,
-        'datos_basicos_sidebar' : datos_basicos_sidebar,
-        'trabajos_sidebar':trabajos_sidebar,
-        'estado_arbitrajes_sidebar':estado_arbitrajes_sidebar,
-        'espacio_sidebar':espacio_sidebar,
-        'verify_configuration':configuration,
-        'verify_arbitration':arbitration,
-        'verify_result':result,
-        'verify_event':event,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
     }
     return render(request, 'main_app_totales.html', context)
