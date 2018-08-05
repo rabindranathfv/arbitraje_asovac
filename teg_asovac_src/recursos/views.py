@@ -195,8 +195,8 @@ def generate_acceptation_letter_with_observations(filename, context):
     Story.append(Spacer(1, 21))
 
     ptext = '<font size=10>Le agradecemos suministrar la nueva versión del resumen a más tardar en <b>tres (3) días</b>, a \
-    partir de la fecha de envío de esta comunicación, mediante el Formulario de registro de la versión final del resumen \
-    (haga click para abrir el formulario)</font>'
+    partir de la fecha de envío de esta comunicación, mediante el <font color=blue><u><link href="%s">Formulario de registro \
+    de la versión final del resumen (haga click para abrir el formulario)</link></u></font>.</font>' % context["completed_work_form_link"]
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 12))
 
@@ -331,7 +331,6 @@ def generate_rejection_letter_with_observations(filename, context):
 
     return response
 
-
 def generate_pdf(request,*args , **kwargs):
     filename = "AsoVAC_Carta_Aceptacion.pdf"
     context = {}
@@ -360,8 +359,9 @@ def generate_pdf(request,*args , **kwargs):
                                 'Falta señalar cuantitativamente la reducción ponderal y en cuánto tiempo además de expresarlo con significancia y análisis estadístico.',
                                 'Es conocido el after taste de la Stevia, sería interesante informar si los animales mostraron alguna preferencia o rechazo por las tres opciones propuestas.']
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
+    context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
 
-    return generate_rejection_letter_with_observations(filename, context)
+    return generate_acceptation_letter_with_observations(filename, context)
     """
     #obtener el template
     template = get_template('pdf/certificate_pdf_base.html')
