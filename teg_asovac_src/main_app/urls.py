@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^admin/total/$',views.total,name='total'),
 
     url(r'^register/$',views.register, name='register'), 
-
+    ## Url para probar plantillas de emails
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
 ]
