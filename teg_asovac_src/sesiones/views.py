@@ -7,7 +7,7 @@ from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 # Create your views here.
 def sesiones_pag(request):
@@ -39,7 +39,11 @@ def sesions_list(request):
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -70,6 +74,8 @@ def sesions_list(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'sesiones_sesions_list.html', context)
 
@@ -96,7 +102,11 @@ def sesions_edit(request):
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -127,6 +137,8 @@ def sesions_edit(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'sesiones_sesions_edit.html', context)
 
@@ -153,7 +165,11 @@ def sesions_space_list(request):
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -184,6 +200,8 @@ def sesions_space_list(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'sesiones_space_list.html', context)
 
@@ -210,7 +228,11 @@ def sesions_space_edit(request):
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -241,5 +263,7 @@ def sesions_space_edit(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'sesiones_space_edit.html', context)

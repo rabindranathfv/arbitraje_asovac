@@ -142,31 +142,53 @@ def validate_rol_status(estado,rol_id,item_active):
     result=  verify_result(estado,rol_id)
     event= verify_event(estado,rol_id)
 
+    # Menu de configuración 
     items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('main_app:data_basic')])
-
-    items.setdefault("autores_sidebar",[autores_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("arbitros_sidebar",[arbitros_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("sesion_arbitraje_sidebar",[sesion_arbitraje_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("arbitraje_sidebar",[arbitraje_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('main_app:data_basic')])
-
-    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:data_basic')])
-    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:data_basic')])
-    items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('main_app:data_basic')])
-
-    items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list')])
+    items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('recursos:resources_author')])
+    items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('arbitrajes:arbitrations_areas_subareas')])
+    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state')])
     items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic')])
+    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general')])
+    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area')])
 
-    items.setdefault("configuration",[configuration,reverse('main_app:data_basic')])
-    items.setdefault("arbitration",[arbitration,reverse('main_app:data_basic')])
-    items.setdefault("result",[result,reverse('main_app:data_basic')])
-    items.setdefault("event",[event,reverse('main_app:data_basic')])
+    # Menu de arbitraje y seguimiento
+    items.setdefault("autores_sidebar",[autores_sidebar,reverse('autores:authors_list')])
+    items.setdefault("arbitros_sidebar",[arbitros_sidebar,reverse('arbitrajes:referee_list')])
+    items.setdefault("sesion_arbitraje_sidebar",[sesion_arbitraje_sidebar,reverse('sesiones:sesions_list')])
+    items.setdefault("arbitraje_sidebar",[arbitraje_sidebar,reverse('arbitrajes:referee_list')])
+    items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('trabajos:jobs_list')])
+
+    # Menu de resultados
+
+    # Menu de eventos 
+    items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('eventos:event_list')])
+    items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('sesiones:sesions_space_list')])
+    
+
+    items.setdefault("configuration",[configuration,''])
+    items.setdefault("arbitration",[arbitration,''])
+    items.setdefault("result",[result,''])
+    items.setdefault("event",[event,''])
 
     return items
+
+def get_route_configuracion(items):
+    
+    for item,val in items.items():
+        # print item, ":", val[0]
+        if ( ((item == "configuracion_general_sidebar") or (item == "usuarios_sidebar") or (item == "recursos_sidebar") or (item == "areas_subareas_sidebar") or (item == "estado_arbitrajes_sidebar") or (item == "datos_basicos_sidebar") or (item == "asignacion_coordinador_general") or (item == "asignacion_coordinador_area")) and val[0] == 1 ):
+            # print item , ":" , val[1]
+            return val[1]
+
+def get_route_seguimiento(items):
+    
+    for item,val in items.items():
+        # print item, ":", val[0]
+        if ( ((item == "autores_sidebar") or (item == "arbitros_sidebar") or (item == "sesion_arbitraje_sidebar") or (item == "arbitraje_sidebar") or (item == "trabajos_sidebar") ) and val[0] == 1 ):
+            # print item , ":" , val[1]
+            return val[1]
+
 
 # Create your views here.
 def login(request):
@@ -181,7 +203,7 @@ def home(request):
     # queryset
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
-    print(arbitraje_data)
+    # print(arbitraje_data)
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
@@ -200,7 +222,7 @@ def create_arbitraje(request):
         form = CreateArbitrajeForm(request.POST or None)
         if form.is_valid():
             form.save()
-            #print(form)
+            # print(form)
             arbitraje_data = Sistema_asovac.objects.all()
             context = {        
                 'username' : request.user.username,
@@ -259,7 +281,13 @@ def dashboard(request):
     item_active = 1
 
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    # print items
+
+    # for item,val in items.items():
+        # print item, ":", val[0]
 
     context = {
         'nombre_vista' : 'Dashboard',
@@ -290,6 +318,8 @@ def dashboard(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -315,11 +345,14 @@ def data_basic(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+   
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    # print items
 
     context = {
         'nombre_vista' : 'Configuracion general',
@@ -350,6 +383,8 @@ def data_basic(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -374,10 +409,16 @@ def state_arbitration(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
+
+    
 
     context = {
         'nombre_vista' : 'Configuracion general',
@@ -408,6 +449,8 @@ def state_arbitration(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -432,10 +475,14 @@ def users_list(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -466,6 +513,8 @@ def users_list(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -506,10 +555,13 @@ def user_edit(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -540,6 +592,8 @@ def user_edit(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -563,10 +617,14 @@ def user_roles(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -597,6 +655,8 @@ def user_roles(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -620,10 +680,14 @@ def coord_general(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -654,6 +718,8 @@ def coord_general(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -677,10 +743,14 @@ def coord_area(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -711,6 +781,8 @@ def coord_area(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -734,10 +806,14 @@ def total(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Usuarios',
@@ -768,5 +844,7 @@ def total(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_totales.html', context)

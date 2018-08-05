@@ -15,7 +15,7 @@ from .utils import render_to_pdf
 from django.template.loader import get_template
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option
+from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 
 # Create your views here.
@@ -61,11 +61,14 @@ def resources_author(request):
     for item in rol:
         rol_id.append(item.id)
 
-    print (rol_id)
+    # print (rol_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -96,6 +99,8 @@ def resources_author(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_author.html', context)
 
@@ -123,7 +128,11 @@ def resources_referee(request):
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -154,6 +163,8 @@ def resources_referee(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_referee.html', context)
 
@@ -179,7 +190,11 @@ def resources_event(request):
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -210,6 +225,8 @@ def resources_event(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_event.html', context)
 
@@ -235,7 +252,11 @@ def resources_sesion(request):
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -266,6 +287,8 @@ def resources_sesion(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
@@ -291,7 +314,11 @@ def resources_asovac(request):
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -322,6 +349,8 @@ def resources_asovac(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_asovac.html', context)
 
@@ -347,7 +376,11 @@ def resources_arbitration(request):
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
-    print items
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
 
     context = {
         'nombre_vista' : 'Recursos',
@@ -378,6 +411,8 @@ def resources_arbitration(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
     }
     return render(request, 'main_app_resources_arbitrations.html', context)
 

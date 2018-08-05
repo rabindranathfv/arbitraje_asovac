@@ -23,7 +23,7 @@
           <ul class="nav navbar-nav">
             {% if verify_configuration == 1 %}
               <li>
-                <form method="post" action="{% url 'main_app:data_basic' %}"  name="nav_data_basic">
+                <form method="post" action="{{ route_conf }}"  name="nav_data_basic">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -33,7 +33,7 @@
             {% endif %}
             {% if verify_arbitration == 1 %}
             <li>
-                <form method="post" action="{% url 'autores:authors_list' %}"  name="nav_authors_list">
+                <form method="post" action="{{ route_seg }}"  name="nav_authors_list">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
