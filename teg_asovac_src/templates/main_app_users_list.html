@@ -28,16 +28,54 @@
                    <div class="jumbotron RLcard">
                    
                     <h2 class="text-left">Lista de usuarios</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
+                    <div class="">
+                        <div class="col-md-12">
+                            <div class="col-md-10">
+                                <form class="form-inline text-right">
+                                    <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                                    <button class="btn btn-primary" type="submit">Buscar</button>
+                                </form>
+                            </div>
+                            <div class="col-md-2">
+                                    <div class="dropdown text-right">
+                                        <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Carga de usuarios
+                                        <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                            <li><a href="#">Cargar usuario</a></li>
+                                            <li><a href="#">Cargar arbitros</a></li>
+                                            <li><a href="#">Cargar coordinador de área</a></li>
+                                            <li><a href="#">Cargar coordinador general</a></li>
+                                        </ul>
+                                    </div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-md-2 text-right">
+                            <div class="dropdown">
+                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Carga de usuarios
+                                <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li><a href="#">Cargar usuario</a></li>
+                                    <li><a href="#">Cargar arbitros</a></li>
+                                    <li><a href="#">Cargar coordinador de área</a></li>
+                                    <li><a href="#">Cargar coordinador general</a></li>
+                                </ul>
+                            </div>
+                        </div> -->
                     </div>
+                    <br>
+                    <br>
                     <br>
                            <table class="table table-bordered">
                                <thead>
                                  <tr>
+                                     <th>
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
+                                     </th>
                                    <th>Nombres</th>
                                    <th>Apellidos</th>
                                    <th>Nombre de usuario</th>
@@ -47,6 +85,9 @@
                                </thead>
                                <tbody>
                                  <tr>
+                                    <td>
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
+                                    </td>
                                    <td>Pedro Manuel</td>
                                    <td>Camacho Rodriguez</td>
                                    <td>PedroManuel</td>
@@ -64,9 +105,15 @@
                                         <a href="" class="btn btn-info" role="button">
                                             <i class="fas fa-door-open"></i>
                                         </a>
+                                        <a href="" class="btn btn-info" role="button">
+                                            <i class="fas fa-user"></i> 
+                                        </a>
                                    </td>
                                  </tr>
                                  <tr>
+                                    <td>
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
+                                    </td>
                                     <td>Pedro Manuel</td>
                                     <td>Camacho Rodriguez</td>
                                     <td>PedroManuel</td>
@@ -84,9 +131,15 @@
                                         <a href="" class="btn btn-info" role="button">
                                             <i class="fas fa-door-open"></i>
                                         </a>
+                                        <a href="" class="btn btn-info" role="button">
+                                            <i class="fas fa-user"></i> 
+                                        </a>
                                    </td>
                                  </tr>
                                  <tr>
+                                    <td>
+                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
+                                    </td>
                                     <td>Pedro Manuel</td>
                                     <td>Camacho Rodriguez</td>
                                     <td>PedroManuel</td>
@@ -103,6 +156,9 @@
                                             </a>
                                             <a href="" class="btn btn-info" role="button">
                                                 <i class="fas fa-door-open"></i>
+                                            </a>
+                                            <a href="" class="btn btn-info" role="button">
+                                                <i class="fas fa-user"></i> 
                                             </a>
                                    </td>
                                  </tr>
