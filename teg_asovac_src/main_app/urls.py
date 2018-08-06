@@ -26,7 +26,7 @@ from django.conf.urls import include
 #import para collect static y usar media
 from django.conf.urls.static import static
 from django.contrib.auth.views import login, logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
-
+from django.conf.urls import include, handler404
 
 from . import views
 from main_app.views import register
@@ -51,3 +51,5 @@ urlpatterns = [
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
 ]
+
+handler404 = 'main_app.views.handler404'
