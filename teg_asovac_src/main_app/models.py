@@ -72,8 +72,9 @@ def crear_usuario_asovac(sender, **kwargs):
 		usuario_asovac = Usuario_asovac(usuario=user)
 
 		usuario_asovac.save()
-		usuario_asovac.rol.add(Rol.objects.get(id=1)) #Los roles se crean en base a la tabla de roles, autor es id=5
-		usuario_asovac.save()
+		if Rol.objects.count() >= 5:
+			usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
+			usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
 
