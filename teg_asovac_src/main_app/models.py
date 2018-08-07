@@ -70,11 +70,31 @@ def crear_usuario_asovac(sender, **kwargs):
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)
-
 		usuario_asovac.save()
-		if Rol.objects.count() >= 5:
-			usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
-			usuario_asovac.save()
+
+		first_usuario_asovac = Usuario_asovac.objects.count()
+
+
+		if Usuario_asovac.objects.count() == 1 and Rol.objects.count() == 0: #Esto asegura la creación de roles al momento de crear el primer usuario
+			rol = Rol(nombre="Admin", descripcion="Administrador")
+			rol.save()
+
+
+			rol = Rol(nombre="Coordinador General", descripcion ="CG")
+			rol.save()
+
+			rol = Rol(nombre="Coordinador de Area", descripcion ="CA")
+			rol.save()
+
+			rol = Rol(nombre="Arbitro de Subarea", descripcion ="AS")
+			rol.save()
+
+			rol = Rol(nombre="Autor",descripcion="Autor")
+			rol.save()
+
+
+		usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
+		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
 
