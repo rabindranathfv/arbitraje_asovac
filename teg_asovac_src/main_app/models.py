@@ -73,12 +73,11 @@ def crear_usuario_asovac(sender, **kwargs):
 		usuario_asovac.save()
 
 		first_usuario_asovac = Usuario_asovac.objects.count()
+		roles = Rol.objects.count()
 
-
-		if Usuario_asovac.objects.count() == 1 and Rol.objects.count() == 0: #Esto asegura la creación de roles al momento de crear el primer usuario
+		if first_usuario_asovac == 1 and roles == 0: #Esto asegura la creación de roles al momento de crear el primer usuario
 			rol = Rol(nombre="Admin", descripcion="Administrador")
 			rol.save()
-
 
 			rol = Rol(nombre="Coordinador General", descripcion ="CG")
 			rol.save()
