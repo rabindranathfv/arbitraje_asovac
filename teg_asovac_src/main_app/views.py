@@ -399,6 +399,8 @@ def state_arbitration(request):
     if request.POST:
         estado= request.POST['estado']
         event_id= request.POST['event_id']
+        print("estado del proceso")
+        print(estado)
     else:
         estado=-1
         event_id=-1

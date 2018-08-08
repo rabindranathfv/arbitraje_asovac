@@ -36,28 +36,39 @@
                         <div class="col-md-8 col-sm-offset-2">
                             <div class="col-md-12">
                                 <select class="form-control">
-                                    <option>Seleccione un estado</option>
-                                    <option>Desactivado</option>
-                                    <option>Iniciado</option>
-                                    <option>En  Selección  y  Asignación  de  coordinadores</option>
-                                    <option>En  carga  de  trabajos</option>
-                                    <option>En  Asignación  de  trabajas  a  áreas</option>
-                                    <option>En  Arbitraje </option>
-                                    <option>En  Cierre  de  Arbitraje </option>
-                                    <option>En  Asignación  de  sesiones </option>
-                                    <option>En  Resumen</option>
+                                    {% if  estado == 0 %}
+                                        <option>Desactivado</option>
+                                    {% elif estado == 1 %}
+                                        <option>Iniciado</option>
+                                    {% elif estado == 2%}
+                                        <option>En  Selección  y  Asignación  de  coordinadores</option>
+                                    {% elif estado == 3%}
+                                        <option>En  carga  de  trabajos</option>
+                                    {% elif estado == 4 %}
+                                        <option>En  Asignación  de  trabajas  a  áreas</option>
+                                    {% elif estado == 5 %}
+                                        <option>En  Arbitraje </option>
+                                    {% elif estado == 6 %}
+                                        <option>En  Cierre  de  Arbitraje </option>
+                                    {% elif estado == 7 %}
+                                        <option>En  Asignación  de  sesiones </option>
+                                    {% elif estado == 8 %}
+                                        <option>En  Resumen</option>
+                                    {% endif %}
                                 </select>
                             </div>
                         </div>
                     </div>
                     <br>
                     
-                    <div class="form-inline col-sm-3 col-sm-offset-6">
-                        <a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
-                    </div>
-                    <div class="form-inline col-sm-3">
-                        <a href="" class="btn btn-block btn-success" role="button">Modificar</a>
-                    </div>
+                    
+                        <div class="form-inline col-sm-3 col-sm-offset-6">
+                            <a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
+                        </div>
+                        <div class="form-inline col-sm-3">
+                            <a href="" class="btn btn-block btn-success" role="button">Guardar</a>
+                        </div>
+
                     <br>
                     <br>
 
