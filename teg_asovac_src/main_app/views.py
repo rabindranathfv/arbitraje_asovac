@@ -230,7 +230,7 @@ def create_arbitraje(request):
                 'arb_data': arbitraje_data,
                 }
             return render(request, 'main_app_home.html', context)        
-        
+    print(request.session['fav_color'])
     return render(request, 'main_app_create_arbitraje.html', context)
 
 def email_test(request):
@@ -266,8 +266,8 @@ def dashboard(request):
     secondary_navbar_options = ['']
 
     if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
+        request.session['estado'] = request.POST['estado']
+        request.session['arbitraje_id'] = request.POST['event_id']
     else:
         estado=-1
         event_id=-1
@@ -277,9 +277,12 @@ def dashboard(request):
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+    
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
-
+    print(request.session['estado'])
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
@@ -332,12 +335,6 @@ def data_basic(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id= -1
     
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -346,6 +343,9 @@ def data_basic(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -353,6 +353,7 @@ def data_basic(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     # print items
+
 
     context = {
         'nombre_vista' : 'Configuracion general',
@@ -396,13 +397,6 @@ def state_arbitration(request):
 
     secondary_navbar_options = ['']
 
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
-
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
@@ -410,6 +404,10 @@ def state_arbitration(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -463,19 +461,16 @@ def users_list(request):
 
     secondary_navbar_options = ['']
 
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id= -1
-
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -543,19 +538,17 @@ def user_edit(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=0
-        event_id= -1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -604,12 +597,6 @@ def user_roles(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=0
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -618,6 +605,9 @@ def user_roles(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -667,12 +657,6 @@ def coord_general(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -681,6 +665,9 @@ def coord_general(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -730,12 +717,6 @@ def coord_area(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -744,6 +725,9 @@ def coord_area(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -793,12 +777,6 @@ def total(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -807,6 +785,9 @@ def total(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+    
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
 

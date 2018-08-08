@@ -48,12 +48,6 @@ def resources_author(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all() 
 
@@ -62,6 +56,8 @@ def resources_author(request):
         rol_id.append(item.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -119,12 +115,9 @@ def resources_referee(request):
     print (rol_id)
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -175,12 +168,6 @@ def resources_event(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -188,6 +175,10 @@ def resources_event(request):
     for item in rol:
         rol_id.append(item.id)
 
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+        
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -237,18 +228,16 @@ def resources_sesion(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -299,18 +288,16 @@ def resources_asovac(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -361,18 +348,16 @@ def resources_arbitration(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)

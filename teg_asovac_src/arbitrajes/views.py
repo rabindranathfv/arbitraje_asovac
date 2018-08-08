@@ -44,12 +44,6 @@ def referee_list(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -57,6 +51,10 @@ def referee_list(request):
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -107,18 +105,16 @@ def referee_edit(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -169,18 +165,15 @@ def areas_subareas(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
     rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)

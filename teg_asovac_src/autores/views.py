@@ -26,13 +26,6 @@ def authors_list(request):
 	
 	secondary_navbar_options = ['']
 
-	if request.POST:
-		estado= request.POST['estado']
-		event_id= request.POST['event_id']
-	else:
-		estado=-1
-		event_id=-1
-
 	rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
 	rol_id=[]
@@ -40,6 +33,9 @@ def authors_list(request):
 		rol_id.append(item.id)
 
 	# print (rol_id)
+
+	estado = request.session['estado']
+	event_id = request.session['arbitraje_id']
 
 	item_active = 2
 	items=validate_rol_status(estado,rol_id,item_active)
@@ -89,12 +85,6 @@ def author_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 	secondary_navbar_options = ['']
-	if request.POST:
-		estado= request.POST['estado']
-		event_id= request.POST['event_id']
-	else:
-		estado=-1
-		event_id=-1
 
 	rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
 
@@ -103,6 +93,9 @@ def author_edit(request):
 		rol_id.append(item.id)
 
 	# print (rol_id)
+	estado = request.session['estado']
+	event_id = request.session['arbitraje_id']
+	
 	item_active = 2
 	items=validate_rol_status(estado,rol_id,item_active)
 
