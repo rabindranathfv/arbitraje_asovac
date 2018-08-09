@@ -463,6 +463,8 @@ def users_list(request):
 
     secondary_navbar_options = ['']
 
+    users= User.objects.all()
+
     if request.POST:
         estado= request.POST['estado']
         event_id= request.POST['event_id']
@@ -488,6 +490,7 @@ def users_list(request):
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'users' : users,
         'estado' : estado,
         'rol' : rol,
         'rol_id' : rol_id,
