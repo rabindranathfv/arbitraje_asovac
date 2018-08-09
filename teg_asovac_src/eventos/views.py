@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento
+from main_app.views import get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 # Create your views here.
 def eventos_pag(request):
@@ -19,20 +19,12 @@ def event_list(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
-    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+    rol_id=get_roles(request.user.id)
 
-    rol_id=[]
-    for item in rol:
-        rol_id.append(item.id)
-
-    print (rol_id)
+    #print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -47,7 +39,7 @@ def event_list(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        'rol' : rol,
+        #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : item_active,
@@ -84,21 +76,13 @@ def event_edit(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
-    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-
-    rol_id=[]
-    for item in rol:
-        rol_id.append(item.id)
+    rol_id=get_roles(request.user.id)
 
     # print (rol_id)
-    
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
 
@@ -112,7 +96,7 @@ def event_edit(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        'rol' : rol,
+        #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : item_active,
@@ -148,20 +132,12 @@ def event_create(request):
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
     secondary_navbar_options = ['']
-    if request.POST:
-        estado= request.POST['estado']
-        event_id= request.POST['event_id']
-    else:
-        estado=-1
-        event_id=-1
 
-    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
-
-    rol_id=[]
-    for item in rol:
-        rol_id.append(item.id)
+    rol_id=get_roles(request.user.id)
 
     # print (rol_id)
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
     
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -176,7 +152,7 @@ def event_create(request):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        'rol' : rol,
+        #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
         'item_active' : item_active,
