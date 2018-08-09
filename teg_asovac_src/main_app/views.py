@@ -199,6 +199,21 @@ def get_roles(user_id):
 
     return rol_id
 
+
+#Update state of arbitration
+def update_state_arbitration(arbitraje_id,estado):
+    new_state = Sistema_asovac.objects.get(pk=arbitraje_id)
+    #update Sistema_asovac
+    new_state.estado_arbitraje = estado
+    # save in DB
+    new_state.save()
+    return estado
+
+
+#################################################
+######### VIEWS BACKEND #########################
+#################################################
+
 # Create your views here.
 def login(request):
     form = MyLoginForm()
@@ -409,7 +424,7 @@ def state_arbitration(request):
     # print (rol_id)
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
-
+    user_id = request.user.id
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -417,10 +432,14 @@ def state_arbitration(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
-    # print items
+    # si se envia el cambio de estado via post se actualiza en bd
+    if request.method == 'POST':
+        estado = request.POST['estado']
+        print(estado)
+        request.session['estado'] = update_state_arbitration(event_id,estado)
 
-    
-
+    # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
+    estado = request.session['estado']
     context = {
         'nombre_vista' : 'Configuracion general',
         'main_navbar_options' : main_navbar_options,
