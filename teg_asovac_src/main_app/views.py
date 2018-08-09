@@ -308,7 +308,7 @@ def dashboard(request):
     event_id = request.session['arbitraje_id']
 
     item_active = 1
-    print(request.session['estado'])
+    #print(request.session['estado'])
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
@@ -435,7 +435,7 @@ def state_arbitration(request):
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
         estado = request.POST['estado']
-        print(estado)
+        #print(estado)
         request.session['estado'] = update_state_arbitration(event_id,estado)
 
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
