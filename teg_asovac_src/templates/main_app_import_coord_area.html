@@ -1,0 +1,57 @@
+
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">{{ nombre_vista }}</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+                <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                        <h2 class="text-left">Importar Coordinadores de Área</h2>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <label>Archivo de Usuario-Django:</label>
+                                    <input type="file" name="userFile">
+                                    <br/>
+                                    <label>Archivo de Sistema-Asovac:</label>
+                                    <input type="file" name="SistemaAsovacFile">
+                                    <br/>
+                                    <label>Archivo de Usuario-Asovac:</label>
+                                    <input type="file" name="UsuarioAsovacFile">
+                                    <br/>
+                                    <button type="submit">Importar</button>
+                                </form>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}
+
+

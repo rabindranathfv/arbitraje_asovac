@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^admin/data_basic/$',views.data_basic,name='data_basic'),
     url(r'^admin/arbitration/state/$',views.state_arbitration,name='arbitration_state'),
     url(r'^admin/users/list/$',views.users_list,name='users_list'),
+    url(r'^admin/users/importar/coordinadores-area$',views.import_area_coord,name='import_area_coord'),
     url(r'^admin/user/edit/$',views.user_edit,name='user_edit'),
     url(r'^admin/user/roles/$',views.user_roles,name='user_roles'),
     url(r'^admin/coord/general/$',views.coord_general,name='coord_general'),

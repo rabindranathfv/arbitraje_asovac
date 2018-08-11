@@ -3,13 +3,15 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect
 from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
-
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
+from .resources import UserResource, UsuarioAsovacResource, SistemaAsovacResource
+from tablib import Dataset
 
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
@@ -848,3 +850,108 @@ def total(request):
         'route_seg':route_seg,
     }
     return render(request, 'main_app_totales.html', context)
+
+# View que importa Coordinadores de Área.
+def import_area_coord(request):
+    """
+    user_resource = UserResource()
+    #dataset_users = user_resource.export()
+    user_asovac_resource = UsuarioAsovacResource()
+    #dataset_users = user_asovac_resource.export()
+    asovac_system_resource = SistemaAsovacResource()
+    dataset_users = asovac_system_resource.export()
+    response = HttpResponse(dataset_users.csv, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="MyAsovacUsers.csv"'
+    return response
+    """
+    estado = -1
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': True},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    if request.POST:
+        estado = request.POST.get('estado',-1)
+        event_id= request.POST.get('event_id',-1)
+        # Import of CSV files UsuarioAsovacResource, SistemaAsovacResource
+        user_resource = UserResource()
+        dataset_users = Dataset()
+        new_users = request.FILES['userFile']
+
+        user_asovac_resource = UsuarioAsovacResource()
+        dataset_asovac_users = Dataset()
+        new_asovac_users = request.FILES['UsuarioAsovacFile']
+
+        asovac_system_resource = SistemaAsovacResource()
+        dataset_asovac_system = Dataset()
+        new_asovac_system = request.FILES['SistemaAsovacFile']
+
+        imported_data = dataset_users.load(new_users.read())
+        result = user_resource.import_data(dataset_users, dry_run=True)  # Test the data import
+
+        if not result.has_errors():
+            user_resource.import_data(dataset_users, dry_run=False)  # Actually import now
+
+            imported_data = dataset_asovac_system.load(new_asovac_system.read())
+            result = asovac_system_resource.import_data(dataset_asovac_system, dry_run=True)  # Test the data import
+
+            if not result.has_errors():
+                asovac_system_resource.import_data(dataset_asovac_system, dry_run=False)
+                imported_data = dataset_asovac_users.load(new_asovac_users.read())
+                result = user_asovac_resource.import_data(dataset_asovac_users, dry_run=True)
+
+                if not result.has_errors():
+                    user_asovac_resource.import_data(dataset_asovac_users, dry_run=False)
+
+    else:
+        estado=-1
+        event_id=-1
+
+    rol = Usuario_asovac.objects.get(usuario_id=request.user.id).rol.all()
+
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+
+    # print (rol_id)
+    item_active = 3
+    items=validate_rol_status(estado,rol_id,item_active)
+
+    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+
+    # print items
+
+    context = {
+        'nombre_vista' : 'Importar Coordinadores de Área',
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : [''],
+        'estado' : estado,
+        'rol' : rol,
+        'rol_id' : rol_id,
+        'event_id' : event_id,
+        'item_active' : item_active,
+        'items':items,
+        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
+        'usuarios_sidebar' : items["usuarios_sidebar"][0],
+        'recursos_sidebar' : items["recursos_sidebar"][0],
+        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
+        'autores_sidebar' : items["autores_sidebar"][0],
+        'arbitros_sidebar' : items["arbitros_sidebar"][0],
+        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
+        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
+        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
+        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
+        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
+        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
+        'trabajos_sidebar':items["trabajos_sidebar"][0],
+        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
+        'espacio_sidebar':items["espacio_sidebar"][0],
+        'verify_configuration':items["configuration"][0],
+        'verify_arbitration':items["arbitration"][0],
+        'verify_result':items["result"][0],
+        'verify_event':items["event"][0],
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+    }
+    return render(request, 'main_app_import_coord_area.html', context)
