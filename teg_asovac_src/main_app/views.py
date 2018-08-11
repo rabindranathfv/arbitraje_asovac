@@ -11,6 +11,8 @@ from django.core.urlresolvers import reverse_lazy
 from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
@@ -484,7 +486,7 @@ def users_list(request):
     secondary_navbar_options = ['']
 
     rol_id=get_roles(request.user.id)
-
+    users= User.objects.all()
     # print (rol_id)
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
