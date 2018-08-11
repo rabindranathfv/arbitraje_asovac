@@ -23,7 +23,7 @@
           <ul class="nav navbar-nav">
             {% if verify_configuration == 1 %}
               <li>
-                <a href="{{ route_conf }}">
+                <a href="{% url 'main_app:data_basic' %}">
                   <i class ="fas fa-cogs"></i>Configuración
                 </a>
 <!-- 
@@ -38,7 +38,7 @@
             {% endif %}
             {% if verify_arbitration == 1 %}
             <li>
-                <a href="{{ route_seg }}">
+                <a href="{% url 'autores:authors_list' %}">
                   <i class ="fas fa-eye"></i> Arbitraje y seguimiento
                 </a>
 

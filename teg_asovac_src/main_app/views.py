@@ -116,41 +116,44 @@ def verify_event(estado,rol_id):
         return 0 
     return 1
 
-def validate_rol_status(estado,rol_id,item_active):
+def validate_rol_status(estado,rol_id,item_active,request):
     items={}
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
+    request.session['configuracion_general_sidebar'] = verify_configuracion_general_option(estado, rol_id, item_active)
+    print(request.session['configuracion_general_sidebar'])
+    request.session['usuarios_sidebar'] = verify_usuario_option(estado,rol_id,item_active)
+    request.session['recursos_sidebar'] = verify_recursos_option(estado,rol_id,item_active)
+    request.session['areas_subareas_sidebar'] = verify_areas_subareas_option(estado,rol_id,item_active)
     
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
+    request.session['autores_sidebar'] = verify_autores_option(estado,rol_id,item_active)
+    request.session['arbitros_sidebar'] = verify_arbitros_option(estado,rol_id,item_active)
+    request.session['sesion_arbitraje_sidebar'] = verify_sesions_arbitraje_option(estado,rol_id,item_active)
+    request.session['arbitraje_sidebar'] = verify_arbitraje_option(estado,rol_id,item_active)
+    request.session['eventos_sidebar_full'] = verify_eventos_sidebar_full(estado,rol_id,item_active)
 
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
+    request.session['asignacion_coordinador_general'] = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
+    request.session['asignacion_coordinador_area'] = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
+    request.session['datos_basicos_sidebar'] = verify_datos_basicos_option(estado,rol_id,item_active)
 
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
+    request.session['trabajos_sidebar'] = verify_trabajo_option(estado,rol_id,item_active)
+    request.session['estado_arbitrajes_sidebar'] = verify_estado_arbitrajes_option(estado,rol_id,item_active)
+    request.session['espacio_sidebar'] = verify_espacio_option(estado,rol_id,item_active)
 
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    request.session['configuration'] = verify_configuration(estado,rol_id)
+    request.session['arbitration'] = verify_arbitration(estado,rol_id)
+    request.session['result'] =  verify_result(estado,rol_id)
+    request.session['event'] = verify_event(estado,rol_id)
 
+    return items
+"""
     # Menu de configuración 
-    items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list')])
-    items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('recursos:resources_author')])
-    items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('arbitrajes:arbitrations_areas_subareas')])
-    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state')])
-    items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general')])
-    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area')])
+    #items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
+    #items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list')])
+    #items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('recursos:resources_author')])
+    #items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('arbitrajes:arbitrations_areas_subareas')])
+    #items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state')])
+    #items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic')])
+    #items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general')])
+    #items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area')])
 
     # Menu de arbitraje y seguimiento
     items.setdefault("autores_sidebar",[autores_sidebar,reverse('autores:authors_list')])
@@ -170,8 +173,8 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("arbitration",[arbitration,''])
     items.setdefault("result",[result,''])
     items.setdefault("event",[event,''])
-
-    return items
+"""
+    
 
 def get_route_configuracion(items):
     
@@ -307,17 +310,27 @@ def dashboard(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
+    ##item_active = 1
     #print(request.session['estado'])
-    items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    try:
+        if request.session['item_active'] != 1:
+            request.session['item_active'] = 1
+            item_active = request.session['item_active']
+            validate_rol_status(estado,rol_id,item_active,request)
+    except:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
+
+
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1,request))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2,request))
     # print items
 
     # for item,val in items.items():
         # print item, ":", val[0]
-
+    print(request.session['configuracion_general_sidebar'])
     context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
@@ -326,29 +339,29 @@ def dashboard(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        ##'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -369,11 +382,15 @@ def data_basic(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    ##item_active = 1
+        
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
    
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1,request))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2,request))
     # print items
 
 
@@ -385,29 +402,29 @@ def data_basic(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        ##'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -426,11 +443,14 @@ def state_arbitration(request):
     event_id = request.session['arbitraje_id']
     user_id = request.user.id
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    ##item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
@@ -448,29 +468,29 @@ def state_arbitration(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -489,11 +509,14 @@ def users_list(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
     # print items
 
@@ -505,29 +528,29 @@ def users_list(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -563,11 +586,14 @@ def user_edit(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     # print items
 
     context = {
@@ -578,29 +604,29 @@ def user_edit(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -618,11 +644,14 @@ def user_roles(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
     # print items
 
@@ -634,29 +663,29 @@ def user_roles(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -674,11 +703,14 @@ def coord_general(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
     # print items
 
@@ -690,29 +722,29 @@ def coord_general(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -730,11 +762,14 @@ def coord_area(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 1
+    if request.session['item_active'] != 1:
+        request.session['item_active'] = 1
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     
     # print items
 
@@ -746,29 +781,29 @@ def coord_area(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -786,11 +821,14 @@ def total(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
     
-    item_active = 3
-    items=validate_rol_status(estado,rol_id,item_active)
+    #item_active = 3
+    if request.session['item_active'] != 3:
+        request.session['item_active'] = 3
+        item_active = request.session['item_active']
+        validate_rol_status(estado,rol_id,item_active,request)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    #route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    #route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
 
     # print items
 
@@ -802,28 +840,28 @@ def total(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
-        'item_active' : item_active,
-        'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'verify_configuration':items["configuration"][0],
-        'verify_arbitration':items["arbitration"][0],
-        'verify_result':items["result"][0],
-        'verify_event':items["event"][0],
-        'route_conf':route_conf,
-        'route_seg':route_seg,
+        #'item_active' : item_active,
+        #'items':items,
+        'configuracion_general_sidebar': request.session['configuracion_general_sidebar'],
+        'usuarios_sidebar' : request.session['usuarios_sidebar'],
+        'recursos_sidebar' : request.session['recursos_sidebar'],
+        'areas_subareas_sidebar' : request.session['areas_subareas_sidebar'],
+        'autores_sidebar' : request.session['autores_sidebar'],
+        'arbitros_sidebar' : request.session['arbitros_sidebar'],
+        'sesion_arbitraje_sidebar' : request.session['sesion_arbitraje_sidebar'],
+        'arbitraje_sidebar' : request.session['arbitraje_sidebar'],
+        'eventos_sidebar_full' : request.session['eventos_sidebar_full'],
+        'asignacion_coordinador_general': request.session['asignacion_coordinador_general'],
+        'asignacion_coordinador_area': request.session['asignacion_coordinador_area'],
+        'datos_basicos_sidebar' : request.session['datos_basicos_sidebar'],
+        'trabajos_sidebar':request.session['trabajos_sidebar'],
+        'estado_arbitrajes_sidebar':request.session['estado_arbitrajes_sidebar'],
+        'espacio_sidebar':request.session['espacio_sidebar'],
+        'verify_configuration':request.session['configuration'],
+        'verify_arbitration':request.session['arbitration'],
+        'verify_result':request.session['result'],
+        'verify_event':request.session['event'],
+        #'route_conf':route_conf,
+        #'route_seg':route_seg,
     }
     return render(request, 'main_app_totales.html', context)
