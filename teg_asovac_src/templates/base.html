@@ -67,6 +67,22 @@
 -->
             </li>
             {% endif %}
+
+            {% if verify_jobs == 1 %}
+            <li>
+              <a href="{% url 'trabajos:jobs_list' %}">
+                <i class="fas fa-book"></i> Trabajos
+              </a>
+<!--
+              <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
+                  {% csrf_token %}
+                  <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+              </form>
+              <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
+-->
+            </li>
+            {% endif %}
 <!--  
             {% if verify_event == 1 %}
             <li>

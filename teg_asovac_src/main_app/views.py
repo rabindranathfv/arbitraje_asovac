@@ -97,17 +97,17 @@ def verify_espacio_option(estado,rol_id,item_active):
 
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
-    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id)):
+    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
         return 0 
     return 1
 
 def verify_arbitration(estado,rol_id):
-    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' and estado == '8') and 3 in rol_id) or ((estado != '5' or estado != '6') and 4 in rol_id)):
+    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' and estado == '8') and 3 in rol_id) or ((estado != '5' or estado != '6') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
         return 0 
     return 1
 
 def verify_result(estado,rol_id):
-    if ( ((estado !='6' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id)):
+    if ( ((estado !='6' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id) or (estado != '6' and 5 in rol_id)):
         return 0 
     return 1
 
@@ -115,6 +115,11 @@ def verify_event(estado,rol_id):
     if (  1 not in rol_id):
         return 0 
     return 1
+
+def verify_jobs(estado, rol_id):
+    if((estado == '3' and 5 in rol_id) or (estado == '5' and 4 in rol_id)):
+        return 1
+    return 0
 
 def validate_rol_status(estado,rol_id,item_active):
     items={}
@@ -141,6 +146,7 @@ def validate_rol_status(estado,rol_id,item_active):
     arbitration= verify_arbitration(estado,rol_id)
     result=  verify_result(estado,rol_id)
     event= verify_event(estado,rol_id)
+    jobs = verify_jobs(estado,rol_id)
 
     # Menu de configuración 
     items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
@@ -170,6 +176,7 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("arbitration",[arbitration,''])
     items.setdefault("result",[result,''])
     items.setdefault("event",[event,''])
+    items.setdefault("jobs",[jobs,''])
 
     return items
 
@@ -346,6 +353,7 @@ def dashboard(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -405,6 +413,7 @@ def data_basic(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -468,6 +477,7 @@ def state_arbitration(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -525,6 +535,7 @@ def users_list(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -598,6 +609,7 @@ def user_edit(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -654,6 +666,7 @@ def user_roles(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -710,6 +723,7 @@ def coord_general(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -766,6 +780,7 @@ def coord_area(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
@@ -822,6 +837,7 @@ def total(request):
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
