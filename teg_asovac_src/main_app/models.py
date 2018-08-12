@@ -34,6 +34,7 @@ class Sistema_asovac(models.Model):
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
+	estado_arbitraje = models.SmallIntegerField(default=0)
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
@@ -52,7 +53,7 @@ class Usuario_asovac(models.Model):
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
 	subarea_id= models.ManyToManyField('arbitrajes.Sub_area',blank=True)
 
-	estado_arbitraje = models.SmallIntegerField(default=0)
+	
 	usuario_activo = models.BooleanField(default=True)
 	
 
