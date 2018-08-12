@@ -32,8 +32,6 @@ class Sistema_asovac(models.Model):
 	
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=255)
-	#Quitar este atributo de estado arbitraje posteriormente
-	estado_arbitraje = models.SmallIntegerField(default=0)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
