@@ -30,8 +30,8 @@ class Autor(models.Model):
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	marca_temporal = models.DateTimeField(auto_now=True)
-	nombre = models.CharField(max_length=40)
-	apellido = models.CharField(max_length=40)
+	nombres = models.CharField(max_length=40)
+	apellidos = models.CharField(max_length=40)
 	genero = models.CharField(max_length=1)
 	cedula_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
@@ -75,8 +75,8 @@ class Datos_pagador(models.Model):
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 	
 	cedula = models.CharField(max_length=10) 
-	nombre = models.CharField(max_length=50)
-	apellido = models.CharField(max_length=50)
+	nombres = models.CharField(max_length=50)
+	apellidos = models.CharField(max_length=50)
 	pasaporte_rif = models.CharField(max_length=20, blank = True)
 	telefono_oficina = models.CharField(max_length=20, blank = True)
 	telefono_habitacion_celular = models.CharField(max_length=20)
