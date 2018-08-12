@@ -67,22 +67,24 @@
 -->
             </li>
             {% endif %}
+<!--  
             {% if verify_event == 1 %}
             <li>
                 <a href="{% url 'eventos:event_create' %}">
                   <i class="fas fa-archive"></i> Eventos
                 </a>
 
-<!--              
+            
                 <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
                     {% csrf_token %}
                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
                 </form>
               <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
--->
+
             </li>
             {% endif %}
+-->
           </ul> 
 
         {% if user.username %}
