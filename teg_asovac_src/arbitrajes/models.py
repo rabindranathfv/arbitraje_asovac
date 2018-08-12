@@ -55,13 +55,13 @@ Arbitro Model
 """""""""""""""""""""""""""
 class Arbitro(models.Model):
 
-	usuario= models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
+	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
 	arbitraje_id = models.ManyToManyField(Arbitraje,blank=True)
 	subarea_id = models.ManyToManyField(Sub_area)
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
-	nombre = models.CharField(max_length=40)
-	apellido = models.CharField(max_length=40)
+	nombres = models.CharField(max_length=40)
+	apellidos = models.CharField(max_length=40)
 	genero = models.CharField(max_length=5)
 	cedula_pasaporte = models.CharField(max_length=20)
 	titulo = models.CharField(max_length=50)
