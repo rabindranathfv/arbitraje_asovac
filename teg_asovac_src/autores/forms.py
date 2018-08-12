@@ -14,7 +14,7 @@ class DatosPagadorForm(forms.ModelForm):
 
 	class Meta:
 		model = Datos_pagador
-		fields = ['cedula', 'nombre', 'apellido', 'pasaporte_rif', 'telefono_oficina', 'telefono_habitacion_celular', 'direccion_fiscal']
+		fields = ['cedula', 'nombres', 'apellidos', 'pasaporte_rif', 'telefono_oficina', 'telefono_habitacion_celular', 'direccion_fiscal']
 
 	def __init__(self, *args, **kwargs):
 		super(DatosPagadorForm,self).__init__(*args, **kwargs)
@@ -25,8 +25,8 @@ class DatosPagadorForm(forms.ModelForm):
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
 		self.fields['cedula'].label = "Cédula"
-		self.fields['nombre'].label = "Nombre"
-		self.fields['apellido'].label = "Apellido"
+		self.fields['nombres'].label = "Nombre"
+		self.fields['apellidos'].label = "Apellido"
 		self.fields['pasaporte_rif'].label = "Pasaporte/RIF"
 		self.fields['telefono_oficina'].label = "Teléfono de Oficina"
 		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/Celular"

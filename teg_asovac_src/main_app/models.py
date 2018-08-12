@@ -32,8 +32,6 @@ class Sistema_asovac(models.Model):
 	
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=255)
-	#Quitar este atributo de estado arbitraje posteriormente
-	estado_arbitraje = models.SmallIntegerField(default=0)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
@@ -50,8 +48,9 @@ Usuario_asovac Model
 class Usuario_asovac(models.Model):
 
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
-	rol = models.ManyToManyField(Rol)
-	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac)
+	rol = models.ManyToManyField(Rol,blank=True)
+	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
+	subarea_id= models.ManyToManyField('arbitrajes.Sub_area',blank=True)
 
 	estado_arbitraje = models.SmallIntegerField(default=0)
 	usuario_activo = models.BooleanField(default=True)

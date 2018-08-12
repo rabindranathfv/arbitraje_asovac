@@ -260,7 +260,6 @@ def create_arbitraje(request):
                 'arb_data': arbitraje_data,
                 }
             return render(request, 'main_app_home.html', context)        
-    print(request.session['fav_color'])
     return render(request, 'main_app_create_arbitraje.html', context)
 
 def email_test(request):
