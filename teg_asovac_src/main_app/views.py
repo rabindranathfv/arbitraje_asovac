@@ -876,32 +876,35 @@ def import_area_coord(request):
         # Import of CSV files UsuarioAsovacResource, SistemaAsovacResource
         user_resource = UserResource()
         dataset_users = Dataset()
-        new_users = request.FILES['userFile']
+        new_users = None
 
-        user_asovac_resource = UsuarioAsovacResource()
-        dataset_asovac_users = Dataset()
-        new_asovac_users = request.FILES['UsuarioAsovacFile']
+        if request.FILES['userFile']:
+            new_users = request.FILES['userFile']
+            imported_data = dataset_users.load(new_users.read())
+            result = user_resource.import_data(dataset_users, dry_run=True)  # Test the data import
+            if not result.has_errors():
+                user_resource.import_data(dataset_users, dry_run=False)  # Actually import now
 
         asovac_system_resource = SistemaAsovacResource()
         dataset_asovac_system = Dataset()
-        new_asovac_system = request.FILES['SistemaAsovacFile']
-
-        imported_data = dataset_users.load(new_users.read())
-        result = user_resource.import_data(dataset_users, dry_run=True)  # Test the data import
-
-        if not result.has_errors():
-            user_resource.import_data(dataset_users, dry_run=False)  # Actually import now
-
+        new_asovac_system = None
+        if request.FILES['SistemaAsovacFile']:
+            new_asovac_system = request.FILES['SistemaAsovacFile']
             imported_data = dataset_asovac_system.load(new_asovac_system.read())
             result = asovac_system_resource.import_data(dataset_asovac_system, dry_run=True)  # Test the data import
 
             if not result.has_errors():
                 asovac_system_resource.import_data(dataset_asovac_system, dry_run=False)
-                imported_data = dataset_asovac_users.load(new_asovac_users.read())
-                result = user_asovac_resource.import_data(dataset_asovac_users, dry_run=True)
 
-                if not result.has_errors():
-                    user_asovac_resource.import_data(dataset_asovac_users, dry_run=False)
+        user_asovac_resource = UsuarioAsovacResource()
+        dataset_asovac_users = Dataset()
+        new_asovac_users = None
+        if request.FILES['UsuarioAsovacFile']:
+            new_asovac_users = request.FILES['UsuarioAsovacFile']
+            imported_data = dataset_asovac_users.load(new_asovac_users.read())
+            result = user_asovac_resource.import_data(dataset_asovac_users, dry_run=True)
+            if not result.has_errors():
+                user_asovac_resource.import_data(dataset_asovac_users, dry_run=False)
 
     else:
         estado=-1
