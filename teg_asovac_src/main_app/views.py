@@ -863,17 +863,6 @@ def import_area_coord(request):
             if not result.has_errors():
                 user_resource.import_data(dataset_users, dry_run=False)  # Actually import now
 
-        asovac_system_resource = SistemaAsovacResource()
-        dataset_asovac_system = Dataset()
-        new_asovac_system = None
-        if request.FILES['SistemaAsovacFile']:
-            new_asovac_system = request.FILES['SistemaAsovacFile']
-            imported_data = dataset_asovac_system.load(new_asovac_system.read())
-            result = asovac_system_resource.import_data(dataset_asovac_system, dry_run=True)  # Test the data import
-
-            if not result.has_errors():
-                asovac_system_resource.import_data(dataset_asovac_system, dry_run=False)
-
         user_asovac_resource = UsuarioAsovacResource()
         dataset_asovac_users = Dataset()
         new_asovac_users = None
