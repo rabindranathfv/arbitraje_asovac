@@ -14,11 +14,11 @@ class Organizador(models.Model):
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
-	nombre = models.CharField(max_length=50)
-	apellido = models.CharField(max_length=50)
+	nombres = models.CharField(max_length=50)
+	apellidos = models.CharField(max_length=50)
 	genero = models.CharField(max_length=5)
 	cedula_o_pasaporte = models.CharField(max_length=20)
-	correo_electronico= models.EmailField(max_length=254)
+	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
@@ -54,7 +54,7 @@ Evento Model
 class Evento(models.Model):
 
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento')
-	locacion_evento= models.ForeignKey(Locacion_evento)
+	locacion_evento = models.ForeignKey(Locacion_evento)
 
 	nombre = models.CharField(max_length=50)
 	categoria = models.CharField(max_length=50)

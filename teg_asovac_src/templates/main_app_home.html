@@ -57,7 +57,7 @@
                                             
                                         </div>
                                         <div class="col-sm-3 text-center">
-                                            <form method="post" action="{% url 'main_app:dashboard' %}">
+                                            <form method="post" action="{% url 'main_app:dashboard'%}">
                                                 {% csrf_token %}
                                                 <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
                                                 <input class="" name="event_id" type='hidden' value="{{ arb.id }}">
