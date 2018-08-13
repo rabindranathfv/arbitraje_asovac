@@ -66,7 +66,7 @@ def verify_autores_option(estado,rol_id,item_active):
     return 0
 
 def verify_arbitros_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 in rol_id and item_active == 2) or (estado == '1' and 2 in rol_id and item_active == 2) or ((estado =='2' or estado == '3' or estado == '4') and (2 in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
