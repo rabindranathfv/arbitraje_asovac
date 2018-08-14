@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
+from main_app.views import get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
 
 # Create your views here.
 def eventos_pag(request):
@@ -31,6 +31,7 @@ def event_list(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -67,6 +68,7 @@ def event_list(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_event_list.html', context)
 
@@ -90,6 +92,7 @@ def event_edit(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -126,6 +129,7 @@ def event_edit(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_event_edit.html', context)
 
@@ -148,6 +152,7 @@ def event_create(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -184,5 +189,6 @@ def event_create(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'event_create.html', context)

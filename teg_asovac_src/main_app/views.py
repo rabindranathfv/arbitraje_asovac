@@ -24,8 +24,6 @@ def verify_datos_basicos_option(estado,rol_id,item_active):
     return 1
 
 def verify_estado_arbitrajes_option(estado,rol_id,item_active):
-    if(estado == '4' and 2 in rol_id and item_active == 1):
-        return 0
     return 1
 
 
@@ -76,7 +74,7 @@ def verify_sesions_arbitraje_option(estado,rol_id, item_active):
     return 0
 
 def verify_asignar_sesion(estado,rol_id,item_active):
-    if(1 in rol_id and item_active == 2) or (estado == '4' and 3 in rol_id and item_active == 2):
+    if(1 in rol_id and item_active == 2) or (estado == '4' and (2in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
@@ -215,6 +213,11 @@ def get_roles(user_id):
 
     return rol_id
 
+def get_route_trabajos_sidebar(estado,rol_id,item_active):
+    if (estado =='4' and 2 in rol_id and item_active == 2):
+        return reverse('trabajos:trabajos_evaluados')
+    else:
+        return reverse('trabajos:jobs_list')
 
 #Update state of arbitration
 def update_state_arbitration(arbitraje_id,estado):
@@ -328,6 +331,7 @@ def dashboard(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     # print items
 
     # for item,val in items.items():
@@ -366,6 +370,7 @@ def dashboard(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -391,6 +396,8 @@ def data_basic(request):
    
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+
     # print items
 
 
@@ -427,6 +434,7 @@ def data_basic(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -450,6 +458,7 @@ def state_arbitration(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
@@ -492,6 +501,7 @@ def state_arbitration(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -515,6 +525,7 @@ def users_list(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -551,6 +562,7 @@ def users_list(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -591,6 +603,7 @@ def user_edit(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     # print items
 
     context = {
@@ -626,6 +639,7 @@ def user_edit(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -648,6 +662,7 @@ def user_roles(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -684,6 +699,7 @@ def user_roles(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -706,6 +722,7 @@ def coord_general(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -742,6 +759,7 @@ def coord_general(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -764,6 +782,7 @@ def coord_area(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     
     # print items
 
@@ -800,6 +819,7 @@ def coord_area(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -822,6 +842,7 @@ def total(request):
 
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 
     # print items
 
@@ -858,5 +879,6 @@ def total(request):
         'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
     }
     return render(request, 'main_app_totales.html', context)
