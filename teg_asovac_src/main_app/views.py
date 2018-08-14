@@ -227,9 +227,6 @@ def home(request):
     # queryset
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
-    print(arbitraje_data)
-
-
 
     # print(arbitraje_data)
     context = {
