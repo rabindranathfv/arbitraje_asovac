@@ -269,6 +269,15 @@
 	        </li>
 	    {% endif %}
 
+        {% if asignacion_de_sesion_sidebar == 1 %}
+            <li>
+                <a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
+                    Asignacion de Sesión
+                </a>
+            </li>
+        {% endif %}
+
+
         {% if trabajos_sidebar == 1 %}
             <li>
                 <a href="{% url 'trabajos:jobs_list' %}">
