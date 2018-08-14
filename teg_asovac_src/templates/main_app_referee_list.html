@@ -27,19 +27,26 @@
              <div class="row">
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
-                    <div class="col-sm-4">
-                      <h2 class="text-left">Lista de arbitros</h2>
-                    </div>
-                    <div class="col-sm-offset-1 col-sm-3 text-right">
-                      <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalArbitrosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon"></i> Carga Arbitros</button>
-                    </div>
-                    <div class="col-sm-4">
-                        <form class="form-inline text-left">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
-                    </div>
-                    
+                      <div class="col-sm-3">
+                        <h2 class="text-left">Lista de arbitros</h2>
+                      </div>
+                      <div class="col-sm-4 col-sm-offset-3 btn-lg">
+                          <form class="form-inline text-right">
+                              <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                              <button class="btn btn-primary" type="submit">Buscar</button>
+                          </form>
+                      </div>
+                      <div class="col-sm-2 btn-lg">
+                        <div class="btn-group">
+                              <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                              <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="#"><i class="fa fa-file-excel" id="menu-toggle-icon"></i> Carga Excel</a>
+                                  </li>
+                              </ul>
+                        </div>
+                      </div>
+                      
 
                     <br>
                            <table class="table table-bordered">
