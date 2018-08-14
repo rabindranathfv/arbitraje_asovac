@@ -111,7 +111,7 @@ def verify_arbitration(estado,rol_id):
     return 1
 
 def verify_result(estado,rol_id):
-    if ( ((estado !='6' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id) or (estado != '6' and 5 in rol_id)):
+    if ( ((estado !='6' and estado != '7' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id) or (estado != '6' and 5 in rol_id)):
         return 0 
     return 1
 
