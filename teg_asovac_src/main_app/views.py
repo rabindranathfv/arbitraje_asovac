@@ -82,12 +82,12 @@ def verify_asignar_sesion(estado,rol_id,item_active):
 
 
 def verify_arbitraje_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 2) or (estado =='6' and (2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 in rol_id and item_active == 2) or (estado =='6' and (2 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5')and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2):
+    if((estado =='3' or estado =='4' or estado =='5')and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
         return 1
     return 0
 
