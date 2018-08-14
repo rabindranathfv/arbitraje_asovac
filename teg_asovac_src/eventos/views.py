@@ -66,7 +66,7 @@ def event_list(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_event_list.html', context)
+    return render(request, 'eventos_event_list.html', context)
 
 
 def event_edit(request):
@@ -123,7 +123,7 @@ def event_edit(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_event_edit.html', context)
+    return render(request, 'eventos_event_edit.html', context)
 
 def event_create(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -179,4 +179,4 @@ def event_create(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'event_create.html', context)
+    return render(request, 'eventos_event_create.html', context)
