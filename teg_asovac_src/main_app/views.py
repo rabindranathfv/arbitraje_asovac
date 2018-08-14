@@ -14,7 +14,7 @@ from .models import Rol,Sistema_asovac,Usuario_asovac
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if (1 in rol_id and item_active == 1) or ((estado =='2' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 1):
+    if (1 in rol_id and item_active == 1) or (2 in rol_id and item_active == 1):
         return 1
     return 0
 
