@@ -826,3 +826,7 @@ def total(request):
         'route_seg':route_seg,
     }
     return render(request, 'main_app_totales.html', context)
+
+def apps_selection(request):
+    
+    return render(request, 'main_app_aplicaciones_opc.html',context={})

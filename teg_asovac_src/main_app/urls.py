@@ -50,4 +50,5 @@ urlpatterns = [
 
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
+    url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
 ]

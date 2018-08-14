@@ -53,10 +53,8 @@ class Usuario_asovac(models.Model):
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
 	subarea_id= models.ManyToManyField('arbitrajes.Sub_area',blank=True)
 
-	
 	usuario_activo = models.BooleanField(default=True)
 	
-
 	def __str__(self):
 		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
 
