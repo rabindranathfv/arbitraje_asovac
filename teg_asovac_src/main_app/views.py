@@ -227,7 +227,7 @@ def home(request):
     # queryset
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
-
+    print(arbitraje_data)
 
 
 
@@ -828,5 +828,16 @@ def total(request):
     return render(request, 'main_app_totales.html', context)
 
 def apps_selection(request):
+    # queryset
+    # arbitraje_data = Sistema_asovac.objects.all()
+
+    # if request.method == 'POST':
+    #     context = {
+    #         'nombre_vista' : 'Home',
+    #         'arb_data' : arbitraje_data,
+    #     }
+    #     return render(request, 'main_app_home.html',context)
+    context = {
     
-    return render(request, 'main_app_aplicaciones_opc.html',context={})
+    }
+    return render(request, 'main_app_aplicaciones_opc.html',context)
