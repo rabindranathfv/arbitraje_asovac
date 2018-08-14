@@ -74,7 +74,7 @@ def verify_sesions_arbitraje_option(estado,rol_id, item_active):
     return 0
 
 def verify_asignar_sesion(estado,rol_id,item_active):
-    if(1 in rol_id and item_active == 2) or (estado == '4' and (2in rol_id or 3 in rol_id) and item_active == 2):
+    if(1 in rol_id and item_active == 2) or (estado == '4' and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='7' and 2 in rol_id and item_active == 2):
         return 1
     return 0
 
