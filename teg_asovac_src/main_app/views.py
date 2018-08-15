@@ -229,6 +229,16 @@ def get_route_trabajos_sidebar(estado,rol_id,item_active):
     else:
         return reverse('trabajos:jobs_list')
 
+
+def get_route_trabajos_navbar(estado,rol_id):
+    if(estado =='3' and 5 in rol_id):
+        return reverse('trabajos:trabajos')
+    if(estado =='5' and 4 in rol_id):
+        return reverse('trabajos:trabajos_evaluados')
+    return None 
+
+
+
 #Update state of arbitration
 def update_state_arbitration(arbitraje_id,estado):
     new_state = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -342,6 +352,7 @@ def dashboard(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     # print items
 
     # for item,val in items.items():
@@ -382,6 +393,7 @@ def dashboard(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -408,6 +420,7 @@ def data_basic(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # print items
 
@@ -447,6 +460,7 @@ def data_basic(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -471,6 +485,7 @@ def state_arbitration(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
@@ -515,6 +530,7 @@ def state_arbitration(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -539,6 +555,7 @@ def users_list(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # print items
 
@@ -577,6 +594,7 @@ def users_list(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -618,6 +636,7 @@ def user_edit(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     # print items
 
     context = {
@@ -655,6 +674,7 @@ def user_edit(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -678,6 +698,7 @@ def user_roles(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # print items
 
@@ -716,6 +737,7 @@ def user_roles(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -739,6 +761,7 @@ def coord_general(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # print items
 
@@ -777,6 +800,7 @@ def coord_general(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -800,6 +824,7 @@ def coord_area(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     
     # print items
 
@@ -838,6 +863,7 @@ def coord_area(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -861,6 +887,7 @@ def total(request):
     route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 
     # print items
 
@@ -899,5 +926,6 @@ def total(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
     }
     return render(request, 'main_app_totales.html', context)
