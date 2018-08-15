@@ -328,10 +328,15 @@
 	        </li>
 	    {% endif %}
 
-        {% if crear_trabajo_sidebar == 1 %}
+        {% if trabajo_sidebar == 1 %}
             <li>
                 <a href="{% url 'trabajos:trabajos' %}">
                     Crear Trabajo
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'autores:postular_trabajo' %}">
+                    Postular Trabajo
                 </a>
             </li>
         {% endif %}

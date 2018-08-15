@@ -13,7 +13,7 @@ from django.conf.urls import include
 from django.conf.urls import url
 from django.contrib import admin
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import verify_crear_trabajo_option, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
+from main_app.views import verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
 
 # Create your views here.
 def arbitrajes_pag(request):
@@ -71,7 +71,7 @@ def listado_trabajos(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
-        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -138,7 +138,7 @@ def referee_list(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
-        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -199,7 +199,7 @@ def referee_edit(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
-        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -259,7 +259,7 @@ def areas_subareas(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
-        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -320,7 +320,7 @@ def asignacion_de_sesion(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
-        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
