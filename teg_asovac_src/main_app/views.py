@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
+import random, string
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
@@ -294,17 +295,17 @@ def dashboard(request):
 
     if request.POST:
         request.session['estado'] = request.POST['estado']
-        request.session['arbitraje_id'] = request.POST['event_id']
+        request.session['arbitraje_id'] = request.POST['arbitraje_id']
     else:
         estado=-1
-        event_id=-1
+        arbitraje_id=-1
 
     
     rol_id=get_roles(request.user.id)
     
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     #print(request.session['estado'])
@@ -324,7 +325,7 @@ def dashboard(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -366,7 +367,23 @@ def data_basic(request):
     # print (rol_id)
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
+
+    if request.POST:
+        opcion = request.POST['generar_clave']
+        x = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+        if opcion == '1':
+            x += 'COG'
+
+        elif opcion == '2':
+            x+= 'COA'
+
+        elif opcion == '3':    
+            x += 'ARS'
+        
+        print("The password is:"+x)
+
+
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -383,7 +400,7 @@ def data_basic(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -422,7 +439,7 @@ def state_arbitration(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
     user_id = request.user.id
 
     item_active = 1
@@ -435,7 +452,7 @@ def state_arbitration(request):
     if request.method == 'POST':
         estado = request.POST['estado']
         #print(estado)
-        request.session['estado'] = update_state_arbitration(event_id,estado)
+        request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
 
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
     estado = request.session['estado']
@@ -446,7 +463,7 @@ def state_arbitration(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -486,7 +503,7 @@ def users_list(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -503,7 +520,7 @@ def users_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -560,7 +577,7 @@ def user_edit(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -576,7 +593,7 @@ def user_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -615,7 +632,7 @@ def user_roles(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -632,7 +649,7 @@ def user_roles(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -671,7 +688,7 @@ def coord_general(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -688,7 +705,7 @@ def coord_general(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -727,7 +744,7 @@ def coord_area(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -744,7 +761,7 @@ def coord_area(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -783,7 +800,7 @@ def total(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
     
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
@@ -800,7 +817,7 @@ def total(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],

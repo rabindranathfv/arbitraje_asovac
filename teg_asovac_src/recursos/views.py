@@ -53,7 +53,7 @@ def resources_author(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -69,7 +69,7 @@ def resources_author(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -109,7 +109,7 @@ def resources_referee(request):
     secondary_navbar_options = ['']
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -126,7 +126,7 @@ def resources_referee(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -164,7 +164,7 @@ def resources_event(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
         
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -181,7 +181,7 @@ def resources_event(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -220,7 +220,7 @@ def resources_sesion(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -237,7 +237,7 @@ def resources_sesion(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -276,7 +276,7 @@ def resources_asovac(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -293,7 +293,7 @@ def resources_asovac(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -331,7 +331,7 @@ def resources_arbitration(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -348,7 +348,7 @@ def resources_arbitration(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],

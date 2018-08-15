@@ -80,11 +80,15 @@
                                 <!-- {{ form | crispy}} -->
                                 <!-- {{ form }} -->
 
-                                <form class="form-inline">
+                                <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                     <div class="col-sm-12">
                                         <!-- <div class="form-group"> -->
-                                            <button type="submit" class="btn btn-primary">Generar</button>
+                                            {% csrf_token %}
+                                            <input class="" name="generar_clave" type='hidden' value="1">
+                                            <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                            <!--
                                             <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
+                                            -->
                                         <!-- </div> -->
                                     </div>
                                 </form>
@@ -105,11 +109,15 @@
                                     <!-- {{ form | crispy}} -->
                                     <!-- {{ form }} -->
     
-                                    <form class="form-inline">
+                                    <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                         <div class="col-sm-12">
                                             <!-- <div class="form-group"> -->
-                                                <button type="submit" class="btn btn-primary">Generar</button>
+                                                {% csrf_token %}
+                                                <input class="" name="generar_clave" type='hidden' value="2">
+                                                <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                                <!--
                                                 <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
+                                                -->
                                             <!-- </div> -->
                                         </div>
                                     </form>
@@ -130,11 +138,15 @@
                                         <!-- {{ form | crispy}} -->
                                         <!-- {{ form }} -->
         
-                                        <form class="form-inline">
+                                        <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                             <div class="col-sm-12">
                                                 <!-- <div class="form-group"> -->
-                                                    <button type="submit" class="btn btn-primary">Generar</button>
+                                                    {% csrf_token %}
+                                                    <input class="" name="generar_clave" type='hidden' value="3">
+                                                    <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                                    <!--
                                                     <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
+                                                    -->
                                                 <!-- </div> -->
                                             </div>
                                         </form>

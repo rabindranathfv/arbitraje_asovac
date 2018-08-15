@@ -48,7 +48,7 @@ def referee_list(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -65,7 +65,7 @@ def referee_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -104,7 +104,7 @@ def referee_edit(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -121,7 +121,7 @@ def referee_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -159,7 +159,7 @@ def areas_subareas(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -176,7 +176,7 @@ def areas_subareas(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
