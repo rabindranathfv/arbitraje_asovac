@@ -328,6 +328,14 @@
 	        </li>
 	    {% endif %}
 
+        {% if crear_trabajo_sidebar == 1 %}
+            <li>
+                <a href="{% url 'trabajos:trabajos' %}">
+                    Crear Trabajo
+                </a>
+            </li>
+        {% endif %}
+
 
 	    {% if eventos_sidebar_full == 1 %}
 		    <li>

@@ -99,6 +99,11 @@ def verify_espacio_option(estado,rol_id,item_active):
         return 1
     return 0
 
+def verify_crear_trabajo_option(estado,rol_id):
+    if(estado == '3' and 5 in rol_id):
+        return 1
+    return 0
+
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
     if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
@@ -147,6 +152,8 @@ def validate_rol_status(estado,rol_id,item_active):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
 
+    crear_trabajo_sidebar = verify_crear_trabajo_option(estado,rol_id)
+
     configuration= verify_configuration(estado,rol_id)
     arbitration= verify_arbitration(estado,rol_id)
     result=  verify_result(estado,rol_id)
@@ -178,6 +185,9 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('eventos:event_list')])
     items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('sesiones:sesions_space_list')])
     
+    #Menú de trabajos
+    items.setdefault("crear_trabajo_sidebar",[crear_trabajo_sidebar,reverse('trabajos:trabajos')])
+
 
     items.setdefault("configuration",[configuration,''])
     items.setdefault("arbitration",[arbitration,''])
@@ -363,6 +373,7 @@ def dashboard(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -427,6 +438,7 @@ def data_basic(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -494,6 +506,7 @@ def state_arbitration(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -555,6 +568,7 @@ def users_list(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -632,6 +646,7 @@ def user_edit(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -692,6 +707,7 @@ def user_roles(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -752,6 +768,7 @@ def coord_general(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -812,6 +829,7 @@ def coord_area(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
@@ -872,6 +890,7 @@ def total(request):
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
         'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'crear_trabajo_sidebar': items["crear_trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
