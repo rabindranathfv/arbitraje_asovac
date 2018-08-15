@@ -7,7 +7,7 @@ from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
 
 # Create your views here.
 def sesiones_pag(request):
@@ -37,6 +37,7 @@ def sesions_list(request):
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     
     # print items
 
@@ -76,6 +77,7 @@ def sesions_list(request):
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'sesiones_sesions_list.html', context)
 
@@ -99,6 +101,7 @@ def sesions_edit(request):
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -138,6 +141,7 @@ def sesions_edit(request):
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'sesiones_sesions_edit.html', context)
 
@@ -162,6 +166,7 @@ def sesions_space_list(request):
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -201,6 +206,7 @@ def sesions_space_list(request):
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'sesiones_space_list.html', context)
 
@@ -225,6 +231,7 @@ def sesions_space_edit(request):
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -264,5 +271,6 @@ def sesions_space_edit(request):
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'sesiones_space_edit.html', context)

@@ -26,4 +26,6 @@ urlpatterns = [
     url(r'^$', views.trabajos, name= 'trabajos'),
     url(r'^editar/$', views.edit_trabajo, name= 'edit_trabajo'),
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
+    url(r'^resultados/$', views.trabajos_resultados_autor, name = 'trabajos_resultados_autor'),
+
 ]
