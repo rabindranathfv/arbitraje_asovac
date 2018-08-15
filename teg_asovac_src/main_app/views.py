@@ -832,9 +832,29 @@ def total(request):
 
 # Ajax para el uso de ventanas modales
 def create_user_modal(request):
-    form = User
+    data= dict()
+    if request.method == 'POST':
+        print "El metodo es post"
+        form = User(request.POST)
+        if form.is_valid():
+            form.save()
+            data['form_is_valid']= True
+        else:
+            data['form_is_valid']= False
+    else:
+        print "El metodo es get"
+        form= User()
     context={
-        'form':form
+        'form': form
     }
-    html_form= render_to_string('users-create.html', context,request=request)
-    return JsonResponse({'html_form':html_form})
+
+    data['html_form']= render_to_string('users-create.html',context, request)
+    return JsonResponse(data)
+            
+        
+    # form = User
+    # context={
+    #     'form':form
+    # }
+    # html_form= render_to_string('users-create.html', context,request=request)
+    # return JsonResponse({'html_form':html_form})
