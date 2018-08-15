@@ -20,5 +20,22 @@ $(document).ready(function(){
 
 $('#myModal').on('shown.bs.modal', function () {
   $('#myInput').trigger('focus')
-})
+});
 
+// Ajax para modales
+
+$(document).ready(function(){
+    $('.show-form').click(function(){
+        $.ajax({
+            url: '/dashboard/usuario/crear',
+            type: 'get',
+            dataType: 'json',
+            beforeSend: function(){
+              $('#modal-user').modal('show');  
+            },
+            success: function (data){
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        })
+    })
+});

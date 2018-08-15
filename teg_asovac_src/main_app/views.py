@@ -829,3 +829,12 @@ def total(request):
         'route_seg':route_seg,
     }
     return render(request, 'main_app_totales.html', context)
+
+# Ajax para el uso de ventanas modales
+def create_user_modal(request):
+    form = User
+    context={
+        'form':form
+    }
+    html_form= render_to_string('users-create.html', context,request=request)
+    return JsonResponse({'html_form':html_form})

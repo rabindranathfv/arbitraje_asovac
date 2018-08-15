@@ -45,9 +45,10 @@ urlpatterns = [
     url(r'^admin/coord/general/$',views.coord_general,name='coord_general'),
     url(r'^admin/coord/area/$',views.coord_area,name='coord_area'),
     url(r'^admin/total/$',views.total,name='total'),
-
     url(r'^register/$',views.register, name='register'), 
-
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
+
+    #Rutas para modales ajax
+    url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
 ]
