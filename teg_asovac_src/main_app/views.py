@@ -372,21 +372,21 @@ def data_basic(request):
     if request.POST:
         opcion = request.POST['generar_clave']
         random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
-        if opcion == '1': #Caso de generar_clave
+        if opcion == '1': #Caso de generar clave  para coordinador general
             random_password += 'COG'
             arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_coordinador_general = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador general ha sido generada.')
         
-        elif opcion == '2':
+        elif opcion == '2':#Caso de generar clave para coordinador de area
             random_password+= 'COA'
             arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_coordinador_area = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
         
-        elif opcion == '3':    
+        elif opcion == '3':#Caso de generar clave para arbitro de subarea
             random_password += 'ARS'
             arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_arbitro_subarea = random_password
