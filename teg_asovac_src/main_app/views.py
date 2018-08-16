@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
+
+from decouple import config
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -218,11 +223,11 @@ def update_state_arbitration(arbitraje_id,estado):
 # Create your views here.
 def login(request):
     form = MyLoginForm()
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Login',
         'form' : form,
     }
-    return render(request, 'main_app_login.html', conterandom_passwordt)
+    return render(request, 'main_app_login.html', context)
 
 def home(request):
     # queryset
@@ -233,16 +238,16 @@ def home(request):
 
 
     # print(arbitraje_data)
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
         'arb_data' : arbitraje_data,
     }
-    return render(request, 'main_app_home.html', conterandom_passwordt)
+    return render(request, 'main_app_home.html', context)
 
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
-    conterandom_passwordt = {
+    context = {
                     'nombre_vista' : 'Crear Arbitraje',
                     'username' : request.user.username,
                     'form' : form,
@@ -253,36 +258,36 @@ def create_arbitraje(request):
             form.save()
             # print(form)
             arbitraje_data = Sistema_asovac.objects.all()
-            conterandom_passwordt = {        
+            context = {        
                 'username' : request.user.username,
                 'form' : form,
                 'arb_data': arbitraje_data,
                 }
-            return render(request, 'main_app_home.html', conterandom_passwordt)        
-    return render(request, 'main_app_create_arbitraje.html', conterandom_passwordt)
+            return render(request, 'main_app_home.html', context)        
+    return render(request, 'main_app_create_arbitraje.html', context)
 
 def email_test(request):
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
         'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño erandom_passwordperimental',
         'authors': ['Karla Calo', 'Luis Henríquez']
     }
-    return render(request, 'resumen_rejected_email.html', conterandom_passwordt)
+    return render(request, 'resumen_rejected_email.html', context)
 
 def listado_trabajos(request):
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Lista de Trabajos',
         'username' : 'Rabindranath Ferreira',
     }
-    return render(request, 'main_app_resumenes_trabajos_list.html', conterandom_passwordt)
+    return render(request, 'main_app_resumenes_trabajos_list.html', context)
 
 def detalles_resumen(request):
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Detalles de Resumen',
         'username' : 'Rabindranath Ferreira',
     }
-    return render(request, 'main_app_detalle_resumen.html', conterandom_passwordt)
+    return render(request, 'main_app_detalle_resumen.html', context)
 
 
 def dashboard(request):
@@ -318,7 +323,7 @@ def dashboard(request):
     # for item,val in items.items():
         # print item, ":", val[0]
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Dashboard',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -350,7 +355,7 @@ def dashboard(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_dashboard.html', conterandom_passwordt)
+    return render(request, 'main_app_dashboard.html', context)
 
 def data_basic(request):
     form= DataBasicForm()
@@ -372,27 +377,50 @@ def data_basic(request):
     if request.POST:
         opcion = request.POST['generar_clave']
         random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+        arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+            
         if opcion == '1': #Caso de generar clave  para coordinador general
             random_password += 'COG'
-            arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_coordinador_general = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador general ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 2)
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=2).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),                #email de envio
+                        [item.usuario.email],                       #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+                print(item.usuario.email)
+
         
         elif opcion == '2':#Caso de generar clave para coordinador de area
             random_password+= 'COA'
-            arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_coordinador_area = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
         
         elif opcion == '3':#Caso de generar clave para arbitro de subarea
             random_password += 'ARS'
-            arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             arbitraje.clave_maestra_arbitro_subarea = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
         
+
         print("The password is:"+random_password)
 
 
@@ -405,7 +433,7 @@ def data_basic(request):
     # print items
 
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Configuracion general',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -437,7 +465,7 @@ def data_basic(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_data_basic.html', conterandom_passwordt)
+    return render(request, 'main_app_data_basic.html', context)
 
 def state_arbitration(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -468,7 +496,7 @@ def state_arbitration(request):
 
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
     estado = request.session['estado']
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Configuracion general',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -500,7 +528,7 @@ def state_arbitration(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_status_arbitration.html', conterandom_passwordt)
+    return render(request, 'main_app_status_arbitration.html', context)
 
 def users_list(request):
 
@@ -525,7 +553,7 @@ def users_list(request):
 
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -557,7 +585,7 @@ def users_list(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_users_list.html', conterandom_passwordt)
+    return render(request, 'main_app_users_list.html', context)
     
 def register(request):
     if request.method == 'POST':
@@ -565,17 +593,17 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Se ha registrado de manera erandom_passworditosa.')
-            conterandom_passwordt={"form":form,}
+            context={"form":form,}
             return redirect('login')
 
         else:
-            conterandom_passwordt={"form":form,}
-            return render(request,'main_app_register.html',conterandom_passwordt)
+            context={"form":form,}
+            return render(request,'main_app_register.html',context)
             
     else:
         form = RegisterForm()
-        conterandom_passwordt={"form":form,}
-        return render(request,'main_app_register.html',conterandom_passwordt)
+        context={"form":form,}
+        return render(request,'main_app_register.html',context)
 
 def user_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -598,7 +626,7 @@ def user_edit(request):
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -630,7 +658,7 @@ def user_edit(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_edit_user.html', conterandom_passwordt)
+    return render(request, 'main_app_edit_user.html', context)
 
 def user_roles(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -654,7 +682,7 @@ def user_roles(request):
 
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -686,7 +714,7 @@ def user_roles(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_user_roles.html', conterandom_passwordt)
+    return render(request, 'main_app_user_roles.html', context)
 
 def coord_general(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -710,7 +738,7 @@ def coord_general(request):
 
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -742,7 +770,7 @@ def coord_general(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_coord_general.html', conterandom_passwordt)
+    return render(request, 'main_app_coord_general.html', context)
 
 def coord_area(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
@@ -766,7 +794,7 @@ def coord_area(request):
     
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -798,7 +826,7 @@ def coord_area(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_coord_area.html', conterandom_passwordt)
+    return render(request, 'main_app_coord_area.html', context)
 
 def total(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -822,7 +850,7 @@ def total(request):
 
     # print items
 
-    conterandom_passwordt = {
+    context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
@@ -854,4 +882,4 @@ def total(request):
         'route_conf':route_conf,
         'route_seg':route_seg,
     }
-    return render(request, 'main_app_totales.html', conterandom_passwordt)
+    return render(request, 'main_app_totales.html', context)
