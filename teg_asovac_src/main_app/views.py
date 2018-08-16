@@ -401,11 +401,10 @@ def data_basic(request):
                 send_mail(
                         'Asignación de contraseña',         #titulo
                         msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),                #email de envio
-                        [item.usuario.email],                       #destinatario
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
                         html_message=msg_html,              #mensaje en html
                         )
-                print(item.usuario.email)
 
         
         elif opcion == '2':#Caso de generar clave para coordinador de area
@@ -413,12 +412,55 @@ def data_basic(request):
             arbitraje.clave_maestra_coordinador_area = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 3)
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=3).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
         
+
         elif opcion == '3':#Caso de generar clave para arbitro de subarea
             random_password += 'ARS'
             arbitraje.clave_maestra_arbitro_subarea = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 4)
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=4).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
         
 
         print("The password is:"+random_password)
