@@ -4,7 +4,202 @@
 <!-- Fixed Sidebar & Content-->
 <div id="wrapper" class="toggled">
 
-{% include 'sidebar.html'%}
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-11" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div>
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Trabajos</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                    <div class="col-sm-3">
+                        <h2 class="text-left">Listado de resumenes</h2>
+                    </div>
+
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                    <th>Título</th>
+                                    <th>Área</th>
+                                    <th>Subárea</th>
+                                    <th>Autor(es)</th>
+                                    <th>Estatus</th>
+                                    <th>Versión</th>
+                                    <th class="col-sm-2">Acciones</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                 </tr>
+
+                                 <tr>
+                                    <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                 
+                                  <tr>
+                                    <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Este es un T&iacute;tulo</td>
+                                    <td>Computaci&oacute;n</td>
+                                    <td>Computaci&oacute;n001</td>
+                                    <td>
+                                        Rabindranath Ferreira
+                                    </td>
+                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
+                                    <td class="col-sm-1">2.0</td>
+                                    <td class="col-sm-2">
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button">
+                                            <i class="fas fa-envelope"></i>
+                                        </a>
+                                        <a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>                  
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+                           
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+<!--
 <div class="login-content">
     <div class="container-fluid">
         <div class="row">
@@ -113,4 +308,5 @@
     </div>
 </div>
 </div>
+-->
 {% endblock %}
