@@ -6,89 +6,187 @@
 <!-- Fixed Sidebar & Content-->
 <div id="wrapper" class="toggled">
 
-    {% include 'sidebar.html'%}
-    <div class="login-content">
-        <div class="container-fluid">
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-11" id="content-wrapper">
+            <!-- Title content--> 
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="jumbotron RLcard">
-                        <div class="container-fluid">
-                            <div class="row middle-content">
-                                <div class="col-sm-3">
-                                    <h2>Autor</h2>
-                                </div>
-                                <div class="col-sm-2 col-sm-offset-7">
-                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block">Atrás</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row middle-content">
-                            <div class="col-sm-10">
-                                <h3>Datos de pagadores del trabajo 'Titulo 1'</h3>
-                            </div>
-                            <div class="col-sm-2">
-                                <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-primary btn-block">Añadir Pago</a>
-                            </div>
-                        </div>
-                        <table class="table table-bordered gray-header">
-                            <tr>
-                                <th class="col-sm-3">Nombre</th>
-                                <th class="col-sm-2">Cedula</th>                 
-                                <th class="col-sm-2">Banco Origen</th>
-                                <th class="col-sm-2">N° de Transferencia</th>
-                                <th class="col-sm-2">Total</th>
-                                <th class="col-sm-1">Acciones</th>
-                            </tr>
-                            <tr>
-                                <td>Juanito Perez</td>
-                                <td>1323234</td>
-                                <td>Venezolano de Crédito</td>
-                                <td>121324344</td>
-                                <td>100</td>
-                                <td>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                        <i class="fas fa-door-open"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Milagros del cielo</td>
-                                <td>124345</td>
-                                <td>Banco de Venezuela</td>
-                                <td>5467764564</td>
-                                <td>500</td>
-                                <td>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                        <i class="fas fa-door-open"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Un Desconocido</td>
-                                <td>34636356</td>
-                                <td>Banesco</td>
-                                <td>32543453</td>
-                                <td>200</td>
-                                <td>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                        <i class="fas fa-door-open"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>                  
-                    </div>
+                <div>
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Trabajos</h3>
                 </div>
             </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                    <div class="row">
+                        <h2 class="text-left">Autor</h2>
+                    </div>
+
+                    <div class="row middle-content">
+                        <div class="col-sm-10">
+                            <h3>Datos de pagadores del trabajo 'Titulo 1'</h3>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-primary btn-block">Añadir Pago</a>
+                        </div>
+                    </div>
+
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                    <th class="col-sm-3">Nombre</th>
+                                    <th class="col-sm-2">Cedula</th>                 
+                                    <th class="col-sm-2">Banco Origen</th>
+                                    <th class="col-sm-2">N° de Transferencia</th>
+                                    <th class="col-sm-2">Total</th>
+                                    <th class="col-sm-1">Acciones</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                    <td>Juanito Perez</td>
+                                    <td>1323234</td>
+                                    <td>Venezolano de Crédito</td>
+                                    <td>121324344</td>
+                                    <td>100</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                 </tr>
+
+                                 <tr>
+                                    <td>Milagros del cielo</td>
+                                    <td>124345</td>
+                                    <td>Banco de Venezuela</td>
+                                    <td>5467764564</td>
+                                    <td>500</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Un Desconocido</td>
+                                    <td>34636356</td>
+                                    <td>Banesco</td>
+                                    <td>32543453</td>
+                                    <td>200</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>                  
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+                           
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                    <div class="row middle-content">
+                        <div class="col-sm-10">
+                            <h3>Datos de pagadores del trabajo 'Titulo 2'</h3>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="#" class="btn btn-success btn-block">Pagado</a>
+                        </div>
+                    </div>
+
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                    <th class="col-sm-3">Nombre</th>
+                                    <th class="col-sm-2">Cedula</th>                 
+                                    <th class="col-sm-2">Banco Origen</th>
+                                    <th class="col-sm-2">N° de Transferencia</th>
+                                    <th class="col-sm-2">Total</th>
+                                    <th class="col-sm-1">Acciones</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                    <td>Juanito Perez</td>
+                                    <td>1323234</td>
+                                    <td>Venezolano de Crédito</td>
+                                    <td>121324344</td>
+                                    <td>100</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                 </tr>
+
+                                 <tr>
+                                    <td>Milagros del cielo</td>
+                                    <td>124345</td>
+                                    <td>Banco de Venezuela</td>
+                                    <td>5467764564</td>
+                                    <td>500</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Un Desconocido</td>
+                                    <td>34636356</td>
+                                    <td>Banesco</td>
+                                    <td>32543453</td>
+                                    <td>200</td>
+                                    <td>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                            <i class="fas fa-door-open"></i>
+                                        </a>
+                                    </td>
+                                  </tr>                  
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+                           
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
         </div>
-    </div>
 </div>
+
 {% endblock %}
