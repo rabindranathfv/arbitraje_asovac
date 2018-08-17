@@ -3,6 +3,45 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div id="wrapper" class="toggled">
+
+    {% include 'sidebar.html'%}
+
+    <!-- Page Content -->
+    <div class="container-fluid">
+
+            <div class="col-sm-12 ">
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-5">
+                                <h2>Agregar organizador</h2>
+                            </div>
+                            <div class="col-sm-2 col-sm-offset-5">
+                                <div class="row middle-content">
+                                    <div class="col-sm-10">
+                                        <a href="{% url 'eventos:organizer_create' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                
+                                    <div class="col-sm-12">
+                                        {% crispy form %}
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    
+                </div>
+            </div>
+        
+    </div>
+</div>
 
 
 <!-- Modal -->
@@ -13,11 +52,11 @@
             <div class="modal-header">
                 <div class="col-sm-offset-1">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h3 class="modal-title"> Creación de Arbitraje</h3>
+                    <h3 class="modal-title"> Agregar organizador </h3>
                 </div>
             </div>
             <div class="modal-body">
-                <h4 class="text-center">¡El arbitraje ingresado ha sido creado exitósamente!</h4>
+                <h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
                 <p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
             </div>
             <div class="modal-footer">

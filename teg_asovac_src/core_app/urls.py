@@ -30,14 +30,14 @@ from django.contrib.auth.views import login, logout_then_login, password_reset, 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
-    url(r'^administracion/', include('main_app.urls',      namespace='main_app')),
-    url(r'^arbitrajes/', include('arbitrajes.urls',    namespace='arbitrajes')),
-    url(r'^recursos/', include('recursos.urls',      namespace='recursos')),
-    url(r'^seguimiento/', include('seguimiento.urls',   namespace='seguimiento')),
-    url(r'^sesiones/', include('sesiones.urls',      namespace='sesiones')),
-    url(r'^trabajos/', include('trabajos.urls',      namespace='trabajos')),
-    url(r'^eventos/', include('eventos.urls',       namespace='eventos')),
-    url(r'^autores/', include('autores.urls',       namespace='autores')),
+    url(r'^administracion/', include('main_app.urls', namespace='main_app')),
+    url(r'^arbitrajes/', include('arbitrajes.urls', namespace='arbitrajes')),
+    url(r'^recursos/', include('recursos.urls', namespace='recursos')),
+    url(r'^seguimiento/', include('seguimiento.urls', namespace='seguimiento')),
+    url(r'^sesiones/', include('sesiones.urls', namespace='sesiones')),
+    url(r'^trabajos/', include('trabajos.urls', namespace='trabajos')),
+    url(r'^eventos/', include('eventos.urls', namespace='eventos')),
+    url(r'^autores/', include('autores.urls', namespace='autores')),
 
      ## password and login 
 
