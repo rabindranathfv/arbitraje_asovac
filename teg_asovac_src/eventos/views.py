@@ -123,6 +123,8 @@ def event_create(request):
 
     secondary_navbar_options = ['']
 
+
+
     #rol_id=get_roles(request.user.id)
 
     # print (rol_id)
@@ -168,3 +170,19 @@ def event_create(request):
         # 'route_seg':route_seg,
     }
     return render(request, 'eventos_event_create.html', context)
+
+def organizer_create(request):
+
+    return render(request, 'eventos_organizer_create.html',context={})
+
+def organizer_list(request):
+
+    return render(request, 'eventos_organizer_list.html', context={})
+
+def organizer_edit(request):
+
+    return render(request, 'eventos_organizer_edit.html', context={})
+
+def organizer_delete(request):
+
+    return render(request, 'eventos_organizer_delente.html',context={})
