@@ -83,7 +83,14 @@
                       </li>
                     </ul>
                 </li>
-                {% endif %}
+              
+              {% else %}
+              <li>
+                    <a href="{% url 'trabajos:trabajos_evaluados' %}">
+                      <i class="fas fa-book"></i> Trabajos
+                    </a>
+              </li>
+              {% endif %}
             {% endif %}
 <!--  
             {% if verify_event == 1 %}
