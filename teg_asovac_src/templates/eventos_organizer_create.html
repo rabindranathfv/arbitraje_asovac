@@ -5,43 +5,48 @@
 {% block content %}
 <div id="wrapper" class="toggled">
 
-    {% include 'sidebar.html'%}
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Organizador</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
 
-    <!-- Page Content -->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-                <div class="jumbotron RLcard">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <div class="col-sm-5">
-                                <h2>Agregar organizador</h2>
-                            </div>
-                            <div class="col-sm-2 col-sm-offset-5">
-                                <div class="row middle-content">
-                                    <div class="col-sm-10">
-                                        <a href="{% url 'eventos:organizer_create' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
-                                    </div>
+             <!-- First Row -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="jumbotron RLcard">
+                                             
+                        <div class="col-sm-12">
+                                <div class="col-sm-10">
+                                        <h2 class="text-left">Agregar Organizador</h2>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-12">
-                                        {% crispy form %}
-                                    </div>
+                                <div class="col-sm-2">
+                                    <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg ">Atras</a> 
                                 </div>
-                            </div>
                         </div>
+
+                        {% include "errors_form.html" %}
+                    <!-- init form -->
+                    {% crispy form %}
+                    <!-- end form -->
+                    <br><br><br>
                     </div>
                 </div>
             </div>
+             <!-- EndFirst Row -->
+   
         </div>
-    </div>
 </div>
+
 
 
 <!-- Modal -->

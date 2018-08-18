@@ -65,17 +65,21 @@ class CreateOrganizerForm(forms.ModelForm):
             Field('observaciones'),
             Div(
                 Div(
+                    HTML("<span></span>"),
+                css_class='col-sm-7'),
+
+                Div(
                     HTML("<a href=\"{% url 'eventos:organizer_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-4 col-sm-offset-4'),
+                css_class='col-sm-2'),
 
                 Div(
                     Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
-                css_class='col-sm-6'),
+                css_class='col-sm-3'),
 
                 # Div(
                 #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
                 # css_class='col-sm-1'),
 
-            css_class='row col-sm-12')
+            css_class='col-sm-12')
         )
 
