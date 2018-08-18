@@ -374,11 +374,12 @@ def data_basic(request):
     
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 
     if request.POST:
         opcion = request.POST['generar_clave']
         random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
-        arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             
         if opcion == '1': #Caso de generar clave  para coordinador general
             random_password += 'COG'
@@ -484,6 +485,7 @@ def data_basic(request):
         #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
+        'arbitraje':arbitraje,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],

@@ -89,13 +89,18 @@
                                 <!-- Init form -->
                                 <!-- {{ form | crispy}} -->
                                 <!-- {{ form }} -->
-
+                                {% if arbitraje.clave_maestra_coordinador_general != "" %} 
+                                    <p class="col-sm-12 text-center">Clave: {{ arbitraje.clave_maestra_coordinador_general }}</p>
+                                {% else %}
+                                    <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
+                                {% endif %}                                 
+                                
                                 <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                     <div class="col-sm-12">
                                         <!-- <div class="form-group"> -->
                                             {% csrf_token %}
                                             <input class="" name="generar_clave" type='hidden' value="1">
-                                            <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                            <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
                                             <!--
                                             <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
                                             -->
@@ -118,13 +123,18 @@
                                     <!-- Init form -->
                                     <!-- {{ form | crispy}} -->
                                     <!-- {{ form }} -->
-    
+                                    {% if arbitraje.clave_maestra_coordinador_area != "" %} 
+                                        <p class="col-sm-12 text-center">Clave: {{ arbitraje.clave_maestra_coordinador_area }}</p>
+                                    {% else %}
+                                        <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
+                                    {% endif %}   
+                                    
                                     <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                         <div class="col-sm-12">
                                             <!-- <div class="form-group"> -->
                                                 {% csrf_token %}
                                                 <input class="" name="generar_clave" type='hidden' value="2">
-                                                <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                                <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
                                                 <!--
                                                 <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
                                                 -->
@@ -147,13 +157,18 @@
                                         <!-- Init form -->
                                         <!-- {{ form | crispy}} -->
                                         <!-- {{ form }} -->
-        
+                                        {% if arbitraje.clave_maestra_arbitro_subarea != "" %} 
+                                            <p class="col-sm-12 text-center">Clave: {{ arbitraje.clave_maestra_arbitro_subarea }}</p>
+                                        {% else %}
+                                            <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
+                                        {% endif %}
+                                        
                                         <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
                                             <div class="col-sm-12">
                                                 <!-- <div class="form-group"> -->
                                                     {% csrf_token %}
                                                     <input class="" name="generar_clave" type='hidden' value="3">
-                                                    <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar</button>
+                                                    <button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
                                                     <!--
                                                     <input type="text" class="form-control" id="name_arbitration" placeholder="Introduzca su clave ">
                                                     -->
