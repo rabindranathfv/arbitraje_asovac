@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -831,30 +831,39 @@ def total(request):
     return render(request, 'main_app_totales.html', context)
 
 # Ajax para el uso de ventanas modales
-def create_user_modal(request):
+def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
-        print "El metodo es post"
-        form = User(request.POST)
         if form.is_valid():
             form.save()
             data['form_is_valid']= True
+            users= User.objects.all()
+            data['user_list']= render_to_string('dinamic_list.html',{'users':users})
         else:
             data['form_is_valid']= False
-    else:
-        print "El metodo es get"
-        form= User()
+  
     context={
         'form': form
     }
-
-    data['html_form']= render_to_string('users-create.html',context, request)
+    data['html_form']= render_to_string(template_name,context, request=request)
     return JsonResponse(data)
-            
-        
-    # form = User
-    # context={
-    #     'form':form
-    # }
-    # html_form= render_to_string('users-create.html', context,request=request)
-    # return JsonResponse({'html_form':html_form})
+
+def create_user_modal(request):
+    if request.method == 'POST':
+        form= RegisterForm(request.POST)
+    else:
+        form= RegisterForm()
+
+    return process_modal(request,form,'users-create.html')
+
+def update_user_modal(request,id):
+    print "update_user_modal"
+    user=  get_object_or_404(User,id=id)
+    if request.method == 'POST':
+        # form= RegisterForm(request.POST,instance=user)
+        form= PerfilForm(request.POST,instance=user)
+    else:
+        # form= RegisterForm(instance=user)
+        form= PerfilForm(instance=user)
+    return process_modal(request,form,'user_update.html')
+    

@@ -29,7 +29,7 @@
                    
                     <h2 class="text-left">Lista de usuarios</h2>
                     <div class="">
-                            <button class="btn btn-primary show-form">Crear usuario</button>
+                            <button class="btn btn-primary show-form" data-url="{% url 'main_app:crear_usuario' %}">Crear usuario</button>
                         <div class="col-md-12">
                             <div class="col-md-10">
                                 <form class="form-inline text-right">
@@ -57,7 +57,7 @@
                     <br>
                     <br>
                     <br>
-                           <table class="table table-bordered gray-header">
+                           <table class="table table-bordered gray-header" id="show_users">
                                <thead>
                                  <tr>
                                      <th>
@@ -72,38 +72,7 @@
                                </thead>
                                <tbody>
 
-                                {% if users %}
-                                    {% for user in users %}
-                                        <tr>
-                                            <td>
-                                                <input type="checkbox" class="custom-control-input" id="customCheck1">    
-                                            </td>
-                                            <td>{{ user.first_name }}</td>
-                                            <td>{{ user.last_name }}</td>
-                                            <td>{{ user.username }}</td>
-                                            <td>{{ user.email }}</td>
-                                            <td >
-                                                    <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-info" role="button">
-                                                        <i class="fas fa-times"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-info" role="button"> 
-                                                        <i class="fas fa-envelope"></i>
-                                                    </a>
-                                                    <a href="" class="btn btn-info" role="button">
-                                                        <i class="fas fa-door-open"></i>
-                                                    </a>
-                                                    <a href="" class="btn btn-info" role="button">
-                                                        <i class="fas fa-user"></i> 
-                                                    </a>
-                                               </td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else%}
-                                   
-                                {% endif %}
+                                    {% include 'dinamic_list.html' %}
                                </tbody>
                              </table>
                            <!-- End table  -->

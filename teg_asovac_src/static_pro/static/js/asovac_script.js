@@ -25,23 +25,26 @@ $('#myModal').on('shown.bs.modal', function () {
 // Ajax para modales
 
 $(document).ready(function(){
-    $('.show-form').click(function(){
+    var ShowForm= function(){
+        var btn= $(this);
+        console.log('ShowForm');
         $.ajax({
-            url: '/dashboard/usuario/crear',
+            url: btn.attr('data-url'),
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
               $('#modal-user').modal('show');  
             },
             success: function (data){
+                // console.log(data.html_form);
                 $('#modal-user .modal-content').html(data.html_form);
             }
-        })
-    });
+        });
+    };
 
-    $('#modal-user').on('submit', 'create-form', function(){
+    var SaveForm= function(){
         var form= $(this);
-        alert('modal-book');
+        alert('Save');
         $.ajax({
             url: form.attr('data-url'),
             data: form.serialize(),
@@ -51,12 +54,23 @@ $(document).ready(function(){
             success: function(data){
                 if(data.form_is_valid){
                     console.log('data is saved')
+                    $('#show_users tbody').html(data.user_list);
+                    $('#modal-user').modal('hide');
                 }else{
+                    console.log('data is invalid')
                     $('#modal-book .modal-content').html(data.html_form)
                 }
             }
-        })
+        });
         return false;
-    });
+    };
+
+    // create
+    $('.show-form').click(ShowForm);
+    $('#modal-user').on('submit', '.create-form',SaveForm);
+
+    //update
+    $('#show_users').on('click','.show-form-update',ShowForm);
+    $('#modal-user').on('submit','.update-form',SaveForm);
 
 });
