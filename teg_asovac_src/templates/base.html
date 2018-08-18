@@ -69,19 +69,21 @@
             {% endif %}
 
             {% if verify_jobs == 1 %}
-            <li>
-              <a href="{{ route_trabajos_navbar}}">
-                <i class="fas fa-book"></i> Trabajos
-              </a>
-<!--
-              <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
-                  {% csrf_token %}
-                  <input class="" name="estado" type='hidden' value="{{ estado }}">
-                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-              </form>
-              <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
--->
-            </li>
+              {% if trabajo_sidebar == 1 %}
+                <li>
+                    <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+                      <i class="fas fa-book"></i> Trabajos
+                    </a>
+                    <ul class="dropdown-menu" style ="z-index:2">
+                      <li>
+                        <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Crear Trabajo</a>
+                      </li>
+                      <li>
+                      <a class="dropdown-item" href="{% url 'autores:postular_trabajo' %}">Postular Trabajo</a>
+                      </li>
+                    </ul>
+                </li>
+                {% endif %}
             {% endif %}
 <!--  
             {% if verify_event == 1 %}
@@ -123,7 +125,7 @@
 
     {% if secondary_navbar_options %}
     <!-- Fixed Secondary Navbar -->
-    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
+    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style ="z-index: 1">
       <div class="container-fluid">
         <ul class="nav navbar-nav ">
           {% for option in secondary_navbar_options %}
