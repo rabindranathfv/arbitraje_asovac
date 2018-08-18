@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect, render_to_response
 from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
 
+from django.db.models import Q
 from decouple import config
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -385,7 +386,7 @@ def data_basic(request):
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador general ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 2)
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 2) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=2).nombre
             context = {
@@ -413,7 +414,7 @@ def data_basic(request):
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 3)
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 3) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=3).nombre
             context = {
@@ -441,7 +442,7 @@ def data_basic(request):
             arbitraje.save()
             messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 4)
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 4) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=4).nombre
             context = {
