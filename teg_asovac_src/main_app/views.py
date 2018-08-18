@@ -48,7 +48,7 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
 
 
 def verify_recursos_option(estado,rol_id,item_active):
-    if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id) and item_active==1):
+    if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
         return 1
     return 0
 
