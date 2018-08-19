@@ -3,17 +3,16 @@
 
 {% block content %}
 <!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="">
+<div id="wrapper" class="toggled">
 
         {% include 'sidebar.html'%}
-   
         <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
+        <div class="container login-content col-sm-11" id="content-wrapper">
             <!-- Title content--> 
             <div class="row">
                 <div class="col-sm-12">
                     <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-right" id="menu-toggle-icon"></i>
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
                     </a>
                     <h3 class="user-title">Trabajos</h3>
                 </div>
@@ -25,9 +24,10 @@
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
                     <div class="col-sm-3">
-                        <h2 class="text-left">Lista de trabajos</h2>
+                      <h2 class="text-left">Lista de trabajos</h2>
                     </div>
-                           <table class="table table-bordered">
+                    <br>
+                           <table class="table table-bordered gray-header">
                                <thead>
                                  <tr>
                                     <th class="col-sm-3">Título</th>
@@ -39,7 +39,7 @@
                                </thead>
                                <tbody>
                                  <tr>
-                                    <td>Este es un T&iacute;tulo</td>
+                                   <td>Este es un T&iacute;tulo</td>
                                     <td>Rabindranath Ferreira</td>
                                     <td>2.0</td>
                                     <td><span class="label label-success lb-md center-block">Aprobado</span></td>
@@ -48,7 +48,7 @@
                                              <i class="fa fa-comment"></i>
                                          </a>
                                     </td>
-                                  </tr>
+                                 </tr>
                                  <tr>
                                     <td>Un título interesante</td>
                                     <td>
@@ -61,8 +61,8 @@
                                              <i class="fa fa-comment"></i>
                                          </a>
                                     </td>
-                                 </tr>
-                                 <tr>
+                                  </tr>
+                                  <tr>
                                     <td>Funciones Diferenciales</td>
                                     <td>
                                         Rodrigo Montoya
@@ -74,11 +74,12 @@
                                              <i class="fa fa-comment"></i>
                                          </a>
                                     </td>
-                                 </tr>
+                                  </tr>
+                                 
                                </tbody>
                              </table>
                            <!-- End table  -->
-                           
+
                        </div>
                </div>
              </div>
@@ -86,4 +87,5 @@
    
         </div>
 </div>
+
 {% endblock %}

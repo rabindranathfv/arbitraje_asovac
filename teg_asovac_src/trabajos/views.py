@@ -348,6 +348,6 @@ def trabajos_resultados_autor(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
     }
-    return render(request,"trabajos_trabajos_evaluados.html",context)
+    return render(request,"trabajos_resultados_autor.html",context)
 
 
