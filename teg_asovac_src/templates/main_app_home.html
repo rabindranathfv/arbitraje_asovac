@@ -79,7 +79,7 @@
                                                 </div>
                                             {% endif %}
                                         {% elif 3 in rol_id %}
-                                            {% if arb.estado_arbitraje != 0 and arb.estado_arbitraje != 1 %}
+                                            {% if arb.estado_arbitraje != 0 %}
                                                 <div class="col-sm-3 text-center">
                                                     <form method="post" action="{% url 'main_app:dashboard'%}">
                                                         {% csrf_token %}
