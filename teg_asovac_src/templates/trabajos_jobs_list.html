@@ -40,7 +40,7 @@
                           <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
                           <ul class="dropdown-menu">
                               <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:green"></i> Carga Excel</a>
+                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
                               </li>
                           </ul>
                         </div>
@@ -66,19 +66,19 @@
                                    <td>Biociencias</td>
                                    <td>Nutrición</td>
                                    <td class="text-center">
-                                        <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
+                                        <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button"  data-toggle="tooltip" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="#" class="btn btn-info" role="button">
+                                        <a href="#" class="btn btn-info" role="button"  title="Eliminar">
                                             <i class="fas fa-times"></i>
                                         </a>
-                                        <a href="#" class="btn btn-info" role="button">
+                                        <a href="#" class="btn btn-info" role="button" title="Enviar">
                                             <i class="fas fa-envelope"></i>
                                         </a>
-                                        <a href="" class="btn btn-info" role="button">
+                                        <a href="" class="btn btn-info" role="button" title="Entrar">
                                             <i class="fas fa-door-open"></i>
                                         </a>
-                                        <a href="" class="btn btn-info" role="button">
+                                        <a href="" class="btn btn-info" role="button" title="Comentar">
                                              <i class="fa fa-comment"></i>
                                          </a>
                                    </td>
