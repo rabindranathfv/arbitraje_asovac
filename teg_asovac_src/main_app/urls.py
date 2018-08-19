@@ -37,14 +37,14 @@ urlpatterns = [
     url(r'^$',views.dashboard,name='dashboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
 
-    url(r'^admin/data_basic/$',views.data_basic,name='data_basic'),
-    url(r'^admin/arbitration/state/$',views.state_arbitration,name='arbitration_state'),
-    url(r'^admin/users/list/$',views.users_list,name='users_list'),
-    url(r'^admin/user/edit/$',views.user_edit,name='user_edit'),
-    url(r'^admin/user/roles/$',views.user_roles,name='user_roles'),
-    url(r'^admin/coord/general/$',views.coord_general,name='coord_general'),
-    url(r'^admin/coord/area/$',views.coord_area,name='coord_area'),
-    url(r'^admin/total/$',views.total,name='total'),
+    url(r'^data_basic/$',views.data_basic,name='data_basic'),
+    url(r'^arbitration/state/$',views.state_arbitration,name='arbitration_state'),
+    url(r'^users/list/$',views.users_list,name='users_list'),
+    url(r'^user/edit/$',views.user_edit,name='user_edit'),
+    url(r'^user/roles/$',views.user_roles,name='user_roles'),
+    url(r'^coord/general/$',views.coord_general,name='coord_general'),
+    url(r'^coord/area/$',views.coord_area,name='coord_area'),
+    url(r'^total/$',views.total,name='total'),
 
     url(r'^register/$',views.register, name='register'), 
 
