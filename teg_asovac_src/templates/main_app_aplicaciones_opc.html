@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="jumbotron RLcard">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-3">
+                                <h2>AsoVAC</h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Seleccione su aplicacion de preferencia</h4>
+                        </div>
+
+                        <!-- dynamic content-->  
+                            <div class="panel-body">
+                                <div class="container-fluid">
+                                    <div class="row middle-content">
+                                        <div class="container-fuild col-sm-6 offset-3 center-block">
+                                            <div class="well center-block " style="max-width:1000px"> 
+                                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:home' %}">Arbitraje AsoVAC</a> 
+                                            </div>
+
+                                            <div class="well center-block " style="max-width:1000px"> 
+                                                <a class="btn btn-default btn-lg btn-block" href="{% url 'eventos:event_create' %}">Eventos AsoVAC</a> 
+                                            </div>
+                                        </div>
+                                        <!--
+                                        <div class="col-sm-3 text-center">
+                                            <form method="post" action="{% url 'main_app:dashboard'%}">
+                                                {% csrf_token %}
+                                                <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
+                                                <input class="" name="event_id" type='hidden' value="{{ arb.id }}">
+                                                <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
+                                            </form>
+                                        </div>
+                                        -->
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+{% endblock %}

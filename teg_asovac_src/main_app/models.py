@@ -55,7 +55,6 @@ class Usuario_asovac(models.Model):
 
 	usuario_activo = models.BooleanField(default=True)
 	
-
 	def __str__(self):
 		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
 

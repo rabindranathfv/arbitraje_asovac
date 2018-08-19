@@ -300,8 +300,6 @@ def home(request):
     secondary_navbar_options = ['Bienvenido']
 
     rol_id=get_roles(request.user.id)
-
-
     # print(arbitraje_data)
     context = {
         'nombre_vista' : 'Home',
@@ -1075,3 +1073,18 @@ def total(request):
         'route_resultados': route_resultados,
     }
     return render(request, 'main_app_totales.html', context)
+
+def apps_selection(request):
+    # queryset
+    # arbitraje_data = Sistema_asovac.objects.all()
+
+    # if request.method == 'POST':
+    #     context = {
+    #         'nombre_vista' : 'Home',
+    #         'arb_data' : arbitraje_data,
+    #     }
+    #     return render(request, 'main_app_home.html',context)
+    context = {
+    
+    }
+    return render(request, 'main_app_aplicaciones_opc.html',context)
