@@ -59,7 +59,7 @@ def resources_author(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -124,7 +124,7 @@ def resources_referee(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -188,7 +188,7 @@ def resources_event(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -253,7 +253,7 @@ def resources_sesion(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -318,7 +318,7 @@ def resources_asovac(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -382,7 +382,7 @@ def resources_arbitration(request):
     items=validate_rol_status(estado,rol_id,item_active)
 
     route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
