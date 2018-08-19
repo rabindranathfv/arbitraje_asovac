@@ -18,13 +18,13 @@ from . import views
 
 urlpatterns = [
     #url(r'^$', views.eventos_pag, name= 'eventos'),
-    url(r'^lista_eventos/$',views.event_list,name='event_list'),
-    url(r'^editar_evento/$',views.event_edit,name='event_edit'),
-    url(r'^crear_evento/$',views.event_create,name='event_create'),
+    url(r'^lista-eventos/$',views.event_list,name='event_list'),
+    url(r'^editar-evento/$',views.event_edit,name='event_edit'),
+    url(r'^crear-evento/$',views.event_create,name='event_create'),
 
-    url(r'^crear_organizador/$',views.organizer_create,name='organizer_create'),
-    url(r'^listar_organizadores/$',views.organizer_list,name='organizer_list'),
-    url(r'^editar_organizador/$',views.organizer_edit,name='organizer_edit'),
-    url(r'^eliminar_organizador/$',views.organizer_delete,name='organizer_delete'),
-    url(r'^detalles_organizador/$',views.organizer_detail,name='organizer_detail'),
+    url(r'^crear-organizador/$',views.organizer_create,name='organizer_create'),
+    url(r'^listar-organizadores/$',views.organizer_list,name='organizer_list'),
+    url(r'^editar-organizador/$',views.organizer_edit,name='organizer_edit'),
+    url(r'^eliminar-organizador/$',views.organizer_delete,name='organizer_delete'),
+    url(r'^detalles-organizador/$',views.organizer_detail,name='organizer_detail'),
 ]
