@@ -14,7 +14,7 @@ from .models import Rol,Sistema_asovac,Usuario_asovac
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if (1 in rol_id and item_active == 1) or (2 in rol_id and item_active == 1):
+    if (1 in rol_id and item_active == 1) or (estado != '0' and 2 in rol_id and item_active == 1):
         return 1
     return 0
 
@@ -106,7 +106,7 @@ def verify_trabajo_options(estado,rol_id):
 
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
-    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
+    if ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
         return 0 
     return 1
 
@@ -197,13 +197,18 @@ def validate_rol_status(estado,rol_id,item_active):
 
     return items
 
-def get_route_configuracion(items):
+def get_route_configuracion(estado,rol_id):
     
-    for item,val in items.items():
-        # print item, ":", val[0]
-        if ( ((item == "configuracion_general_sidebar") or (item == "usuarios_sidebar") or (item == "recursos_sidebar") or (item == "areas_subareas_sidebar") or (item == "estado_arbitrajes_sidebar") or (item == "datos_basicos_sidebar") or (item == "asignacion_coordinador_general") or (item == "asignacion_coordinador_area")) and val[0] == 1 ):
-            # print item , ":" , val[1]
-            return val[1]
+    if(1 in rol_id or 2 in rol_id):#Caso que sea admin o coordinador general
+        return reverse('main_app:data_basic')
+    elif 3 in rol_id:
+        if(estado == '8'):
+            return reverse('recursos:resources_author')
+        if(estado == '1'):
+            return reverse('arbitrajes:arbitrations_areas_subareas')
+
+
+    return None
 
 def get_route_seguimiento(items):
     
@@ -354,7 +359,7 @@ def dashboard(request):
     #print(request.session['estado'])
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -424,7 +429,7 @@ def data_basic(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
    
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -491,7 +496,7 @@ def state_arbitration(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -563,7 +568,7 @@ def users_list(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -646,7 +651,7 @@ def user_edit(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -710,7 +715,7 @@ def user_roles(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -775,7 +780,7 @@ def coord_general(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -840,7 +845,7 @@ def coord_area(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -905,7 +910,7 @@ def total(request):
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
+    route_conf= get_route_configuracion(estado,rol_id)
     route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
