@@ -292,7 +292,7 @@ def home(request):
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
 
-
+    rol_id=get_roles(request.user.id)
 
 
     # print(arbitraje_data)
@@ -300,6 +300,7 @@ def home(request):
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
         'arb_data' : arbitraje_data,
+        'rol_id' : rol_id,
     }
     return render(request, 'main_app_home.html', context)
 
