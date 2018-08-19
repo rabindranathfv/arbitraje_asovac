@@ -11,7 +11,7 @@
         {% include 'sidebar.html'%}
    
         <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
+        <div class="container login-content col-sm-11" id="content-wrapper">
             <!-- Title content--> 
             <div class="row">
                 <div class="col-sm-12">
@@ -27,14 +27,27 @@
              <div class="row">
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de arbitros</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
-                    </div>
+                      <div class="col-sm-3">
+                        <h2 class="text-left">Lista de arbitros</h2>
+                      </div>
+                      <div class="col-sm-4 col-sm-offset-3 btn-lg">
+                          <form class="form-inline text-right">
+                              <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                              <button class="btn btn-primary" type="submit">Buscar</button>
+                          </form>
+                      </div>
+                      <div class="col-sm-2 btn-lg">
+                        <div class="btn-group">
+                              <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                              <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalArbitrosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
+                                  </li>
+                              </ul>
+                        </div>
+                      </div>
+                      
+
                     <br>
                            <table class="table table-bordered">
                                <thead>
@@ -122,6 +135,27 @@
              <!-- EndFirst Row -->
    
         </div>
+</div>
+
+<!-- Modal Carga Excel-->
+<div class="modal fade" id="ModalArbitrosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center content-modal">
+        ¿Está seguro que desea cargar arbitros por el excel?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-success">Cargar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
