@@ -73,4 +73,7 @@ $(document).ready(function(){
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
 
+    //delete
+    $('#show_users').on('click','.show-form-delete',ShowForm);
+    $('#modal-user').on('submit','.delete-form',SaveForm);
 });
