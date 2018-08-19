@@ -218,7 +218,7 @@ def get_route_seguimiento(estado,rol_id):
     if 1 in rol_id:
         return reverse('autores:authors_list')
     elif 2 in rol_id:
-        if(estado =='1' or estado=='2' or estado =='3' or estado=='4'):
+        if(estado == '1' or estado== '2' or estado == '3' or estado == '4'):
             return reverse('autores:authors_list')
         elif(estado == '5'):
             return reverse('trabajos:jobs_list')
@@ -226,7 +226,13 @@ def get_route_seguimiento(estado,rol_id):
             return reverse('arbitrajes:listado')
         elif(estado == '7'):
             return reverse('arbitrajes:asignacion_de_sesion')
-
+    elif 3 in rol_id:
+        if(estado == '2' or estado == '3' or estado == '4'):
+            return reverse('arbitrajes:referee_list')
+        elif(estado =='5' or estado == '6'):
+            return reverse('trabajos:jobs_list')
+        elif(estado == '7'):
+            return reverse('sesiones:sesions_list')
 #Obtener roles del usuario
 def get_roles(user_id):
     rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
