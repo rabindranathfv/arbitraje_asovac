@@ -106,7 +106,7 @@ def verify_trabajo_options(estado,rol_id):
 
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
-    if ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 4 in rol_id or 5 in rol_id):
+    if ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 5 in rol_id):
         return 0 
     return 1
 
@@ -206,6 +206,9 @@ def get_route_configuracion(estado,rol_id):
             return reverse('recursos:resources_author')
         if(estado == '1'):
             return reverse('arbitrajes:arbitrations_areas_subareas')
+    elif 4 in rol_id:
+        if(estado == '8'):
+            return reverse('recursos:resources_author')
 
 
     return None
