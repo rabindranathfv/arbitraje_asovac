@@ -21,7 +21,7 @@ import random, string
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if ((estado == '0' or estado =='1' or estado =='3' or estado =='5' or estado =='6' or estado =='7' or estado == '8') and 1 in rol_id and item_active == 1) or ((estado =='2' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 1):
+    if (1 in rol_id and item_active == 1) or (estado != '0' and 2 in rol_id and item_active == 1):
         return 1
     return 0
 
@@ -31,25 +31,23 @@ def verify_datos_basicos_option(estado,rol_id,item_active):
     return 1
 
 def verify_estado_arbitrajes_option(estado,rol_id,item_active):
-    if(estado == '4' and 2 in rol_id and item_active == 1):
-        return 0
     return 1
 
 
 def verify_usuario_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado == '6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1):
+    if (1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_general_option(estado,rol_id,item_active):
-    if((estado == '1' or estado =='2' or estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and  1 in rol_id and item_active == 1):
+    if(1 in rol_id and item_active == 1):
         return 1
     return 0
 
 
 def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
-    if(estado =='2' and  (1 in rol_id or 2 in rol_id) and item_active ==1) or((estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1):
+    if(estado =='2' and 2 in rol_id and item_active == 1) or (1 in rol_id and item_active == 1):
         return 1
     return 0
 
@@ -57,12 +55,12 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
 
 
 def verify_recursos_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado == '1' or estado == '2' or estado == '3' or estado == '4' or estado == '5' or estado =='6' or estado =='7') and 1 in rol_id and item_active == 1) or (estado =='8' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active==1):
+    if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
         return 1
     return 0
 
 def verify_areas_subareas_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='3' or estado == '4' or estado == '5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 1) or (estado == '1' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and (1 in rol_id or 2 in rol_id) and item_active ==1):
+    if (1 in rol_id and item_active == 1) or (estado == '1' and (2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and 2 in rol_id and item_active ==1):
         return 1
     return 0
 
@@ -73,55 +71,71 @@ def verify_autores_option(estado,rol_id,item_active):
     return 0
 
 def verify_arbitros_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 in rol_id and item_active == 2) or (estado == '1' and 2 in rol_id and item_active == 2) or ((estado =='2' or estado == '3' or estado == '4') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='1' and 3 in rol_id and item_active==2):
         return 1
     return 0
 
 def verify_sesions_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado =='5' or estado =='6' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '4' or estado =='7') and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 in rol_id and item_active == 2) or ((estado == '4' or estado =='7') and (2 in rol_id or 3 in rol_id) and item_active == 2):
         return 1
     return 0
 
+def verify_asignar_sesion(estado,rol_id,item_active):
+    if(1 in rol_id and item_active == 2) or (estado == '4' and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='7' and 2 in rol_id and item_active == 2):
+        return 1
+    return 0
+
+
 def verify_arbitraje_option(estado,rol_id, item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or (estado =='6' and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 in rol_id and item_active == 2) or (estado =='6' and (2 in rol_id) and item_active == 2):
         return 1
     return 0
 
 def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5')and (1 in rol_id or 2 in rol_id or 3 in rol_id) and item_active == 2) or ((estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active ==2):
+    if((estado =='3' or estado =='4' or estado =='5')and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
         return 1
     return 0
 
 def verify_eventos_sidebar_full(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='1' or estado == '2' or estado == '3' or estado == '4' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 4):
+    if (1 in rol_id and item_active == 4):
         return 1
     return 0
 
 def verify_espacio_option(estado,rol_id,item_active):
-    if((estado =='7' or estado =='8') and 1 in rol_id and item_active == 4):
+    if(1 in rol_id and item_active == 4):
+        return 1
+    return 0
+
+def verify_trabajo_options(estado,rol_id):
+    if(estado == '3' and 5 in rol_id):
         return 1
     return 0
 
 # Funciones para verificar los campos del navbar
 def verify_configuration(estado,rol_id):
-    if ( ((estado =='0' or estado == '3' or estado == '5' or estado == '6' or estado=='7' ) and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id)):
+    if ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 5 in rol_id):
         return 0 
     return 1
 
 def verify_arbitration(estado,rol_id):
-    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' and estado == '8') and 3 in rol_id) or ((estado != '5' or estado != '6') and 4 in rol_id)):
+    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' or estado == '8') and 3 in rol_id) or 4 in rol_id or 5 in rol_id):
         return 0 
     return 1
 
 def verify_result(estado,rol_id):
-    if ( ((estado !='6' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id)):
+    if ( ((estado !='6' and estado != '7' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id) or (estado != '6' and 5 in rol_id)):
         return 0 
     return 1
 
 def verify_event(estado,rol_id):
-    if (  1 not in rol_id):
+    if ( 1 not in rol_id):
         return 0 
     return 1
+
+def verify_jobs(estado, rol_id):
+    if((estado == '3' and 5 in rol_id) or (estado == '5' and 4 in rol_id)):
+        return 1
+    return 0
 
 def validate_rol_status(estado,rol_id,item_active):
     items={}
@@ -135,6 +149,7 @@ def validate_rol_status(estado,rol_id,item_active):
     sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
     arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
     eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
+    asignacion_de_sesion_sidebar = verify_asignar_sesion(estado,rol_id,item_active)
 
     asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
     asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
@@ -144,10 +159,13 @@ def validate_rol_status(estado,rol_id,item_active):
     estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
     espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
 
+    trabajo_sidebar = verify_trabajo_options(estado,rol_id)
+
     configuration= verify_configuration(estado,rol_id)
     arbitration= verify_arbitration(estado,rol_id)
     result=  verify_result(estado,rol_id)
     event= verify_event(estado,rol_id)
+    jobs = verify_jobs(estado,rol_id)
 
     # Menu de configuración 
     items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
@@ -165,6 +183,8 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("sesion_arbitraje_sidebar",[sesion_arbitraje_sidebar,reverse('sesiones:sesions_list')])
     items.setdefault("arbitraje_sidebar",[arbitraje_sidebar,reverse('arbitrajes:referee_list')])
     items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('trabajos:jobs_list')])
+    items.setdefault("asignacion_de_sesion_sidebar",[asignacion_de_sesion_sidebar,reverse('arbitrajes:asignacion_de_sesion')])
+
 
     # Menu de resultados
 
@@ -172,30 +192,54 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('eventos:event_list')])
     items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('sesiones:sesions_space_list')])
     
+    #Menú de trabajos
+    items.setdefault("trabajo_sidebar",[trabajo_sidebar,reverse('trabajos:trabajos')])
+
 
     items.setdefault("configuration",[configuration,''])
     items.setdefault("arbitration",[arbitration,''])
     items.setdefault("result",[result,''])
     items.setdefault("event",[event,''])
+    items.setdefault("jobs",[jobs,''])
 
     return items
 
-def get_route_configuracion(items):
+def get_route_configuracion(estado,rol_id):
     
-    for item,val in items.items():
-        # print item, ":", val[0]
-        if ( ((item == "configuracion_general_sidebar") or (item == "usuarios_sidebar") or (item == "recursos_sidebar") or (item == "areas_subareas_sidebar") or (item == "estado_arbitrajes_sidebar") or (item == "datos_basicos_sidebar") or (item == "asignacion_coordinador_general") or (item == "asignacion_coordinador_area")) and val[0] == 1 ):
-            # print item , ":" , val[1]
-            return val[1]
+    if(1 in rol_id or 2 in rol_id):#Caso que sea admin o coordinador general
+        return reverse('main_app:data_basic')
+    elif 3 in rol_id:
+        if(estado == '8'):
+            return reverse('recursos:resources_author')
+        if(estado == '1'):
+            return reverse('arbitrajes:arbitrations_areas_subareas')
+    elif 4 in rol_id:
+        if(estado == '8'):
+            return reverse('recursos:resources_author')
 
-def get_route_seguimiento(items):
+
+    return None
+
+def get_route_seguimiento(estado,rol_id):
     
-    for item,val in items.items():
-        # print item, ":", val[0]
-        if ( ((item == "autores_sidebar") or (item == "arbitros_sidebar") or (item == "sesion_arbitraje_sidebar") or (item == "arbitraje_sidebar") or (item == "trabajos_sidebar") ) and val[0] == 1 ):
-            # print item , ":" , val[1]
-            return val[1]
-
+    if 1 in rol_id:
+        return reverse('autores:authors_list')
+    elif 2 in rol_id:
+        if(estado == '1' or estado== '2' or estado == '3' or estado == '4'):
+            return reverse('autores:authors_list')
+        elif(estado == '5'):
+            return reverse('trabajos:jobs_list')
+        elif(estado == '6'):
+            return reverse('arbitrajes:listado')
+        elif(estado == '7'):
+            return reverse('arbitrajes:asignacion_de_sesion')
+    elif 3 in rol_id:
+        if(estado =='1' or estado == '2' or estado == '3' or estado == '4'):
+            return reverse('arbitrajes:referee_list')
+        elif(estado =='5' or estado == '6'):
+            return reverse('trabajos:jobs_list')
+        elif(estado == '7'):
+            return reverse('sesiones:sesions_list')
 #Obtener roles del usuario
 def get_roles(user_id):
     rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
@@ -205,6 +249,26 @@ def get_roles(user_id):
         rol_id.append(item.id)
 
     return rol_id
+
+def get_route_trabajos_sidebar(estado,rol_id,item_active):
+    if (estado =='4' and 2 in rol_id and item_active == 2):
+        return reverse('trabajos:trabajos_evaluados')
+    else:
+        return reverse('trabajos:jobs_list')
+
+
+def get_route_trabajos_navbar(estado,rol_id):
+    if(estado =='3' and 5 in rol_id):
+        return reverse('trabajos:trabajos')
+    if(estado =='5' and 4 in rol_id):
+        return reverse('trabajos:trabajos_evaluados')
+    return None 
+
+def get_route_resultados(estado,rol_id):
+    if(estado=='6' and 5 in rol_id):
+        return reverse('trabajos:trabajos_resultados_autor')
+    else:
+        return reverse('main_app:total')
 
 
 #Update state of arbitration
@@ -235,7 +299,7 @@ def home(request):
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
 
-
+    rol_id=get_roles(request.user.id)
 
 
     # print(arbitraje_data)
@@ -243,6 +307,7 @@ def home(request):
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
         'arb_data' : arbitraje_data,
+        'rol_id' : rol_id,
     }
     return render(request, 'main_app_home.html', context)
 
@@ -317,8 +382,11 @@ def dashboard(request):
     #print(request.session['estado'])
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     # print items
 
     # for item,val in items.items():
@@ -349,12 +417,18 @@ def dashboard(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -472,8 +546,12 @@ def data_basic(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
    
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
+
     # print items
 
 
@@ -503,12 +581,18 @@ def data_basic(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_data_basic.html', context)
 
@@ -530,8 +614,11 @@ def state_arbitration(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
@@ -566,12 +653,18 @@ def state_arbitration(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
@@ -593,8 +686,11 @@ def users_list(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -623,12 +719,18 @@ def users_list(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_users_list.html', context)
     
@@ -667,8 +769,11 @@ def user_edit(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     # print items
 
     context = {
@@ -696,12 +801,18 @@ def user_edit(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_edit_user.html', context)
 
@@ -722,8 +833,11 @@ def user_roles(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -752,12 +866,18 @@ def user_roles(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_user_roles.html', context)
 
@@ -778,8 +898,11 @@ def coord_general(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -808,12 +931,18 @@ def coord_general(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_coord_general.html', context)
 
@@ -834,8 +963,11 @@ def coord_area(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     
     # print items
 
@@ -864,12 +996,18 @@ def coord_area(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_coord_area.html', context)
 
@@ -890,8 +1028,11 @@ def total(request):
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
 
@@ -920,11 +1061,17 @@ def total(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_totales.html', context)

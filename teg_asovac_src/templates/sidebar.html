@@ -160,7 +160,7 @@
                         </li>
                         <li>
                             <a href="{% url 'recursos:resources_event' %}">
-                                Arbitros
+                                Eventos
                             </a>
 <!-- 
                             <form method="post" action="{% url 'recursos:resources_event' %}"  name="resources_event">
@@ -269,9 +269,18 @@
 	        </li>
 	    {% endif %}
 
+        {% if asignacion_de_sesion_sidebar == 1 %}
+            <li>
+                <a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
+                    Asignacion de Sesión
+                </a>
+            </li>
+        {% endif %}
+
+
         {% if trabajos_sidebar == 1 %}
             <li>
-                <a href="{% url 'trabajos:jobs_list' %}">
+                <a href="{{ route_trabajos_sidebar }}">
                     Trabajos
                 </a>
 <!--
@@ -288,7 +297,7 @@
 	    {% if sesion_arbitraje_sidebar == 1%}
 	        <li>
                 <a href="{% url 'sesiones:sesions_list' %}">
-                    Sesión de arbitraje
+                    Lista de sesion de arbitraje
                 </a>
 
 <!--      
@@ -318,7 +327,20 @@
 -->
 	        </li>
 	    {% endif %}
-
+<!-- 
+        {% if trabajo_sidebar == 1 %}
+            <li>
+                <a href="{% url 'trabajos:trabajos' %}">
+                    Crear Trabajo
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'autores:postular_trabajo' %}">
+                    Postular Trabajo
+                </a>
+            </li>
+        {% endif %}
+-->
 
 	    {% if eventos_sidebar_full == 1 %}
 		    <li>

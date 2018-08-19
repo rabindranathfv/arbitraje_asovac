@@ -1,23 +1,44 @@
-{% extends "base_users.html" %}
+{% extends "base.html" %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="login-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-                <div class="jumbotron RLcard">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <div class="col-sm-10">
-                                <h2>Autor - Título del trabajo: Titulo 1</h2>
-                            </div>
-                            <div class="col-sm-2">
-                                <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-warning btn-block">Atrás</a>
-                            </div>
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-10" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div>
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Trabajos</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                    <div class="row">
+                        <h2 class="text-left">Autor</h2>
+                    </div>
+
+                    <div class="row middle-content">
+                        <div class="col-sm-10">
+                            <h3>Autor - Título del trabajo: Titulo 1</h3>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-warning btn-block">Atrás</a>
                         </div>
                     </div>
+
+                    <br>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4>Datos de pago</h4>
@@ -32,9 +53,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                           <!-- End Form -->
+                           
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
         </div>
-    </div>
 </div>
 {% endblock %}

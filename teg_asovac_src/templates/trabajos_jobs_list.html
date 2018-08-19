@@ -7,13 +7,13 @@
 <!-- Fixed Sidebar & Content-->
 <div id="wrapper" class="toggled">
 
-        {% include 'sidebar.html'%}
+    {% include 'sidebar.html'%}
    
         <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
+        <div class="container login-content col-sm-11" id="content-wrapper">
             <!-- Title content--> 
             <div class="row">
-                <div class="col-sm-12">
+                <div>
                     <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
                         <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
                     </a>
@@ -26,14 +26,26 @@
              <div class="row">
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de trabajos</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
+                    <div class="col-sm-3">
+                        <h2 class="text-left">Lista de trabajos</h2>
                     </div>
+                    <div class="col-sm-4 col-sm-offset-3 btn-lg">
+                      <form class="form-inline text-right">
+                          <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+                          <button class="btn btn-primary" type="submit">Buscar</button>
+                      </form>
+                    </div>
+                    <div class="col-sm-2 btn-lg">
+                        <div class="btn-group">
+                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                              <li>
+                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Importar Trabajos</a>
+                              </li>
+                          </ul>
+                        </div>
+                    </div>
+
                     <br>
                            <table class="table table-bordered">
                                <thead>
@@ -53,19 +65,22 @@
                                    <td>Cartel</td>
                                    <td>Biociencias</td>
                                    <td>Nutrición</td>
-                                   <td >
-                                        <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
+                                   <td class="text-center">
+                                        <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button"  data-toggle="tooltip" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="#" class="btn btn-info" role="button">
+                                        <a href="#" class="btn btn-info" role="button"  title="Eliminar">
                                             <i class="fas fa-times"></i>
                                         </a>
-                                        <a href="#" class="btn btn-info" role="button">
+                                        <a href="#" class="btn btn-info" role="button" title="Enviar">
                                             <i class="fas fa-envelope"></i>
                                         </a>
-                                        <a href="" class="btn btn-info" role="button">
+                                        <a href="" class="btn btn-info" role="button" title="Entrar">
                                             <i class="fas fa-door-open"></i>
                                         </a>
+                                        <a href="" class="btn btn-info" role="button" title="Comentar">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
                                    </td>
                                  </tr>
 
@@ -75,7 +90,7 @@
                                     <td>Cartel</td>
                                     <td>Biociencias</td>
                                     <td>Nutrición</td>
-                                    <td >
+                                    <td class="text-center" >
                                          <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
                                              <i class="fas fa-edit"></i>
                                          </a>
@@ -87,6 +102,9 @@
                                          </a>
                                          <a href="" class="btn btn-info" role="button">
                                              <i class="fas fa-door-open"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fa fa-comment"></i>
                                          </a>
                                     </td>
                                   </tr>
@@ -97,7 +115,7 @@
                                     <td>Cartel</td>
                                     <td>Biociencias</td>
                                     <td>Nutrición</td>
-                                    <td >
+                                    <td class="text-center" >
                                          <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
                                              <i class="fas fa-edit"></i>
                                          </a>
@@ -110,10 +128,84 @@
                                          <a href="" class="btn btn-info" role="button">
                                              <i class="fas fa-door-open"></i>
                                          </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
                                     </td>
                                   </tr>
-                                  
+                                  <tr>
+                                    <td>Pedro Perez</td>
+                                    <td>Trabajo 1</td>
+                                    <td>Cartel</td>
+                                    <td>Biociencias</td>
+                                    <td>Nutrición</td>
+                                    <td class="text-center" >
+                                         <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
+                                             <i class="fas fa-edit"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-times"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-envelope"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fas fa-door-open"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Pedro Perez</td>
+                                    <td>Trabajo 1</td>
+                                    <td>Cartel</td>
+                                    <td>Biociencias</td>
+                                    <td>Nutrición</td>
+                                    <td class="text-center" >
+                                         <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
+                                             <i class="fas fa-edit"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-times"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-envelope"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fas fa-door-open"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td>Pedro Perez</td>
+                                    <td>Trabajo 1</td>
+                                    <td>Cartel</td>
+                                    <td>Biociencias</td>
+                                    <td>Nutrición</td>
+                                    <td class="text-center" >
+                                         <a href="{% url 'trabajos:jobs_edit'%}" class="btn btn-info" role="button">
+                                             <i class="fas fa-edit"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-times"></i>
+                                         </a>
+                                         <a href="#" class="btn btn-info" role="button">
+                                             <i class="fas fa-envelope"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fas fa-door-open"></i>
+                                         </a>
+                                         <a href="" class="btn btn-info" role="button">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
 
+                                    </td>
+                                  </tr>                  
                                </tbody>
                              </table>
                            <!-- End table  -->
@@ -124,6 +216,27 @@
              <!-- EndFirst Row -->
    
         </div>
+</div>
+
+<!-- Modal Carga Excel-->
+<div class="modal fade" id="ModalTrabajosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center content-modal">
+        ¿Está seguro que desea cargar trabajos por el excel?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-success">Cargar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

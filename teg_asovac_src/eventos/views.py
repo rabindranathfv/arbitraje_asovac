@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
 
 # Create your views here.
 def eventos_pag(request):
@@ -29,9 +29,11 @@ def event_list(request):
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
-
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     # print items
 
     context = {
@@ -59,12 +61,18 @@ def event_list(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_event_list.html', context)
 
@@ -86,9 +94,11 @@ def event_edit(request):
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
-
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     # print items
 
     context = {
@@ -116,12 +126,18 @@ def event_edit(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'main_app_event_edit.html', context)
 
@@ -142,9 +158,11 @@ def event_create(request):
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(validate_rol_status(estado,rol_id,1))
-    route_seg= get_route_seguimiento(validate_rol_status(estado,rol_id,2))
-
+    route_conf= get_route_configuracion(estado,rol_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id)
     # print items
 
     context = {
@@ -172,11 +190,17 @@ def event_create(request):
         'trabajos_sidebar':items["trabajos_sidebar"][0],
         'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
         'espacio_sidebar':items["espacio_sidebar"][0],
+        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
+        'trabajo_sidebar': items["trabajo_sidebar"][0],
         'verify_configuration':items["configuration"][0],
         'verify_arbitration':items["arbitration"][0],
         'verify_result':items["result"][0],
         'verify_event':items["event"][0],
+        'verify_jobs':items["jobs"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
     }
     return render(request, 'event_create.html', context)
