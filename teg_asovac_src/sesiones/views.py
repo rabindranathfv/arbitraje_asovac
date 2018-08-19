@@ -28,7 +28,7 @@ def sesions_list(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -48,7 +48,7 @@ def sesions_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -92,7 +92,7 @@ def sesions_edit(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -112,7 +112,7 @@ def sesions_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -157,7 +157,7 @@ def sesions_space_list(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -177,7 +177,7 @@ def sesions_space_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -222,7 +222,7 @@ def sesions_space_edit(request):
 
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active)
@@ -242,7 +242,7 @@ def sesions_space_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],

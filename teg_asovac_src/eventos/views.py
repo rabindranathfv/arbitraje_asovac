@@ -24,7 +24,7 @@ def event_list(request):
 
     #print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -43,7 +43,7 @@ def event_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -89,7 +89,7 @@ def event_edit(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -108,7 +108,7 @@ def event_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -153,7 +153,7 @@ def event_create(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
     
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active)
@@ -172,7 +172,7 @@ def event_create(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],

@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
+
+from django.db.models import Q
+from decouple import config
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.template.loader import render_to_string
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -11,6 +17,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
+import random, string
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
@@ -329,7 +336,7 @@ def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
-        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño experimental',
+        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño erandom_passwordperimental',
         'authors': ['Karla Calo', 'Luis Henríquez']
     }
     return render(request, 'resumen_rejected_email.html', context)
@@ -359,17 +366,17 @@ def dashboard(request):
 
     if request.POST:
         request.session['estado'] = request.POST['estado']
-        request.session['arbitraje_id'] = request.POST['event_id']
+        request.session['arbitraje_id'] = request.POST['arbitraje_id']
     else:
         estado=-1
-        event_id=-1
+        arbitraje_id=-1
 
     
     rol_id=get_roles(request.user.id)
     
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     #print(request.session['estado'])
@@ -392,7 +399,7 @@ def dashboard(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -440,7 +447,101 @@ def data_basic(request):
     # print (rol_id)
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
+    
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+
+    if request.POST:
+        opcion = request.POST['generar_clave']
+        random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+            
+        if opcion == '1': #Caso de generar clave  para coordinador general
+            random_password += 'COG'
+            arbitraje.clave_maestra_coordinador_general = random_password
+            arbitraje.save()
+            messages.success(request, 'La contraseña de coordinador general ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 2) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=2).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+
+        
+        elif opcion == '2':#Caso de generar clave para coordinador de area
+            random_password+= 'COA'
+            arbitraje.clave_maestra_coordinador_area = random_password
+            arbitraje.save()
+            messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 3) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=3).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+        
+
+        elif opcion == '3':#Caso de generar clave para arbitro de subarea
+            random_password += 'ARS'
+            arbitraje.clave_maestra_arbitro_subarea = random_password
+            arbitraje.save()
+            messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
+
+            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 4) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+            nombre_rol = Rol.objects.get(id=4).nombre
+            context = {
+            'rol': nombre_rol,
+            'sistema': nombre_sistema,
+            'password': random_password,
+            }
+            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+            
+            for item in usuarios:
+                
+                send_mail(
+                        'Asignación de contraseña',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [item.usuario.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+        
+
+        print("The password is:"+random_password)
+
+
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -461,7 +562,8 @@ def data_basic(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
+        'arbitraje':arbitraje,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -506,7 +608,7 @@ def state_arbitration(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
     user_id = request.user.id
 
     item_active = 1
@@ -522,7 +624,7 @@ def state_arbitration(request):
     if request.method == 'POST':
         estado = request.POST['estado']
         #print(estado)
-        request.session['estado'] = update_state_arbitration(event_id,estado)
+        request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
 
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
     estado = request.session['estado']
@@ -533,7 +635,7 @@ def state_arbitration(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -579,7 +681,7 @@ def users_list(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -599,7 +701,7 @@ def users_list(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -637,7 +739,7 @@ def register(request):
         form= RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Se ha registrado de manera exitosa.')
+            messages.success(request, 'Se ha registrado de manera erandom_passworditosa.')
             context={"form":form,}
             return redirect('login')
 
@@ -662,7 +764,7 @@ def user_edit(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -681,7 +783,7 @@ def user_edit(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -726,7 +828,7 @@ def user_roles(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -746,7 +848,7 @@ def user_roles(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -791,7 +893,7 @@ def coord_general(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -811,7 +913,7 @@ def coord_general(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -856,7 +958,7 @@ def coord_area(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
@@ -876,7 +978,7 @@ def coord_area(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
@@ -921,7 +1023,7 @@ def total(request):
 
     # print (rol_id)
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
     
     item_active = 3
     items=validate_rol_status(estado,rol_id,item_active)
@@ -941,7 +1043,7 @@ def total(request):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
