@@ -870,11 +870,12 @@ def update_user_modal(request,id):
 def delete_user_modal(request,id):
     data= dict()
     user= get_object_or_404(User,id=id)
+    print user
     if request.method == 'POST':
         user.delete()
         data['form_is_valid']= True
         users= User.objects.all()
-        data['user_list']= render_to_string('dinamic_list.html',{'users',users})
+        data['user_list']= render_to_string('dinamic_list.html',{'users':users})
     else:
         context= {'user':user}
         data['html_form']=render_to_string('user_delete.html',context,request=request)
