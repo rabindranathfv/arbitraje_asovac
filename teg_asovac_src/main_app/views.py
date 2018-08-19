@@ -830,7 +830,7 @@ def total(request):
     }
     return render(request, 'main_app_totales.html', context)
 
-# Ajax para el uso de ventanas modales
+# Ajax/para el uso de ventanas modales
 def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -838,7 +838,7 @@ def process_modal(request,form,template_name):
             form.save()
             data['form_is_valid']= True
             users= User.objects.all()
-            data['user_list']= render_to_string('dinamic_list.html',{'users':users})
+            data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
         else:
             data['form_is_valid']= False
   
@@ -854,7 +854,7 @@ def create_user_modal(request):
     else:
         form= RegisterForm()
 
-    return process_modal(request,form,'users-create.html')
+    return process_modal(request,form,'ajax/users-create.html')
 
 def update_user_modal(request,id):
     print "update_user_modal"
@@ -865,7 +865,7 @@ def update_user_modal(request,id):
     else:
         # form= RegisterForm(instance=user)
         form= PerfilForm(instance=user)
-    return process_modal(request,form,'user_update.html')
+    return process_modal(request,form,'ajax/user_update.html')
     
 def delete_user_modal(request,id):
     data= dict()
@@ -875,10 +875,10 @@ def delete_user_modal(request,id):
         user.delete()
         data['form_is_valid']= True
         users= User.objects.all()
-        data['user_list']= render_to_string('dinamic_list.html',{'users':users})
+        data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
     else:
         context= {'user':user}
-        data['html_form']=render_to_string('user_delete.html',context,request=request)
+        data['html_form']=render_to_string('ajax/user_delete.html',context,request=request)
 
     return JsonResponse(data)
 
