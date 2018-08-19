@@ -32,9 +32,9 @@ class Sistema_asovac(models.Model):
 	
 	nombre = models.CharField(max_length=20)
 	descripcion = models.TextField(max_length=255)
+	fecha_inicio_arbitraje = models.DateField()
+	fecha_fin_arbitraje = models.DateField()
 	estado_arbitraje = models.SmallIntegerField(default=0)
-	fecha_inicio_arbitraje = models.DateTimeField()
-	fecha_fin_arbitraje = models.DateTimeField()
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
@@ -49,15 +49,15 @@ Usuario_asovac Model
 class Usuario_asovac(models.Model):
 
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
-	rol = models.ManyToManyField(Rol)
-	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac)
+	rol = models.ManyToManyField(Rol,blank=True)
+	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
+	area_id= models.ManyToManyField('arbitrajes.Area',blank=True)
 
-	estado_arbitraje = models.SmallIntegerField(default=0)
 	usuario_activo = models.BooleanField(default=True)
 	
 
 	def __str__(self):
-		return "{}".format(self.usuario.get_username())#.encode('utf-8', errors='replace')
+		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
 
 
 
@@ -70,6 +70,29 @@ def crear_usuario_asovac(sender, **kwargs):
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)
+		usuario_asovac.save()
+
+		first_usuario_asovac = Usuario_asovac.objects.count()
+		roles = Rol.objects.count()
+
+		if first_usuario_asovac == 1 and roles == 0: #Esto asegura la creación de roles al momento de crear el primer usuario
+			rol = Rol(nombre="Admin", descripcion="Administrador")
+			rol.save()
+
+			rol = Rol(nombre="Coordinador General", descripcion ="CG")
+			rol.save()
+
+			rol = Rol(nombre="Coordinador de Area", descripcion ="CA")
+			rol.save()
+
+			rol = Rol(nombre="Arbitro de Subarea", descripcion ="AS")
+			rol.save()
+
+			rol = Rol(nombre="Autor",descripcion="Autor")
+			rol.save()
+
+
+		usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
 		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)

@@ -16,8 +16,9 @@ class Organizador(models.Model):
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
+	genero = models.CharField(max_length=5)
 	cedula_o_pasaporte = models.CharField(max_length=20)
-	correo_electronico= models.EmailField(max_length=254)
+	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
@@ -26,10 +27,10 @@ class Organizador(models.Model):
 	capitulo_asovac = models.CharField(max_length=50)
 	cargo_en_institucion = models.CharField(max_length=50)
 	url_organizador = models.CharField(max_length=100)
-	observaciones = models.TextField(max_length=100)
+	observaciones = models.TextField(max_length=100, blank = True)
 
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -53,7 +54,7 @@ Evento Model
 class Evento(models.Model):
 
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento')
-	locacion_evento= models.ForeignKey(Locacion_evento)
+	locacion_evento = models.ForeignKey(Locacion_evento)
 
 	nombre = models.CharField(max_length=50)
 	categoria = models.CharField(max_length=50)
@@ -65,7 +66,7 @@ class Evento(models.Model):
 	duracion = models.CharField(max_length=50)
 	horario_preferido = models.CharField(max_length=50)
 	fecha_preferida = models.DateTimeField()
-	observaciones = models.TextField(max_length=100)
+	observaciones = models.TextField(max_length=100, blank = True)
 	url_anuncio_evento = models.CharField(max_length=100)
 
 	def __str__(self):

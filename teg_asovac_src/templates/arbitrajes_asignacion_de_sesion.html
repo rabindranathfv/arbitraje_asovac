@@ -1,0 +1,133 @@
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-11" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">{{nombre_vista}}</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                  <h2 class="text-center">Lista de arbitros según subarea</h2>
+                   <div class="jumbotron RLcard">
+                      <div class="col-sm-3">
+                        <h2 class="text-left">Sin Asignar</h2>
+                      </div>
+                      
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th class="text-center"><input type="checkbox" name="all" value="Select All" class="text-center"></th>
+                                   <th>Nombres</th>
+                                   <th>Apellidos</th>
+                                   <th>Correo electrónico</th>
+                                   <th>Cédula</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                   <td>Pedro Manuel</td>
+                                   <td>Camacho Rodriguez</td>
+                                   <td>PedroManuel@gmail.com</td>
+                                   <td>30687908</td>
+                                 </tr>
+                                 <tr>
+                                    <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                    <td>Pedro Manuel</td>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                    <td>30687908</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                    <td>Pedro Manuel</td>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                    <td>30687908</td>
+                                  </tr>
+                                 
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+
+             <!-- Second Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                      <div class="col-sm-3">
+                        <h2 class="text-left">Nombre Subarea</h2>
+                      </div>
+                      
+                    <br>
+                           <table class="table table-bordered">
+                               <thead>
+                                 <tr>
+                                   <th class="text-center">
+                                        <input type="checkbox" name="all" value="Select All" class="text-center">
+                                    </th>
+                                   <th>Nombres</th>
+                                   <th>Apellidos</th>
+                                   <th>Correo electrónico</th>
+                                   <th>Cédula</th>
+                                 </tr>
+                               </thead>
+                               <tbody>
+                                 <tr>
+                                   <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                   <td>Pedro Manuel</td>
+                                   <td>Camacho Rodriguez</td>
+                                   <td>PedroManuel@gmail.com</td>
+                                   <td>30687908</td>
+                                 </tr>
+                                 <tr>
+                                    <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                    <td>Pedro Manuel</td>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                    <td>30687908</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="text-center"><input type="checkbox" name="all" value="Select All"></td>
+                                    <td>Pedro Manuel</td>
+                                    <td>Camacho Rodriguez</td>
+                                    <td>PedroManuel@gmail.com</td>
+                                    <td>30687908</td>
+                                  </tr>
+                                 
+                               </tbody>
+                             </table>
+                           <!-- End table  -->
+
+                       </div>
+               </div>
+             </div>
+             <!-- EndSecond Row -->
+
+
+        </div>
+</div>
+
+{% endblock %}

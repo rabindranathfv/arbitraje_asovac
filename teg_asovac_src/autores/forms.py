@@ -9,12 +9,12 @@ from django.core.urlresolvers import reverse
 from trabajos.models import Trabajo
 from .models import Datos_pagador, Pago, Factura
 
-
+# Form para datos del pagador
 class DatosPagadorForm(forms.ModelForm):
 
 	class Meta:
 		model = Datos_pagador
-		fields = ['cedula', 'nombre', 'apellido', 'pasaporte_rif', 'telefono_oficina', 'telefono_habitacion_celular', 'direccion_fiscal']
+		fields = ['cedula', 'nombres', 'apellidos', 'pasaporte_rif', 'telefono_oficina', 'telefono_habitacion_celular', 'direccion_fiscal']
 
 	def __init__(self, *args, **kwargs):
 		super(DatosPagadorForm,self).__init__(*args, **kwargs)
@@ -25,8 +25,8 @@ class DatosPagadorForm(forms.ModelForm):
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
 		self.fields['cedula'].label = "Cédula"
-		self.fields['nombre'].label = "Nombre"
-		self.fields['apellido'].label = "Apellido"
+		self.fields['nombres'].label = "Nombre"
+		self.fields['apellidos'].label = "Apellido"
 		self.fields['pasaporte_rif'].label = "Pasaporte/RIF"
 		self.fields['telefono_oficina'].label = "Teléfono de Oficina"
 		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/Celular"
@@ -49,7 +49,7 @@ class DatosPagadorForm(forms.ModelForm):
 			)
 		
 
-
+# Form para vista de pago
 class PagoForm(forms.ModelForm):
 
 	class Meta:
@@ -91,11 +91,13 @@ class PagoForm(forms.ModelForm):
 			)
 		
 
+
+# Form para vista de Factura
 class FacturaForm(forms.ModelForm):
 	
 	class Meta:
 		model = Factura
-		fields = ['monto_subtotal','fecha_emision','monto_total', 'iva']
+		fields = ['monto_subtotal','fecha_emision', 'iva']
 
 	def __init__(self, *args, **kwargs):
 		super(FacturaForm,self).__init__(*args, **kwargs)
@@ -107,12 +109,10 @@ class FacturaForm(forms.ModelForm):
 		self.helper.field_class = 'col-sm-8'
 		self.fields['monto_subtotal'].label = "Monto Subtotal"
 		self.fields['fecha_emision'].label = "Fecha de emisión"
-		self.fields['monto_total'].label = "Monto Total"
 		self.fields['iva'].label = "IVA"
 		self.helper.layout = Layout(
 			'monto_subtotal',
 			'fecha_emision',
-			'monto_total',
 			'iva',
 			Div(
                 Div(

@@ -13,28 +13,104 @@
       <div class="container-fluid">
         <!-- Navbar Brand or Logo -->
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="{% url 'main_app:home' %}">
             <strong>ASOVAC</strong>
           </a>
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-        {% if main_navbar_options %}
-        <ul class="nav navbar-nav">
-          {% for option in main_navbar_options %}
-            {% if option.active %}
-              <li class="active">
-                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
-                <span class="sr-only">(current)</span>
-              </li>
-            {% else %}
+     
+          <ul class="nav navbar-nav">
+            {% if verify_configuration == 1 %}
               <li>
-                <a  href="#"><i class="fas {{ option.icon }}"></i> {{ option.title }}</a>
+                <a href="{{ route_conf }}">
+                  <i class ="fas fa-cogs"></i>Configuración
+                </a>
+<!-- 
+                <form method="post" action="{{ route_conf }}"  name="nav_data_basic">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+                <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
+-->
               </li>
             {% endif %}
-          {% endfor %}
-        </ul>
-        {% endif %}
+            {% if verify_arbitration == 1 %}
+            <li>
+                <a href="{{ route_seg }}">
+                  <i class ="fas fa-eye"></i> Arbitraje y seguimiento
+                </a>
+
+<!--
+                <form method="post" action="{{ route_seg }}"  name="nav_authors_list">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+              <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
+-->
+            </li>
+            {% endif %}
+            {% if verify_result == 1 %}
+            <li>
+              <a href="{{ route_resultados }}">
+                <i class="fas fa-chart-area"></i> Resultados
+              </a>
+<!--
+              <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
+                  {% csrf_token %}
+                  <input class="" name="estado" type='hidden' value="{{ estado }}">
+                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+              </form>
+              <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
+-->
+            </li>
+            {% endif %}
+
+            {% if verify_jobs == 1 %}
+              {% if trabajo_sidebar == 1 %}
+                <li>
+                    <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+                      <i class="fas fa-book"></i> Trabajos
+                    </a>
+                    <ul class="dropdown-menu" style ="z-index:2">
+                      <li>
+                        <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Crear Trabajo</a>
+                      </li>
+                      <li>
+                      <a class="dropdown-item" href="{% url 'autores:postular_trabajo' %}">Postular Trabajo</a>
+                      </li>
+                    </ul>
+                </li>
+              
+              {% else %}
+              <li>
+                    <a href="{% url 'trabajos:trabajos_evaluados' %}">
+                      <i class="fas fa-book"></i> Trabajos
+                    </a>
+              </li>
+              {% endif %}
+            {% endif %}
+<!--  
+            {% if verify_event == 1 %}
+            <li>
+                <a href="{% url 'eventos:event_create' %}">
+                  <i class="fas fa-archive"></i> Eventos
+                </a>
+
+            
+                <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
+                    {% csrf_token %}
+                    <input class="" name="estado" type='hidden' value="{{ estado }}">
+                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
+                </form>
+              <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
+
+            </li>
+            {% endif %}
+-->
+          </ul> 
 
         {% if user.username %}
         <!-- Username logged in -->
@@ -56,7 +132,7 @@
 
     {% if secondary_navbar_options %}
     <!-- Fixed Secondary Navbar -->
-    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
+    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style ="z-index: 1">
       <div class="container-fluid">
         <ul class="nav navbar-nav ">
           {% for option in secondary_navbar_options %}
