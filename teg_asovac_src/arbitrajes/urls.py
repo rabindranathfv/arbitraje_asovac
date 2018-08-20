@@ -23,8 +23,8 @@ urlpatterns = [
     url(r'^listado-trabajos/detalles/$',views.detalles_resumen, name='detalles_resumen'),
     url(r'^$', views.arbitrajes_pag, name= 'arbitrajes'),
     url(r'^asignar-sesion/$',views.asignacion_de_sesion, name='asignacion_de_sesion'),
-    url(r'^dashboard/admin/referee/list/$',views.referee_list,name='referee_list'),
-    url(r'^dashboard/admin/referee/edit/$',views.referee_edit,name='referee_edit'),
-    url(r'^dashboard/admin/arbitrations/areas/subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    url(r'^arbitro/listar-arbitros/$',views.referee_list,name='referee_list'),
+    url(r'^arbitro/editar-arbitro/$',views.referee_edit,name='referee_edit'),
+    url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
 
 ]
