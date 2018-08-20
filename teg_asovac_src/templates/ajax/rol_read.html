@@ -6,13 +6,13 @@
         <h4 class="modal-title" >Roles del usuario: {{ form.usuario.username }}</h4>
     </div>
     <div class="modal-body">
-        <h5>Roles:
+        <h4>Roles:
             <ul>
                 {% for rol in form.rol.all %}
                     <li>{{ rol.nombre }}</li>
                 {% endfor %}
             </ul>
-        </h5>
+        </h4>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
