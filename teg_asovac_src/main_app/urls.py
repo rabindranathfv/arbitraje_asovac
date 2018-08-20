@@ -39,12 +39,12 @@ urlpatterns = [
 
     url(r'^datos_basicos/$',views.data_basic,name='data_basic'),
     url(r'^estado-arbitraje/$',views.state_arbitration,name='arbitration_state'),
-    url(r'^usuarios/lista/$',views.users_list,name='users_list'),
-    url(r'^usuarios/editar/$',views.user_edit,name='user_edit'),
+    url(r'^usuarios/listar-usuarios/$',views.users_list,name='users_list'),
+    url(r'^usuarios/editar-usuario/$',views.user_edit,name='user_edit'),
     url(r'^usuarios/roles/$',views.user_roles,name='user_roles'),
     url(r'^coordinador-general/$',views.coord_general,name='coord_general'),
     url(r'^coordinador-area/$',views.coord_area,name='coord_area'),
-    url(r'^total/$',views.total,name='total'),
+    url(r'^resultados-total/$',views.total,name='total'),
 
     url(r'^registrar/$',views.register, name='register'), 
 
