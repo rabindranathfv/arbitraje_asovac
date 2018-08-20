@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm
 
 from django.db.models import Q
 from decouple import config
@@ -1162,16 +1162,27 @@ def delete_user_modal(request,id):
 def update_rol_modal(request,id):
     print "update_rol_modal"
     data= dict()
+    request_user = request.user
+    request_user_role = request_user.usuario_asovac.biggest_role()
+    #print request_user_role
     user= get_object_or_404(Usuario_asovac,id=id)
-    if request.method == 'POST':
-        # user.save()
-        print "Rol update post"
-        # data['form_is_valid']= True
-        # users= User.objects.all()
-        # data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+    user_role = user.biggest_role()
+    if request_user_role.id < user_role.id:
+        if request.method == 'POST':
+            # user.save()
+            print "Rol update post"
+            # data['form_is_valid']= True
+            # users= User.objects.all()
+            # data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+        else:
+
+            print "Rol update get"
+            form = None
+            if request_user_role.id == 1:
+                form = AdminAssingRolForm(instance = user)
+            #form= RolForm(instance=user)
+            return process_modal(request,form,'ajax/rol_update.html')
     else:
-        print "Rol update get"
-        form= RolForm(instance=user)
-        return process_modal(request,form,'ajax/rol_update.html')
+        return process_modal(request,user, 'ajax/rol_read.html')
 
     return JsonResponse(data)

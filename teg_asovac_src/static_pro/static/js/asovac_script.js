@@ -36,7 +36,7 @@ $(document).ready(function(){
               $('#modal-user').modal('show');  
             },
             success: function (data){
-                // console.log(data.html_form);
+                console.log(data.html_form);
                 $('#modal-user .modal-content').html(data.html_form);
             }
         });

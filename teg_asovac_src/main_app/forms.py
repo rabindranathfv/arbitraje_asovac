@@ -6,7 +6,7 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Sistema_asovac,Usuario_asovac
+from .models import Sistema_asovac, Usuario_asovac, Rol
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -86,8 +86,18 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-class RolForm(forms.ModelForm):
+class AdminAssingRolForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        self.fields['rol'].queryset = Rol.objects.filter(id__gt=1)
 
+
+    class Meta:
+        model = Usuario_asovac
+        fields = ['rol']
+
+
+class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
