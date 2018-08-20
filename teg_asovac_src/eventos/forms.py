@@ -6,7 +6,7 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Organizador
+from .models import Organizador,Evento,Locacion_evento,Organizador_evento
 
 # class MyLoginForm(forms.Form):
 #     username = forms.CharField(label="Usuario", max_length=100)
@@ -83,3 +83,50 @@ class CreateOrganizerForm(forms.ModelForm):
             css_class='col-sm-12')
         )
 
+class CreateEventForm(forms.ModelForm):
+    
+    class Meta:
+        model = Evento
+        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado','duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento']
+
+    def __init__(self, *args, **kwargs):
+        super(CreateEventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'create-event-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-8'
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            Field('nombre'),
+            Field('categoria'),
+            Field('descripcion'),
+            Field('tipo'),
+            Field('fecha_inicio'),
+            Field('fecha_fin'),
+            Field('dia_asignado'),
+            Field('duracion'),
+            Field('horario_preferido'),
+            Field('fecha_preferida'),
+            Field('observaciones'),
+            Div(
+                Div(
+                    HTML("<span></span>"),
+                css_class='col-sm-7'),
+
+                Div(
+                    HTML("<a href=\"{% url 'eventos:event_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-2'),
+
+                Div(
+                    Submit('submit', 'Crear Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                css_class='col-sm-3'),
+
+                # Div(
+                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
+                # css_class='col-sm-1'),
+
+            css_class='col-sm-12')
+        )
