@@ -20,8 +20,8 @@ from . import views
 
 urlpatterns = [
     # url(r'^trabajos/$', views.trabajos_pag, name= 'trabajos'),
-    url(r'^dashboard/admin/jobs/list/$', views.jobs_list, name= 'jobs_list'),
-    url(r'^dashboard/admin/jobs/edit/$', views.jobs_edit, name= 'jobs_edit'),
+    url(r'^administracion/lista/$', views.jobs_list, name= 'jobs_list'),
+    url(r'^administracion/editar/$', views.jobs_edit, name= 'jobs_edit'),
   
     url(r'^$', views.trabajos, name= 'trabajos'),
     url(r'^editar/$', views.edit_trabajo, name= 'edit_trabajo'),

@@ -20,8 +20,8 @@ from . import views
 
 urlpatterns = [
     url(r'^sesiones/$', views.sesiones_pag, name= 'sesiones'),
-    url(r'^dashboard/admin/sesions/list/$', views.sesions_list, name= 'sesions_list'),
-    url(r'^dashboard/admin/sesions/edit/$', views.sesions_edit, name= 'sesions_edit'),
-    url(r'^dashboard/admin/sesions/space/list/$', views.sesions_space_list, name= 'sesions_space_list'),
-    url(r'^dashboard/admin/sesions/space/edit/$', views.sesions_space_edit, name= 'sesions_space_edit'),
+    url(r'^administracion/lista/$', views.sesions_list, name= 'sesions_list'),
+    url(r'^administracion/editar/$', views.sesions_edit, name= 'sesions_edit'),
+    url(r'^administracion/espacio/lista/$', views.sesions_space_list, name= 'sesions_space_list'),
+    url(r'^administracion/espacio/editar/$', views.sesions_space_edit, name= 'sesions_space_edit'),
 ]
