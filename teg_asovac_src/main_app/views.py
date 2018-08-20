@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm
 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -486,7 +486,18 @@ def users_list(request):
 
     rol_id=get_roles(request.user.id)
     users= User.objects.all()
-    # print (rol_id)
+    
+    # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
+    user_asovac= Usuario_asovac.objects.all()
+    users= Usuario_asovac.objects.all()
+
+    for user in user_asovac:
+        query= user.usuario.username
+        user.rol.all()
+        # for rol in user.rol.all():
+        #user.area_id.all()
+        print (query)
+
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
 
@@ -837,7 +848,8 @@ def process_modal(request,form,template_name):
         if form.is_valid():
             form.save()
             data['form_is_valid']= True
-            users= User.objects.all()
+            # users= User.objects.all()
+            users= Usuario_asovac.objects.all()
             data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
         else:
             data['form_is_valid']= False
@@ -874,7 +886,8 @@ def delete_user_modal(request,id):
     if request.method == 'POST':
         user.delete()
         data['form_is_valid']= True
-        users= User.objects.all()
+        # users= User.objects.all()
+        users= Usuario_asovac.objects.all()
         data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
     else:
         context= {'user':user}
@@ -882,6 +895,21 @@ def delete_user_modal(request,id):
 
     return JsonResponse(data)
 
+def update_rol_modal(request,id):
+    print "update_rol_modal"
+    data= dict()
+    user= get_object_or_404(Usuario_asovac,id=id)
+    if request.method == 'POST':
+        # user.save()
+        print "Rol update post"
+        # data['form_is_valid']= True
+        # users= User.objects.all()
+        # data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+    else:
+        print "Rol update get"
+        form= RolForm(instance=user)
+        return process_modal(request,form,'ajax/rol_update.html')
 
+    return JsonResponse(data)
 
 

@@ -27,7 +27,7 @@ $('#myModal').on('shown.bs.modal', function () {
 $(document).ready(function(){
     var ShowForm= function(){
         var btn= $(this);
-        console.log('ShowForm');
+        alert('ShowForm');
         $.ajax({
             url: btn.attr('data-url'),
             type: 'get',
@@ -44,7 +44,7 @@ $(document).ready(function(){
 
     var SaveForm= function(){
         var form= $(this);
-        alert('Save');
+        alert('SaveForm');
         $.ajax({
             url: form.attr('data-url'),
             data: form.serialize(),
@@ -76,4 +76,9 @@ $(document).ready(function(){
     //delete
     $('#show_users').on('click','.show-form-delete',ShowForm);
     $('#modal-user').on('submit','.delete-form',SaveForm);
+
+    // update rol
+    $('#show_users').on('click','.show-form-rol',ShowForm);
+    // $('#modal-user').on('submit','.delete-form',SaveForm);
+
 });
