@@ -690,7 +690,7 @@ def users_list(request):
         user.rol.all()
         # for rol in user.rol.all():
         #user.area_id.all()
-        print (query)
+        #print (query)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
@@ -1146,7 +1146,7 @@ def update_user_modal(request,id):
 def delete_user_modal(request,id):
     data= dict()
     user= get_object_or_404(User,id=id)
-    print user
+    # print user
     if request.method == 'POST':
         user.delete()
         data['form_is_valid']= True
@@ -1175,11 +1175,25 @@ def update_rol_modal(request,id):
     if request_user_role.id < user_role.id and request_user_role.id < 4:
         if request.method == 'POST':
             # user.save()
+            if request_user_role.id == 1:
+                form = AdminAssingRolForm(request.POST,instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 2:
+                form = CoordGeneralAssingRolForm(request.POST,instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 3:
+                form = CoordAreaAssingRolForm(request.POST,instance = user)
+
+            form.save()
+
             print "Rol update post"
-            # data['form_is_valid']= True
+            data['form_is_valid']= True
             # users= User.objects.all()
-            # data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
-            return redirect('users_list')
+            users= Usuario_asovac.objects.all()
+            data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+            # return redirect('users_list')
         else:
             print "Rol update get"
             form = None
@@ -1200,5 +1214,5 @@ def update_rol_modal(request,id):
     else:
         context={'form': user}
         data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
-
+   
     return JsonResponse(data)

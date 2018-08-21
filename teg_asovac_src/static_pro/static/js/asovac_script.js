@@ -27,7 +27,7 @@ $('#myModal').on('shown.bs.modal', function () {
 $(document).ready(function(){
     var ShowForm= function(){
         var btn= $(this);
-        alert('ShowForm');
+        // alert('ShowForm');
         $.ajax({
             url: btn.attr('data-url'),
             type: 'get',
@@ -36,7 +36,7 @@ $(document).ready(function(){
               $('#modal-user').modal('show');  
             },
             success: function (data){
-                console.log(data.html_form);
+                // console.log(data.html_form);
                 $('#modal-user .modal-content').html(data.html_form);
             }
         });
@@ -44,7 +44,7 @@ $(document).ready(function(){
 
     var SaveForm= function(){
         var form= $(this);
-        alert('SaveForm');
+        // alert('SaveForm');
         $.ajax({
             url: form.attr('data-url'),
             data: form.serialize(),
@@ -53,11 +53,11 @@ $(document).ready(function(){
 
             success: function(data){
                 if(data.form_is_valid){
-                    console.log('data is saved')
+                    // console.log('data is saved')
                     $('#show_users tbody').html(data.user_list);
                     $('#modal-user').modal('hide');
                 }else{
-                    console.log('data is invalid')
+                    // console.log('data is invalid')
                     $('#modal-book .modal-content').html(data.html_form)
                 }
             }
@@ -69,7 +69,7 @@ $(document).ready(function(){
     $('.show-form').click(ShowForm);
     $('#modal-user').on('submit', '.create-form',SaveForm);
 
-    //update
+    // //update
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
 
@@ -79,6 +79,6 @@ $(document).ready(function(){
 
     // update rol
     $('#show_users').on('click','.show-form-rol',ShowForm);
-    // $('#modal-user').on('submit','.delete-form',SaveForm);
+    $('#modal-user').on('submit','.rol-form',SaveForm);
 
 });
