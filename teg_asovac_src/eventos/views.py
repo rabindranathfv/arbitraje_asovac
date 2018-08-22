@@ -8,6 +8,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, veri
 from eventos.forms import CreateOrganizerForm,CreateEventForm
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
 
+from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
 def event_list(request):
@@ -239,6 +240,15 @@ def event_create(request):
 
 def organizer_create(request):
     form = CreateOrganizerForm()
+    print(request.user.id)
+    #print(request.user.username)
+    #user_asov = Usuario_asovac.Sistema_asovac_id.find(pk=request.user.id)
+    #print(user_asovac)
+    # user_asov.save()
+    # arbitraje al cual pertenece el usuario
+    #arbitraje = Sistema_asovac.objects.all()
+    #print(arbitraje)
+
     context = {
         'username' : request.user.username,
         'form' : form,
@@ -246,7 +256,8 @@ def organizer_create(request):
     if request.method == 'POST':
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
-            form.save()
+            form.save(commit=False)
+
             print(form)
             organizer_data = Organizador.objects.all()
             context = {        
