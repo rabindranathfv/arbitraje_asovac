@@ -35,95 +35,67 @@
                         </form>
                     </div>
                     <br>
-                           <table class="table table-bordered">
-                               <thead>
-                                 <tr>
-                                   <th>Organizador</th>
-                                   <th>Nombre</th>
-                                   <th>Categoria</th>
-                                   <th>Lugar</th>
-                                   <th>Capacidad</th>
-                                   <th>Fecha inicio</th>
-                                   <th>Fecha fin</th>
-                                   <th>Acciones</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 <tr>
-                                   <td>Pedro Manuel Camacho Rodriguez</td>
-                                   <td>Fin de clases</td>
-                                   <td>Fiestas</td>
-                                   <td>Caracas</td>
-                                   <td>300</td>
-                                   <td>12/10/2018</td>
-                                   <td>15/11/2018</td>
-                                   <td >
-                                        <a href="{% url 'eventos:event_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
-                                    <td>Pedro Manuel Camacho Rodriguez</td>
-                                    <td>Fin de clases</td>
-                                    <td>Fiestas</td>
-                                    <td>Caracas</td>
-                                   <td>300</td>
-                                    <td>12/10/2018</td>
-                                    <td>15/11/2018</td>
-                                    <td >
-                                        <a href="{% url 'eventos:event_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                   </td>
-                                  </tr>
-                                  <tr>
-                                    <td>Pedro Manuel Camacho Rodriguez</td>
-                                    <td>Fin de clases</td>
-                                    <td>Fiestas</td>
-                                    <td>Caracas</td>
-                                   <td>300</td>
-                                    <td>12/10/2018</td>
-                                    <td>15/11/2018</td>
-                                    <td >
-                                        <a href="{% url 'eventos:event_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                   </td>
-                                  </tr>
-                                 
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                        {% if event_data %}
+                            <thead>
+                              <tr>
+                                <th>Nombre</th>
+                                <th>Categoria</th>
+                                <th>Tipo</th>
+                                <th>Fecha Inicio</th>
+                                <th>Fecha Fin</th>
+                                <th>Dia Asignado</th>
+                                <th>Duracion</th>
+                                <th>Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {% for evt_data in event_data  %}
+                                
+                              <tr>
+                                <td>{{ evt_data.nombre }}<td>
+                                <td>{{ evt_data.categoria }}</td>
+                                <td>{{ evt_data.tipo }}</td>
+                                <td>{{ evt_data.fecha_inicio }}</td>
+                                <td>{{ evt_data.fecha_fin }}</td>
+                                <td>{{ evt_data.dia_asignado }}</td>
+                                <td >
+                                     <a href="{% url 'eventos:event_edit'%}" class="btn btn-info" role="button" title="Editar Evento">
+                                         <i class="fas fa-edit"></i>
+                                     </a>
+                                     <a href="{% url 'eventos:event_delete' %}" class="btn btn-info" role="button" title="Eliminar Evento">
+                                         <i class="fas fa-times"></i>
+                                     </a>
+                                     
+                                     <a href="{% url 'eventos:event_detail' %}" class="btn btn-info" role="button" title="Ver Detalles del Evento">
+                                         <i class="fas fa-eye"></i>
+                                     </a>
+                                                                             
+                                     <a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
+                                         <i class="fa fa-comment"></i>
+                                     </a>
+                                </td>
+                              </tr>
+                              
+                            {% endfor %}                             
+                            </tbody>
 
-                       </div>
+
+                        </table>  
+
+                        {% else %}
+                      
+                            <div class="well well-lg">
+                                <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+                            </div>
+                            
+                        {% endif %}
+                           <!-- End table  -->
+                    </div>
+                    <!--end jumbotrom -->    
+                    </div>
                </div>
              </div>
              <!-- EndFirst Row -->

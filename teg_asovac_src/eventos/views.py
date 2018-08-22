@@ -238,6 +238,14 @@ def event_create(request):
     #}
     return render(request, 'eventos_event_create.html', context)
 
+def event_delete(request):
+    
+    return render(request, 'eventos_event_delete.html',context={})
+
+def event_detail(request):
+    
+    return render(request, 'eventos_event_detail.html',context={})  
+
 def organizer_create(request):
     form = CreateOrganizerForm()
     print(request.user.id)
