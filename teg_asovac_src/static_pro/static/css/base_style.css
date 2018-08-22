@@ -368,3 +368,8 @@ textarea{
 .content-modal{
     font-size: 22px;
 }
+
+/**=== Imagenes centradas ===*/
+.img-responsive {
+    margin: 0 auto !important;
+}

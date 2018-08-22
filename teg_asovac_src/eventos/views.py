@@ -242,11 +242,11 @@ def organizer_create(request):
     form = CreateOrganizerForm()
     print(request.user.id)
     #print(request.user.username)
-    #user_asov = Usuario_asovac.Sistema_asovac_id.find(pk=request.user.id)
-    #print(user_asovac)
-    # user_asov.save()
+    user_data = Usuario_asovac.objects.get(pk=request.user.id)
+    print(user_data.Sistema_asovac_id.values())
+    #user_asov.save()
     # arbitraje al cual pertenece el usuario
-    #arbitraje = Sistema_asovac.objects.all()
+    #arbitraje = Sistema_asovac.objects.filter().only(id)
     #print(arbitraje)
 
     context = {
