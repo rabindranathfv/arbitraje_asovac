@@ -1186,11 +1186,11 @@ def update_rol_modal(request,id):
             if request_user_role.id == 3:
                 form = CoordAreaAssingRolForm(request.POST,instance = user)
 
-            form.save()
-
-            print "Rol update post"
-            data['form_is_valid']= True
-            # users= User.objects.all()
+            if form.is_valid():
+                form.save()
+                print "Rol update post"
+                data['form_is_valid']= True
+                # users= User.objects.all()
             users= Usuario_asovac.objects.all()
             data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
             # return redirect('users_list')
@@ -1209,7 +1209,7 @@ def update_rol_modal(request,id):
             # que posee todas las opciones menos "Administrador" y "Coord. General".
             if request_user_role.id == 3:
                 form = CoordAreaAssingRolForm(instance = user)
-            context={'form': form}
+            context={'form': form, 'user':user}
             data['html_form']= render_to_string('ajax/rol_update.html',context, request=request)
     else:
         context={'form': user}

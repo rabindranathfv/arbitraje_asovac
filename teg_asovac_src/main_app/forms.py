@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 
 from .models import Sistema_asovac, Usuario_asovac, Rol
-
+from django.forms import CheckboxSelectMultiple
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -94,6 +94,7 @@ class AdminAssingRolForm(forms.ModelForm):
     class Meta:
         model = Usuario_asovac
         fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
 
 class CoordGeneralAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -103,6 +104,7 @@ class CoordGeneralAssingRolForm(forms.ModelForm):
     class Meta:
         model = Usuario_asovac
         fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
 
 class CoordAreaAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -112,6 +114,7 @@ class CoordAreaAssingRolForm(forms.ModelForm):
     class Meta:
         model = Usuario_asovac
         fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
 
 class RolForm(forms.ModelForm):
     class Meta:

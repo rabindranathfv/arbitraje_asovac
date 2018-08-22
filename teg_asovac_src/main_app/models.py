@@ -21,7 +21,7 @@ class Rol(models.Model):
 	descripcion = models.TextField(max_length=255)
 	
 	def __str__(self):
-		return str(self.id) + ": " + self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre#.encode('utf-8', errors='replace')
 
 
 

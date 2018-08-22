@@ -3,12 +3,19 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Actualizar usuario</h4>
+        <h4 class="modal-title" >Actualizar roles del usuario: {{ user.usuario.first_name }} {{ user.usuario.last_name }}</h4>
 </div>
 <div class="modal-body">
     <form method="POST" class="rol-form" data-url="{% url 'main_app:actualizar_rol' form.instance.id %}">
         {% csrf_token %}
-        {{ form | crispy }}
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="form-group lb-md">
+                    {{ form.rol }}
+                </div>
+            </div>
+        </div>
+        <br/>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
         <button id="test" type="submit" class="btn btn-success">Actualizar</button>
     </form>
