@@ -37,7 +37,10 @@ class CreateOrganizerForm(forms.ModelForm):
 
     class Meta:
         model = Organizador
-        fields = ['nombres','apellidos', 'cedula_o_pasaporte', 'correo_electronico','institucion','telefono_oficina','telefono_habitacion_celular','direccion_correspondencia','es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador','observaciones']
+        fields = ['nombres','apellidos', 'genero','cedula_o_pasaporte', 'correo_electronico','institucion',
+                'telefono_oficina','telefono_habitacion_celular','direccion_correspondencia',
+                'es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador',
+                'observaciones','usuario_asovac','Sistema_asovac_id']
 
     def __init__(self, *args, **kwargs):
         super(CreateOrganizerForm, self).__init__(*args, **kwargs)
@@ -52,6 +55,7 @@ class CreateOrganizerForm(forms.ModelForm):
         self.helper.layout = Layout( # the order of the items in this layout is important
             Field('nombres'),
             Field('apellidos'),
+            Field('genero'),
             Field('cedula_o_pasaporte'),
             Field('correo_electronico'),
             Field('institucion'),
@@ -63,6 +67,8 @@ class CreateOrganizerForm(forms.ModelForm):
             Field('cargo_en_institucion'),
             Field('url_organizador'),
             Field('observaciones'),
+            Field('usuario_asovac'),
+            Field('Sistema_asovac_id'),
             Div(
                 Div(
                     HTML("<span></span>"),
@@ -73,7 +79,7 @@ class CreateOrganizerForm(forms.ModelForm):
                 css_class='col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success', action="/eventos/listar-organizadores/"),
                 css_class='col-sm-3'),
 
                 # Div(

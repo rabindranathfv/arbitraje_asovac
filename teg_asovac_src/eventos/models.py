@@ -30,7 +30,7 @@ class Organizador(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombres#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""

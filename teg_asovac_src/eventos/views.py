@@ -264,15 +264,16 @@ def organizer_create(request):
     if request.method == 'POST':
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
-            form.save(commit=False)
+            form.save()
 
             print(form)
+            print("El form es valido y se guardo satisfactoriamente")
             organizer_data = Organizador.objects.all()
             context = {        
                 'username' : request.user.username,
                 'form' : form,
                 'org_data': organizer_data,
-                'verify_event_app' : verify_event_app(),
+                #'verify_event_app' : verify_event_app(),
                 }
             return render(request, 'eventos_organizer_list.html', context) 
     return render(request, 'eventos_organizer_create.html',context)
