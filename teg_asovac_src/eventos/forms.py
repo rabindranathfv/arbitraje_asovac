@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
+from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,InlineRadios
 from django import forms
 from django.core.urlresolvers import reverse
 
@@ -59,13 +60,13 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['telefono_oficina'].label = "Teléfono de Oficina"
         self.fields['telefono_habitacion_celular'].label = "Teléfono Habitacion/Celular"
         self.fields['direccion_correspondencia'].label = "Dirección"
-        self.fields['es_miembro_asovac'].label = ""
+        self.fields['es_miembro_asovac'].label = "Es Mienbro de AsoVAC"
         self.fields['capitulo_asovac'].label = "Capitulo AsoVAC"
         self.fields['cargo_en_institucion'].label = "Cargo en la Institución"
         self.fields['url_organizador'].label = "Enlace del Organizador"
         self.fields['observaciones'].label = "Observaciones"
         self.fields['usuario_asovac'].label = "Usuario"
-        
+        #self.fields['es_meinbro_asovac'].widget.attr('type') = 'radio'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
@@ -78,12 +79,13 @@ class CreateOrganizerForm(forms.ModelForm):
             'telefono_oficina',
             'telefono_habitacion_celular',
             'direccion_correspondencia',
-            'es_miembro_asovac',
+            Field('es_miembro_asovac',type="checkbox"),
+            #InlineRadios('es_miembro_asovac'),
             'capitulo_asovac',
             'cargo_en_institucion',
             'url_organizador',
             'observaciones',
-            'usuario_asovac',
+            Field('usuario_asovac', type="hidden"),
             Div(
                 Div(
                     HTML("<span></span>"),
