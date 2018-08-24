@@ -12,11 +12,10 @@ Organizador Model
 class Organizador(models.Model):
 
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
-	genero = models.CharField(max_length=5)
+	genero = models.SmallIntegerField()
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
@@ -30,7 +29,7 @@ class Organizador(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombres#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""

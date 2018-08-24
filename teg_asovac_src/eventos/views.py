@@ -5,8 +5,10 @@ from django.shortcuts import render
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
-from eventos.forms import CreateOrganizerForm
+from eventos.forms import CreateOrganizerForm,CreateEventForm
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
+
+from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
 def event_list(request):
@@ -155,7 +157,28 @@ def event_create(request):
 
     secondary_navbar_options = ['']
 
-
+    form = CreateEventForm()
+    context = {
+        'username' : request.user.username,
+        'form' : form,
+        'main_navbar_options' : main_navbar_options,
+        'secondary_navbar_options' : secondary_navbar_options,
+    }
+    if request.method == 'POST':
+        form = CreateOrganizerForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+            print(form)
+            organizer_data = Organizador.objects.all()
+            context = {        
+                'username' : request.user.username,
+                'form' : form,
+                'org_data': organizer_data,
+                'main_navbar_options' : main_navbar_options,
+                'secondary_navbar_options' : secondary_navbar_options,
+                #'verify_event_app' : verify_event_app(),
+                }
+            return render(request, 'eventos_event_create.html', context) 
 
     #rol_id=get_roles(request.user.id)
 
@@ -175,10 +198,10 @@ def event_create(request):
     # print items
 
 
-    context = {
-        'nombre_vista' : 'Eventos',
-        'main_navbar_options' : main_navbar_options,
-        'secondary_navbar_options' : secondary_navbar_options,
+    #context = {
+        #'nombre_vista' : 'Eventos',
+        #'main_navbar_options' : main_navbar_options,
+        #'secondary_navbar_options' : secondary_navbar_options,
         # 'estado' : estado,
         # #'rol' : rol,
         # 'rol_id' : rol_id,
@@ -212,11 +235,28 @@ def event_create(request):
         # 'route_trabajos_sidebar':route_trabajos_sidebar,
         # 'route_trabajos_navbar': route_trabajos_navbar,
         # 'route_resultados': route_resultados,
-    }
+    #}
     return render(request, 'eventos_event_create.html', context)
+
+def event_delete(request):
+    
+    return render(request, 'eventos_event_delete.html',context={})
+
+def event_detail(request):
+    
+    return render(request, 'eventos_event_detail.html',context={})  
 
 def organizer_create(request):
     form = CreateOrganizerForm()
+    print(request.user.id)
+    #print(request.user.username)
+    user_data = Usuario_asovac.objects.get(pk=request.user.id)
+    print(user_data.Sistema_asovac_id.values())
+    #user_asov.save()
+    # arbitraje al cual pertenece el usuario
+    #arbitraje = Sistema_asovac.objects.filter().only(id)
+    #print(arbitraje)
+
     context = {
         'username' : request.user.username,
         'form' : form,
@@ -225,12 +265,15 @@ def organizer_create(request):
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
             form.save()
+            
             print(form)
+            print("El form es valido y se guardo satisfactoriamente")
             organizer_data = Organizador.objects.all()
             context = {        
                 'username' : request.user.username,
                 'form' : form,
                 'org_data': organizer_data,
+                #'verify_event_app' : verify_event_app(),
                 }
             return render(request, 'eventos_organizer_list.html', context) 
     return render(request, 'eventos_organizer_create.html',context)

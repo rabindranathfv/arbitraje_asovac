@@ -115,3 +115,13 @@ DB_HOST=xxxx
 1. Existira un Branch Master que contendra los cambios ya estables y revisados.
 2. Existira un Branch Development donde se se tendran los cambios estables que aun deben ser revisados por 2da vez.
 3. Al desarrollar algo nuevo se procede a crear un branch nuevo con el siguiente formato *TEG-XXX* donde ese numero se indicara en la tarea del trello acompañado de una descripcion. Todos los branchs deben salir de development mientras sean funcionaldiades nuevas y si son errores deben salir desde Master. Al ser revisada la tarea por primera vez si esta correcta se hace merge hacia development.
+
+
+### Seccion para mostrar sin contenido
+
+```
+<div class="well well-lg">
+   <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+   <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>    
+</div> 
+```

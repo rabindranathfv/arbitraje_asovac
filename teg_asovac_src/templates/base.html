@@ -92,6 +92,42 @@
               </li>
               {% endif %}
             {% endif %}
+
+<!--
+
+            {% if verify_event_app == 1 %}
+            
+              <li>
+                  <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+                    <i class="fas fa-id-badge"></i> Organizador
+                  </a>
+                  <ul class="dropdown-menu" style ="z-index:2">
+                    <li>
+                      <a class="dropdown-item" href="{% url 'eventos:organizer_create' %}">Crear Organizador</a>
+                    </li>
+                    <li>
+                    <a class="dropdown-item" href="{% url 'eventos:orgnaizer_list' %}">Listar Organizadores</a>
+                    </li>
+                  </ul>
+              </li>
+                   
+            <li>
+              <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+                <i class="fas fa-calendar-check"></i> Eventos
+              </a>
+              <ul class="dropdown-menu" style ="z-index:2">
+                <li>
+                  <a class="dropdown-item" href="{% url 'eventos:event_create' %}">Crear Evento</a>
+                </li>
+                <li>
+                <a class="dropdown-item" href="{% url 'eventos:event_list' %}">Lista de Eventos</a>
+                </li>
+              </ul>
+          </li>
+            
+          {% endif %}
+-->
+
 <!--  
             {% if verify_event == 1 %}
             <li>

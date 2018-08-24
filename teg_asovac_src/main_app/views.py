@@ -132,6 +132,9 @@ def verify_event(estado,rol_id):
         return 0 
     return 1
 
+# def verify_event_app():
+#     return 1
+
 def verify_jobs(estado, rol_id):
     if((estado == '3' and 5 in rol_id) or (estado == '5' and 4 in rol_id)):
         return 1
@@ -161,11 +164,13 @@ def validate_rol_status(estado,rol_id,item_active):
 
     trabajo_sidebar = verify_trabajo_options(estado,rol_id)
 
-    configuration= verify_configuration(estado,rol_id)
-    arbitration= verify_arbitration(estado,rol_id)
-    result=  verify_result(estado,rol_id)
-    event= verify_event(estado,rol_id)
+    configuration = verify_configuration(estado,rol_id)
+    arbitration = verify_arbitration(estado,rol_id)
+    result =  verify_result(estado,rol_id)
+    event = verify_event(estado,rol_id)
     jobs = verify_jobs(estado,rol_id)
+    #organizer_event = verify_event_app()
+    
 
     # Menu de configuración 
     items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
@@ -191,6 +196,7 @@ def validate_rol_status(estado,rol_id,item_active):
     # Menu de eventos 
     items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('eventos:event_list')])
     items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('sesiones:sesions_space_list')])
+    #items.setdefault("verify_event_app",[organizer_event,None])
     
     #Menú de trabajos
     items.setdefault("trabajo_sidebar",[trabajo_sidebar,reverse('trabajos:trabajos')])
@@ -675,17 +681,17 @@ def users_list(request):
 
     secondary_navbar_options = ['']
 
-    rol_id=get_roles(request.user.id)
+    rol_id = get_roles(request.user.id)
 
     # print (rol_id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items = validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id)
+    route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
