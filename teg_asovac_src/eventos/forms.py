@@ -40,7 +40,7 @@ class CreateOrganizerForm(forms.ModelForm):
         fields = ['nombres','apellidos', 'genero','cedula_o_pasaporte', 'correo_electronico','institucion',
                 'telefono_oficina','telefono_habitacion_celular','direccion_correspondencia',
                 'es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador',
-                'observaciones','usuario_asovac','Sistema_asovac_id']
+                'observaciones','usuario_asovac']
 
     def __init__(self, *args, **kwargs):
         super(CreateOrganizerForm, self).__init__(*args, **kwargs)
@@ -68,7 +68,6 @@ class CreateOrganizerForm(forms.ModelForm):
             Field('url_organizador'),
             Field('observaciones'),
             Field('usuario_asovac'),
-            Field('Sistema_asovac_id'),
             Div(
                 Div(
                     HTML("<span></span>"),
