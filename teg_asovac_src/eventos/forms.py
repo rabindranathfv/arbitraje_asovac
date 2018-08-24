@@ -50,24 +50,40 @@ class CreateOrganizerForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-sm-3'
         self.helper.field_class = 'col-sm-8'
+        self.fields['nombres'].label = "Nombres"
+        self.fields['apellidos'].label = "Apellidos"
+        self.fields['genero'].label = "Genero"
+        self.fields['cedula_o_pasaporte'].label = "Cédula o Pasaporte"
+        self.fields['correo_electronico'].label = "Correo Electronico"
+        self.fields['institucion'].label = "Institucirón"
+        self.fields['telefono_oficina'].label = "Teléfono de Oficina"
+        self.fields['telefono_habitacion_celular'].label = "Teléfono Habitacion/Celular"
+        self.fields['direccion_correspondencia'].label = "Dirección"
+        self.fields['es_miembro_asovac'].label = ""
+        self.fields['capitulo_asovac'].label = "Capitulo AsoVAC"
+        self.fields['cargo_en_institucion'].label = "Cargo en la Institución"
+        self.fields['url_organizador'].label = "Enlace del Organizador"
+        self.fields['observaciones'].label = "Observaciones"
+        self.fields['usuario_asovac'].label = "Usuario"
+        
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
-            Field('nombres'),
-            Field('apellidos'),
-            Field('genero'),
-            Field('cedula_o_pasaporte'),
-            Field('correo_electronico'),
-            Field('institucion'),
-            Field('telefono_oficina'),
-            Field('telefono_habitacion_celular'),
-            Field('direccion_correspondencia'),
-            Field('es_miembro_asovac'),
-            Field('capitulo_asovac'),
-            Field('cargo_en_institucion'),
-            Field('url_organizador'),
-            Field('observaciones'),
-            Field('usuario_asovac'),
+            'nombres',
+            'apellidos',
+            'genero',
+            'cedula_o_pasaporte',
+            'correo_electronico',
+            'institucion',
+            'telefono_oficina',
+            'telefono_habitacion_celular',
+            'direccion_correspondencia',
+            'es_miembro_asovac',
+            'capitulo_asovac',
+            'cargo_en_institucion',
+            'url_organizador',
+            'observaciones',
+            'usuario_asovac',
             Div(
                 Div(
                     HTML("<span></span>"),
