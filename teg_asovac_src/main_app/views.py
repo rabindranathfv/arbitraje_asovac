@@ -618,15 +618,15 @@ def state_arbitration(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id)
+    route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
-        estado = request.POST['estado']
+        estado = request.POST['estadoArbitraje']
         #print(estado)
         request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
 
