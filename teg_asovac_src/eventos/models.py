@@ -12,10 +12,12 @@ Organizador Model
 class Organizador(models.Model):
 
 	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
+	# cambiar a seleccion multiple 
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
+	#cambiar a small integer
 	genero = models.CharField(max_length=5)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)

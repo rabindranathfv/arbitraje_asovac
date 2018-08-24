@@ -265,7 +265,7 @@ def organizer_create(request):
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
             form.save()
-
+            
             print(form)
             print("El form es valido y se guardo satisfactoriamente")
             organizer_data = Organizador.objects.all()
