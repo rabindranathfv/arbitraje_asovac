@@ -1,18 +1,28 @@
-    <!--EN ESTA VISTA LA VARIABLE "form" ES EN REALIDAD UN OBJETO USUARIO_ASOVAC -->
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Roles del usuario: {{ form.usuario.username }}</h4>
+        <h4 class="modal-title" >Roles del usuario: 
+            {% if user.usuario.first_name and user.usuario.last_name %}
+                <strong>{{ user.usuario.first_name }} {{ user.usuario.last_name }}</strong>
+            {% else %}
+                <strong>{{ user.usuario.username }}</strong>
+            {% endif %}
+        </h4>
     </div>
     <div class="modal-body">
-        <h4>Roles:
-            <ul>
-                {% for rol in form.rol.all %}
-                    <li>{{ rol.nombre }}</li>
-                {% endfor %}
-            </ul>
-        </h4>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+                <h4>Roles:</h4>
+                <h4>
+                    <ul>
+                        {% for rol in user.rol.all %}
+                            <strong><li><p>{{ rol.nombre }}</p></li></strong>
+                        {% endfor %}
+                    </ul>
+                </h4>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>

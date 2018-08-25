@@ -90,6 +90,7 @@ class AdminAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=1)
+        self.fields['rol'].required = True
 
     class Meta:
         model = Usuario_asovac
@@ -100,6 +101,7 @@ class CoordGeneralAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=2)
+        self.fields['rol'].required = True
 
     class Meta:
         model = Usuario_asovac
@@ -110,6 +112,7 @@ class CoordAreaAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=3)
+        self.fields['rol'].required = True
 
     class Meta:
         model = Usuario_asovac

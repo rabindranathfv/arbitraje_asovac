@@ -95,7 +95,7 @@ def verify_arbitraje_option(estado,rol_id, item_active):
     return 0
 
 def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5')and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
+    if((estado =='3' or estado =='4' or estado =='5') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
         return 1
     return 0
 
@@ -1160,7 +1160,7 @@ def delete_user_modal(request,id):
     return JsonResponse(data)
 
 def update_rol_modal(request,id):
-    print "update_rol_modal"
+    #print "update_rol_modal"
     data= dict()
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user = request.user
@@ -1172,7 +1172,7 @@ def update_rol_modal(request,id):
     # Si el rol del usuario haciendo la petición es mayor en rango al del usuario a modificar y so este tiene un rol para modificar
     # entonces se despliega en el modal el formulario de acuerdo a su mayor rol, de lo contrario
     # solo se despliega la informacion de los roles del usuario.
-    if request_user_role.id < user_role.id and request_user_role.id < 4:
+    if (request_user_role.id < user_role.id and request_user_role.id < 4) or (request_user.id is user.id):
         if request.method == 'POST':
             # user.save()
             if request_user_role.id == 1:
@@ -1188,14 +1188,14 @@ def update_rol_modal(request,id):
 
             if form.is_valid():
                 form.save()
-                print "Rol update post"
+                #print "Rol update post"
                 data['form_is_valid']= True
                 # users= User.objects.all()
             users= Usuario_asovac.objects.all()
             data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
             # return redirect('users_list')
         else:
-            print "Rol update get"
+            #print "Rol update get"
             form = None
             # Si el usuario haciendo la petición es Administrador, se usa este formulario
             # que posee todas las opciones menos "Administrador".
@@ -1212,7 +1212,7 @@ def update_rol_modal(request,id):
             context={'form': form, 'user':user}
             data['html_form']= render_to_string('ajax/rol_update.html',context, request=request)
     else:
-        context={'form': user}
+        context={'user': user}
         data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
    
     return JsonResponse(data)
