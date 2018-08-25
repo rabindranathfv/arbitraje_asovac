@@ -1,0 +1,58 @@
+{% load crispy_forms_tags %}
+<form method="post" class="update-form" data-url="{% url 'main_app:actualizar_usuario' form.instance.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Actualizar usuario</h4>
+    </div>
+    <div class="modal-body">
+    
+     <div id="div_id_first_name" class="form-group">
+            <label for="first_name" class="control-label  requiredField">
+              Nombres 
+              <span class="asteriskField">*</span>
+            </label>
+            <div class="controls ">
+              <input type="text" value="{{form.first_name.value}}" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
+            </div>
+          </div>
+
+          <div id="div_id_last_name" class="form-group">
+            <label for="last_name" class="control-label  requiredField">
+              Apellidos
+              <span class="asteriskField">*</span>
+            </label>
+            <div class="controls ">
+              <input type="text" value="{{form.last_name.value}}" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
+            </div>
+          </div>
+
+          <div id="div_id_email" class="form-group">
+            <label for="email" class="control-label  requiredField">
+              Correo electrónico
+              <span class="asteriskField">*</span>
+            </label>
+            <div class="controls ">
+              <input type="email" value="{{form.email.value}}" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
+            </div>
+          </div>
+
+          <div id="div_id_username" class="form-group">
+            <label for="username" class="control-label  requiredField">
+              Nombre de usuario
+              <span class="asteriskField">*</span>
+            </label>
+            <div class="controls ">
+              <input type="text"  value="{{form.username.value}}" name="username" id="username" required="" class="textinput textInput form-control" maxlength="100">
+            </div>
+          </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Actualizar</button>
+    </div>
+</form>

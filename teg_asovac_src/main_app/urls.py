@@ -36,7 +36,6 @@ urlpatterns = [
     url(r'^home/$',views.home,name='home'),
     url(r'^$',views.dashboard,name='dashboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
-
     url(r'^datos_basicos/$',views.data_basic,name='data_basic'),
     url(r'^estado-arbitraje/$',views.state_arbitration,name='arbitration_state'),
     url(r'^usuarios/listar-usuarios/$',views.users_list,name='users_list'),
@@ -45,10 +44,15 @@ urlpatterns = [
     url(r'^coordinador-general/$',views.coord_general,name='coord_general'),
     url(r'^coordinador-area/$',views.coord_area,name='coord_area'),
     url(r'^resultados-total/$',views.total,name='total'),
-
     url(r'^registrar/$',views.register, name='register'), 
-
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
+    
+    #Rutas para modales ajax
+    url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
+    url(r'^usuario/(?P<id>\d+)/actualizar$',views.update_user_modal,name='actualizar_usuario'),
+    url(r'^usuario/(?P<id>\d+)/eliminar$',views.delete_user_modal,name='eliminar_usuario'),
+    url(r'^usuario/(?P<id>\d+)/rol/actualizar$',views.update_rol_modal,name='actualizar_rol'),
+
 ]

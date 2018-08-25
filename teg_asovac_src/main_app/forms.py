@@ -6,8 +6,8 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Sistema_asovac
-
+from .models import Sistema_asovac, Usuario_asovac, Rol
+from django.forms import CheckboxSelectMultiple
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -80,3 +80,46 @@ class CreateArbitrajeForm(forms.ModelForm):
             css_class='row')
         )
 
+class PerfilForm(forms.ModelForm):
+    
+    class Meta:
+        model= User
+        fields=['username','first_name','last_name','email',]
+
+class AdminAssingRolForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        self.fields['rol'].queryset = Rol.objects.filter(id__gt=1)
+        self.fields['rol'].required = True
+
+    class Meta:
+        model = Usuario_asovac
+        fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
+
+class CoordGeneralAssingRolForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        self.fields['rol'].queryset = Rol.objects.filter(id__gt=2)
+        self.fields['rol'].required = True
+
+    class Meta:
+        model = Usuario_asovac
+        fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
+
+class CoordAreaAssingRolForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        self.fields['rol'].queryset = Rol.objects.filter(id__gt=3)
+        self.fields['rol'].required = True
+
+    class Meta:
+        model = Usuario_asovac
+        fields = ['rol']
+        widgets = {'rol': CheckboxSelectMultiple()}
+
+class RolForm(forms.ModelForm):
+    class Meta:
+        model= Usuario_asovac
+        fields=['rol']

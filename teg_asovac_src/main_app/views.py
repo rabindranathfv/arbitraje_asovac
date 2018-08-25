@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect, render_to_response
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm
+from django.shortcuts import render, redirect, get_object_or_404, render_to_response
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm
 
 from django.db.models import Q
 from decouple import config
@@ -18,6 +18,9 @@ from django.urls import reverse
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
 import random, string
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
@@ -92,7 +95,7 @@ def verify_arbitraje_option(estado,rol_id, item_active):
     return 0
 
 def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5')and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
+    if((estado =='3' or estado =='4' or estado =='5') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
         return 1
     return 0
 
@@ -676,8 +679,19 @@ def users_list(request):
     secondary_navbar_options = ['']
 
     rol_id=get_roles(request.user.id)
+    users= User.objects.all()
+    
+    # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
+    user_asovac= Usuario_asovac.objects.all()
+    users= Usuario_asovac.objects.all()
 
-    # print (rol_id)
+    for user in user_asovac:
+        query= user.usuario.username
+        user.rol.all()
+        # for rol in user.rol.all():
+        #user.area_id.all()
+        #print (query)
+
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
@@ -696,6 +710,7 @@ def users_list(request):
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
+        'users' : users,
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
@@ -1087,4 +1102,117 @@ def apps_selection(request):
     context = {
     
     }
+
     return render(request, 'main_app_aplicaciones_opc.html',context)
+
+# Ajax/para el uso de ventanas modales
+def process_modal(request,form,template_name):
+    data= dict()
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            data['form_is_valid']= True
+            # users= User.objects.all()
+            users= Usuario_asovac.objects.all()
+            data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+        else:
+            data['form_is_valid']= False
+  
+    context={
+        'form': form
+    }
+    data['html_form']= render_to_string(template_name,context, request=request)
+    return JsonResponse(data)
+
+def create_user_modal(request):
+    if request.method == 'POST':
+        form= RegisterForm(request.POST)
+    else:
+        form= RegisterForm()
+
+    return process_modal(request,form,'ajax/users-create.html')
+
+def update_user_modal(request,id):
+    print "update_user_modal"
+    user=  get_object_or_404(User,id=id)
+    if request.method == 'POST':
+        # form= RegisterForm(request.POST,instance=user)
+        form= PerfilForm(request.POST,instance=user)
+    else:
+        # form= RegisterForm(instance=user)
+        form= PerfilForm(instance=user)
+    return process_modal(request,form,'ajax/user_update.html')
+    
+def delete_user_modal(request,id):
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    # print user
+    if request.method == 'POST':
+        user.delete()
+        data['form_is_valid']= True
+        # users= User.objects.all()
+        users= Usuario_asovac.objects.all()
+        data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+    else:
+        context= {'user':user}
+        data['html_form']=render_to_string('ajax/user_delete.html',context,request=request)
+
+    return JsonResponse(data)
+
+def update_rol_modal(request,id):
+    #print "update_rol_modal"
+    data= dict()
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user = request.user
+    request_user_role = request_user.usuario_asovac.biggest_role()
+    # Obtenemos la instancia del usuario asovac a modificar y su mayor rol
+    user= get_object_or_404(Usuario_asovac,id=id)
+    user_role = user.biggest_role()
+    #print user_role, request_user_role, request.method
+    # Si el rol del usuario haciendo la petición es mayor en rango al del usuario a modificar y so este tiene un rol para modificar
+    # entonces se despliega en el modal el formulario de acuerdo a su mayor rol, de lo contrario
+    # solo se despliega la informacion de los roles del usuario.
+    if (request_user_role.id < user_role.id and request_user_role.id < 4) or (request_user.id is user.id):
+        if request.method == 'POST':
+            # user.save()
+            if request_user_role.id == 1:
+                form = AdminAssingRolForm(request.POST,instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 2:
+                form = CoordGeneralAssingRolForm(request.POST,instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 3:
+                form = CoordAreaAssingRolForm(request.POST,instance = user)
+
+            if form.is_valid():
+                form.save()
+                #print "Rol update post"
+                data['form_is_valid']= True
+                # users= User.objects.all()
+            users= Usuario_asovac.objects.all()
+            data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+            # return redirect('users_list')
+        else:
+            #print "Rol update get"
+            form = None
+            # Si el usuario haciendo la petición es Administrador, se usa este formulario
+            # que posee todas las opciones menos "Administrador".
+            if request_user_role.id == 1:
+                form = AdminAssingRolForm(instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 2:
+                form = CoordGeneralAssingRolForm(instance = user)
+            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
+            # que posee todas las opciones menos "Administrador" y "Coord. General".
+            if request_user_role.id == 3:
+                form = CoordAreaAssingRolForm(instance = user)
+            context={'form': form, 'user':user}
+            data['html_form']= render_to_string('ajax/rol_update.html',context, request=request)
+    else:
+        context={'user': user}
+        data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
+   
+    return JsonResponse(data)

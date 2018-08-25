@@ -54,7 +54,18 @@ class Usuario_asovac(models.Model):
 	area_id= models.ManyToManyField('arbitrajes.Area',blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
-	
+
+	def biggest_role(self):
+		my_roles = self.rol.all()
+		biggest_role = None
+		for role in my_roles:
+			if biggest_role:
+				if role.id < biggest_role.id:
+					biggest_role = role
+			else:
+				biggest_role = role
+		return biggest_role
+
 	def __str__(self):
 		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
 
