@@ -12,7 +12,6 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, veri
 
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
-    form = TrabajoForm()
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -37,7 +36,12 @@ def trabajos(request):
     route_resultados = get_route_resultados(estado,rol_id)
 
     # print items
-
+    if request.method =='POST':
+        form = TrabajoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+    else:
+        form = TrabajoForm()
 
     context = {
         "nombre_vista": 'Autores',
