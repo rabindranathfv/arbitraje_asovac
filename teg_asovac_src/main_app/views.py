@@ -330,7 +330,7 @@ def create_arbitraje(request):
                 'form' : form,
                 'arb_data': arbitraje_data,
                 }
-            return render(request, 'main_app_home.html', context)        
+            return redirect('main_app:home')        
     return render(request, 'main_app_create_arbitraje.html', context)
 
 def email_test(request):
