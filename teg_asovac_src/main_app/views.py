@@ -21,6 +21,18 @@ import random, string
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
+# Lista de Estados de un arbitraje.
+estados_arbitraje = [ 'Desactivado',
+                      'Iniciado',
+                      'En Selección y Asignación de Coordinadores de Área',
+                      'En Carga de Trabajos',
+                      'En Asignación de Trabajos a las Áreas',
+                      'En En Arbitraje',
+                      'En Cierre de Arbitraje',
+                      'En Asignación de Secciones',
+                      'En Resumen'
+                    ]
+
 # Global functions
 # Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
 def verify_configuracion_general_option(estado, rol_id, item_active): 
@@ -298,18 +310,45 @@ def login(request):
     return render(request, 'main_app_login.html', context)
 
 def home(request):
-    # queryset
+    # Queryset
     arbitraje_data = Sistema_asovac.objects.all()
     secondary_navbar_options = ['Bienvenido']
 
     rol_id=get_roles(request.user.id)
-    # print(arbitraje_data)
+
+    # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
+    allow_entry_list = []
+    # Lista de strings de estados de los arbitrajes
+    state_strings = []
+
+    # En este ciclo for determinamos el string de estado de un arbitraje y si el usuario
+    # puede o no acceder a el
+    for arb in arbitraje_data:
+        state_strings.append(estados_arbitraje[arb.estado_arbitraje])
+        if 1 in rol_id:
+            allow_entry_list.append(True)
+        elif 2 in rol_id and arb.estado_arbitraje != 0:
+            allow_entry_list.append(True)
+        elif 3 in rol_id and arb.estado_arbitraje != 0:
+            allow_entry_list.append(True)
+        elif 4 in rol_id and arb.estado_arbitraje in [5,6,8]:
+            allow_entry_list.append(True)
+        elif 5 in rol_id and arb.estado_arbitraje in [3,6]:
+            allow_entry_list.append(True)
+        else:
+            allow_entry_list.append(False)
+
+    # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
+    arb_data = zip(arbitraje_data, state_strings, allow_entry_list)
+
+    print(arbitraje_data, state_strings, allow_entry_list)
     context = {
         'nombre_vista' : 'Home',
         'secondary_navbar_options' : secondary_navbar_options,
-        'arb_data' : arbitraje_data,
+        'arb_data' : arb_data,
         'rol_id' : rol_id,
     }
+
     return render(request, 'main_app_home.html', context)
 
 def create_arbitraje(request):
@@ -357,25 +396,26 @@ def detalles_resumen(request):
     return render(request, 'main_app_detalle_resumen.html', context)
 
 
-def dashboard(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-    
+def dashboard(request, arbitraje_id):
+    main_navbar_options = [ {'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                            {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                            {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                            {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
     secondary_navbar_options = ['']
 
-    if request.POST:
-        request.session['estado'] = request.POST['estado']
-        request.session['arbitraje_id'] = request.POST['arbitraje_id']
-    else:
-        estado=-1
-        arbitraje_id=-1
+    ######################################################################################
+    # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
+    # Si: se procede a desplegar el contenido normalmente.
+    # No: Se despliega un error 404
+    ######################################################################################
 
-    
+    request.session['arbitraje_id'] = arbitraje_id
+    request.session['estado'] =  Sistema_asovac.objects.get(pk=arbitraje_id).estado_arbitraje
+
+
     rol_id=get_roles(request.user.id)
-    
-    
+
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 

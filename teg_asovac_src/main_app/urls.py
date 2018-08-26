@@ -34,7 +34,7 @@ from main_app.views import register
 urlpatterns = [
     # url(r'^$',views.login,name='login'),
     url(r'^home/$',views.home,name='home'),
-    url(r'^$',views.dashboard,name='dashboard'),
+    url(r'^(?P<arbitraje_id>\d+)/$',views.dashboard,name='dashboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
     url(r'^datos_basicos/$',views.data_basic,name='data_basic'),
     url(r'^estado-arbitraje/$',views.state_arbitration,name='arbitration_state'),
