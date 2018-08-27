@@ -67,8 +67,6 @@ def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
     return 0
 
 
-
-
 def verify_recursos_option(estado,rol_id,item_active):
     if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
         return 1
@@ -142,17 +140,21 @@ def verify_result(estado,rol_id):
         return 0 
     return 1
 
+
 def verify_event(estado,rol_id):
     if ( 1 not in rol_id):
         return 0 
     return 1
+
 
 def verify_jobs(estado, rol_id):
     if((estado == '3' and 5 in rol_id) or (estado == '5' and 4 in rol_id)):
         return 1
     return 0
 
-def validate_rol_status(estado,rol_id,item_active):
+
+
+def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     items={}
     configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
     usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
@@ -183,14 +185,14 @@ def validate_rol_status(estado,rol_id,item_active):
     jobs = verify_jobs(estado,rol_id)
 
     # Menu de configuración 
-    items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list')])
+    items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})])
+    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list', kwargs={'arbitraje_id': arbitraje_id})])
     items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('recursos:resources_author')])
     items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('arbitrajes:arbitrations_areas_subareas')])
-    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state')])
-    items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic')])
-    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general')])
-    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area')])
+    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state', kwargs={'arbitraje_id': arbitraje_id})])
+    items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})])
+    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general', kwargs={'arbitraje_id': arbitraje_id})])
+    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area', kwargs={'arbitraje_id': arbitraje_id})])
 
     # Menu de arbitraje y seguimiento
     items.setdefault("autores_sidebar",[autores_sidebar,reverse('autores:authors_list')])
@@ -200,7 +202,6 @@ def validate_rol_status(estado,rol_id,item_active):
     items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('trabajos:jobs_list')])
     items.setdefault("asignacion_de_sesion_sidebar",[asignacion_de_sesion_sidebar,reverse('arbitrajes:asignacion_de_sesion')])
 
-
     # Menu de resultados
 
     # Menu de eventos 
@@ -209,8 +210,6 @@ def validate_rol_status(estado,rol_id,item_active):
     
     #Menú de trabajos
     items.setdefault("trabajo_sidebar",[trabajo_sidebar,reverse('trabajos:trabajos')])
-
-
     items.setdefault("configuration",[configuration,''])
     items.setdefault("arbitration",[arbitration,''])
     items.setdefault("result",[result,''])
@@ -219,10 +218,12 @@ def validate_rol_status(estado,rol_id,item_active):
 
     return items
 
-def get_route_configuracion(estado,rol_id):
+
+
+def get_route_configuracion(estado,rol_id, arbitraje_id):
     
     if(1 in rol_id or 2 in rol_id):#Caso que sea admin o coordinador general
-        return reverse('main_app:data_basic')
+        return reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})
     elif 3 in rol_id:
         if(estado == '8'):
             return reverse('recursos:resources_author')
@@ -231,9 +232,9 @@ def get_route_configuracion(estado,rol_id):
     elif 4 in rol_id:
         if(estado == '8'):
             return reverse('recursos:resources_author')
-
-
     return None
+
+
 
 def get_route_seguimiento(estado,rol_id):
     
@@ -255,21 +256,15 @@ def get_route_seguimiento(estado,rol_id):
             return reverse('trabajos:jobs_list')
         elif(estado == '7'):
             return reverse('sesiones:sesions_list')
-#Obtener roles del usuario
-def get_roles(user_id):
-    rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
 
-    rol_id=[]
-    for item in rol:
-        rol_id.append(item.id)
 
-    return rol_id
 
 def get_route_trabajos_sidebar(estado,rol_id,item_active):
     if (estado =='4' and 2 in rol_id and item_active == 2):
         return reverse('trabajos:trabajos_evaluados')
     else:
         return reverse('trabajos:jobs_list')
+
 
 
 def get_route_trabajos_navbar(estado,rol_id):
@@ -279,11 +274,24 @@ def get_route_trabajos_navbar(estado,rol_id):
         return reverse('trabajos:trabajos_evaluados')
     return None 
 
-def get_route_resultados(estado,rol_id):
+
+
+def get_route_resultados(estado,rol_id, arbitraje_id):
     if(estado=='6' and 5 in rol_id):
         return reverse('trabajos:trabajos_resultados_autor')
     else:
-        return reverse('main_app:total')
+        return reverse('main_app:total', kwargs={'arbitraje_id': arbitraje_id})
+
+
+
+#Obtener roles del usuario
+def get_roles(user_id):
+    rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
+    rol_id=[]
+    for item in rol:
+        rol_id.append(item.id)
+    return rol_id
+
 
 
 #Update state of arbitration
@@ -296,11 +304,11 @@ def update_state_arbitration(arbitraje_id,estado):
     return estado
 
 
-#################################################
-######### VIEWS BACKEND #########################
-#################################################
+#########################################################################################
+################################## VIEWS BACKEND #######################################
+########################################################################################
 
-# Create your views here.
+
 def login(request):
     form = MyLoginForm()
     context = {
@@ -308,6 +316,8 @@ def login(request):
         'form' : form,
     }
     return render(request, 'main_app_login.html', context)
+
+
 
 def home(request):
     # Queryset
@@ -348,8 +358,9 @@ def home(request):
         'arb_data' : arb_data,
         'rol_id' : rol_id,
     }
-
     return render(request, 'main_app_home.html', context)
+
+
 
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
@@ -372,6 +383,8 @@ def create_arbitraje(request):
             return redirect('main_app:home')        
     return render(request, 'main_app_create_arbitraje.html', context)
 
+
+
 def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
@@ -381,6 +394,8 @@ def email_test(request):
     }
     return render(request, 'resumen_rejected_email.html', context)
 
+
+
 def listado_trabajos(request):
     context = {
         'nombre_vista' : 'Lista de Trabajos',
@@ -388,12 +403,15 @@ def listado_trabajos(request):
     }
     return render(request, 'main_app_resumenes_trabajos_list.html', context)
 
+
+
 def detalles_resumen(request):
     context = {
         'nombre_vista' : 'Detalles de Resumen',
         'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'main_app_detalle_resumen.html', context)
+
 
 
 def dashboard(request, arbitraje_id):
@@ -421,13 +439,13 @@ def dashboard(request, arbitraje_id):
 
     item_active = 1
     #print(request.session['estado'])
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     # print items
 
     # for item,val in items.items():
@@ -473,7 +491,10 @@ def dashboard(request, arbitraje_id):
     }
     return render(request, 'main_app_dashboard.html', context)
 
-def data_basic(request):
+
+
+
+def data_basic(request, arbitraje_id):
     form= DataBasicForm()
 
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -482,13 +503,18 @@ def data_basic(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     secondary_navbar_options = ['']
-    
-    rol_id=get_roles(request.user.id)
 
-    # print (rol_id)
-    
+    ######################################################################################
+    # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
+    # Si: se procede a desplegar el contenido normalmente.
+    # No: Se despliega un error 404
+    ######################################################################################
+
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+
+    rol_id=get_roles(request.user.id)
+    # print (rol_id)
     
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 
@@ -585,13 +611,13 @@ def data_basic(request):
 
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
    
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -637,7 +663,7 @@ def data_basic(request):
     }
     return render(request, 'main_app_data_basic.html', context)
 
-def state_arbitration(request):
+def state_arbitration(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -653,13 +679,13 @@ def state_arbitration(request):
     user_id = request.user.id
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # si se envia el cambio de estado via post se actualiza en bd
     if request.method == 'POST':
@@ -709,7 +735,7 @@ def state_arbitration(request):
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
-def users_list(request):
+def users_list(request, arbitraje_id):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -736,13 +762,13 @@ def users_list(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -805,7 +831,9 @@ def register(request):
         context={"form":form,}
         return render(request,'main_app_register.html',context)
 
-def user_edit(request):
+
+
+def user_edit(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -820,13 +848,13 @@ def user_edit(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     # print items
 
     context = {
@@ -869,7 +897,9 @@ def user_edit(request):
     }
     return render(request, 'main_app_edit_user.html', context)
 
-def user_roles(request):
+
+
+def user_roles(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -884,13 +914,13 @@ def user_roles(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -934,7 +964,9 @@ def user_roles(request):
     }
     return render(request, 'main_app_user_roles.html', context)
 
-def coord_general(request):
+
+
+def coord_general(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -949,13 +981,13 @@ def coord_general(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -999,7 +1031,10 @@ def coord_general(request):
     }
     return render(request, 'main_app_coord_general.html', context)
 
-def coord_area(request):
+
+
+
+def coord_area(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -1014,13 +1049,13 @@ def coord_area(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     
     # print items
 
@@ -1064,7 +1099,7 @@ def coord_area(request):
     }
     return render(request, 'main_app_coord_area.html', context)
 
-def total(request):
+def total(request, arbitraje_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': True},
@@ -1079,13 +1114,13 @@ def total(request):
     arbitraje_id = request.session['arbitraje_id']
     
     item_active = 3
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 

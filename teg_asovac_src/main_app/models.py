@@ -77,8 +77,7 @@ class Usuario_asovac(models.Model):
 		return biggest_role
 
 	def __str__(self):
-		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
-
+		return "{} {}".format(self.usuario.first_name,self.usuario.last_name)#.encode('utf-8', errors='replace')
 
 
 

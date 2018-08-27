@@ -93,9 +93,8 @@
                                     <p class="col-sm-12 text-center">Clave: {{ arbitraje.clave_maestra_coordinador_general }}</p>
                                 {% else %}
                                     <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
-                                {% endif %}                                 
-                                
-                                <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
+                                {% endif %}
+                                <form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
                                     <div class="col-sm-12">
                                         <!-- <div class="form-group"> -->
                                             {% csrf_token %}
@@ -129,7 +128,7 @@
                                         <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
                                     {% endif %}   
                                     
-                                    <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
+                                    <form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
                                         <div class="col-sm-12">
                                             <!-- <div class="form-group"> -->
                                                 {% csrf_token %}
@@ -163,7 +162,7 @@
                                             <p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
                                         {% endif %}
                                         
-                                        <form class="form-inline" method="post" action="{% url 'main_app:data_basic' %}">
+                                        <form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
                                             <div class="col-sm-12">
                                                 <!-- <div class="form-group"> -->
                                                     {% csrf_token %}

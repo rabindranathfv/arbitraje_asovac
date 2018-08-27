@@ -15,7 +15,7 @@ from .utils import render_to_pdf
 from django.template.loader import get_template
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,get_route_configuracion,get_route_seguimiento, verify_jobs
 
 
 # Create your views here.
@@ -56,13 +56,13 @@ def resources_author(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     # print items
 
     context = {
@@ -121,13 +121,13 @@ def resources_referee(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -185,13 +185,13 @@ def resources_event(request):
     arbitraje_id = request.session['arbitraje_id']
         
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -250,13 +250,13 @@ def resources_sesion(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -315,13 +315,13 @@ def resources_asovac(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 
@@ -379,13 +379,13 @@ def resources_arbitration(request):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
 

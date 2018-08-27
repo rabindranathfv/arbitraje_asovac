@@ -17,11 +17,11 @@
                             
 
                             <li>
-                                <a href="{% url 'main_app:data_basic' %}">
+                                <a href="{% url 'main_app:data_basic' arbitraje_id %}">
                                     Datos básicos
                                 </a>
 <!--
-    	                        <form method="post" action="{% url 'main_app:data_basic' %}"  name="data_basic">
+    	                        <form method="post" action="{% url 'main_app:data_basic' arbitraje_id %}"  name="data_basic">
     	                            {% csrf_token %}
     	                            <input class="" name="estado" type='hidden' value="{{ estado }}">
     	                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -33,12 +33,12 @@
 
                         {% if estado_arbitrajes_sidebar == 1 %}
     	                    <li>
-                                <a href="{% url 'main_app:arbitration_state' %}">
+                                <a href="{% url 'main_app:arbitration_state' arbitraje_id %}">
                                     Estado arbitraje
                                 </a>
 
 <!--                        
-    	                        <form method="post" action="{% url 'main_app:arbitration_state' %}"  name="arbitration_state">
+    	                        <form method="post" action="{% url 'main_app:arbitration_state' arbitraje_id %}"  name="arbitration_state">
     	                            {% csrf_token %}
     	                            <input class="" name="estado" type='hidden' value="{{ estado }}">
     	                            <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -60,12 +60,12 @@
                     <ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
                         <li>
 
-                            <a href="{% url 'main_app:users_list' %}">
+                            <a href="{% url 'main_app:users_list' arbitraje_id %}">
                                 Lista de usuarios
                             </a>
 
 <!--
-                            <form method="post" action="{% url 'main_app:users_list' %}"  name="users_list">
+                            <form method="post" action="{% url 'main_app:users_list' arbitraje_id %}"  name="users_list">
                                 {% csrf_token %}
                                 <input class="" name="estado" type='hidden' value="{{ estado }}">
                                 <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -74,12 +74,12 @@
 -->
                         </li>
                         <li>
-                            <a href="{% url 'main_app:user_roles' %}">
+                            <a href="{% url 'main_app:user_roles' arbitraje_id %}">
                                 Acceso de usuarios
                             </a>
 
 <!--
-                            <form method="post" action="{% url 'main_app:user_roles' %}"  name="user_roles">
+                            <form method="post" action="{% url 'main_app:user_roles' arbitraje_id %}"  name="user_roles">
                                 {% csrf_token %}
                                 <input class="" name="estado" type='hidden' value="{{ estado }}">
                                 <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -90,12 +90,12 @@
                         
                         {% if asignacion_coordinador_general == 1 %}
 	                        <li>
-                                <a href="{% url 'main_app:coord_general' %}">
+                                <a href="{% url 'main_app:coord_general' arbitraje_id %}">
                                     Asignar coordinador general
                                 </a>
 
 <!--
-	                            <form method="post" action="{% url 'main_app:coord_general' %}"  name="coord_general">
+	                            <form method="post" action="{% url 'main_app:coord_general' arbitraje_id %}"  name="coord_general">
 	                                {% csrf_token %}
 	                                <input class="" name="estado" type='hidden' value="{{ estado }}">
 	                                <input class="" name="event_id" type='hidden' value="{{ event_id }}">
@@ -107,12 +107,12 @@
 
                         {% if asignacion_coordinador_area == 1 %}
                             <li>
-                                <a href="{% url 'main_app:coord_area' %}">
+                                <a href="{% url 'main_app:coord_area' arbitraje_id %}">
                                     Asignar coordinador de área
                                 </a>
 
 <!--           
-                                <form method="post" action="{% url 'main_app:coord_area' %}"  name="coord_area">
+                                <form method="post" action="{% url 'main_app:coord_area' arbitraje_id %}"  name="coord_area">
                                     {% csrf_token %}
                                     <input class="" name="estado" type='hidden' value="{{ estado }}">
                                     <input class="" name="event_id" type='hidden' value="{{ event_id }}">
