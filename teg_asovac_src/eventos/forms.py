@@ -79,7 +79,8 @@ class CreateOrganizerForm(forms.ModelForm):
             'telefono_oficina',
             'telefono_habitacion_celular',
             'direccion_correspondencia',
-            Field('es_miembro_asovac',type="checkbox"),
+            #Field('es_miembro_asovac',type="checkbox"),
+            Field('es_miembro_asovac'),
             #InlineRadios('es_miembro_asovac'),
             'capitulo_asovac',
             'cargo_en_institucion',
@@ -110,7 +111,7 @@ class CreateEventForm(forms.ModelForm):
     
     class Meta:
         model = Evento
-        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado','duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento']
+        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado','duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','organizador_id','locacion_evento']
 
     def __init__(self, *args, **kwargs):
         super(CreateEventForm, self).__init__(*args, **kwargs)
@@ -131,6 +132,9 @@ class CreateEventForm(forms.ModelForm):
         self.fields['horario_preferido'].label = 'Horario Preferido'
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['observaciones'].label = 'Observaciones'
+        self.fields['url_anuncio_evento'] = 'Enlace del Evento'
+        self.fields['organizador_id'] = 'Organizador ID'
+        self.fields['locacion_evento'] = 'Locacizacion del Evento'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
@@ -145,6 +149,9 @@ class CreateEventForm(forms.ModelForm):
             'horario_preferido',
             'fecha_preferida',
             'observaciones',
+            'url_anuncio_evento',
+            'organizador_id',
+            'locacion_evento',
             Div(
                 Div(
                     HTML("<span></span>"),
