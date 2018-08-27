@@ -743,7 +743,7 @@ def register(request):
         form= RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Se ha registrado de manera erandom_passworditosa.')
+            messages.success(request, 'Se ha registrado Exitosamente.')
             context={"form":form,}
             return redirect('login')
 

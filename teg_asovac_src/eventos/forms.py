@@ -56,7 +56,7 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['genero'].label = "Genero"
         self.fields['cedula_o_pasaporte'].label = "Cédula o Pasaporte"
         self.fields['correo_electronico'].label = "Correo Electronico"
-        self.fields['institucion'].label = "Institucirón"
+        self.fields['institucion'].label = "Institución"
         self.fields['telefono_oficina'].label = "Teléfono de Oficina"
         self.fields['telefono_habitacion_celular'].label = "Teléfono Habitacion/Celular"
         self.fields['direccion_correspondencia'].label = "Dirección"
@@ -79,14 +79,14 @@ class CreateOrganizerForm(forms.ModelForm):
             'telefono_oficina',
             'telefono_habitacion_celular',
             'direccion_correspondencia',
-            #Field('es_miembro_asovac',type="checkbox"),
             Field('es_miembro_asovac'),
             #InlineRadios('es_miembro_asovac'),
             'capitulo_asovac',
             'cargo_en_institucion',
             'url_organizador',
             'observaciones',
-            Field('usuario_asovac', type="hidden"),
+            #Field('usuario_asovac', type="hidden"),
+            'usuario_asovac',
             Div(
                 Div(
                     HTML("<span></span>"),
@@ -97,7 +97,7 @@ class CreateOrganizerForm(forms.ModelForm):
                 css_class='col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success', action="/eventos/listar-organizadores/"),
+                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
 
                 # Div(

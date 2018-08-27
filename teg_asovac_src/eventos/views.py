@@ -167,8 +167,30 @@ def event_create(request):
     if request.method == 'POST':
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
-            form.save()
-            print(form)
+            form.save(commit=False)
+            #Limpiando la data
+            nombre = form.cleaned_data['nombre']
+            categoria = form.cleaned_data['categoria']
+            descripcion = form.cleaned_data['descripcion']
+            tipo = form.cleaned_data['tipo']
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            print(fecha_inicio)
+            fecha_fin = form.cleaned_data['fecha_fin']
+            print(fecha_fin)
+            dia_asignado = form.cleaned_data['dia_asignado']
+            duracion = form.cleaned_data['duracion']
+            horario_preferido = form.cleaned_data['horario_preferido']
+            fecha_preferida = form.cleaned_data['fecha_preferida']
+            print(fecha_preferida)
+            observaciones = form.cleaned_data['observaciones']
+            url_anuncio_evento = form.cleaned_data['url_anuncio_evento']
+            organizador_id = form.cleaned_data['organizador_id']
+            print(type(organizador_id))
+            print(organizador_id)
+            locacion_evento = form.cleaned_data['locacion_evento']
+            print(type(locacion_evento))
+            print(locacion_evento)           
+            #print(form)
             organizer_data = Organizador.objects.all()
             context = {        
                 'username' : request.user.username,
@@ -265,38 +287,26 @@ def organizer_create(request):
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
             form.save(commit=False)
-            print("EL FORM ES VALIDO")
-            nombres = form.POST['id_nombres']
-            # print("contenido del campo nombre " + nombres)
-            # apellidos = form.cleaned_data['apellidos']
-            # print("contenido del campo nombre " + apellidos)
-            # genero = form.cleaned_data['genero']
-            # print("contenido del campo genero " + genero)
-            # cedula_o_pasaporte = form.cleaned_data['cedula_o_pasaporte']
-            # print("contenido del campo cedula_o_pasaporte " + cedula_o_pasaporte)
-            # correo_electronico = form.cleaned_data['correo_electronico']
-            # print("contenido del campo correo_electronico " + correo_electronico)
-            # institucion = form.cleaned_data['institucion']
-            # print("contenido del campo institucion " + institucion)
-            # telefono_oficina = form.cleaned_data['telefono_oficina']
-            # print("contenido del campo telefono_oficina " + telefono_oficina)
-            # telefono_habitacion_celular = form.cleaned_data['telefono_habitacion_celular']
-            # print("contenido del campo telefono_habitacion_celular " + telefono_habitacion_celular)
-            # direccion_correspondencia = form.cleaned_data['nomdireccion_correspondenciabres']
-            # print("contenido del campo direccion_correspondencia " + direccion_correspondencia)
-            # es_miembro_asovac = form.cleaned_data['es_miembro_asovac']
-            # print("contenido del campo es_miembro_asovac " + es_miembro_asovac)
-            # capitulo_asovac = form.cleaned_data['capitulo_asovac']
-            # print("contenido del campo capitulo_asovac " + capitulo_asovac)
-            # cargo_en_institucion = form.cleaned_data['cargo_en_institucion']
-            # print("contenido del campo cargo_en_institucion " + cargo_en_institucion)
-            # url_organizador = form.cleaned_data['nomurl_organizadorbres']
-            # print("contenido del campo url_organizador " + url_organizador)
-            # observaciones = form.cleaned_data['observaciones']
-            # print("contenido del campo observaciones " + observaciones)
-            # usuario_asovac = form.cleaned_data['usuario_asovac']
-            # print("contenido del campo usuario_asovac " + usuario_asovac)
-            #print(form)
+            #lIMPIANDO DATA
+            nombres = form.cleaned_data['nombres']
+            apellidos = form.cleaned_data['apellidos']
+            genero = form.cleaned_data['genero']
+            print(genero)
+            cedula_o_pasaporte = form.cleaned_data['cedula_o_pasaporte']
+            correo_electronico = form.cleaned_data['correo_electronico']
+            institucion = form.cleaned_data['institucion']
+            telefono_oficina = form.cleaned_data['telefono_oficina']
+            telefono_habitacion_celular = form.cleaned_data['telefono_habitacion_celular']
+            direccion_correspondencia = form.cleaned_data['direccion_correspondencia']
+            es_miembro_asovac = form.cleaned_data['es_miembro_asovac']
+            print(es_miembro_asovac)
+            capitulo_asovac = form.cleaned_data['capitulo_asovac']
+            cargo_en_institucion = form.cleaned_data['cargo_en_institucion']
+            url_organizador = form.cleaned_data['url_organizador']
+            observaciones = form.cleaned_data['observaciones']
+            usuario_asovac = form.cleaned_data['usuario_asovac']
+            print(usuario_asovac)
+
             print("El form es valido y se guardo satisfactoriamente")
             organizer_data = Organizador.objects.all()
             context = {        
