@@ -386,8 +386,8 @@ def dashboard(request):
     #print(request.session['estado'])
     items=validate_rol_status(estado,rol_id,item_active)
 
-    route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id)
+    route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
@@ -437,7 +437,7 @@ def dashboard(request):
     return render(request, 'main_app_dashboard.html', context)
 
 def data_basic(request):
-    form= DataBasicForm()
+    form = DataBasicForm()
 
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -488,7 +488,7 @@ def data_basic(request):
 
         
         elif opcion == '2':#Caso de generar clave para coordinador de area
-            random_password+= 'COA'
+            random_password += 'COA'
             arbitraje.clave_maestra_coordinador_area = random_password
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
@@ -550,8 +550,8 @@ def data_basic(request):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active)
    
-    route_conf= get_route_configuracion(estado,rol_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id)
+    route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id)
