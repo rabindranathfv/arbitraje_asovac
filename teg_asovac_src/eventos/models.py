@@ -15,7 +15,7 @@ class Organizador(models.Model):
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
-	genero = models.SmallIntegerField()
+	genero = models.SmallIntegerField(default=0)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
@@ -68,7 +68,7 @@ class Evento(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 	url_anuncio_evento = models.CharField(max_length=100)
 
-	def __str__(self):
+	def __unicode__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
@@ -80,6 +80,7 @@ class Organizador_evento(models.Model):
 	organizador = models.ForeignKey(Organizador)
 
 	locacion_preferida = models.CharField(max_length=50)
+
 	def __str__(self):
 		return self.locacion_preferida#.encode('utf-8', errors='replace')
 
