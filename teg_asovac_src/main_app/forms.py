@@ -11,6 +11,17 @@ from django.forms import CheckboxSelectMultiple
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
+
+estados_arbitraje = (   (0,'Desactivado'),
+                        (1,'Iniciado'),
+                        (2,'En Selección y Asignación de Coordinadores de Área'),
+                        (3,'En Carga de Trabajos'),
+                        (4,'En Asignación de Trabajos a las Áreas'),
+                        (5,'En En Arbitraje'),
+                        (6,'En Cierre de Arbitraje'),
+                        (7,'En Asignación de Secciones'),
+                        (8,'En Resumen'))
+
 class RegisterForm(UserCreationForm):
 
     class Meta:
@@ -129,6 +140,26 @@ class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     class Meta:
         model = Sistema_asovac
         fields = ['coordinador_general']
+
+
+class ArbitrajeStateChangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArbitrajeStateChangeForm, self).__init__(*args, **kwargs)
+        self.fields['estado_arbitraje'].required = True
+
+    class Meta:
+        model = Sistema_asovac
+        fields = ['coordinador_general', 'estado_arbitraje']
+        widgets = {'coordinador_general': forms.HiddenInput(),
+                'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
+
+    def clean_coordinador_general(self):
+        data = self.cleaned_data['coordinador_general']
+        if data is None:
+            print ('Raising form error of estado!')
+            raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
+        return data
+
 
 class RolForm(forms.ModelForm):
     class Meta:

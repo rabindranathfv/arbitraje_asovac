@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
 
 from django.db.models import Q
 from decouple import config
@@ -688,10 +688,19 @@ def state_arbitration(request, arbitraje_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # si se envia el cambio de estado via post se actualiza en bd
+    # if request.method == 'POST':
+    #     estado = request.POST['estado']
+    #     #print(estado)
+    #     request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
+
+    # Preparamos el formulario y el proceso de este para asignar coordinador general.
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    form = ArbitrajeStateChangeForm(request.POST or None, instance = arbitraje)
     if request.method == 'POST':
-        estado = request.POST['estado']
-        #print(estado)
-        request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
+        if form.is_valid():
+            form.save()
+        else:
+            print (form.errors)
 
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
     estado = request.session['estado']
@@ -700,6 +709,7 @@ def state_arbitration(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
+        'form':form,
         #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
