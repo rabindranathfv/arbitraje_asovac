@@ -158,7 +158,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     top_nav_options = []
     sidebar_options = []
 
-    ### Opciones de Menu Principal ###
+    ### Opciones del Menu Principal ###
     # verify_configuration
     if not ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 5 in rol_id):
         top_nav_options.append('configuration')
@@ -177,51 +177,52 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
 
     items['top_nav_options'] = top_nav_options
 
-    ### Opciones de Menu de la Barra Lateral o Sidebar ###
-    configuracion_general_sidebar = verify_configuracion_general_option(estado, rol_id, item_active)
-    usuarios_sidebar = verify_usuario_option(estado,rol_id,item_active)
-    recursos_sidebar = verify_recursos_option(estado,rol_id,item_active)
-    areas_subareas_sidebar = verify_areas_subareas_option(estado,rol_id,item_active)
-    
-    autores_sidebar = verify_autores_option(estado,rol_id,item_active)
-    arbitros_sidebar = verify_arbitros_option(estado,rol_id,item_active)
-    sesion_arbitraje_sidebar = verify_sesions_arbitraje_option(estado,rol_id,item_active)
-    arbitraje_sidebar = verify_arbitraje_option(estado,rol_id,item_active)
-    eventos_sidebar_full = verify_eventos_sidebar_full(estado,rol_id,item_active)
-    asignacion_de_sesion_sidebar = verify_asignar_sesion(estado,rol_id,item_active)
+    ### Opciones del Menu de la Barra Lateral o Sidebar ###
+    # verify_configuracion_general_option
+    if (1 in rol_id and item_active == 1) or (estado != '0' and 2 in rol_id and item_active == 1):
+        sidebar_options.append("general_config")
+    # verify_datos_basicos_option
+    if not (estado == '2' and (1 not in rol_id and 2 not in rol_id) and item_active == 1) or (estado == '4' and (1 not in rol_id and 2 not in rol_id) and item_active ==1):
+        sidebar_options.append("basic_data")
+    # verify_estado_arbitrajes_option (This one is always true...)
+    sidebar_options.append("arbitration_state")
+    # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
+    if (1 in rol_id and item_active == 1):
+        sidebar_options.append("users")
+        sidebar_options.append("assing_general_coordinator")
+    # verify_asignacion_coordinador_area_option
+    if(estado =='2' and 2 in rol_id and item_active == 1) or (1 in rol_id and item_active == 1):
+        sidebar_options.append("assing_area_coordinator")
+    # verify_recursos_option
+    if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
+        sidebar_options.append("resources")
+    # verify_areas_subareas_option
+    if (1 in rol_id and item_active == 1) or (estado == '1' and (2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and 2 in rol_id and item_active ==1):
+        sidebar_options.append("areas_subareas")
+    # verify_autores_option
+    if ((estado == '0' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 2):
+        sidebar_options.append("authors")
+    # verify_arbitros_option
+    if (1 in rol_id and item_active == 2) or (estado == '1' and 2 in rol_id and item_active == 2) or ((estado =='2' or estado == '3' or estado == '4') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='1' and 3 in rol_id and item_active==2):
+        sidebar_options.append("arbiters")
+    # verify_asignar_sesion
+    if(1 in rol_id and item_active == 2) or (estado == '4' and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='7' and 2 in rol_id and item_active == 2):
+        sidebar_options.append("assing_session")
+    # verify_trabajo_option
+    if((estado =='3' or estado =='4' or estado =='5') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
+        sidebar_options.append("jobs")
+    # verify_sesions_arbitraje_option
+    if (1 in rol_id and item_active == 2) or ((estado == '4' or estado =='7') and (2 in rol_id or 3 in rol_id) and item_active == 2):
+        sidebar_options.append("session_arbitration")
+    # verify_arbitraje_option
+    if (1 in rol_id and item_active == 2) or (estado =='6' and (2 in rol_id) and item_active == 2):
+        sidebar_options.append("arbitrations")
+    # verify_eventos_sidebar_full & verify_espacio_option (same condition)
+    if (1 in rol_id and item_active == 4):
+        sidebar_options.append("events")
+        sidebar_options.append("event_space")
 
-    asignacion_coordinador_general = verify_asignacion_coordinador_general_option(estado,rol_id,item_active)
-    asignacion_coordinador_area = verify_asignacion_coordinador_area_option(estado, rol_id,item_active)
-    datos_basicos_sidebar = verify_datos_basicos_option(estado,rol_id,item_active)
-
-    trabajos_sidebar = verify_trabajo_option(estado,rol_id,item_active)
-    estado_arbitrajes_sidebar = verify_estado_arbitrajes_option(estado,rol_id,item_active)
-    espacio_sidebar = verify_espacio_option(estado,rol_id,item_active)
-
-
-    # Menu de configuración 
-    items.setdefault("configuracion_general_sidebar",[configuracion_general_sidebar,reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})])
-    items.setdefault("usuarios_sidebar",[usuarios_sidebar,reverse('main_app:users_list', kwargs={'arbitraje_id': arbitraje_id})])
-    items.setdefault("recursos_sidebar",[recursos_sidebar,reverse('recursos:resources_author')])
-    items.setdefault("areas_subareas_sidebar",[areas_subareas_sidebar,reverse('arbitrajes:arbitrations_areas_subareas')])
-    items.setdefault("estado_arbitrajes_sidebar",[estado_arbitrajes_sidebar,reverse('main_app:arbitration_state', kwargs={'arbitraje_id': arbitraje_id})])
-    items.setdefault("datos_basicos_sidebar",[datos_basicos_sidebar,reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})])
-    items.setdefault("asignacion_coordinador_general",[asignacion_coordinador_general,reverse('main_app:coord_general', kwargs={'arbitraje_id': arbitraje_id})])
-    items.setdefault("asignacion_coordinador_area",[asignacion_coordinador_area,reverse('main_app:coord_area', kwargs={'arbitraje_id': arbitraje_id})])
-
-    # Menu de arbitraje y seguimiento
-    items.setdefault("autores_sidebar",[autores_sidebar,reverse('autores:authors_list')])
-    items.setdefault("arbitros_sidebar",[arbitros_sidebar,reverse('arbitrajes:referee_list')])
-    items.setdefault("sesion_arbitraje_sidebar",[sesion_arbitraje_sidebar,reverse('sesiones:sesions_list')])
-    items.setdefault("arbitraje_sidebar",[arbitraje_sidebar,reverse('arbitrajes:referee_list')])
-    items.setdefault("trabajos_sidebar",[trabajos_sidebar,reverse('trabajos:jobs_list')])
-    items.setdefault("asignacion_de_sesion_sidebar",[asignacion_de_sesion_sidebar,reverse('arbitrajes:asignacion_de_sesion')])
-
-    # Menu de resultados
-
-    # Menu de eventos 
-    items.setdefault("eventos_sidebar_full",[eventos_sidebar_full,reverse('eventos:event_list')])
-    items.setdefault("espacio_sidebar",[espacio_sidebar,reverse('sesiones:sesions_space_list')])
+    items['sidebar_options'] = sidebar_options
 
     return items
 
@@ -468,22 +469,6 @@ def dashboard(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -634,22 +619,6 @@ def data_basic(request, arbitraje_id):
         'arbitraje':arbitraje,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -710,22 +679,6 @@ def state_arbitration(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -782,22 +735,6 @@ def users_list(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -860,22 +797,6 @@ def user_edit(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -921,22 +842,6 @@ def user_roles(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -990,22 +895,6 @@ def coord_general(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -1052,22 +941,6 @@ def coord_area(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
@@ -1111,22 +984,6 @@ def total(request, arbitraje_id):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
-        'configuracion_general_sidebar': items["configuracion_general_sidebar"][0],
-        'usuarios_sidebar' : items["usuarios_sidebar"][0],
-        'recursos_sidebar' : items["recursos_sidebar"][0],
-        'areas_subareas_sidebar' : items["areas_subareas_sidebar"][0],
-        'autores_sidebar' : items["autores_sidebar"][0],
-        'arbitros_sidebar' : items["arbitros_sidebar"][0],
-        'sesion_arbitraje_sidebar' : items["sesion_arbitraje_sidebar"][0],
-        'arbitraje_sidebar' : items["arbitraje_sidebar"][0],
-        'eventos_sidebar_full' : items["eventos_sidebar_full"][0],
-        'asignacion_coordinador_general': items["asignacion_coordinador_general"][0],
-        'asignacion_coordinador_area': items["asignacion_coordinador_area"][0],
-        'datos_basicos_sidebar' : items["datos_basicos_sidebar"][0],
-        'trabajos_sidebar':items["trabajos_sidebar"][0],
-        'estado_arbitrajes_sidebar':items["estado_arbitrajes_sidebar"][0],
-        'espacio_sidebar':items["espacio_sidebar"][0],
-        'asignacion_de_sesion_sidebar':items["asignacion_de_sesion_sidebar"][0],
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,

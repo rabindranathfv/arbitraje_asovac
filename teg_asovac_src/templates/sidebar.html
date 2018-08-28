@@ -6,33 +6,32 @@
         
       		</a>
     	</li>
-
-    	{% if configuracion_general_sidebar == 1 %}
-	    	<li>
-	            <div class="dropdown">
-	                <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
-	                <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
-                        {% if datos_basicos_sidebar == 1 %}
+        {% if "general_config" in items.sidebar_options %}
+            <li>
+                <div class="dropdown">
+                    <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
+                    <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
+                        {% if "basic_data" in items.sidebar_options %}
                             <li>
                                 <a href="{% url 'main_app:data_basic' arbitraje_id %}">
                                     Datos básicos
                                 </a>
-    	                    </li>
-    	                {% endif %} 
+                            </li>
+                        {% endif %} 
 
-                        {% if estado_arbitrajes_sidebar == 1 %}
-    	                    <li>
+                        {% if "arbitration_state" in items.sidebar_options %}
+                            <li>
                                 <a href="{% url 'main_app:arbitration_state' arbitraje_id %}">
                                     Estado arbitraje
                                 </a>
-    	                    </li>
+                            </li>
                         {% endif %}
-	                </ul>
-	            </div>
-			</li>
+                    </ul>
+                </div>
+            </li>
 		{% endif %}
 
-		{% if usuarios_sidebar == 1 %}
+		{% if "users" in items.sidebar_options %}
 			<li>
                 <div class="dropdown">
                     <a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Usuarios<i class="fas fa-angle-right"></i></a>
@@ -48,7 +47,7 @@
                             </a>
                         </li>
 
-                        {% if asignacion_coordinador_general == 1 %}
+                        {% if "assing_general_coordinator" in items.sidebar_options %}
 	                        <li>
                                 <a href="{% url 'main_app:coord_general' arbitraje_id %}">
                                     Asignar coordinador general
@@ -56,7 +55,7 @@
 	                        </li>
                         {% endif %}
 
-                        {% if asignacion_coordinador_area == 1 %}
+                        {% if "assing_area_coordinator" in items.sidebar_options %}
                             <li>
                                 <a href="{% url 'main_app:coord_area' arbitraje_id %}">
                                     Asignar coordinador de área
@@ -68,7 +67,7 @@
             </li>
         {% endif %}
 
-        {% if recursos_sidebar == 1%}
+        {% if "resources" in items.sidebar_options %}
         	<li>
                 <div class="dropdown">
                     <a href="#resources-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Recursos<i class="fas fa-angle-right"></i></a>
@@ -109,7 +108,7 @@
             </li>
         {% endif %}
 
-        {% if areas_subareas_sidebar == 1 %}
+        {% if "areas_subareas" in items.sidebar_options %}
         	<li>
                 <a href="{% url 'arbitrajes:arbitrations_areas_subareas' %}">
                     Areas y Subáreas
@@ -117,7 +116,7 @@
             </li>
         {% endif %}
 
-        {% if autores_sidebar == 1%}
+        {% if "authors" in items.sidebar_options %}
 	        <li>
                 <a href="{% url 'autores:authors_list' %}">
                     Autores
@@ -125,7 +124,7 @@
 	        </li>
 	    {% endif %}
 	        
-	    {% if arbitros_sidebar == 1 %}
+	    {% if "arbiters" in items.sidebar_options %}
 	        <li>
                 <a href="{% url 'arbitrajes:referee_list' %}">
                     Arbitros
@@ -133,7 +132,7 @@
 	        </li>
 	    {% endif %}
 
-        {% if asignacion_de_sesion_sidebar == 1 %}
+        {% if "assing_session" in items.sidebar_options %}
             <li>
                 <a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
                     Asignacion de Sesión
@@ -141,7 +140,7 @@
             </li>
         {% endif %}
 
-        {% if trabajos_sidebar == 1 %}
+        {% if "jobs" in items.sidebar_options %}
             <li>
                 <a href="{{ route_trabajos_sidebar }}">
                     Trabajos
@@ -149,7 +148,7 @@
             </li>
         {% endif %}
 	        
-	    {% if sesion_arbitraje_sidebar == 1%}
+	    {% if "session_arbitration" in items.sidebar_options %}
 	        <li>
                 <a href="{% url 'sesiones:sesions_list' %}">
                     Lista de sesion de arbitraje
@@ -157,10 +156,10 @@
 	        </li>
 	    {% endif %}
 
-	    {% if arbitraje_sidebar == 1 %}
+	    {% if "arbitrations" in items.sidebar_options %}
 	        <li>
                 <a href="{% url 'arbitrajes:listado' %}">
-                    Arbitraje
+                    Arbitrajes
                 </a>
 	        </li>
 	    {% endif %}
@@ -178,13 +177,14 @@
             </li>
         {% endif %}
 -->
-	    {% if eventos_sidebar_full == 1 %}
+	    {% if "events" in items.sidebar_options %}
 		    <li>
                 <a href="{% url 'eventos:event_create' %}">
                     Organizar evento
                 </a>
 	        </li>
-            {% if espacio_sidebar == 1%}
+
+            {% if "event_space" in items.sidebar_options %}
     	        <li>
                     <a href="{% url 'sesiones:sesions_space_list' %}">
                         Espacio
@@ -198,6 +198,5 @@
                 </a>
 	        </li>
 	    {% endif %}
-
     </ul>
 </nav>
