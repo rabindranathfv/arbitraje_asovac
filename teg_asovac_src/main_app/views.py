@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm
+from .forms import MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
 
 from django.db.models import Q
 from decouple import config
@@ -991,6 +991,13 @@ def coord_general(request, arbitraje_id):
 
     # print items
 
+    # Preparamos el formulario y el proceso de este para asignar coordinador general.
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    form = ArbitrajeAssignCoordGenForm(request.POST or None, instance = arbitraje)
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+
     context = {
         'nombre_vista' : 'Usuarios',
         'main_navbar_options' : main_navbar_options,
@@ -998,6 +1005,7 @@ def coord_general(request, arbitraje_id):
         'estado' : estado,
         #'rol' : rol,
         'rol_id' : rol_id,
+        'form': form,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,

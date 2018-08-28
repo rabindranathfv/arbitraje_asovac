@@ -99,7 +99,7 @@ class AdminAssingRolForm(forms.ModelForm):
 
 class CoordGeneralAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        super(CoordGeneralAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=2)
         self.fields['rol'].required = True
 
@@ -110,7 +110,7 @@ class CoordGeneralAssingRolForm(forms.ModelForm):
 
 class CoordAreaAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        super(CoordAreaAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=3)
         self.fields['rol'].required = True
 
@@ -118,6 +118,17 @@ class CoordAreaAssingRolForm(forms.ModelForm):
         model = Usuario_asovac
         fields = ['rol']
         widgets = {'rol': CheckboxSelectMultiple()}
+
+class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
+                                                        # El rol con id 2 es Coordinador General
+        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.filter(rol__id = 2)
+        self.fields['coordinador_general'].required = True
+
+    class Meta:
+        model = Sistema_asovac
+        fields = ['coordinador_general']
 
 class RolForm(forms.ModelForm):
     class Meta:

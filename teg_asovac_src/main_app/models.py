@@ -44,6 +44,7 @@ class Sistema_asovac(models.Model):
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
+	coordinador_general = models.ForeignKey('Usuario_asovac',blank = True, null = True)
 	estado_arbitraje = models.SmallIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(8)])
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
