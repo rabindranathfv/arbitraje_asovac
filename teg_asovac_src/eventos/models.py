@@ -11,7 +11,7 @@ Organizador Model
 """""""""""""""""""""""""""
 class Organizador(models.Model):
 
-	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
+	usuario_asovac = models.ForeignKey('main_app.Usuario_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
@@ -68,7 +68,7 @@ class Evento(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 	url_anuncio_evento = models.CharField(max_length=100)
 
-	def __unicode__(self):
+	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
