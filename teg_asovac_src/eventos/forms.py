@@ -79,8 +79,7 @@ class CreateOrganizerForm(forms.ModelForm):
             'telefono_oficina',
             'telefono_habitacion_celular',
             'direccion_correspondencia',
-            Field('es_miembro_asovac'),
-            #InlineRadios('es_miembro_asovac'),
+            'es_miembro_asovac',
             'capitulo_asovac',
             'cargo_en_institucion',
             'url_organizador',
@@ -106,7 +105,66 @@ class CreateOrganizerForm(forms.ModelForm):
 
             css_class='col-sm-12')
         )
+    def clean_names(self):
+        names_data = self.cleaned_data['nombres']
+        return names_data
+    
+    def clean_lastnames(self):
+        lastnames_data = self.cleaned_data['apellidos']
+        return lastnames_data
+    
+    def clean_gender(self):
+        gender_data = self.cleaned_data['genero']
+        return gender_data
 
+    def clean_cedula_pass(self):
+        cedula_pass_data = self.cleaned_data['cedula_o_pasaporte']
+        return cedula_pass_data
+
+    def clean_email(self):
+        email_data = self.cleaned_data['correo_electronico']
+        return email_data
+
+    def clean_institution(self):
+        institution_data = self.cleaned_data['institucion']
+        return institution_data
+
+    def clean_phone_office(self):
+        phone_office_data = self.cleaned_data['telefono_oficina']
+        return phone_office_data
+
+    def clean_phone_personal(self):
+        phone_personal_data = self.cleaned_data['telefono_habitacion_celular']
+        return phone_personal_data
+
+    def clean_address(self):
+        address_data = self.cleaned_data['direccion_correspondencia']
+        return address_data
+
+    def clean_asovac_menber(self):
+        asovac_menber_data = self.cleaned_data['es_miembro_asovac']
+        return asovac_menber_data
+
+    def clean_cap_asovac(self):
+        capitulo_asovac_data = self.cleaned_data['capitulo_asovac']       
+        return capitulo_asovac_data
+
+    def clean_position_institution(self):
+        cargo_institucion_data = self.cleaned_data['cargo_en_institucion']
+        return cargo_institucion_data
+
+    def clean_url_organizer(self):
+        url_organizador_data = self.cleaned_data['url_organizador']
+        return url_organizador_data
+
+    def clean_observations(self):
+        observaciones_data = self.cleaned_data['observaciones'] 
+        return observaciones_data
+
+    def clean_user_asovac(self):
+        user_asovac_data = self.cleaned_data['usuario_asovac']
+        return user_asovac_data
+    
 class CreateEventForm(forms.ModelForm):
     
     class Meta:

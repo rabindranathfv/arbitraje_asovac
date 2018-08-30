@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render,redirect
+from django.urls import reverse
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
@@ -128,23 +129,24 @@ def organizer_create(request):
         if form.is_valid():
             form.save(commit=False)
             #lIMPIANDO DATA
-            nombres = form.cleaned_data['nombres']
-            apellidos = form.cleaned_data['apellidos']
-            genero = form.cleaned_data['genero']
+            nombres = form.clean_names()
+            apellidos = form.clean_lastnames()
+            genero = form.clean_gender()
+
             print(genero)
-            cedula_o_pasaporte = form.cleaned_data['cedula_o_pasaporte']
-            correo_electronico = form.cleaned_data['correo_electronico']
-            institucion = form.cleaned_data['institucion']
-            telefono_oficina = form.cleaned_data['telefono_oficina']
-            telefono_habitacion_celular = form.cleaned_data['telefono_habitacion_celular']
-            direccion_correspondencia = form.cleaned_data['direccion_correspondencia']
-            es_miembro_asovac = form.cleaned_data['es_miembro_asovac']
+            cedula_o_pasaporte = form.clean_cedula_pass()
+            correo_electronico = form.clean_email()
+            institucion = form.clean_institution()
+            telefono_oficina = form.clean_phone_office()
+            telefono_habitacion_celular = form.clean_phone_personal()
+            direccion_correspondencia = form.clean_address()
+            es_miembro_asovac = form.clean_asovac_menber()
             print(es_miembro_asovac)
-            capitulo_asovac = form.cleaned_data['capitulo_asovac']
-            cargo_en_institucion = form.cleaned_data['cargo_en_institucion']
-            url_organizador = form.cleaned_data['url_organizador']
-            observaciones = form.cleaned_data['observaciones']
-            usuario_asovac = form.cleaned_data['usuario_asovac']
+            capitulo_asovac = form.clean_cap_asovac()
+            cargo_en_institucion = form.clean_position_institution()
+            url_organizador = form.clean_url_organizer()
+            observaciones = form.clean_observations()
+            usuario_asovac = form.clean_user_asovac()   
             print(usuario_asovac)
 
             print("El form es valido y se guardo satisfactoriamente")
@@ -155,7 +157,7 @@ def organizer_create(request):
                 'org_data': organizer_data,
                 #'verify_event_app' : verify_event_app(),
                 }
-            return redirect('eventos_organizer_list.html', context) 
+            return redirect(reverse('eventos:organizer_list'), context) 
     return render(request, 'eventos_organizer_create.html',context)
 
 def organizer_list(request):
