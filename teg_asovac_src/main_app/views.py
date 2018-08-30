@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect, get_object_or_404, render_to_response
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
-
-from django.db.models import Q
+import random, string
 from decouple import config
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.template.loader import render_to_string
 
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
+from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
-from django.urls import reverse
-from .models import Rol,Sistema_asovac,Usuario_asovac
-
-import random, string
 from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
+from django.urls import reverse
+
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
+from .models import Rol,Sistema_asovac,Usuario_asovac
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -34,126 +30,8 @@ estados_arbitraje = [ 'Desactivado',
                     ]
 
 # Global functions
-# Esta función verifica que se va a desplegar la opción de configuracion general en el sidebar, retorna 1 si se usará y 0 sino.
-def verify_configuracion_general_option(estado, rol_id, item_active): 
-    if (1 in rol_id and item_active == 1) or (estado != '0' and 2 in rol_id and item_active == 1):
-        return 1
-    return 0
-
-def verify_datos_basicos_option(estado,rol_id,item_active):
-    if(estado == '2' and (1 not in rol_id and 2 not in rol_id) and item_active == 1) or (estado == '4' and (1 not in rol_id and 2 not in rol_id) and item_active ==1):
-        return 0
-    return 1
-
-def verify_estado_arbitrajes_option(estado,rol_id,item_active):
-    return 1
-
-
-def verify_usuario_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 1):
-        return 1
-    return 0
-
-
-def verify_asignacion_coordinador_general_option(estado,rol_id,item_active):
-    if(1 in rol_id and item_active == 1):
-        return 1
-    return 0
-
-
-def verify_asignacion_coordinador_area_option(estado,rol_id,item_active):
-    if(estado =='2' and 2 in rol_id and item_active == 1) or (1 in rol_id and item_active == 1):
-        return 1
-    return 0
-
-
-def verify_recursos_option(estado,rol_id,item_active):
-    if (1 in rol_id and item_active == 1) or (estado =='8' and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
-        return 1
-    return 0
-
-def verify_areas_subareas_option(estado,rol_id,item_active):
-    if (1 in rol_id and item_active == 1) or (estado == '1' and (2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == '2' and 2 in rol_id and item_active ==1):
-        return 1
-    return 0
-
-
-def verify_autores_option(estado,rol_id,item_active):
-    if ((estado == '0' or estado =='5' or estado =='6' or estado =='7' or estado =='8') and 1 in rol_id and item_active == 2) or ((estado == '1' or estado =='2' or estado == '3' or estado == '4') and (1 in rol_id or 2 in rol_id) and item_active == 2):
-        return 1
-    return 0
-
-def verify_arbitros_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 2) or (estado == '1' and 2 in rol_id and item_active == 2) or ((estado =='2' or estado == '3' or estado == '4') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='1' and 3 in rol_id and item_active==2):
-        return 1
-    return 0
-
-def verify_sesions_arbitraje_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 2) or ((estado == '4' or estado =='7') and (2 in rol_id or 3 in rol_id) and item_active == 2):
-        return 1
-    return 0
-
-def verify_asignar_sesion(estado,rol_id,item_active):
-    if(1 in rol_id and item_active == 2) or (estado == '4' and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado =='7' and 2 in rol_id and item_active == 2):
-        return 1
-    return 0
-
-
-def verify_arbitraje_option(estado,rol_id, item_active):
-    if (1 in rol_id and item_active == 2) or (estado =='6' and (2 in rol_id) and item_active == 2):
-        return 1
-    return 0
-
-def verify_trabajo_option(estado, rol_id,item_active):
-    if((estado =='3' or estado =='4' or estado =='5') and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado =='6' and 3 in rol_id and item_active ==2):
-        return 1
-    return 0
-
-def verify_eventos_sidebar_full(estado,rol_id,item_active):
-    if (1 in rol_id and item_active == 4):
-        return 1
-    return 0
-
-def verify_espacio_option(estado,rol_id,item_active):
-    if(1 in rol_id and item_active == 4):
-        return 1
-    return 0
-
-def verify_trabajo_options(estado,rol_id):
-    if(estado == '3' and 5 in rol_id):
-        return 1
-    return 0
-
-# Funciones para verificar los campos del navbar
-def verify_configuration(estado,rol_id):
-    if ( (estado =='0' and 2 in rol_id) or ((estado != '1' and estado != '8') and 3 in rol_id) or ((estado != '8') and 4 in rol_id) or 5 in rol_id):
-        return 0 
-    return 1
-
-def verify_arbitration(estado,rol_id):
-    if ( ((estado =='0' or estado == '8') and 2 in rol_id) or ((estado == '0' or estado == '8') and 3 in rol_id) or 4 in rol_id or 5 in rol_id):
-        return 0 
-    return 1
-
-def verify_result(estado,rol_id):
-    if ( ((estado !='6' and estado != '7' and estado != '8') and 2 in rol_id) or ((estado != '6' and estado != '8') and 3 in rol_id) or ((estado != '8' and estado != '6') and 4 in rol_id) or (estado != '6' and 5 in rol_id)):
-        return 0 
-    return 1
-
-
-def verify_event(estado,rol_id):
-    if ( 1 not in rol_id):
-        return 0 
-    return 1
-
-
-def verify_jobs(estado, rol_id):
-    if((estado == '3' and 5 in rol_id) or (estado == '5' and 4 in rol_id)):
-        return 1
-    return 0
-
-
 def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
+    """ Retornar un diccionario de items con 2 listas, cada una con un string por cada opción a desplegar en el frontend """
     items={}
     top_nav_options = []
     sidebar_options = []
@@ -464,7 +342,6 @@ def dashboard(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -613,7 +490,6 @@ def data_basic(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'arbitraje':arbitraje,
@@ -674,7 +550,6 @@ def state_arbitration(request, arbitraje_id):
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
         'form':form,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -730,7 +605,6 @@ def users_list(request, arbitraje_id):
         'secondary_navbar_options' : secondary_navbar_options,
         'users' : users,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -792,7 +666,6 @@ def user_edit(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -837,7 +710,6 @@ def user_roles(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -889,7 +761,6 @@ def coord_general(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'form': form,
         'arbitraje_id' : arbitraje_id,
@@ -936,7 +807,6 @@ def coord_area(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -979,7 +849,6 @@ def total(request, arbitraje_id):
         'main_navbar_options' : main_navbar_options,
         'secondary_navbar_options' : secondary_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
