@@ -10,16 +10,6 @@ from django.core.urlresolvers import reverse
 from .models import Organizador,Evento,Locacion_evento,Organizador_evento
 
 
-estados_arbitraje = (   (0,'Desactivado'),
-                        (1,'Iniciado'),
-                        (2,'En Selección y Asignación de Coordinadores de Área'),
-                        (3,'En Carga de Trabajos'),
-                        (4,'En Asignación de Trabajos a las Áreas'),
-                        (5,'En En Arbitraje'),
-                        (6,'En Cierre de Arbitraje'),
-                        (7,'En Asignación de Secciones'),
-                        (8,'En Resumen'))
-                        
 # class MyLoginForm(forms.Form):
 #     username = forms.CharField(label="Usuario", max_length=100)
 #     password = forms.CharField(label="Contraseña", max_length=100, widget=forms.PasswordInput)
@@ -77,7 +67,6 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['url_organizador'].label = "Enlace del Organizador"
         self.fields['observaciones'].label = "Observaciones"
         self.fields['usuario_asovac'].label = "Usuario"
-        self.fields['es_meinbro_asovac'].widget.attr('type') = 'radio'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
