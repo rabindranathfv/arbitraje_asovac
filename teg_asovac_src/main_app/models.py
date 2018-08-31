@@ -62,7 +62,7 @@ class Usuario_asovac(models.Model):
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
 	rol = models.ManyToManyField(Rol,blank=True)
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
-	area_id= models.ManyToManyField('arbitrajes.Area',blank=True)
+	area_id = models.ManyToManyField('arbitrajes.Area',blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
 

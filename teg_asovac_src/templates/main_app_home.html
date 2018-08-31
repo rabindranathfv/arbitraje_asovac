@@ -1,4 +1,5 @@
 {% extends "base_users.html" %}
+{% load static %}
 
 {% block content %}
 <div class="login-content">
@@ -48,11 +49,12 @@
                             {% endfor %}
                         {% else %}
                         <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="container-fuild col-sm-6 offset-3 center-block">
-                                        <p class="text-center">Debe Crear un proceso de Arbitraje</p>
-                                        <i class="fa fa-info-circle" style="font-size:315px; text-align:center;"></i>
+                                <div class="container-fluid">
+                                    <div class="row middle-content">
+                                            <div class="container-fuild col-sm-6 offset-3 center-block">
+                                                    <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                                    <strong><h2 class="text-center">No Hay Arbitrajes Creados</h2></strong>                                                   
+                                            </div>
                                     </div>
                                 </div>
                             </div>
