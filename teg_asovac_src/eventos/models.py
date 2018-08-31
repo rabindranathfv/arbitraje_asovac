@@ -5,11 +5,11 @@ from django.db import models
 
 # Create your models here.
 
-choises_genero = (   (0,'Masculino'),
+CHOICES_GENERO = (   (0,'Masculino'),
                         (1,'Femenino'),
                         )
 
-choises_mienbro_asovac = (   (False,'No es mienbro de AsoVAC'),
+CHOICES_MIENBRO_ASOVAC = (   (False,'No es mienbro de AsoVAC'),
                         (True,'Es mienbro de AsoVAC'),
                         )
 
@@ -18,18 +18,18 @@ Organizador Model
 """""""""""""""""""""""""""
 class Organizador(models.Model):
 
-	usuario_asovac = models.ForeignKey('main_app.Usuario_asovac')
+	usuario_asovac = models.ForeignKey('main_app.Usuario_asovac',related_name='Usuarios_asovac_organizadores')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
-	genero = models.SmallIntegerField(default=0,choices=choises_genero)
+	genero = models.SmallIntegerField(default=0,choices=CHOICES_GENERO)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_correspondencia = models.TextField(max_length=100)
-	es_miembro_asovac = models.BooleanField(default=False,choices=choises_mienbro_asovac)
+	es_miembro_asovac = models.BooleanField(default=False,choices=CHOICES_MIENBRO_ASOVAC)
 	capitulo_asovac = models.CharField(max_length=50)
 	cargo_en_institucion = models.CharField(max_length=50)
 	url_organizador = models.CharField(max_length=100)
@@ -59,8 +59,8 @@ Evento Model
 """""""""""""""""""""""""""
 class Evento(models.Model):
 
-	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento')
-	locacion_evento = models.ForeignKey(Locacion_evento)
+	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento',related_name='Organizador_eventos')
+	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
 
 	nombre = models.CharField(max_length=50)
 	categoria = models.CharField(max_length=50)
@@ -83,8 +83,8 @@ Organizador_evento Model
 """""""""""""""""""""""""""
 class Organizador_evento(models.Model):
 
-	evento = models.ForeignKey(Evento)
-	organizador = models.ForeignKey(Organizador)
+	evento = models.ForeignKey(Evento,related_name='Eventos')
+	organizador = models.ForeignKey(Organizador,related_name='Organizadores')
 
 	locacion_preferida = models.CharField(max_length=50)
 
