@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
+
+from .forms import CreateOrganizerForm
+from .models import Organizador,Organizador_evento,Evento,Locacion_evento
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, verify_trabajo_options, get_route_trabajos_sidebar, verify_asignar_sesion, get_roles, verify_configuration, verify_arbitration,verify_result,verify_event,validate_rol_status,verify_configuracion_general_option,verify_datos_basicos_option,verify_estado_arbitrajes_option,verify_usuario_option,verify_asignacion_coordinador_general_option,verify_asignacion_coordinador_area_option,verify_recursos_option,verify_areas_subareas_option,verify_autores_option,verify_arbitros_option,verify_sesions_arbitraje_option,verify_arbitraje_option,verify_trabajo_option,verify_eventos_sidebar_full,verify_espacio_option,validate_rol_status,get_route_configuracion,get_route_seguimiento, verify_jobs
 from eventos.forms import CreateOrganizerForm,CreateEventForm
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -18,8 +23,8 @@ def event_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
-    secondary_navbar_options = ['']
 
+    secondary_navbar_options = ['']
     context = {
         'nombre_vista' : 'Eventos',
         'main_navbar_options' : main_navbar_options,
@@ -34,11 +39,8 @@ def event_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
-    secondary_navbar_options = ['']
-
     rol_id=get_roles(request.user.id)
-
-
+    
     context = {
         'nombre_vista' : 'Autores',
         'main_navbar_options' : main_navbar_options,
@@ -52,9 +54,11 @@ def event_create(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
+
     secondary_navbar_options = ['']
 
     form = CreateEventForm()
+
     context = {
         'username' : request.user.username,
         'form' : form,
