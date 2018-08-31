@@ -1,0 +1,32 @@
+{% if users %}
+{% for user in users %}
+    <tr>
+        <td>
+            <input type="checkbox" class="custom-control-input" id="customCheck1">    
+        </td>
+        <td>{{ user.usuario.first_name }}</td>
+        <td>{{ user.usuario.last_name }}</td>
+        <td>{{ user.usuario.username }}</td>
+        <td>{{ user.usuario.email }}</td>
+        <td >
+                <a href="#" class="btn btn-info show-form-update" data-url="{% url 'main_app:actualizar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="#" class="btn btn-info show-form-delete" data-url="{% url 'main_app:eliminar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-times"></i>
+                </a>
+                <a href="#" class="btn btn-info"> 
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="" class="btn btn-info" role="button">
+                    <i class="fas fa-door-open"></i>
+                </a>
+                <a href="" class="btn btn-info show-form-rol" data-url="{% url 'main_app:actualizar_rol' user.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-users"></i> 
+                </a>
+           </td>
+    </tr>
+{% endfor %}
+{% else%}
+
+{% endif %}

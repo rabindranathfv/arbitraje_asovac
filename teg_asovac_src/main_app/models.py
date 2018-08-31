@@ -2,14 +2,24 @@
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models.signals import post_save
-#from .views import cod_generator
-import uuid
-
 from django.dispatch import receiver
+
+import uuid
 # Create your models here.
 
+# Este es un diccionario con los estados numericos y en string de los arbitrajes.
+estados_arbitraje = {	'0':'Desactivado',
+						'1':'Iniciado',
+						'2':'En Selección y Asignación de Coordinadores de Área',
+						'3':'En Carga de Trabajos',
+						'4':'En Asignación de Trabajos a las Áreas',
+						'5':'En En Arbitraje',
+						'6':'En Cierre de Arbitraje',
+						'7':'En Asignación de Secciones',
+						'8':'En Resumen'}
 
 """""""""""""""""""""""""""
 Rol Model
@@ -34,7 +44,8 @@ class Sistema_asovac(models.Model):
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
-	estado_arbitraje = models.SmallIntegerField(default=0)
+	coordinador_general = models.ForeignKey('Usuario_asovac',blank = True, null = True)
+	estado_arbitraje = models.SmallIntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(8)])
 	clave_maestra_coordinador_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
@@ -54,11 +65,20 @@ class Usuario_asovac(models.Model):
 	area_id= models.ManyToManyField('arbitrajes.Area',blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
-	
+
+	def biggest_role(self):
+		my_roles = self.rol.all()
+		biggest_role = None
+		for role in my_roles:
+			if biggest_role:
+				if role.id < biggest_role.id:
+					biggest_role = role
+			else:
+				biggest_role = role
+		return biggest_role
 
 	def __str__(self):
-		return "{} {}".format(self.usuario.get_username(),self.usuario_activo)#.encode('utf-8', errors='replace')
-
+		return "{} {}".format(self.usuario.first_name,self.usuario.last_name)#.encode('utf-8', errors='replace')
 
 
 

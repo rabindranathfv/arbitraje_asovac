@@ -34,20 +34,25 @@ from main_app.views import register
 urlpatterns = [
     # url(r'^$',views.login,name='login'),
     url(r'^home/$',views.home,name='home'),
-    url(r'^$',views.dashboard,name='dashboard'),
+    url(r'^(?P<arbitraje_id>\d+)/$',views.dashboard,name='dashboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
-
-    url(r'^admin/data_basic/$',views.data_basic,name='data_basic'),
-    url(r'^admin/arbitration/state/$',views.state_arbitration,name='arbitration_state'),
-    url(r'^admin/users/list/$',views.users_list,name='users_list'),
-    url(r'^admin/user/edit/$',views.user_edit,name='user_edit'),
-    url(r'^admin/user/roles/$',views.user_roles,name='user_roles'),
-    url(r'^admin/coord/general/$',views.coord_general,name='coord_general'),
-    url(r'^admin/coord/area/$',views.coord_area,name='coord_area'),
-    url(r'^admin/total/$',views.total,name='total'),
-
-    url(r'^register/$',views.register, name='register'), 
-
+    url(r'^(?P<arbitraje_id>\d+)/datos_basicos/$',views.data_basic,name='data_basic'),
+    url(r'^(?P<arbitraje_id>\d+)/estado-arbitraje/$',views.state_arbitration,name='arbitration_state'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/$',views.users_list,name='users_list'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/editar-usuario/$',views.user_edit,name='user_edit'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/roles/$',views.user_roles,name='user_roles'),
+    url(r'^(?P<arbitraje_id>\d+)/coordinador-general/$',views.coord_general,name='coord_general'),
+    url(r'^(?P<arbitraje_id>\d+)/coordinador-area/$',views.coord_area,name='coord_area'),
+    url(r'^(?P<arbitraje_id>\d+)/resultados-total/$',views.total,name='total'),
+    url(r'^registrar/$',views.register, name='register'), 
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
+    url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
+    
+    #Rutas para modales ajax
+    url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
+    url(r'^usuario/(?P<id>\d+)/actualizar$',views.update_user_modal,name='actualizar_usuario'),
+    url(r'^usuario/(?P<id>\d+)/eliminar$',views.delete_user_modal,name='eliminar_usuario'),
+    url(r'^usuario/(?P<id>\d+)/rol/actualizar$',views.update_rol_modal,name='actualizar_rol'),
+
 ]

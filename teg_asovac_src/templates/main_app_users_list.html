@@ -29,6 +29,7 @@
                    
                     <h2 class="text-left">Lista de usuarios</h2>
                     <div class="">
+                            <button class="btn btn-primary show-form" data-url="{% url 'main_app:crear_usuario' %}">Crear usuario</button>
                         <div class="col-md-12">
                             <div class="col-md-10">
                                 <form class="form-inline text-right">
@@ -43,7 +44,7 @@
                                         <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                            <li><a href="#">Cargar usuario</a></li>
+                                            <li><a href="#">Cargar autores</a></li>
                                             <li><a href="#">Cargar arbitros</a></li>
                                             <li><a href="#">Cargar coordinador de área</a></li>
                                             <li><a href="#">Cargar coordinador general</a></li>
@@ -52,25 +53,11 @@
                             </div>
                         </div>
 
-                        <!-- <div class="col-md-2 text-right">
-                            <div class="dropdown">
-                                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    Carga de usuarios
-                                <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a href="#">Cargar usuario</a></li>
-                                    <li><a href="#">Cargar arbitros</a></li>
-                                    <li><a href="#">Cargar coordinador de área</a></li>
-                                    <li><a href="#">Cargar coordinador general</a></li>
-                                </ul>
-                            </div>
-                        </div> -->
                     </div>
                     <br>
                     <br>
                     <br>
-                           <table class="table table-bordered">
+                           <table class="table table-bordered gray-header" id="show_users">
                                <thead>
                                  <tr>
                                      <th>
@@ -84,84 +71,8 @@
                                  </tr>
                                </thead>
                                <tbody>
-                                 <tr>
-                                    <td>
-                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
-                                    </td>
-                                   <td>Pedro Manuel</td>
-                                   <td>Camacho Rodriguez</td>
-                                   <td>PedroManuel</td>
-                                   <td>PedroManuel@gmail.com</td>
-                                   <td >
-                                        <a href="{% url 'main_app:user_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-user"></i> 
-                                        </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
-                                    <td>
-                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
-                                    </td>
-                                    <td>Pedro Manuel</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel</td>
-                                    <td>PedroManuel@gmail.com</td>
-                                   <td >
-                                        <a href="{% url 'main_app:user_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-user"></i> 
-                                        </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
-                                    <td>
-                                        <input type="checkbox" class="custom-control-input" id="customCheck1">    
-                                    </td>
-                                    <td>Pedro Manuel</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel</td>
-                                    <td>PedroManuel@gmail.com</td>
-                                   <td >
-                                        <a href="{% url 'main_app:user_edit'%}" class="btn btn-info" role="button">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-info" role="button">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-info" role="button">
-                                                <i class="fas fa-envelope"></i>
-                                            </a>
-                                            <a href="" class="btn btn-info" role="button">
-                                                <i class="fas fa-door-open"></i>
-                                            </a>
-                                            <a href="" class="btn btn-info" role="button">
-                                                <i class="fas fa-user"></i> 
-                                            </a>
-                                   </td>
-                                 </tr>
+
+                                    {% include 'ajax/dinamic_list.html' %}
                                </tbody>
                              </table>
                            <!-- End table  -->
@@ -173,6 +84,14 @@
    
         </div>
 </div>
+
+<!-- modal -->
+  <div class="modal fade" id="modal-user">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+  </div>
 
 {% endblock %}
 
