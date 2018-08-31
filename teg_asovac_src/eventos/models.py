@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from eventos.validators import validate_ced_passport,validate_phone_office,validate_phone_personal,validate_cap_asovac 
+from django.core.validators import EmailValidator,URLValidator
 
 # Create your models here.
 
@@ -23,16 +25,16 @@ class Organizador(models.Model):
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
 	genero = models.SmallIntegerField(default=0,choices=CHOICES_GENERO)
-	cedula_o_pasaporte = models.CharField(max_length=20)
-	correo_electronico = models.EmailField(max_length=254)
+	cedula_o_pasaporte = models.CharField(max_length=20,validators=[validate_ced_passport])
+	correo_electronico = models.EmailField(max_length=254,validators=[EmailValidator])
 	institucion = models.CharField(max_length=50)
-	telefono_oficina = models.CharField(max_length=20)
-	telefono_habitacion_celular = models.CharField(max_length=20)
+	telefono_oficina = models.CharField(max_length=20,validators=[validate_phone_office])
+	telefono_habitacion_celular = models.CharField(max_length=20,validators=[validate_phone_personal])
 	direccion_correspondencia = models.TextField(max_length=100)
 	es_miembro_asovac = models.BooleanField(default=False,choices=CHOICES_MIENBRO_ASOVAC)
-	capitulo_asovac = models.CharField(max_length=50)
+	capitulo_asovac = models.CharField(max_length=50,validators=[validate_cap_asovac])
 	cargo_en_institucion = models.CharField(max_length=50)
-	url_organizador = models.CharField(max_length=100)
+	url_organizador = models.CharField(max_length=100,validators=[URLValidator])
 	observaciones = models.TextField(max_length=100, blank = True)
 
 	def __str__(self):
@@ -42,6 +44,7 @@ class Organizador(models.Model):
 """""""""""""""""""""""""""
 Locacion_evento Model
 """""""""""""""""""""""""""
+#Quitar _ del nombre del modelo
 class Locacion_evento(models.Model):
 
 	lugar = models.TextField(max_length=100)
@@ -81,6 +84,8 @@ class Evento(models.Model):
 """""""""""""""""""""""""""
 Organizador_evento Model
 """""""""""""""""""""""""""
+#Quitar _ del nombre del modelo
+
 class Organizador_evento(models.Model):
 
 	evento = models.ForeignKey(Evento,related_name='Eventos')

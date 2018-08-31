@@ -6,8 +6,9 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,InlineRadios
 from django import forms
 from django.core.urlresolvers import reverse
+from django.core.validators import EmailValidator,URLValidator
 
-#from eventos.validators import 
+from eventos.validators import validate_ced_passport,validate_phone_office,validate_phone_personal,validate_cap_asovac 
 from eventos.models import Organizador,Evento,Locacion_evento,Organizador_evento
 
 
