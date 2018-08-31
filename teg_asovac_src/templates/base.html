@@ -21,55 +21,33 @@
         <!-- Navbar buttons: Passed by context in the view -->
      
           <ul class="nav navbar-nav">
-            {% if verify_configuration == 1 %}
+            {% if "configuration" in items.top_nav_options %}
               <li>
                 <a href="{{ route_conf }}">
                   <i class ="fas fa-cogs"></i>Configuración
                 </a>
-<!-- 
-                <form method="post" action="{{ route_conf }}"  name="nav_data_basic">
-                    {% csrf_token %}
-                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                </form>
-                <a href="javascript:document.nav_data_basic.submit();"><i class ="fas fa-cogs"></i> Configuración </a>
--->
+
               </li>
             {% endif %}
-            {% if verify_arbitration == 1 %}
+            {% if "arbitration" in items.top_nav_options %}
             <li>
                 <a href="{{ route_seg }}">
-                  <i class ="fas fa-eye"></i> Arbitraje y seguimiento
+                  <i class="fas fa-eye"></i> Arbitraje y seguimiento
                 </a>
 
-<!--
-                <form method="post" action="{{ route_seg }}"  name="nav_authors_list">
-                    {% csrf_token %}
-                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                </form>
-              <a href="javascript:document.nav_authors_list.submit();"><i class ="fas fa-eye"></i> Arbitraje y seguimiento</a>
--->
             </li>
             {% endif %}
-            {% if verify_result == 1 %}
+            {% if "result" in items.top_nav_options %}
             <li>
               <a href="{{ route_resultados }}">
                 <i class="fas fa-chart-area"></i> Resultados
               </a>
-<!--
-              <form method="post" action="{% url 'main_app:total' %}"  name="nav_total">
-                  {% csrf_token %}
-                  <input class="" name="estado" type='hidden' value="{{ estado }}">
-                  <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-              </form>
-              <a href="javascript:document.nav_total.submit();"><i class="fas fa-chart-area"></i> Resultados</a>
--->
+
             </li>
             {% endif %}
 
-            {% if verify_jobs == 1 %}
-              {% if trabajo_sidebar == 1 %}
+            {% if "jobs" in items.top_nav_options %}
+              {% if "job_options" in items.top_nav_options %}
                 <li>
                     <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
                       <i class="fas fa-book"></i> Trabajos
@@ -93,59 +71,6 @@
               {% endif %}
             {% endif %}
 
-<!--
-
-            {% if verify_event_app == 1 %}
-            
-              <li>
-                  <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
-                    <i class="fas fa-id-badge"></i> Organizador
-                  </a>
-                  <ul class="dropdown-menu" style ="z-index:2">
-                    <li>
-                      <a class="dropdown-item" href="{% url 'eventos:organizer_create' %}">Crear Organizador</a>
-                    </li>
-                    <li>
-                    <a class="dropdown-item" href="{% url 'eventos:orgnaizer_list' %}">Listar Organizadores</a>
-                    </li>
-                  </ul>
-              </li>
-                   
-            <li>
-              <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
-                <i class="fas fa-calendar-check"></i> Eventos
-              </a>
-              <ul class="dropdown-menu" style ="z-index:2">
-                <li>
-                  <a class="dropdown-item" href="{% url 'eventos:event_create' %}">Crear Evento</a>
-                </li>
-                <li>
-                <a class="dropdown-item" href="{% url 'eventos:event_list' %}">Lista de Eventos</a>
-                </li>
-              </ul>
-          </li>
-            
-          {% endif %}
--->
-
-<!--  
-            {% if verify_event == 1 %}
-            <li>
-                <a href="{% url 'eventos:event_create' %}">
-                  <i class="fas fa-archive"></i> Eventos
-                </a>
-
-            
-                <form method="post" action="{% url 'eventos:event_create' %}"  name="nav_event_create">
-                    {% csrf_token %}
-                    <input class="" name="estado" type='hidden' value="{{ estado }}">
-                    <input class="" name="event_id" type='hidden' value="{{ event_id }}">
-                </form>
-              <a href="javascript:document.nav_event_create.submit();"><i class="fas fa-archive"></i> Eventos</a>
-
-            </li>
-            {% endif %}
--->
           </ul> 
 
         {% if user.username %}
@@ -166,22 +91,16 @@
       </div>
     </nav>
 
-    {% if secondary_navbar_options %}
     <!-- Fixed Secondary Navbar -->
     <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style ="z-index: 1">
       <div class="container-fluid">
         <ul class="nav navbar-nav ">
-          {% for option in secondary_navbar_options %}
-            <li>
-              <p class="navbar-text">
-                {{ option }}
-              </p>
-            </li>
-          {% endfor %}
+          <li>
+            <p class="navbar-text"> </p>
+          </li>
         </ul>
       </div>
     </nav>
-    {% endif %}
 
     <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
         <div class="container-fluid">
