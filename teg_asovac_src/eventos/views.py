@@ -129,7 +129,7 @@ def organizer_create(request):
         if form.is_valid():
             form.save(commit=False)
             #lIMPIANDO DATA
-            nombres = form.clean_names()
+            form.nombres = form.clean_names()
             apellidos = form.clean_lastnames()
             genero = form.clean_gender()
 

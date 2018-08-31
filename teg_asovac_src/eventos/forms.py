@@ -7,7 +7,8 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,Inli
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Organizador,Evento,Locacion_evento,Organizador_evento
+#from eventos.validators import 
+from eventos.models import Organizador,Evento,Locacion_evento,Organizador_evento
 
 
 # class MyLoginForm(forms.Form):
