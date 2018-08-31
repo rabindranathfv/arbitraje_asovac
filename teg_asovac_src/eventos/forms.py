@@ -194,9 +194,9 @@ class CreateEventForm(forms.ModelForm):
         self.fields['horario_preferido'].label = 'Horario Preferido'
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['observaciones'].label = 'Observaciones'
-        self.fields['url_anuncio_evento'] = 'Enlace del Evento'
-        self.fields['organizador_id'] = 'Organizador ID'
-        self.fields['locacion_evento'] = 'Locacizacion del Evento'
+        self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
+        self.fields['organizador_id'].label = 'Organizador ID'
+        self.fields['locacion_evento'].label = 'Locacizacion del Evento'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important

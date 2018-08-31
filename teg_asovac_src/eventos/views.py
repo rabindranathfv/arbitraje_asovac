@@ -101,9 +101,8 @@ def event_create(request):
                 'secondary_navbar_options' : secondary_navbar_options,
                 #'verify_event_app' : verify_event_app(),
                 }
-            return render(request, 'eventos_event_create.html', context) 
-
-    return render(request, 'eventos_event_create.html', context)
+            return redirect(reverse('eventos:event_list'), context) 
+    return render(request,'eventos_event_create.html', context)
 
 def event_delete(request):
     
