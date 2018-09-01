@@ -11,11 +11,22 @@ from django.forms import CheckboxSelectMultiple
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
+
+estados_arbitraje = (   (0,'Desactivado'),
+                        (1,'Iniciado'),
+                        (2,'En Selección y Asignación de Coordinadores de Área'),
+                        (3,'En Carga de Trabajos'),
+                        (4,'En Asignación de Trabajos a las Áreas'),
+                        (5,'En En Arbitraje'),
+                        (6,'En Cierre de Arbitraje'),
+                        (7,'En Asignación de Secciones'),
+                        (8,'En Resumen'))
+
 class RegisterForm(UserCreationForm):
 
     class Meta:
         model= User
-        fields=['username','first_name','last_name','email',]
+        fields = ['username','first_name','last_name','email',]
 
 
 class MyLoginForm(forms.Form):
@@ -31,10 +42,10 @@ class MyLoginForm(forms.Form):
        self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))
 
 class DataBasicForm(forms.Form):
-    name_arbitration= forms.CharField(label="Nombre arbitraje", max_length=20)
-    description= forms.CharField(label="Descripción", max_length=255)
-    start_date= forms.DateField(label="Fecha de inicio")
-    end_date= forms.DateField(label="Fecha de fin")
+    name_arbitration = forms.CharField(label="Nombre arbitraje", max_length=20)
+    description = forms.CharField(label="Descripción", max_length=255)
+    start_date = forms.DateField(label="Fecha de inicio")
+    end_date = forms.DateField(label="Fecha de fin")
         
         # super(MyLoginForm, self).__init__(*args, **kwargs)
         # self.helper = FormHelper()
@@ -99,7 +110,7 @@ class AdminAssingRolForm(forms.ModelForm):
 
 class CoordGeneralAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        super(CoordGeneralAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=2)
         self.fields['rol'].required = True
 
@@ -110,7 +121,7 @@ class CoordGeneralAssingRolForm(forms.ModelForm):
 
 class CoordAreaAssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
+        super(CoordAreaAssingRolForm, self).__init__(*args, **kwargs)
         self.fields['rol'].queryset = Rol.objects.filter(id__gt=3)
         self.fields['rol'].required = True
 
@@ -118,6 +129,37 @@ class CoordAreaAssingRolForm(forms.ModelForm):
         model = Usuario_asovac
         fields = ['rol']
         widgets = {'rol': CheckboxSelectMultiple()}
+
+class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
+                                                        # El rol con id 2 es Coordinador General
+        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.filter(rol__id = 2)
+        self.fields['coordinador_general'].required = True
+
+    class Meta:
+        model = Sistema_asovac
+        fields = ['coordinador_general']
+
+
+class ArbitrajeStateChangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ArbitrajeStateChangeForm, self).__init__(*args, **kwargs)
+        self.fields['estado_arbitraje'].required = True
+
+    class Meta:
+        model = Sistema_asovac
+        fields = ['coordinador_general', 'estado_arbitraje']
+        widgets = {'coordinador_general': forms.HiddenInput(),
+                'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
+
+    def clean_coordinador_general(self):
+        data = self.cleaned_data['coordinador_general']
+        if data is None:
+            print ('Raising form error of estado!')
+            raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
+        return data
+
 
 class RolForm(forms.ModelForm):
     class Meta:

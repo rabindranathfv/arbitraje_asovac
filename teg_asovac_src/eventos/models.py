@@ -5,32 +5,38 @@ from django.db import models
 
 # Create your models here.
 
+choises_genero = (   (0,'Masculino'),
+                        (1,'Femenino'),
+                        )
+
+choises_mienbro_asovac = (   (False,'No es mienbro de AsoVAC'),
+                        (True,'Es mienbro de AsoVAC'),
+                        )
 
 """""""""""""""""""""""""""
 Organizador Model
 """""""""""""""""""""""""""
 class Organizador(models.Model):
 
-	usuario_asovac = models.OneToOneField('main_app.Usuario_asovac')
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
+	usuario_asovac = models.ForeignKey('main_app.Usuario_asovac')
 
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
-	genero = models.CharField(max_length=5)
+	genero = models.SmallIntegerField(default=0,choices=choises_genero)
 	cedula_o_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_correspondencia = models.TextField(max_length=100)
-	es_miembro_asovac = models.BooleanField(default=False)
+	es_miembro_asovac = models.BooleanField(default=False,choices=choises_mienbro_asovac)
 	capitulo_asovac = models.CharField(max_length=50)
 	cargo_en_institucion = models.CharField(max_length=50)
 	url_organizador = models.CharField(max_length=100)
 	observaciones = models.TextField(max_length=100, blank = True)
 
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombres#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -81,6 +87,7 @@ class Organizador_evento(models.Model):
 	organizador = models.ForeignKey(Organizador)
 
 	locacion_preferida = models.CharField(max_length=50)
+
 	def __str__(self):
 		return self.locacion_preferida#.encode('utf-8', errors='replace')
 

@@ -1,4 +1,5 @@
 {% extends "base_users.html" %}
+{% load static %}
 
 {% block content %}
 <div class="login-content">
@@ -24,113 +25,41 @@
 
                         <!-- dynamic content-->
                         {% if arb_data %}
-                            {% for arb in arb_data %}
-                            <div class="panel-body">
-                                <div class="container-fluid">
-                                    <div class="row middle-content">
-                                        <div class="col-sm-4">
-                                            <p>{{ arb.nombre }}</p>
-                                            <h5>{{ arb.fecha_inicio_arbitraje }}</h5>
-                                            <h5>{{ arb.fecha_fin_arbitraje }}</h5>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <span class="">Estado:</span>
-                                            {% if arb.estado_arbitraje == 0 %}
-                                                <p class="text-primary">Desactivado</p>
-                                            {% elif arb.estado_arbitraje == 1 %}
-                                                <p class="text-primary">Iniciado</p>
-                                            {% elif arb.estado_arbitraje == 2 %}
-                                                <p class="text-primary">En Selección y Asignación de Coordinadores</p>
-                                            {% elif arb.estado_arbitraje == 3 %}
-                                                <p class="text-primary">En Carga de Trabajos</p>
-                                            {% elif arb.estado_arbitraje == 4 %}
-                                                <p class="text-primary">En Asignación de Trabajos a las Áreas</p>
-                                            {% elif arb.estado_arbitraje == 5 %}
-                                                <p class="text-primary">En Arbitraje</p>
-                                            {% elif arb.estado_arbitraje == 6 %}
-                                                <p class="text-primary">En Cierre de Arbitraje</p>
-                                            {% elif arb.estado_arbitraje == 7 %}
-                                                <p class="text-primary">En Asignación de Sesiones</p>
-                                            {% elif arb.estado_arbitraje == 8 %}
-                                                <p class="text-primary">En Resumen</p>
-                                            {% endif %}
-                                            
-                                        </div>
-                     
-                                        {% if 1 in rol_id %}
-                                            <div class="col-sm-3 text-center">
-                                                <form method="post" action="{% url 'main_app:dashboard'%}">
-                                                    {% csrf_token %}
-                                                    <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
-                                                    <input class="" name="arbitraje_id" type='hidden' value="{{ arb.id }}">
-                                                    <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
-                                                </form>
+                            {% for arb, state, allow in arb_data %}
+                                <div class="panel-body">
+                                    <div class="container-fluid">
+                                        <div class="row middle-content">
+                                            <div class="col-sm-4">
+                                                <p>{{ arb.nombre }}</p>
+                                                <h5>{{ arb.fecha_inicio_arbitraje }}</h5>
+                                                <h5>{{ arb.fecha_fin_arbitraje }}</h5>
                                             </div>
-                                        {% elif 2 in rol_id %}
-                                            {% if arb.estado_arbitraje != 0 %}
-                                                <div class="col-sm-3 text-center">
-                                                    <form method="post" action="{% url 'main_app:dashboard'%}">
-                                                        {% csrf_token %}
-                                                        <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
-                                                        <input class="" name="arbitraje_id" type='hidden' value="{{ arb.id }}">
-                                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
-                                                    </form>
-                                                </div>
+                                            <div class="col-sm-4">
+                                                <span class="">Estado:</span>
+                                                <p class="text-primary">{{ state }}</p>
+                                            </div>
+                                            {% if allow %}
+                                            <div class="col-sm-3 text-center">
+                                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                            </div>
                                             {% endif %}
-                                        {% elif 3 in rol_id %}
-                                            {% if arb.estado_arbitraje != 0 %}
-                                                <div class="col-sm-3 text-center">
-                                                    <form method="post" action="{% url 'main_app:dashboard'%}">
-                                                        {% csrf_token %}
-                                                        <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
-                                                        <input class="" name="arbitraje_id" type='hidden' value="{{ arb.id }}">
-                                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
-                                                    </form>
-                                                </div>
-                                            {% endif %}
-
-                                        {% elif 4 in rol_id %}
-                                            {% if arb.estado_arbitraje == 5 or arb.estado_arbitraje == 6 or arb.estado_arbitraje == 8 %}
-                                                <div class="col-sm-3 text-center">
-                                                    <form method="post" action="{% url 'main_app:dashboard'%}">
-                                                        {% csrf_token %}
-                                                        <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
-                                                        <input class="" name="arbitraje_id" type='hidden' value="{{ arb.id }}">
-                                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
-                                                    </form>
-                                                </div>
-                                            {%endif%}
-                                        {% elif 5 in rol_id %}
-                                            {% if arb.estado_arbitraje == 3 or arb.estado_arbitraje == 6 %}
-                                                <div class="col-sm-3 text-center">
-                                                    <form method="post" action="{% url 'main_app:dashboard'%}">
-                                                        {% csrf_token %}
-                                                        <input class="" name="estado" type='hidden' value="{{ arb.estado_arbitraje }}">
-                                                        <input class="" name="arbitraje_id" type='hidden' value="{{ arb.id }}">
-                                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" ><i class="fas fa-door-open"></i> Entrar</button>
-                                                    </form>
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
-
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             {% endfor %}
                         {% else %}
                         <div class="panel-body">
                                 <div class="container-fluid">
                                     <div class="row middle-content">
                                             <div class="container-fuild col-sm-6 offset-3 center-block">
-                                                    <p class="text-center">Debe Crear un proceso de Arbitraje</p>
-                                                    <i class="fa fa-info-circle" style="font-size:315px; text-align:center;"></i>                                                    
+                                                    <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                                    <strong><h2 class="text-center">No Hay Arbitrajes Creados</h2></strong>                                                   
                                             </div>
                                     </div>
                                 </div>
                             </div>
-
+                        </div>
                         {% endif %}
-
                     </div>
                 </div>
             </div>
