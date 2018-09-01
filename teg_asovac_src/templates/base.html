@@ -19,8 +19,13 @@
         </div>
 
         <!-- Navbar buttons: Passed by context in the view -->
-     
+
           <ul class="nav navbar-nav">
+            <li>
+                <a href="#" data-url="{% url 'trabajos:mostrar_areas' user.id %}" class="show_areas" data-toggle="modal" data-target="#modal_areas">
+                    <i class="fas fa-exchange-alt"></i> Área/Subárea
+                </a>
+            </li>
             {% if "configuration" in items.top_nav_options %}
               <li>
                 <a href="{{ route_conf }}">

@@ -57,6 +57,7 @@
                     <br>
                     <br>
                     <br>
+                        <!-- El id show_users se usa para referenciar el contenido a actualizar usando ajax -->
                            <table class="table table-bordered gray-header" id="show_users">
                                <thead>
                                  <tr>
@@ -71,7 +72,7 @@
                                  </tr>
                                </thead>
                                <tbody>
-
+                                   <!-- Se carga contenido de forma dinamica con ajax para filtrar areas -->
                                     {% include 'ajax/dinamic_list.html' %}
                                </tbody>
                              </table>

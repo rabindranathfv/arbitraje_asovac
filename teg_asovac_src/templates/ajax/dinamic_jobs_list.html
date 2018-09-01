@@ -1,0 +1,32 @@
+{% if trabajos %}
+{% for trabajo in trabajos %}
+    <tr>
+        <td>{{ trabajo.titulo_espanol}}</td>
+        <td>{{ trabajo.titulo_espanol}}</td>
+        <td>{{ trabajo.area}}</td>
+        <td>{{ trabajo.area }}</td>
+        <td>{{ trabajo.subarea1 }}</td>
+        <td >
+                <a href="#" class="btn btn-info show-form-update" data-url="ruta para la funcionalidad a desarrollar" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="#" class="btn btn-info show-form-delete" data-url="ruta para la funcionalidad a desarrollar" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-times"></i>
+                </a>
+                <a href="#" class="btn btn-info"> 
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="" class="btn btn-info" role="button">
+                    <i class="fas fa-door-open"></i>
+                </a>
+                <a href="" class="btn btn-info show-form-rol" data-url="ruta para la funcionalidad a desarrollar" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                    <i class="fas fa-users"></i> 
+                </a>
+           </td>
+    </tr>
+{% endfor %}
+{% else%}
+
+{% endif %}
+
+

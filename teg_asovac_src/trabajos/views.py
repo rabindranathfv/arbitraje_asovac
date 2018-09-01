@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from .forms import TrabajoForm
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area
+from .models import Trabajo
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
@@ -67,6 +68,9 @@ def jobs_list(request):
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    # Esta asignación debe realizarse a la hora de elegir el evento 
+    # area=request.session['area']
+    # subarea=request.session['subarea']
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -76,8 +80,6 @@ def jobs_list(request):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
 
     context = {
         'nombre_vista' : 'Trabajos',
@@ -236,21 +238,29 @@ def show_areas_modal(request,id):
         areas= user.area.all()
         subareas= user.sub_area.all()
     
-    print (areas)
-    print (subareas)
+    # print (areas)
+    # print (subareas)
 
     if request.method == 'POST':
-        # print "Cambio de área"
-        # print (request.POST['area_select'])
-        # print (request.POST['subarea_select'])
+        # print "Se seleccionaron las siguientes áreas"
+        area=request.POST['area_select']
+        subarea=request.POST['subarea_select']
+
+        # print area
+        # print subarea
         # print (user_role.id)
+
         request.session['area']=request.POST['area_select']
         request.session['subarea']=request.POST['subarea_select']
 
+        trabajos=Trabajo.objects.all().filter(area=area)
+        # print "Lista de trabajos filtrados"
+        # print trabajos
+
         data['form_is_valid']= True
-        data['user_list']= render_to_string('trabajos_jobs_list.html',request=request)
+        data['user_list']= render_to_string('ajax/dinamic_jobs_list.html',{'trabajos':trabajos},request=request)
     else:
-        print "el metodo es get"
+        # print "el metodo es get"
         context= {
             'areas':areas,
             'subareas':subareas,
