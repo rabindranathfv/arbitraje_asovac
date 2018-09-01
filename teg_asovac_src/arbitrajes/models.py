@@ -23,30 +23,30 @@ class Arbitraje(models.Model):
 
 
 
-"""""""""""""""""""""""""""
-Area Model
-"""""""""""""""""""""""""""
-class Area(models.Model):
+# """""""""""""""""""""""""""
+# Area Model
+# """""""""""""""""""""""""""
+# class Area(models.Model):
 	
-	nombre = models.CharField(max_length=20)
-	descripcion = models.TextField(max_length=100, blank = True)
+# 	nombre = models.CharField(max_length=20)
+# 	descripcion = models.TextField(max_length=100, blank = True)
 	
-	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+# 	def __str__(self):
+# 		return self.nombre#.encode('utf-8', errors='replace')
 
 
-"""""""""""""""""""""""""""
-Sub_area Model
-"""""""""""""""""""""""""""
-class Sub_area(models.Model):
+# """""""""""""""""""""""""""
+# Sub_area Model
+# """""""""""""""""""""""""""
+# class Sub_area(models.Model):
 	
-	area_id = models.ForeignKey(Area, on_delete = models.CASCADE)
+# 	area_id = models.ForeignKey(Area, on_delete = models.CASCADE)
 
-	nombre = models.CharField(max_length=20)
-	descripcion = models.TextField(max_length=100, blank = True)
+# 	nombre = models.CharField(max_length=20)
+# 	descripcion = models.TextField(max_length=100, blank = True)
 
-	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+# 	def __str__(self):
+# 		return self.nombre#.encode('utf-8', errors='replace')
 
 
 
@@ -55,9 +55,8 @@ Arbitro Model
 """""""""""""""""""""""""""
 class Arbitro(models.Model):
 
-	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
+	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE,blank=True, null=True)
 	arbitraje_id = models.ManyToManyField(Arbitraje,blank=True)
-	subarea_id = models.ManyToManyField(Sub_area)
 	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	nombres = models.CharField(max_length=40)

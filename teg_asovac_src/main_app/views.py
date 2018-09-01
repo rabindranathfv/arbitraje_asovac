@@ -310,6 +310,7 @@ def home(request):
         'arb_data' : arbitraje_data,
         'rol_id' : rol_id,
     }
+    print rol_id
     return render(request, 'main_app_home.html', context)
 
 def create_arbitraje(request):

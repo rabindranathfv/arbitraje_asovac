@@ -24,6 +24,7 @@ $('#myModal').on('shown.bs.modal', function () {
 
 // Ajax para modales
 
+// Mostrar ventana modal con el contenido correspondiente
 $(document).ready(function(){
     var ShowForm= function(){
         var btn= $(this);
@@ -41,7 +42,7 @@ $(document).ready(function(){
             }
         });
     };
-
+// Ocultar ventana modal y enviar formulario via ajax
     var SaveForm= function(){
         var form= $(this);
         // alert('SaveForm');
@@ -52,6 +53,7 @@ $(document).ready(function(){
             dataType: 'json',
 
             success: function(data){
+
                 if(data.form_is_valid){
                     // console.log('data is saved')
                     $('#show_users tbody').html(data.user_list);
@@ -64,6 +66,47 @@ $(document).ready(function(){
         });
         return false;
     };
+
+    // Para manejar la seleccion de areas y mostrar subareas conventana modal
+    $('#area_select').change(function(){
+
+        var area = $(this).val();
+        $('#enviar').attr('disabled', true);
+        if(area != ""){
+            $('#content_subarea').css("display", "block");
+            
+            $("#subarea_select option").each(function(){
+            
+               if( $(this).attr('data-area') != area){
+                   if($(this).val() != "" ){
+                    //$(this).val("0");
+                    //$(this).remove();
+                    $(this).css('display','none');
+                    $(this).attr("selected",false); 
+                   }
+                  
+                }else{
+                    $(this).attr("selected",false);
+                }
+    
+            });
+    
+        }else{
+            $('#content_subarea').css("display", "none");
+        }
+    
+    });
+
+    //Para habilitar boton de cambio de área y subarea 
+    $('#subarea_select').change(function(){
+        
+        if($(this).val() != ""){
+            $('#enviar').removeAttr("disabled");
+        }else{
+            $('#enviar').attr('disabled', true);
+        }
+    });
+
 
     // create
     $('.show-form').click(ShowForm);
@@ -80,5 +123,10 @@ $(document).ready(function(){
     // update rol
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
+    
+    //show areas 
+    $('.show_areas').click(ShowForm);
+    $('#modal-user').on('submit','.change_area',SaveForm);
+   
 
 });

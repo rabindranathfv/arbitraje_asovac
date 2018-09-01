@@ -17,12 +17,36 @@ Rol Model
 class Rol(models.Model):
 
 	
-	nombre = models.CharField(max_length=20)
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
 
+"""""""""""""""""""""""""""
+Area Model
+"""""""""""""""""""""""""""
+class Area(models.Model):
+	
+	nombre = models.CharField(max_length=80)
+	descripcion = models.TextField(max_length=150, blank = True)
+	
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
+
+
+"""""""""""""""""""""""""""
+Sub_area Model
+"""""""""""""""""""""""""""
+class Sub_area(models.Model):
+	
+	area = models.ForeignKey(Area, on_delete = models.CASCADE)
+
+	nombre = models.CharField(max_length=80)
+	descripcion = models.TextField(max_length=150, blank = True)
+
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -30,7 +54,7 @@ Sistema_asovac Model
 """""""""""""""""""""""""""
 class Sistema_asovac(models.Model):
 	
-	nombre = models.CharField(max_length=20)
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
@@ -51,7 +75,8 @@ class Usuario_asovac(models.Model):
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
 	rol = models.ManyToManyField(Rol,blank=True)
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
-	area_id= models.ManyToManyField('arbitrajes.Area',blank=True)
+	area = models.ManyToManyField(Area, blank=True)
+	sub_area = models.ManyToManyField(Sub_area, blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
 

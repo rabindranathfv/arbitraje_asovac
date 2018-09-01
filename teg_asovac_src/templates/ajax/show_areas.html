@@ -1,0 +1,96 @@
+{% load crispy_forms_tags %}
+<form method="post" class="change_area" data-url="{% url 'trabajos:mostrar_areas' user.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Cambiar Área/SubÁrea</h4>
+    </div>
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-md-12">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="area_select"> Seleccione un Área</label>
+                    <br>
+                        <select name="area_select" class="form-control" id="area_select">
+                            <option value="">Seleccione un Área</option>
+                            {% for area in areas %}
+                            <option value="{{area.id}}">{{ area.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <br>
+
+                <div class="row"  style="display: none" id="content_subarea">
+                    <div class="col-md-12">
+                        <label for="area_select"> Seleccione una Subárea</label>
+                        <br>
+                        <select name="subarea_select" class="form-control" id="subarea_select">
+                            <option value="">Seleccione una Subárea</option>
+                            {% for subarea in subareas %}
+                            <option data-area="{{subarea.area_id}}" value="{{subarea.id}}">{{ subarea.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="enviar" disabled="true" type="submit" class="btn btn-success">Actualizar</button>
+    </div>
+</form>
+
+<script>
+    $('#area_select').change(function(){
+
+        var area = $(this).val();
+        $('#enviar').attr('disabled', true);
+        $("#subarea_select option").each(function(){
+                 $(this).css('display','block');
+         });
+        
+        if(area != ""){
+            $('#content_subarea').css("display", "block");
+            
+            $("#subarea_select option").each(function(){
+            
+               if( $(this).attr('data-area') != area){
+                   if($(this).val() != "" ){
+                    //$(this).val("0");
+                    //$(this).remove();
+                    $(this).css('display','none');
+                    $(this).attr("selected",false); 
+                   }
+                  
+                }else{
+                    $(this).attr("selected",false);
+                }
+    
+            });
+    
+        }else{
+            $('#content_subarea').css("display", "none");
+        }
+    
+    });
+
+     //Para habilitar boton de cambio de área y subarea 
+     $('#subarea_select').change(function(){
+        
+        if($(this).val() != ""){
+            $('#enviar').removeAttr("disabled");
+        }else{
+            $('#enviar').attr('disabled', true);
+        }
+    });
+</script>

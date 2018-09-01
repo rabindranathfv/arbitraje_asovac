@@ -6,7 +6,7 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Sistema_asovac, Usuario_asovac, Rol
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area
 from django.forms import CheckboxSelectMultiple
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -123,3 +123,13 @@ class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
+
+class AreaForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre']
+
+class SubareaForm(forms.ModelForm):
+    class Meta:
+        model= Sub_area
+        fields=['nombre']
