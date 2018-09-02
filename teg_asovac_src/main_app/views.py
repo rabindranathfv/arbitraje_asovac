@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404, render_to_resp
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, AdminAssingRolForm, CoordGeneralAssingRolForm, CoordAreaAssingRolForm, ArbitrajeAssignCoordGenForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm
 from .models import Rol,Sistema_asovac,Usuario_asovac
 
 # Lista de Estados de un arbitraje.
@@ -905,51 +905,34 @@ def update_rol_modal(request,id):
     # Obtenemos la instancia del usuario asovac a modificar y su mayor rol
     user= get_object_or_404(Usuario_asovac,id=id)
     user_role = user.biggest_role()
-    #print user_role, request_user_role, request.method
-    # Si el rol del usuario haciendo la petición es mayor en rango al del usuario a modificar y so este tiene un rol para modificar
-    # entonces se despliega en el modal el formulario de acuerdo a su mayor rol, de lo contrario
-    # solo se despliega la informacion de los roles del usuario.
-    if (request_user_role.id < user_role.id and request_user_role.id < 4) or (request_user.id is user.id):
-        if request.method == 'POST':
-            # user.save()
-            if request_user_role.id == 1:
-                form = AdminAssingRolForm(request.POST,instance = user)
-            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
-            # que posee todas las opciones menos "Administrador" y "Coord. General".
-            if request_user_role.id == 2:
-                form = CoordGeneralAssingRolForm(request.POST,instance = user)
-            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
-            # que posee todas las opciones menos "Administrador" y "Coord. General".
-            if request_user_role.id == 3:
-                form = CoordAreaAssingRolForm(request.POST,instance = user)
 
-            if form.is_valid():
-                form.save()
-                #print "Rol update post"
-                data['form_is_valid']= True
-                # users= User.objects.all()
-            users= Usuario_asovac.objects.all()
-            data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
-            # return redirect('users_list')
-        else:
-            #print "Rol update get"
-            form = None
-            # Si el usuario haciendo la petición es Administrador, se usa este formulario
-            # que posee todas las opciones menos "Administrador".
-            if request_user_role.id == 1:
-                form = AdminAssingRolForm(instance = user)
-            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
-            # que posee todas las opciones menos "Administrador" y "Coord. General".
-            if request_user_role.id == 2:
-                form = CoordGeneralAssingRolForm(instance = user)
-            # Si el usuario haciendo la petición es Coord. general, se usa este formulario
-            # que posee todas las opciones menos "Administrador" y "Coord. General".
-            if request_user_role.id == 3:
-                form = CoordAreaAssingRolForm(instance = user)
+    form = None
+    if request.method == 'POST':
+        # Este formulario tiene todas las opciones populadas de acuerdo al formulario enviado por POST.
+        form = form = AssingRolForm(request.POST, instance = user, max_role = 0)
+        if form.is_valid():
+            form.save()
+            data['form_is_valid']= True
+
+        users= Usuario_asovac.objects.all()
+        data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+
+    else:
+        if request_user.id is user.id and request_user_role.id < 4:
+            # Si el usuario haciendo la petición coincide con el usuario a ser editado:
+            # Se despliegan opciones de rol hasta su propio máximo rol.
+            form = AssingRolForm(instance = user, max_role = request_user_role.id - 1)
             context={'form': form, 'user':user}
             data['html_form']= render_to_string('ajax/rol_update.html',context, request=request)
-    else:
-        context={'user': user}
-        data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
-   
+        elif (request_user_role.id < user_role.id and request_user_role.id < 4):
+            # Si el rol del usuario haciendo la petición es mayor en rango al del usuario ser editado y este tiene un rol con permiso
+            # para modificar: Se despliegan opciones hasta el rol por debajo del mayor rol del usuario haciendo la peticion.
+            form = AssingRolForm(instance = user, max_role = request_user_role.id )
+            context={'form': form, 'user':user}
+            data['html_form']= render_to_string('ajax/rol_update.html',context, request=request)
+        else:
+            # Sino solo se despliega la informacion de los roles del usuario a modificar.
+            context={'user': user}
+            data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
+
     return JsonResponse(data)
