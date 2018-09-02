@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
+
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.forms import CheckboxSelectMultiple
 
 from .models import Sistema_asovac, Usuario_asovac, Rol
-from django.forms import CheckboxSelectMultiple
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 
 
 estados_arbitraje = (   (0,'Desactivado'),
@@ -97,32 +98,11 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-class AdminAssingRolForm(forms.ModelForm):
+class AssingRolForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(AdminAssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=1)
-        self.fields['rol'].required = True
-
-    class Meta:
-        model = Usuario_asovac
-        fields = ['rol']
-        widgets = {'rol': CheckboxSelectMultiple()}
-
-class CoordGeneralAssingRolForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(CoordGeneralAssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=2)
-        self.fields['rol'].required = True
-
-    class Meta:
-        model = Usuario_asovac
-        fields = ['rol']
-        widgets = {'rol': CheckboxSelectMultiple()}
-
-class CoordAreaAssingRolForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(CoordAreaAssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=3)
+        self.max_role = kwargs.pop('max_role')
+        super(AssingRolForm, self).__init__(*args, **kwargs)
+        self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
         self.fields['rol'].required = True
 
     class Meta:
