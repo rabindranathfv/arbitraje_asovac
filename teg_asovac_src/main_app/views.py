@@ -225,7 +225,6 @@ def home(request):
     # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
     arb_data = zip(arbitraje_data, state_strings, allow_entry_list)
 
-    print(arbitraje_data, state_strings, allow_entry_list)
     context = {
         'nombre_vista' : 'Home',
         'arb_data' : arb_data,
