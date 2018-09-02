@@ -64,8 +64,10 @@ def jobs_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
+    # request.session para almacenar el item seleccionado del sidebar
+    request.session['sidebar_item'] = "Trabajos"
 
+    rol_id=get_roles(request.user.id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     # Esta asignación debe realizarse a la hora de elegir el evento 
@@ -223,6 +225,17 @@ def trabajos_resultados_autor(request):
     return render(request,"trabajos_resultados_autor.html",context)
 
 # Ajax/para el uso de ventanas modales
+def query_filter(sidebar_item):
+    list_elem=""
+
+    if sidebar_item == "Trabajos":
+        list_elem= "trabajos"
+
+    if sidebar_item == "Autores":
+        list_elem="Autores"
+        
+    return list_elem
+
 
 # Se realiza el cambio de area y se pasan los parametros necesarios para filtrar contenido
 def show_areas_modal(request,id):
@@ -248,14 +261,13 @@ def show_areas_modal(request,id):
 
         # print area
         # print subarea
+        # print request.session['sidebar_item']
         # print (user_role.id)
 
         request.session['area']=request.POST['area_select']
         request.session['subarea']=request.POST['subarea_select']
 
         trabajos=Trabajo.objects.all().filter(area=area)
-        # print "Lista de trabajos filtrados"
-        # print trabajos
 
         data['form_is_valid']= True
         data['user_list']= render_to_string('ajax/dinamic_jobs_list.html',{'trabajos':trabajos},request=request)

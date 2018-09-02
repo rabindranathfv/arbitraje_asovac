@@ -43,6 +43,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify arbitration
     if not ( ((estado == 0 or estado == 8) and 2 in rol_id) or ((estado == 0 or estado == 8) and 3 in rol_id) or 4 in rol_id or 5 in rol_id):
         top_nav_options.append('arbitration')
+        top_nav_options.append('area/subarea')
     # verify result
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 in rol_id) or ((estado != 6 and estado != 8) and 3 in rol_id) or ((estado != 8 and estado != 6) and 4 in rol_id) or (estado != 6 and 5 in rol_id)):
         top_nav_options.append('result')
@@ -569,7 +570,7 @@ def users_list(request, arbitraje_id):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items = validate_rol_status(estado,rol_id,item_active)
+    items = validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
     route_conf = get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
