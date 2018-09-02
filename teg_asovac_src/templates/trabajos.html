@@ -43,7 +43,7 @@
                                  </tr>
                                </thead>
                                <tbody>
-                                  {% for trabajo in trabajos%}
+                                  {% for trabajo in trabajos %}
                                    <tr>
                                       <td>{{ trabajo.trabajo.titulo_espanol }}</td>
                                       <td>{{ trabajo.trabajo.area }}</td>
@@ -77,6 +77,24 @@
                                </tbody>
                              </table>
                            <!-- End table  -->
+                          <div class="pagination">
+                            <span class="step-links">
+                                {% if trabajos.has_previous %}
+                                    <a href="?page={{ trabajos.previous_page_number }}">previous</a>
+                                {% endif %}
+
+                                <span class="current">
+                                    Page {{ trabajos.number }} of {{ trabajos.paginator.num_pages }}.
+                                </span>
+
+                                {% if trabajos.has_next %}
+                                    <a href="?page={{ trabajos.next_page_number }}">next</a>
+                                {% endif %}
+                            </span>
+                          </div>
+
+
+
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>

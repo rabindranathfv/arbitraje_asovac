@@ -49,15 +49,25 @@ def trabajos(request):
             #Código para crear una instancia de Autores_trabajos
             new_trabajo = Trabajo.objects.latest('id')
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
-            #autor_trabajo.sistema_asovac = sistema_asovac
             autor_trabajo.save()
 
 
 
-    trabajos = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
+    trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
-    for trabajo in trabajos:
-        print(trabajo.trabajo.titulo_espanol)
+#   for trabajo in trabajos:
+#       print(trabajo.trabajo.titulo_espanol)
+    paginator = Paginator(trabajos_list, 10) #Muestra 10 trabajos por página
+
+    page = request.GET.get('page')
+
+    try:
+        trabajos = paginator.page(page)
+    except PageNotAnInteger:
+        #Si la página no es un entero, retorna la primera página
+        trabajos = paginator.page(1)
+    except EmptyPage:
+        trabajos = paginator.page(paginator.num_pages)
 
 
     form = TrabajoForm()
@@ -76,7 +86,7 @@ def trabajos(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'trabajos':trabajos,
+        'trabajos': trabajos,
     }
     return render(request,"trabajos.html",context)
 
