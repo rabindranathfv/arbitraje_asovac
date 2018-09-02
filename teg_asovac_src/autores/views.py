@@ -122,10 +122,10 @@ def postular_trabajo(request):
 	event_id = request.session['arbitraje_id']
 	
 	item_active = 0
-	items=validate_rol_status(estado,rol_id,item_active, event_id)
+	items = validate_rol_status(estado,rol_id,item_active)
 
-	route_conf= get_route_configuracion(estado,rol_id, event_id)
-	route_seg= get_route_seguimiento(estado,rol_id)
+	route_conf = get_route_configuracion(estado,rol_id)
+	route_seg = get_route_seguimiento(estado,rol_id)
 	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 	route_resultados = get_route_resultados(estado,rol_id, event_id)
@@ -167,10 +167,10 @@ def postular_trabajo_pagador(request):
 	event_id = request.session['arbitraje_id']
 	
 	item_active = 0
-	items=validate_rol_status(estado,rol_id,item_active, event_id)
+	items =validate_rol_status(estado,rol_id,item_active, event_id)
 
-	route_conf= get_route_configuracion(estado,rol_id, event_id)
-	route_seg= get_route_seguimiento(estado,rol_id)
+	route_conf = get_route_configuracion(estado,rol_id, event_id)
+	route_seg = get_route_seguimiento(estado,rol_id)
 	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
 	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
 	route_resultados = get_route_resultados(estado,rol_id, event_id)

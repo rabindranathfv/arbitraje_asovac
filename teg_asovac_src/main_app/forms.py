@@ -27,7 +27,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model= User
-        fields=['username','first_name','last_name','email',]
+        fields = ['username','first_name','last_name','email',]
 
 
 class MyLoginForm(forms.Form):
@@ -43,10 +43,10 @@ class MyLoginForm(forms.Form):
        self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))
 
 class DataBasicForm(forms.Form):
-    name_arbitration= forms.CharField(label="Nombre arbitraje", max_length=20)
-    description= forms.CharField(label="Descripción", max_length=255)
-    start_date= forms.DateField(label="Fecha de inicio")
-    end_date= forms.DateField(label="Fecha de fin")
+    name_arbitration = forms.CharField(label="Nombre arbitraje", max_length=20)
+    description = forms.CharField(label="Descripción", max_length=255)
+    start_date = forms.DateField(label="Fecha de inicio")
+    end_date = forms.DateField(label="Fecha de fin")
         
         # super(MyLoginForm, self).__init__(*args, **kwargs)
         # self.helper = FormHelper()
