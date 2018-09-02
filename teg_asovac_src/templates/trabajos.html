@@ -43,71 +43,37 @@
                                  </tr>
                                </thead>
                                <tbody>
-                                 <tr>
-                                    <td>Este es un T&iacute;tulo</td>
-                                    <td>Computaci&oacute;n</td>
-                                    <td>Computaci&oacute;n001</td>
-                                    <td>
-                                        Rabindranath Ferreira
-                                    </td>
-                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
-                                    <td class="col-sm-1">2.0</td>
-                                    <td class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button" title="Ver trabajo">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </td>
-                                 </tr>
-
-                                 <tr>
-                                    <td>Un título interesante</td>
-                                    <td>Biología</td>
-                                    <td>Animales</td>
-                                    <td>
-                                        Fulanito Zambrano
-                                    </td>
-                                    <td><span class="label label-warning lb-md center-block">Pendiente</span></td>
-                                    <td class="col-sm-1">1.0</td>
-                                    <td class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button" title="Ver trabajo">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </td>
-                                  </tr>
-                                 
-                                  <tr>
-                                    <td>Funciones Diferenciales</td>
-                                    <td>Matemática</td>
-                                    <td>Cálculo</td>
-                                    <td>
-                                        Rodrigo Montoya
-                                    </td>
-                                    <td><span class="label label-danger lb-md center-block">Rechazado</span></td>
-                                    <td class="col-sm-1">1.0</td>
-                                    <td class="col-sm-1 text-center">
-                                        <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button" title="Ver trabajo">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </td>
-                                  </tr>                
+                                  {% for trabajo in trabajos%}
+                                   <tr>
+                                      <td>{{ trabajo.trabajo.titulo_espanol }}</td>
+                                      <td>{{ trabajo.trabajo.area }}</td>
+                                      <td>{{ trabajo.trabajo.subarea1 }}</td>
+                                      <td>
+                                          {{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
+                                      </td>
+                                      <td>
+                                        {% if trabajo.trabajo.estatus == "Pendiente" %}
+                                          <span class="label label-warning lb-md center-block">Pendiente</span>
+                                        {% elif trabajo.trabajo.estatus == "Aprobado" %}
+                                          <span class="label label-success lb-md center-block">Aprobado</span>
+                                        {% elif trabajo.trabajo.estatus == "Rechazado" %}
+                                          <span class="label label-danger lb-md center-block">Rechazado</span>
+                                        {% endif %}
+                                      </td>
+                                      <td class="col-sm-1">2.0</td>
+                                      <td class="col-sm-1 text-center">
+                                          <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                              <i class="fas fa-edit"></i>
+                                          </a>
+                                          <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
+                                              <i class="fas fa-times"></i>
+                                          </a>
+                                          <a href="" class="btn btn-info" role="button" title="Ver trabajo">
+                                              <i class="fas fa-door-open"></i>
+                                          </a>
+                                      </td>
+                                   </tr>
+                                   {% endfor %}              
                                </tbody>
                              </table>
                            <!-- End table  -->

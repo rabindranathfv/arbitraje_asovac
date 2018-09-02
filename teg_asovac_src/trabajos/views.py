@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Trabajo
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
@@ -34,6 +35,11 @@ def trabajos(request):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, event_id)
 
+
+    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    autor = Autor.objects.get(usuario = usuario_asovac)
+    sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
@@ -42,14 +48,18 @@ def trabajos(request):
 
             #Código para crear una instancia de Autores_trabajos
             new_trabajo = Trabajo.objects.latest('id')
-            usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-            autor = Autor.objects.get(usuario = usuario_asovac)
-            sistema_asovac = Sistema_asovac.objects.get(id = event_id)
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
             #autor_trabajo.sistema_asovac = sistema_asovac
             autor_trabajo.save()
 
-            
+
+
+    trabajos = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
+
+    for trabajo in trabajos:
+        print(trabajo.trabajo.titulo_espanol)
+
+
     form = TrabajoForm()
 
     context = {
@@ -66,6 +76,7 @@ def trabajos(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'trabajos':trabajos,
     }
     return render(request,"trabajos.html",context)
 

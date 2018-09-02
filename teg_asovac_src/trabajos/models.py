@@ -28,6 +28,8 @@ class Trabajo(models.Model):
 	# autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
 
+
+	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=40)
 	titulo_ingles = models.CharField(max_length=40, blank = True)
 	palabras_clave = models.CharField(max_length=40, blank = True)
@@ -54,7 +56,7 @@ class Detalle_version_final(models.Model):
 	arbitraje = models.OneToOneField('arbitrajes.Arbitraje', blank = True)
 	trabajo = models.OneToOneField(Trabajo, on_delete = models.CASCADE)
 
-	estatus = models.CharField(max_length=20)
+	estatus_final = models.CharField(max_length=20)
 	observaciones = models.TextField(max_length=255, blank = True)
 	se_recibio_version_final_corregida = models.BooleanField(default=False)
 	url_version_final_trabajo = models.CharField(max_length=35, blank = True)
