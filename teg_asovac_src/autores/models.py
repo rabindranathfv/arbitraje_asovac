@@ -45,7 +45,7 @@ class Autor(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombres#.encode('utf-8', errors='replace')
 
 
 
@@ -56,15 +56,16 @@ class Autores_trabajos(models.Model):
 	
 	autor = models.ForeignKey(Autor, on_delete = models.CASCADE)
 	trabajo = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
+	sistema_asovac = models.ForeignKey('main_app.Sistema_asovac')
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
 	es_coautor = models.BooleanField(default=False)
-	monto_total = models.FloatField()
+	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{}".format(self.autor.nombre)#.encode('utf-8', errors='replace')
+		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""

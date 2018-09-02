@@ -5,7 +5,10 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
 
+from .models import Trabajo
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from autores.models import Autor, Autores_trabajos
+
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from .forms import TrabajoForm
@@ -32,6 +35,22 @@ def trabajos(request):
     route_resultados = get_route_resultados(estado,rol_id, event_id)
 
     # print items
+    if request.method =='POST':
+        form = TrabajoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+
+            #Código para crear una instancia de Autores_trabajos
+            new_trabajo = Trabajo.objects.latest('id')
+            usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+            autor = Autor.objects.get(usuario = usuario_asovac)
+            sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+            autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
+            #autor_trabajo.sistema_asovac = sistema_asovac
+            autor_trabajo.save()
+
+            
+    form = TrabajoForm()
 
     context = {
         "nombre_vista": 'Autores',
