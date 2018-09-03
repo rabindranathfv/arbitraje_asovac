@@ -46,20 +46,25 @@
                                    <th>Institución</th>
                                    <th>Capitulo Asovac</th>
                                    <th>Mienbro Asovac</th> 
-                                   <th>Acciones</th>                                  
+                                   <th class="text-center">Acciones</th>                                  
                                  </tr>
                                </thead>
                                <tbody>
                                 
                                     {% for org_data in organizer_data %}
                                     <tr>
-                                    <td>{{ org_data.nombres }}</td>
-                                    <td>{{ org_data.apellidos }}</td>
-                                    <td>{{ org_data.correo_electronico }}</td>
-                                    <td>{{ org_data.institucion }}</td>
-                                    <td>{{ org_data.capitulo_asovac }}</td>
-                                    <td>{{ org_data.es_mienbro_asovac }}</td>
-                                    <td>
+                                    <td class="text-center">{{ org_data.nombres }}</td>
+                                    <td class="text-center">{{ org_data.apellidos }}</td>
+                                    <td class="text-center">{{ org_data.correo_electronico }}</td>
+                                    <td class="text-center">{{ org_data.institucion }}</td>
+                                    <td class="text-center">{{ org_data.capitulo_asovac }}</td>
+                                    {% if org_data.es_mienbro_asovac %}
+                                      <td class="text-center">Si</td>
+                                    {% else %}
+                                        <td class="text-center">No</td>
+                                    {% endif %}
+                                    
+                                    <td class="text-center">
                                             <a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
                                                 <i class="fas fa-edit"></i>
                                             </a>

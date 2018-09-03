@@ -133,39 +133,45 @@ def organizer_create(request):
             form.save(commit=False)
             #lIMPIANDO DATA
             form.nombres = form.clean_names()
-            apellidos = form.clean_lastnames()
-            genero = form.clean_gender()
+            form.apellidos = form.clean_lastnames()
+            form.genero = form.clean_gender()
 
-            print(genero)
-            cedula_o_pasaporte = form.clean_cedula_pass()
-            correo_electronico = form.clean_email()
-            institucion = form.clean_institution()
-            telefono_oficina = form.clean_phone_office()
-            telefono_habitacion_celular = form.clean_phone_personal()
-            direccion_correspondencia = form.clean_address()
-            es_miembro_asovac = form.clean_asovac_menber()
-            print(es_miembro_asovac)
-            capitulo_asovac = form.clean_cap_asovac()
-            cargo_en_institucion = form.clean_position_institution()
-            url_organizador = form.clean_url_organizer()
-            observaciones = form.clean_observations()
-            usuario_asovac = form.clean_user_asovac()   
-            print(usuario_asovac)
+            #print(form.genero)
+            form.cedula_o_pasaporte = form.clean_cedula_pass()
+            form.correo_electronico = form.clean_email()
+            form.institucion = form.clean_institution()
+            form.telefono_oficina = form.clean_phone_office()
+            form.telefono_habitacion_celular = form.clean_phone_personal()
+            form.direccion_correspondencia = form.clean_address()
+            form.es_miembro_asovac = form.clean_asovac_menber()
+            #print(form.es_miembro_asovac)
+            form.capitulo_asovac = form.clean_cap_asovac()
+            form.cargo_en_institucion = form.clean_position_institution()
+            form.url_organizador = form.clean_url_organizer()
+            form.observaciones = form.clean_observations()
+            form.usuario_asovac = form.clean_user_asovac()   
+            #print(form.usuario_asovac)
 
             print("El form es valido y se guardo satisfactoriamente")
+            form.save()
             organizer_data = Organizador.objects.all()
+            print(organizer_data)
             context = {        
                 'username' : request.user.username,
                 'form' : form,
                 'org_data': organizer_data,
-                #'verify_event_app' : verify_event_app(),
                 }
-            return redirect(reverse('eventos:organizer_list'), context) 
+            return redirect(reverse('eventos:organizer_list')) 
     return render(request, 'eventos_organizer_create.html',context)
 
 def organizer_list(request):
-
-    return render(request, 'eventos_organizer_list.html', context={})
+    organizer_data = Organizador.objects.all()
+    print(organizer_data)
+    context = {        
+                'username' : request.user.username,
+                'organizer_data': organizer_data,
+                }
+    return render(request, 'eventos_organizer_list.html', context)
 
 def organizer_edit(request):
 
