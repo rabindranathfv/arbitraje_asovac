@@ -66,32 +66,33 @@ def event_create(request):
         'secondary_navbar_options' : secondary_navbar_options,
     }
     if request.method == 'POST':
-        form = CreateOrganizerForm(request.POST or None)
+        form = CreateEventForm(request.POST or None)
         if form.is_valid():
             form.save(commit=False)
             #Limpiando la data
-            nombre = form.cleaned_data['nombre']
-            categoria = form.cleaned_data['categoria']
-            descripcion = form.cleaned_data['descripcion']
-            tipo = form.cleaned_data['tipo']
-            fecha_inicio = form.cleaned_data['fecha_inicio']
-            print(fecha_inicio)
-            fecha_fin = form.cleaned_data['fecha_fin']
-            print(fecha_fin)
-            dia_asignado = form.cleaned_data['dia_asignado']
-            duracion = form.cleaned_data['duracion']
-            horario_preferido = form.cleaned_data['horario_preferido']
-            fecha_preferida = form.cleaned_data['fecha_preferida']
-            print(fecha_preferida)
-            observaciones = form.cleaned_data['observaciones']
-            url_anuncio_evento = form.cleaned_data['url_anuncio_evento']
-            organizador_id = form.cleaned_data['organizador_id']
-            print(type(organizador_id))
-            print(organizador_id)
-            locacion_evento = form.cleaned_data['locacion_evento']
-            print(type(locacion_evento))
-            print(locacion_evento)           
-            #print(form)
+            form.nombre = form.clean_name()
+            form.categoria = form.clean_category()
+            form.descripcion = form.clean_description()
+            form.tipo = form.clean_type()
+            form.fecha_inicio = form.clean_start_date()
+            print(form.fecha_inicio)
+            form.fecha_fin = form.clean_end_date()
+            print(form.fecha_fin)
+            form.dia_asignado = form.clean_day()
+            form.duracion = form.clean_duration()
+            form.horario_preferido = form.clean_preffer_hour
+            form.fecha_preferida = form.clean_preffer_date
+            print(form.fecha_preferida)
+            form.observaciones = form.clean_observations()
+            form.url_anuncio_evento = form.clean_url_event
+            form.organizador_id = form.clean_organizer_id()
+            #print(form.type(organizador_id))
+            print(form.organizador_id)
+            form.locacion_evento = form.clean_locacion_evento()
+            #print(type(locacion_evento))
+            print(form.locacion_evento)           
+            form.save()
+            print("se creo un evento NUEVO")
             organizer_data = Organizador.objects.all()
             context = {        
                 'username' : request.user.username,
@@ -154,18 +155,14 @@ def organizer_create(request):
 
             print("El form es valido y se guardo satisfactoriamente")
             form.save()
-            organizer_data = Organizador.objects.all()
-            print(organizer_data)
-            context = {        
-                'username' : request.user.username,
-                'form' : form,
-                'org_data': organizer_data,
-                }
             return redirect(reverse('eventos:organizer_list')) 
     return render(request, 'eventos_organizer_create.html',context)
 
 def organizer_list(request):
     organizer_data = Organizador.objects.all()
+    for org_data in organizer_data:
+        print(org_data.nombres)
+        #print(org_data.es_mienbro_asovac)
     print(organizer_data)
     context = {        
                 'username' : request.user.username,

@@ -46,7 +46,7 @@
                                    <th>Institución</th>
                                    <th>Capitulo Asovac</th>
                                    <th>Mienbro Asovac</th> 
-                                   <th class="text-center">Acciones</th>                                  
+                                   <th>Acciones</th>                                  
                                  </tr>
                                </thead>
                                <tbody>
@@ -58,12 +58,11 @@
                                     <td class="text-center">{{ org_data.correo_electronico }}</td>
                                     <td class="text-center">{{ org_data.institucion }}</td>
                                     <td class="text-center">{{ org_data.capitulo_asovac }}</td>
-                                    {% if org_data.es_mienbro_asovac %}
+                                    {% if org_data.es_miembro_asovac %}
                                       <td class="text-center">Si</td>
                                     {% else %}
                                         <td class="text-center">No</td>
                                     {% endif %}
-                                    
                                     <td class="text-center">
                                             <a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
                                                 <i class="fas fa-edit"></i>
