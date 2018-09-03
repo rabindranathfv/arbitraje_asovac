@@ -29,4 +29,10 @@ urlpatterns = [
     url(r'^editar-organizador/$',views.organizer_edit,name='organizer_edit'),
     url(r'^eliminar-organizador/$',views.organizer_delete,name='organizer_delete'),
     url(r'^detalles-organizador/$',views.organizer_detail,name='organizer_detail'),
+
+    url(r'^crear-locacion-evento/$',views.event_place_create,name='event_place_create'),
+    url(r'^listar-locaciones/$',views.event_place_list,name='event_place_list'),
+    url(r'^editar-locacion/$',views.event_place_edit,name='event_place_edit'),
+    url(r'^eliminar-locacion/$',views.event_place_delete,name='event_place_delete'),
+    url(r'^detalles-locacion/$',views.event_place_detail,name='event_place_detail'),
 ]

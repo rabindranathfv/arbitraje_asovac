@@ -53,11 +53,8 @@ def event_create(request):
 
 def event_list(request):
     event_data = Evento.objects.all().order_by('-id')
-    for data in event_data:
-        print("nombre " + data.nombre)
-        print("categoria " + data.categoria)
-        print("desc " + data.descripcion)
-        print("tipo " + data.tipo)
+    #for data in event_data:
+        #print("nombre " + data.nombre)
     context = {
         'nombre_vista' : 'Eventos',
         'username': request.user.username,
@@ -81,6 +78,8 @@ def event_delete(request):
 def event_detail(request):
     
     return render(request, 'eventos_event_detail.html',context={})  
+
+##################### Organizer Views ###########################
 
 def organizer_create(request):
     form = CreateOrganizerForm()
@@ -138,3 +137,29 @@ def organizer_delete(request):
 def organizer_detail(request):
     
     return render(request, 'eventos_organizer_detail.html',context={})
+
+##################### Locacion Views ###########################
+
+def event_place_create(request):
+
+    return render(request, 'eventos_locacion_create.html', context={})
+
+def event_place_list(request):
+    event_place_data = Locacion_evento.objects.all().order_by('id')
+    context = {        
+                'username' : request.user.username,
+                'event_place_data': event_place_data,
+                }
+    return render(request, 'eventos_locacion_list.html', context)
+
+def event_place_edit(request):
+    
+    return render(request, 'eventos_locacion_edit.html', context={})
+
+def event_place_delete(request):
+    
+    return render(request, 'eventos_locacion_delete.html', context={})
+
+def event_place_detail(request):
+    
+    return render(request, 'eventos_locacion_detail.html', context={})
