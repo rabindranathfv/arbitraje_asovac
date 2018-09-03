@@ -16,11 +16,57 @@ from .models import Organizador,Organizador_evento,Evento,Locacion_evento
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
-def event_list(request):
+def event_create(request):
+    form = CreateEventForm()
 
+    context = {
+        'username' : request.user.username,
+        'form' : form,
+    }
+    if request.method == 'POST':
+        form = CreateEventForm(request.POST or None)
+        if form.is_valid():
+            form.save(commit=False)
+            #lIMPIANDO DATA
+            form.nombre = form.clean_name()
+            form.categoria = form.clean_category()
+            form.descripcion = form.clean_description()
+            form.tipo = form.clean_type()
+            form.fecha_inicio = form.clean_start_date()
+            print(form.fecha_inicio)
+
+            form.fecha_fin = form.clean_end_date()
+            print(form.fecha_fin)
+            form.dia_asignado = form.clean_day()
+            form.duracion = form.clean_duration()
+            form.horario_preferido = form.clean_preffer_hour()
+            form.fecha_preferida = form.clean_preffer_date()
+            print(form.fecha_preferida)
+
+            form.observaciones = form.clean_observations()
+            form.url_anuncio_evento = form.clean_url_event()
+            form.organizador_id = form.clean_organizer_id()
+            print(form.organizador_id)
+
+            form.locacion_evento = form.clean_locacion_evento()
+            print(form.locacion_evento)
+
+            print("El form es valido y se guardo satisfactoriamente el EVENTO")
+            form.save()
+            return redirect(reverse('eventos:event_list')) 
+    return render(request, 'eventos_event_create.html',context)
+
+def event_list(request):
+    event_data = Evento.objects.all().order_by('-id')
+    for data in event_data:
+        print("nombre " + data.nombre)
+        print("categoria " + data.categoria)
+        print("desc " + data.descripcion)
+        print("tipo " + data.tipo)
     context = {
         'nombre_vista' : 'Eventos',
         'username': request.user.username,
+        'event_data': event_data,
     }
     return render(request, 'eventos_event_list.html', context)
 
@@ -32,54 +78,6 @@ def event_edit(request):
         'username': request.user.username,
     }
     return render(request, 'eventos_event_edit.html', context)
-
-def event_create(request):
-    
-    form = CreateEventForm()
-
-    context = {
-        'username' : request.user.username,
-        'form' : form,
-    }
-    if request.method == 'POST':
-        form = CreateEventForm(request.POST or None)
-        if form.is_valid():
-            form.save(commit=False)
-            #Limpiando la data
-            form.nombre = form.clean_name()
-            form.categoria = form.clean_category()
-            form.descripcion = form.clean_description()
-            form.tipo = form.clean_type()
-            form.fecha_inicio = form.clean_start_date()
-            print(form.fecha_inicio)
-            form.fecha_fin = form.clean_end_date()
-            print(form.fecha_fin)
-            form.dia_asignado = form.clean_day()
-            form.duracion = form.clean_duration()
-            form.horario_preferido = form.clean_preffer_hour
-            form.fecha_preferida = form.clean_preffer_date
-            print(form.fecha_preferida)
-            form.observaciones = form.clean_observations()
-            form.url_anuncio_evento = form.clean_url_event
-            form.organizador_id = form.clean_organizer_id()
-            #print(form.type(organizador_id))
-            print(form.organizador_id)
-            form.locacion_evento = form.clean_locacion_evento()
-            #print(type(locacion_evento))
-            print(form.locacion_evento)           
-            form.save()
-            print("se creo un evento NUEVO")
-            organizer_data = Organizador.objects.all()
-            context = {        
-                'username' : request.user.username,
-                'form' : form,
-                'org_data': organizer_data,
-                'main_navbar_options' : main_navbar_options,
-                'secondary_navbar_options' : secondary_navbar_options,
-                #'verify_event_app' : verify_event_app(),
-                }
-            return redirect(reverse('eventos:event_list'), context) 
-    return render(request,'eventos_event_create.html', context)
 
 def event_delete(request):
     
