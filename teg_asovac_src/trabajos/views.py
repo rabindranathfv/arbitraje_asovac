@@ -3,8 +3,9 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 
 from .models import Trabajo
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
@@ -12,7 +13,7 @@ from autores.models import Autor, Autores_trabajos
 
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
-from .forms import TrabajoForm
+from .forms import TrabajoForm, EditTrabajoForm
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
     form = TrabajoForm()
@@ -168,13 +169,58 @@ def jobs_edit(request):
    
 
 # Vista para editar trabajos
-def edit_trabajo(request):
-	form = TrabajoForm()
-	context = {
-		"nombre_vista": 'Editar Trabajo',
-		"form": form,
+def edit_trabajo(request, trabajo_id):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    rol_id=get_roles(request.user.id)
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    # print items
+    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    autor = Autor.objects.get(usuario = usuario_asovac)
+    trabajo = Trabajo.objects.get( id = trabajo_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
+
+      
+    if request.method == 'POST':
+        form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
+        form.save()
+        messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
+        return redirect('trabajos:trabajos')
+    else: 
+        form = EditTrabajoForm(instance = autor_trabajo.trabajo)
+
+
+    context = {
+        'nombre_vista' : 'Editar Trabajo',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'form':form,
     }
-	return render(request,"trabajos_edit_trabajo.html",context)
+    return render(request,"trabajos_edit_trabajo.html",context)
 
 #Vista donde aparecen los trabajos evaluados
 def trabajos_evaluados(request):
