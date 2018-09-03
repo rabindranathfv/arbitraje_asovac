@@ -33,10 +33,10 @@
                            <table class="table table-bordered">
                                <thead>
                                  <tr>
-                                    <th class="col-sm-3">T&iacute;tulo</th>
-                                    <th class="col-sm-1">&Aacute;rea</th>
-                                    <th class="col-sm-1">Subárea</th>
-                                    <th class="col-sm-1">Autor(es)</th>
+                                    <th class="col-sm-2">T&iacute;tulo</th>
+                                    <th class="col-sm-2">&Aacute;rea</th>
+                                    <th class="col-sm-2">Subárea</th>
+                                    <th class="col-sm-2">Autor(es)</th>
                                     <th class="col-sm-1">Estatus</th>
                                     <th class="col-sm-1">Versi&oacute;n</th>
                                     <th class="col-sm-2">Acciones</th>
@@ -62,12 +62,15 @@
                                       </td>
                                       <td class="col-sm-1">2.0</td>
                                       <td class="col-sm-1 text-center">
+                                          
+                                      {% if trabajo.monto_total != 0 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado -->
                                           <a href="{% url 'trabajos:edit_trabajo' %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
                                               <i class="fas fa-edit"></i>
                                           </a>
                                           <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
                                               <i class="fas fa-times"></i>
                                           </a>
+                                      {% endif %}
                                           <a href="" class="btn btn-info" role="button" title="Ver trabajo">
                                               <i class="fas fa-door-open"></i>
                                           </a>
@@ -125,22 +128,22 @@
         </div>
 </div>
 
-<!-- Modal Postular Trabajo-->
+<!-- Modal Crear Trabajo-->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Postular Trabajo</h5>
+        <h3 class="modal-title" id="ModalLongTitle">Crear Trabajo</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body text-center content-modal">
-        ¿Está seguro que desea postular el trabajo?
+        ¿Está seguro que desea crear el trabajo?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-success">Postular</button>
+        <button type="submit" class="btn btn-primary btn-success">Crear</button>
       </div>
     </div>
   </div>
