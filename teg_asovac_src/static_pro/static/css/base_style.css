@@ -285,9 +285,11 @@ body {
     margin-bottom: 10px;
 }
 
-/*================= Login content box =================*/
-.login-content {
-    min-height: calc(100vh - 130px);
+/*================= Min height content box =================*/
+/* Esta regla se usa para mantener al footer pegado a la parte inferior de la página
+incluso cuando el contenido de la página es muy corto */
+.min-height-content {
+    min-height: calc(100vh - 120px);
     padding-top: 40px;
 }
 
@@ -332,6 +334,10 @@ body {
 /*================= Defined margin classes =================*/
 .top-margin-18{
     margin-top: 18px;
+}
+
+.top-margin-6{
+    margin-top: 6px;
 }
 
 .top-margin-128{

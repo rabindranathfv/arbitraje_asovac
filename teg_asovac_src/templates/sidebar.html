@@ -1,202 +1,201 @@
-<!-- Sidebar -->
- <nav id="sidebar-wrapper">
-  	<ul class="sidebar-nav">
-    	<li class="sidebar-brand">
-      		<a href="#">
-        
-      		</a>
-    	</li>
-        {% if "general_config" in items.sidebar_options %}
-            <li>
-                <div class="dropdown">
-                    <a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
-                    <ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
-                        {% if "basic_data" in items.sidebar_options %}
-                            <li>
-                                <a href="{% url 'main_app:data_basic' arbitraje_id %}">
-                                    Datos básicos
-                                </a>
-                            </li>
-                        {% endif %} 
+<nav id="sidebar-wrapper">
+	<ul class="sidebar-nav">
+		<li class="sidebar-brand">
+			<strong><a href="{% url 'main_app:dashboard' arbitraje_id %}">
+				<i class="fas fa-list-alt"></i> Panel Principal
+			</a></strong>
+		</li>
+		{% if "general_config" in items.sidebar_options %}
+		<li>
+			<div class="dropdown">
+				<a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
+				<ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
+					{% if "basic_data" in items.sidebar_options %}
+					<li>
+						<a href="{% url 'main_app:data_basic' arbitraje_id %}">
+							Datos básicos
+						</a>
+					</li>
+					{% endif %} 
 
-                        {% if "arbitration_state" in items.sidebar_options %}
-                            <li>
-                                <a href="{% url 'main_app:arbitration_state' arbitraje_id %}">
-                                    Estado arbitraje
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </li>
+					{% if "arbitration_state" in items.sidebar_options %}
+					<li>
+						<a href="{% url 'main_app:arbitration_state' arbitraje_id %}">
+							Estado arbitraje
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+			</div>
+		</li>
 		{% endif %}
 
 		{% if "users" in items.sidebar_options %}
+		<li>
+			<div class="dropdown">
+				<a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Usuarios<i class="fas fa-angle-right"></i></a>
+				<ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
+					<li>
+						<a href="{% url 'main_app:users_list' arbitraje_id %}">
+							Lista de usuarios
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'main_app:user_roles' arbitraje_id %}">
+							Acceso de usuarios
+						</a>
+					</li>
+
+					{% if "assing_general_coordinator" in items.sidebar_options %}
+					<li>
+						<a href="{% url 'main_app:coord_general' arbitraje_id %}">
+							Asignar coordinador general
+						</a>
+					</li>
+					{% endif %}
+
+					{% if "assing_area_coordinator" in items.sidebar_options %}
+					<li>
+						<a href="{% url 'main_app:coord_area' arbitraje_id %}">
+							Asignar coordinador de área
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+			</div>
+		</li>
+		{% endif %}
+
+		{% if "resources" in items.sidebar_options %}
+		<li>
+			<div class="dropdown">
+				<a href="#resources-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Recursos<i class="fas fa-angle-right"></i></a>
+				<ul class="collapse list-unstyled sidebar-submenu" id="resources-submenu">
+					<li>
+						<a href="{% url 'recursos:resources_author' %}">
+							Autores
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'recursos:resources_referee' %}">
+							Arbitros
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'recursos:resources_event' %}">
+							Eventos
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'recursos:resources_arbitration' %}">
+							Arbitraje
+						</a>
+					</li>
+					<li>
+						<a href="{% url 'recursos:resources_sesion' %}">
+							Sesión
+						</a>
+
+					</li>
+					<li>
+						<a href="{% url 'recursos:resources_asovac' %}">
+							AsoVAC
+						</a>
+					</li>
+				</ul>
+			</div>
+		</li>
+		{% endif %}
+
+		{% if "areas_subareas" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'arbitrajes:arbitrations_areas_subareas' %}">
+				Areas y Subáreas
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "authors" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'autores:authors_list' %}">
+				Autores
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "arbiters" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'arbitrajes:referee_list' %}">
+				Arbitros
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "assing_session" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
+				Asignacion de Sesión
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "jobs" in items.sidebar_options %}
+		<li>
+			<a href="{{ route_trabajos_sidebar }}">
+				Trabajos
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "session_arbitration" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'sesiones:sesions_list' %}">
+				Lista de sesion de arbitraje
+			</a>
+		</li>
+		{% endif %}
+
+		{% if "arbitrations" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'arbitrajes:listado' %}">
+				Arbitrajes
+			</a>
+		</li>
+		{% endif %}
+		<!-- 
+		{% if trabajo_sidebar == 1 %}
+		<li>
+		<a href="{% url 'trabajos:trabajos' %}">
+		Crear Trabajo
+		</a>
+		</li>
+		<li>
+		<a href="{% url 'autores:postular_trabajo' %}">
+		Postular Trabajo
+		</a>
+		</li>
+		{% endif %}
+		-->
+		{% if "events" in items.sidebar_options %}
+		<li>
+			<a href="{% url 'eventos:event_create' %}">
+				Organizar evento
+			</a>
+		</li>
+
+			{% if "event_space" in items.sidebar_options %}
 			<li>
-                <div class="dropdown">
-                    <a href="#services-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Usuarios<i class="fas fa-angle-right"></i></a>
-                    <ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
-                        <li>
-                            <a href="{% url 'main_app:users_list' arbitraje_id %}">
-                                Lista de usuarios
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'main_app:user_roles' arbitraje_id %}">
-                                Acceso de usuarios
-                            </a>
-                        </li>
+				<a href="{% url 'sesiones:sesions_space_list' %}">
+					Espacio
+				</a>
+			</li>
+			{% endif %}
 
-                        {% if "assing_general_coordinator" in items.sidebar_options %}
-	                        <li>
-                                <a href="{% url 'main_app:coord_general' arbitraje_id %}">
-                                    Asignar coordinador general
-                                </a>
-	                        </li>
-                        {% endif %}
-
-                        {% if "assing_area_coordinator" in items.sidebar_options %}
-                            <li>
-                                <a href="{% url 'main_app:coord_area' arbitraje_id %}">
-                                    Asignar coordinador de área
-                                </a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </li>
-        {% endif %}
-
-        {% if "resources" in items.sidebar_options %}
-        	<li>
-                <div class="dropdown">
-                    <a href="#resources-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Recursos<i class="fas fa-angle-right"></i></a>
-                    <ul class="collapse list-unstyled sidebar-submenu" id="resources-submenu">
-                        <li>
-                            <a href="{% url 'recursos:resources_author' %}">
-                                Autores
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'recursos:resources_referee' %}">
-                                Arbitros
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'recursos:resources_event' %}">
-                                Eventos
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'recursos:resources_arbitration' %}">
-                                Arbitraje
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'recursos:resources_sesion' %}">
-                                Sesión
-                            </a>
-
-                        </li>
-                        <li>
-                            <a href="{% url 'recursos:resources_asovac' %}">
-                                AsoVAC
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        {% endif %}
-
-        {% if "areas_subareas" in items.sidebar_options %}
-        	<li>
-                <a href="{% url 'arbitrajes:arbitrations_areas_subareas' %}">
-                    Areas y Subáreas
-                </a>
-            </li>
-        {% endif %}
-
-        {% if "authors" in items.sidebar_options %}
-	        <li>
-                <a href="{% url 'autores:authors_list' %}">
-                    Autores
-                </a>
-	        </li>
-	    {% endif %}
-	        
-	    {% if "arbiters" in items.sidebar_options %}
-	        <li>
-                <a href="{% url 'arbitrajes:referee_list' %}">
-                    Arbitros
-                </a>
-	        </li>
-	    {% endif %}
-
-        {% if "assing_session" in items.sidebar_options %}
-            <li>
-                <a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
-                    Asignacion de Sesión
-                </a>
-            </li>
-        {% endif %}
-
-        {% if "jobs" in items.sidebar_options %}
-            <li>
-                <a href="{{ route_trabajos_sidebar }}">
-                    Trabajos
-                </a>
-            </li>
-        {% endif %}
-	        
-	    {% if "session_arbitration" in items.sidebar_options %}
-	        <li>
-                <a href="{% url 'sesiones:sesions_list' %}">
-                    Lista de sesion de arbitraje
-                </a>
-	        </li>
-	    {% endif %}
-
-	    {% if "arbitrations" in items.sidebar_options %}
-	        <li>
-                <a href="{% url 'arbitrajes:listado' %}">
-                    Arbitrajes
-                </a>
-	        </li>
-	    {% endif %}
-<!-- 
-        {% if trabajo_sidebar == 1 %}
-            <li>
-                <a href="{% url 'trabajos:trabajos' %}">
-                    Crear Trabajo
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'autores:postular_trabajo' %}">
-                    Postular Trabajo
-                </a>
-            </li>
-        {% endif %}
--->
-	    {% if "events" in items.sidebar_options %}
-		    <li>
-                <a href="{% url 'eventos:event_create' %}">
-                    Organizar evento
-                </a>
-	        </li>
-
-            {% if "event_space" in items.sidebar_options %}
-    	        <li>
-                    <a href="{% url 'sesiones:sesions_space_list' %}">
-                        Espacio
-                    </a>
-    	        </li>
-            {% endif %}
-            
-	        <li>
-                <a href="{% url 'eventos:event_list' %}">
-                    Lista de eventos
-                </a>
-	        </li>
-	    {% endif %}
-    </ul>
+		<li>
+			<a href="{% url 'eventos:event_list' %}">
+				Lista de eventos
+			</a>
+		</li>
+		{% endif %}
+	</ul>
 </nav>
