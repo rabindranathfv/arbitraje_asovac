@@ -69,13 +69,18 @@ class Evento(models.Model):
 	categoria = models.CharField(max_length=50)
 	descripcion = models.TextField(max_length=100)
 	tipo = models.CharField(max_length=50)
+    #Datefield
 	fecha_inicio = models.DateTimeField()
+    #Datefield
 	fecha_fin = models.DateTimeField()
+    #Datefield
 	dia_asignado = models.DateTimeField()
 	duracion = models.CharField(max_length=50)
+    #Timefield
 	horario_preferido = models.CharField(max_length=50)
 	fecha_preferida = models.DateTimeField()
 	observaciones = models.TextField(max_length=100, blank = True)
+    #Agregar blank=True
 	url_anuncio_evento = models.CharField(max_length=100)
 
 	def __str__(self):

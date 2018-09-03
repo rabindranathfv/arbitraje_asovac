@@ -33,23 +33,18 @@ def event_create(request):
             form.descripcion = form.clean_description()
             form.tipo = form.clean_type()
             form.fecha_inicio = form.clean_start_date()
-            print(form.fecha_inicio)
 
             form.fecha_fin = form.clean_end_date()
-            print(form.fecha_fin)
             form.dia_asignado = form.clean_day()
             form.duracion = form.clean_duration()
             form.horario_preferido = form.clean_preffer_hour()
             form.fecha_preferida = form.clean_preffer_date()
-            print(form.fecha_preferida)
 
             form.observaciones = form.clean_observations()
             form.url_anuncio_evento = form.clean_url_event()
             form.organizador_id = form.clean_organizer_id()
-            print(form.organizador_id)
 
             form.locacion_evento = form.clean_locacion_evento()
-            print(form.locacion_evento)
 
             print("El form es valido y se guardo satisfactoriamente el EVENTO")
             form.save()
