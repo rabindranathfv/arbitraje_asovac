@@ -4,66 +4,42 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render,redirect
 from django.urls import reverse
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
-
-
-from .forms import CreateOrganizerForm
-from .models import Organizador,Organizador_evento,Evento,Locacion_evento
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
-from eventos.forms import CreateOrganizerForm,CreateEventForm
-from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
 
+#Import forms
+from eventos.forms import CreateOrganizerForm,CreateEventForm
+
+#Import Models
+from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
+from .models import Organizador,Organizador_evento,Evento,Locacion_evento
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
 def event_list(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
 
-
-    secondary_navbar_options = ['']
     context = {
         'nombre_vista' : 'Eventos',
-        'main_navbar_options' : main_navbar_options,
-        'secondary_navbar_options' : secondary_navbar_options,
+        'username': request.user.username,
     }
     return render(request, 'eventos_event_list.html', context)
 
 
 def event_edit(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
-
-    rol_id=get_roles(request.user.id)
     
     context = {
         'nombre_vista' : 'Autores',
-        'main_navbar_options' : main_navbar_options,
-        'secondary_navbar_options' : secondary_navbar_options,
+        'username': request.user.username,
     }
     return render(request, 'eventos_event_edit.html', context)
 
 def event_create(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
-
-
-    secondary_navbar_options = ['']
-
+    
     form = CreateEventForm()
 
     context = {
         'username' : request.user.username,
         'form' : form,
-        'main_navbar_options' : main_navbar_options,
-        'secondary_navbar_options' : secondary_navbar_options,
     }
     if request.method == 'POST':
         form = CreateEventForm(request.POST or None)
@@ -115,14 +91,6 @@ def event_detail(request):
 
 def organizer_create(request):
     form = CreateOrganizerForm()
-    #print(request.user.id)
-    #print(request.user.username)
-    user_data = Usuario_asovac.objects.get(pk=request.user.id)
-    print(user_data.Sistema_asovac_id.values())
-    #user_asov.save()
-    # arbitraje al cual pertenece el usuario
-    #arbitraje = Sistema_asovac.objects.filter().only(id)
-    #print(arbitraje)
 
     context = {
         'username' : request.user.username,
@@ -159,11 +127,7 @@ def organizer_create(request):
     return render(request, 'eventos_organizer_create.html',context)
 
 def organizer_list(request):
-    organizer_data = Organizador.objects.all()
-    for org_data in organizer_data:
-        print(org_data.nombres)
-        #print(org_data.es_mienbro_asovac)
-    print(organizer_data)
+    organizer_data = Organizador.objects.all().order_by('-id')
     context = {        
                 'username' : request.user.username,
                 'organizer_data': organizer_data,
