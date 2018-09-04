@@ -46,11 +46,12 @@ Locacion_evento Model
 """""""""""""""""""""""""""
 #Quitar _ del nombre del modelo
 class Locacion_evento(models.Model):
-
+    #Cambiar lugar a ChardField
 	lugar = models.TextField(max_length=100)
 	descripcion = models.TextField(max_length=100)
 	capacidad_de_asistentes = models.IntegerField()
 	observaciones = models.TextField(max_length=100)
+    #Cambiar equipo_requerido a ChardField
 	equipo_requerido = models.TextField(max_length=50)
 	
 	def __str__(self):
