@@ -21,7 +21,7 @@
                     </div>
                     <div class="container-fluid top-margin-18">
                         <div class="row middle-content">
-                            <div class="col-sm-6">
+                            <div class="col-sm-5">
                                 <p class="p-md">
                                     <strong>Título Español:</strong> {{ autor_trabajo.trabajo.titulo_espanol }}
                                 </p>
@@ -56,7 +56,13 @@
                                     <strong>Versión:</strong> {{ autor_trabajo.trabajo.version }}
                                 </p>
                                 <p class="p-md">
-                                    <strong>Estatus:</strong> <span class="label label-warning lb-md">Pendiente</span>
+                                    <strong>Estatus:</strong>   {% if autor_trabajo.trabajo.estatus == "Pendiente" %}
+                                                                  <span class="label label-warning lb-md">Pendiente</span>
+                                                                {% elif autor_trabajo.trabajo.estatus == "Aprobado" %}
+                                                                  <span class="label label-success lb-md">Aprobado</span>
+                                                                {% elif autor_trabajo.trabajo.estatus == "Rechazado" %}
+                                                                  <span class="label label-danger lb-md">Rechazado</span>
+                                                                {% endif %} 
                                 </p>
                                 <p class="p-md">
                                     <strong>Resumen:</strong> {{ autor_trabajo.trabajo.resumen }}
@@ -65,9 +71,13 @@
                                     <strong>Observaciones:</strong> {{ autor_trabajo.trabajo.observaciones }}
                                 </p>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="center-block preview-resumen">
-                                    <embed src="{{autores_trabajo.trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="100%">
+                            <div class="col-sm-7">
+                                <div class="preview-pdf">
+                                    <object data="{{ autor_trabajo.trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="600px">
+                                        <iframe src="{{autor_trabajo.trabajo.archivo_trabajo.url }}" width="100%" height="100%" style="border: none;">
+                                        Este navegador no soporta PDFs. Por favor descarga el PDF para verlo:<a href="{{autor_trabajo.trabajo.archivo_trabajo.url}}">Download PDF</a>
+                                        </iframe>
+                                    </object>
                                 </div>
                             </div>
                         </div>
