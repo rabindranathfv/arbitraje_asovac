@@ -8,7 +8,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 #Import forms
-from eventos.forms import CreateOrganizerForm,CreateEventForm
+from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm
 
 #Import Models
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -141,8 +141,28 @@ def organizer_detail(request):
 ##################### Locacion Views ###########################
 
 def event_place_create(request):
+    form = CreateLocacionForm()
+    context = {
+        'username' : request.user.username,
+        'form' : form,
+    }
+    if request.method == 'POST':
+        form = CreateLocacionForm(request.POST or None)
+        if form.is_valid():
+            form.save(commit=False)
+            #lIMPIANDO DATA
+            form.lugar = form.clean_place()
+            form.descripcion = form.clean_description()
+            form.capacidad_de_asistentes = form.clean_capacity()
 
-    return render(request, 'eventos_locacion_create.html', context={})
+            #print(form.genero)
+            form.observaciones = form.clean_observations()
+            form.equipo_requerido = form.clean_equipement()
+            
+            print("El form es valido y se guardo satisfactoriamente la Locacion del Evento")
+            form.save()
+            return redirect(reverse('eventos:event_place_list'))
+    return render(request, 'eventos_locacion_create.html', context)
 
 def event_place_list(request):
     event_place_data = Locacion_evento.objects.all().order_by('id')

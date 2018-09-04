@@ -289,3 +289,70 @@ class CreateEventForm(forms.ModelForm):
     def clean_locacion_evento(self):
         locacion_event_data = self.cleaned_data['locacion_evento'] 
         return locacion_event_data
+
+
+class CreateLocacionForm(forms.ModelForm):
+
+    class Meta:
+        model = Locacion_evento
+        fields = ['lugar','descripcion','capacidad_de_asistentes','observaciones','equipo_requerido']
+
+    def __init__(self, *args, **kwargs):
+        super(CreateLocacionForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'create-locacion-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-7'
+        self.fields['lugar'].label = "Lugar"
+        self.fields['descripcion'].label = "Descripción"
+        self.fields['capacidad_de_asistentes'].label = "Capacidad de Asistentes"
+        self.fields['observaciones'].label = "Observaciones"
+        self.fields['equipo_requerido'].label = "Equipo Requerido"
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            'lugar',
+            'descripcion',
+            'capacidad_de_asistentes',
+            'observaciones',
+            'equipo_requerido',
+            Div(
+                Div(
+                    HTML("<span></span>"),
+                css_class='col-sm-6'),
+
+                Div(
+                    HTML("<a href=\"{% url 'eventos:event_place_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-2'),
+
+                Div(
+                    Submit('submit', 'Agregar Locacion de Eventos', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                css_class='col-sm-4'),
+
+                # Div(
+                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
+                # css_class='col-sm-1'),
+
+            css_class='col-sm-12')
+        )
+    def clean_place(self):
+        place_data = self.cleaned_data['lugar']
+        return place_data
+    
+    def clean_description(self):
+        description_data = self.cleaned_data['descripcion']
+        return description_data
+    
+    def clean_capacity(self):
+        capacity_data = self.cleaned_data['capacidad_de_asistentes']
+        return capacity_data
+
+    def clean_observations(self):
+        observations_data = self.cleaned_data['observaciones']
+        return observations_data
+
+    def clean_equipement(self):
+        equipement_data = self.cleaned_data['equipo_requerido']
+        return equipement_data
