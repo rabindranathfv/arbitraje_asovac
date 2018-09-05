@@ -98,7 +98,7 @@ class CreateOrganizerForm(forms.ModelForm):
                 css_class='col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
 
                 # Div(
@@ -328,7 +328,7 @@ class CreateLocacionForm(forms.ModelForm):
                 css_class='col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Agregar Locacion de Eventos', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Crear Locacion de Eventos ', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-4'),
 
                 # Div(

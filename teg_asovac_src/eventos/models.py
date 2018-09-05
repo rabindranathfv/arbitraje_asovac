@@ -25,17 +25,19 @@ class Organizador(models.Model):
 	nombres = models.CharField(max_length=50)
 	apellidos = models.CharField(max_length=50)
 	genero = models.SmallIntegerField(default=0,choices=CHOICES_GENERO)
-	cedula_o_pasaporte = models.CharField(max_length=20,validators=[validate_ced_passport])
-	correo_electronico = models.EmailField(max_length=254,validators=[EmailValidator])
+	cedula_o_pasaporte = models.CharField(max_length=20)
+    #Formato de ejemplo para agregar validators
+    #correo_electronico = models.EmailField(max_length=254,validators=[EmailValidator()])
+	correo_electronico = models.EmailField(max_length=254)
 	institucion = models.CharField(max_length=50)
-	telefono_oficina = models.CharField(max_length=20,validators=[validate_phone_office])
-	telefono_habitacion_celular = models.CharField(max_length=20,validators=[validate_phone_personal])
+	telefono_oficina = models.CharField(max_length=20)
+	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_correspondencia = models.TextField(max_length=100)
 	es_miembro_asovac = models.BooleanField(default=False,choices=CHOICES_MIENBRO_ASOVAC)
-	capitulo_asovac = models.CharField(max_length=50,validators=[validate_cap_asovac])
+	capitulo_asovac = models.CharField(max_length=50)
 	cargo_en_institucion = models.CharField(max_length=50)
-	url_organizador = models.CharField(max_length=100,validators=[URLValidator])
-	observaciones = models.TextField(max_length=100, blank = True)
+	url_organizador = models.CharField(max_length=200)
+	observaciones = models.TextField(max_length=400, blank=True)
 
 	def __str__(self):
 		return self.nombres#.encode('utf-8', errors='replace')
@@ -46,13 +48,12 @@ Locacion_evento Model
 """""""""""""""""""""""""""
 #Quitar _ del nombre del modelo
 class Locacion_evento(models.Model):
-    #Cambiar lugar a ChardField
-	lugar = models.TextField(max_length=100)
-	descripcion = models.TextField(max_length=100)
-	capacidad_de_asistentes = models.IntegerField()
-	observaciones = models.TextField(max_length=100)
-    #Cambiar equipo_requerido a ChardField
-	equipo_requerido = models.TextField(max_length=50)
+
+	lugar = models.CharField(max_length=100)
+	descripcion = models.CharField(max_length=255)
+	capacidad_de_asistentes = models.SmallIntegerField(default=0)
+	observaciones = models.TextField(max_length=400, blank=True)
+	equipo_requerido = models.CharField(max_length=255)
 	
 	def __str__(self):
 		return self.lugar#.encode('utf-8', errors='replace')
@@ -66,23 +67,19 @@ class Evento(models.Model):
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento',related_name='Organizador_eventos')
 	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
 
-	nombre = models.CharField(max_length=50)
+	nombre = models.CharField(max_length=150)
 	categoria = models.CharField(max_length=50)
-	descripcion = models.TextField(max_length=100)
+	descripcion = models.TextField(max_length=150)
 	tipo = models.CharField(max_length=50)
-    #Datefield
-	fecha_inicio = models.DateTimeField()
-    #Datefield
-	fecha_fin = models.DateTimeField()
-    #Datefield
-	dia_asignado = models.DateTimeField()
+	fecha_inicio = models.DateField()
+	fecha_fin = models.DateField()
+	dia_asignado = models.DateField()
 	duracion = models.CharField(max_length=50)
-    #Timefield
 	horario_preferido = models.CharField(max_length=50)
-	fecha_preferida = models.DateTimeField()
-	observaciones = models.TextField(max_length=100, blank = True)
+	fecha_preferida = models.TimeField()
+	observaciones = models.TextField(max_length=400, blank = True)
     #Agregar blank=True
-	url_anuncio_evento = models.CharField(max_length=100)
+	url_anuncio_evento = models.CharField(max_length=200, blank= True,validators=[URLValidator()])
 
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')

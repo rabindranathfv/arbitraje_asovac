@@ -165,7 +165,7 @@ def event_place_create(request):
     return render(request, 'eventos_locacion_create.html', context)
 
 def event_place_list(request):
-    event_place_data = Locacion_evento.objects.all().order_by('id')
+    event_place_data = LocacionEvento.objects.all().order_by('id')
     context = {        
                 'username' : request.user.username,
                 'event_place_data': event_place_data,
