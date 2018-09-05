@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm
-from .models import Rol,Sistema_asovac,Usuario_asovac
+from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -827,17 +827,24 @@ def total(request, arbitraje_id):
     return render(request, 'main_app_totales.html', context)
 
 def apps_selection(request):
-    # queryset
-    # arbitraje_data = Sistema_asovac.objects.all()
-
-    # if request.method == 'POST':
-    #     context = {
-    #         'nombre_vista' : 'Home',
-    #         'arb_data' : arbitraje_data,
-    #     }
-    #     return render(request, 'main_app_home.html',context)
-    context = {
     
+    user_id= request.user.id
+    data= dict()
+    user= get_object_or_404(User,id=user_id)
+    
+    user= Usuario_asovac.objects.get(usuario_id=user_id)
+    user_role = user.biggest_role()
+    if(user_role.id == 1 or user_role.id == 2):
+        areas= Area.objects.all()
+        subareas= Sub_area.objects.all()
+    else:
+        areas= user.area.all()
+        subareas= user.sub_area.all()
+
+    print user_role.id
+
+    context = {
+        'user_role': user_role,
     }
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
@@ -936,3 +943,36 @@ def update_rol_modal(request,id):
             data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
 
     return JsonResponse(data)
+
+def validate_access_modal(request):
+    data= dict()
+    user_id= request.user.id
+    user= get_object_or_404(User,id=user_id)
+    
+    user= Usuario_asovac.objects.get(usuario_id=user_id)
+    clave=request.POST['password']
+    rol=request.POST['rol']
+    arbitrajes= user.Sistema_asovac_id.all()
+    print clave
+    print rol
+    print arbitrajes
+
+    for arbitraje in arbitrajes:
+        print ("El id del arbitraje es: ",arbitraje.id)
+        print ("La clave es: ", arbitraje.clave_maestra_coordinador_area)
+
+    # if request.method == 'POST':
+    #     if form.is_valid():
+    #         form.save()
+    #         data['form_is_valid']= True
+    #         # users= User.objects.all()
+    #         users= Usuario_asovac.objects.all()
+    #         data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+    #     else:
+    #         data['form_is_valid']= False
+  
+    # context={
+    #     'form': form
+    # }
+    # data['html_form']= render_to_string(template_name,context, request=request)
+    # return JsonResponse(data)

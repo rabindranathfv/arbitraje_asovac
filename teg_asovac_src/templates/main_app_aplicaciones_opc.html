@@ -25,7 +25,11 @@
                                 <div class="row middle-content">
                                     <div class="container-fuild col-sm-6 offset-3 center-block">
                                         <div class="well center-block " style="max-width:1000px">
+                                            {% if user_role.id == 1 %}
                                             <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:home' %}">Arbitraje AsoVAC</a>
+                                            {% else %}
+                                            <a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#rol_validate">Arbitraje AsoVAC</a>
+                                            {% endif %}
                                         </div>
 
                                         <div class="well center-block " style="max-width:1000px">
@@ -41,5 +45,33 @@
         </div>
     </div>
 </div>
+
+<!-- Button trigger modal -->
+  
+  <!-- Modal -->
+  <div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form method="post" data-url="{% url 'main_app:validar_acceso' %}" class="validate_access">
+            {% csrf_token %}
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Arbitraje AsoVAC</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                <label for="exampleInputPassword1">Clave de {{user_role}}:</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Introduzca la clave solicitada">
+                <input type="hidden" id="rol" name="rol" value="{{user_role.id}}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success">Enviar</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
   
 {% endblock %}

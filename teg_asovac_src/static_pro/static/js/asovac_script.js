@@ -60,12 +60,37 @@ $(document).ready(function(){
                     $('#modal-user').modal('hide');
                 }else{
                     // console.log('data is invalid')
-                    $('#modal-book .modal-content').html(data.html_form)
+                    $('#modal-user .modal-content').html(data.html_form)
                 }
             }
         });
         return false;
     };
+
+// Se valida el acceso al evento segun el rol y su clave 
+var ValidateAccess= function(){
+    var form= $(this);
+    alert('ValidateAccess');
+    $.ajax({
+        url: form.attr('data-url'),
+        data: form.serialize(),
+        type: form.attr('method'),
+        dataType: 'json',
+
+        success: function(data){
+
+            if(data.form_is_valid){
+                // console.log('data is saved')
+                $('#show_users tbody').html(data.user_list);
+                $('#modal-user').modal('hide');
+            }else{
+                // console.log('data is invalid')
+                $('#modal-user .modal-content').html(data.html_form)
+            }
+        }
+    });
+    return false;
+};
 
     // Para manejar la seleccion de areas y mostrar subareas conventana modal
     $('#area_select').change(function(){
@@ -128,5 +153,6 @@ $(document).ready(function(){
     $('.show_areas').click(ShowForm);
     $('#modal-user').on('submit','.change_area',SaveForm);
    
-
+    // validate ValidateAccess
+    $('#rol_validate').on('submit','.validate_access',ValidateAccess);
 });
