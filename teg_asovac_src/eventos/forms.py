@@ -313,6 +313,7 @@ class CreateLocacionForm(forms.ModelForm):
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
+            #Field('lugar',readonly=True),
             'lugar',
             'descripcion',
             'capacidad_de_asistentes',
@@ -337,6 +338,10 @@ class CreateLocacionForm(forms.ModelForm):
 
             css_class='col-sm-12')
         )
+    def can_udpate_location(self, locacion_id):
+        
+        return True
+
     def clean_place(self):
         place_data = self.cleaned_data['lugar']
         return place_data
