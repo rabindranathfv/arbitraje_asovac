@@ -290,9 +290,11 @@ body {
 incluso cuando el contenido de la página es muy corto */
 .min-height-content {
     min-height: calc(100vh - 120px);
-    padding-top: 40px;
 }
 
+.top-padding-40 {
+    padding-top: 40px;
+}
 /*================= Bootstrap button colors override =================*/
 .btn-primary{
     background-color: #2869BC;

@@ -8,12 +8,12 @@
 		{% if "general_config" in items.sidebar_options %}
 		<li>
 			<div class="dropdown">
-				<a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración general<i class="fas fa-angle-right"></i></a>
+				<a href="#shortcut-submenu" data-toggle="collapse" class="dropdown-toggle submenu-toggle">Configuración General<i class="fas fa-angle-right"></i></a>
 				<ul class="collapse list-unstyled sidebar-submenu" id="shortcut-submenu">
 					{% if "basic_data" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:data_basic' arbitraje_id %}">
-							Datos básicos
+							Datos Básicos
 						</a>
 					</li>
 					{% endif %} 
@@ -21,7 +21,7 @@
 					{% if "arbitration_state" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:arbitration_state' arbitraje_id %}">
-							Estado arbitraje
+							Cambiar Estado del Arbitraje
 						</a>
 					</li>
 					{% endif %}
@@ -37,19 +37,19 @@
 				<ul class="collapse list-unstyled sidebar-submenu" id="services-submenu">
 					<li>
 						<a href="{% url 'main_app:users_list' arbitraje_id %}">
-							Lista de usuarios
+							Lista de Usuarios
 						</a>
 					</li>
 					<li>
 						<a href="{% url 'main_app:user_roles' arbitraje_id %}">
-							Acceso de usuarios
+							Acceso de Usuarios
 						</a>
 					</li>
 
 					{% if "assing_general_coordinator" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:coord_general' arbitraje_id %}">
-							Asignar coordinador general
+							Asignar Coordinador General
 						</a>
 					</li>
 					{% endif %}
@@ -57,7 +57,7 @@
 					{% if "assing_area_coordinator" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:coord_area' arbitraje_id %}">
-							Asignar coordinador de área
+							Asignar Coordinador de Área
 						</a>
 					</li>
 					{% endif %}

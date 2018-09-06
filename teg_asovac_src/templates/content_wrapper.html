@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled ">
+	<!-- Sidebar -->
+	{% include 'sidebar.html'%}
+
+	<!-- Content -->
+	{% block intern_content %}{% endblock %}
+</div>
+{% endblock %}

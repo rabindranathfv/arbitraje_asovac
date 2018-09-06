@@ -1,57 +1,50 @@
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-	<!-- Sidebar -->
-	{% include 'sidebar.html'%}
-
-	<!-- Page Content -->
-	<div class="container-fluid" id="content-wrapper">
-		<div class="row">
-			<div class="col-sm-12">
-				<a href="#menu-toggle" class="btn btn-primary" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
-				<h3 class="user-title">Panel Principal de Arbitraje</h3>
-			</div>
+{% block intern_content %}
+<div class="container-fluid" id="content-wrapper">
+	<div class="row">
+		<div class="col-sm-12">
+			<a href="#menu-toggle" class="btn btn-primary" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
+			<h3 class="user-title">Panel Principal de Arbitraje</h3>
 		</div>
-		<!-- First Row -->
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="jumbotron RLcard">
+	</div>
+	<!-- First Row -->
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row middle-content">
+					<div class="col-sm-8">
+						<h2 class="top-margin-6">Datos Básicos:</h2>
+					</div>
+					<div class="col-sm-4">
+						<a class="btn btn-primary pull-right" href="#" role="button"><i class="fas fa-edit"></i> Editar datos
+						</a>
+					</div>
+				</div>
+				<div class="container-fluid">
 					<div class="row middle-content">
 						<div class="col-sm-8">
-							<h2 class="top-margin-6">Datos Básicos:</h2>
+							<label>Nombre:</label>
+							<h3 class="top-margin-6">{{ arbitraje.nombre }}</h3>
+							<div class="row">
+								<div class="col-sm-6">
+									<label>Fecha de Inicio:</label>
+									<h5>{{ arbitraje.fecha_inicio_arbitraje }}</h5>
+								</div>
+								<div class="col-sm-6">
+									<label>Fecha Final:</label>
+									<h5>{{ arbitraje.fecha_fin_arbitraje }}</h5>
+								</div>
+							</div>
+							<label>Descripción:</label>
+							<p class="text-justify">{{ arbitraje.descripcion }}</p>
 						</div>
 						<div class="col-sm-4">
-							<a class="btn btn-primary pull-right" href="#" role="button"><i class="fas fa-edit"></i> Editar datos
-							</a>
-						</div>
-					</div>
-					<div class="container-fluid">
-						<div class="row middle-content">
-							<div class="col-sm-8">
-								<label>Nombre:</label>
-								<h3 class="top-margin-6">{{ arbitraje.nombre }}</h3>
-								<div class="row">
-									<div class="col-sm-6">
-										<label>Fecha de Inicio:</label>
-										<h5>{{ arbitraje.fecha_inicio_arbitraje }}</h5>
-									</div>
-									<div class="col-sm-6">
-										<label>Fecha Final:</label>
-										<h5>{{ arbitraje.fecha_fin_arbitraje }}</h5>
-									</div>
-								</div>
-								<label>Descripción:</label>
-								<p class="text-justify">{{ arbitraje.descripcion }}</p>
-							</div>
-							<div class="col-sm-4">
-								<label>Estado del arbitraje:</label>
-								<p class="{% if progress_pct == 100 %}text-success{% else %}text-primary{% endif %}">{{ arbitraje_state }}</p>
-								<div class="progress">
-									<div class="progress-bar {% if progress_pct == 100 %}progress-bar-success{% else %}progress-bar-primary{% endif %} progress-bar-striped active" role="progressbar" aria-valuenow="{{ progress_pct }}"
-									aria-valuemin="0" aria-valuemax="100" style="width:{{ progress_pct }}%">
-									</div>
+							<label>Estado del arbitraje:</label>
+							<p class="{% if progress_pct == 100 %}text-success{% else %}text-primary{% endif %}">{{ arbitraje_state }}</p>
+							<div class="progress">
+								<div class="progress-bar {% if progress_pct == 100 %}progress-bar-success{% else %}progress-bar-primary{% endif %} progress-bar-striped active" role="progressbar" aria-valuenow="{{ progress_pct }}"
+								aria-valuemin="0" aria-valuemax="100" style="width:{{ progress_pct }}%">
 								</div>
 							</div>
 						</div>
@@ -59,28 +52,28 @@
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- Second Row -->
-		<div class="row row-eq-height">
-			<div class="col-sm-6">
-				<div class="jumbotron RLcard">
-					<h3>Half Card</h3>
-					<p>Esto es un ejemplo de una carta pequeña para anuncios o graficos que no requieran de todo el ancho de la pagina web.</p>
-					<p>
-						<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs</a>
-					</p>
-				</div>
+	<!-- Second Row -->
+	<div class="row row-eq-height">
+		<div class="col-sm-6">
+			<div class="jumbotron RLcard">
+				<h3>Half Card</h3>
+				<p>Esto es un ejemplo de una carta pequeña para anuncios o graficos que no requieran de todo el ancho de la pagina web.</p>
+				<p>
+					<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs</a>
+				</p>
 			</div>
-			<div class="col-sm-6">
-				<div class="jumbotron RLcard">
-					<h3>Half Card</h3>
-					<p>
-						Este es otro ejemplo de una carta de tamaño pequeño para colocar información puntual.
-					</p>
-					<p>
-						<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-					</p>
-				</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="jumbotron RLcard">
+				<h3>Half Card</h3>
+				<p>
+					Este es otro ejemplo de una carta de tamaño pequeño para colocar información puntual.
+				</p>
+				<p>
+					<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
+				</p>
 			</div>
 		</div>
 	</div>
