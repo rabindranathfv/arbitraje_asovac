@@ -93,7 +93,7 @@ class Pagador(models.Model):
 	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
-	categorias_pago = models.CharField(max_length=20)
+	categorias_pago = models.CharField(max_length=20, blank = True)
 
 	def __str__(self):
 		return self.categorias_pago#.encode('utf-8', errors='replace')
@@ -110,12 +110,12 @@ class Pago(models.Model):
 	banco_origen = models.CharField(max_length=50)
 	numero_transferencia = models.CharField(max_length=50, blank = True)
 	numero_cheque = models.CharField(max_length=50, blank = True)
-	fecha_pago = models.DateTimeField()
+	fecha_pago = models.DateField()
 	observaciones = models.TextField(max_length=100,blank=True)
 	comprobante_pago = models.FileField(upload_to = 'comprobantes_de_pago/') # Hacer validacion y path
 
 	def __str__(self):
-		return self.numero_transferencia#.encode('utf-8', errors='replace')
+		return self.numero_cuenta_origen#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -127,7 +127,7 @@ class Factura(models.Model):
 	pago = models.OneToOneField(Pago)
 
 	monto_subtotal = models.FloatField()
-	fecha_emision = models.DateTimeField()
+	fecha_emision = models.DateField()
 	iva = models.FloatField()
 	
 	def __str__(self):
