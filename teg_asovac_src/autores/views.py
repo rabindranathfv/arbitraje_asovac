@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
 
-from .models import Autor, Autores_trabajos
+from .models import Autor, Autores_trabajos, Pagador, Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
@@ -140,7 +140,8 @@ def postular_trabajo(request):
 	for autor_trabajo in autores_trabajos_list:
 		print(autor_trabajo.trabajo.titulo_espanol)
 
-
+	pagador_list = Pagador.objects.all()
+	factura_list = Factura.objects.all()
 	context = {
 		"nombre_vista": 'Postular Trabajo',
 	#	"pagadorform": pagadorform,
@@ -158,6 +159,8 @@ def postular_trabajo(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'autores_trabajos_list':autores_trabajos_list,
+        'pagador_list': pagador_list,
+        'factura_list':factura_list,
     }
 	return render(request,"autores_postular_trabajo.html",context)
 

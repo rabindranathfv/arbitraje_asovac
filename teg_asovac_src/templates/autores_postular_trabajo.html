@@ -20,7 +20,7 @@
                 </div>
             </div>
              <!-- EndTitle content-->
-            
+
             {%for autor_trabajo in autores_trabajos_list%} 
                  <!-- First Row New-->
                  <div class="row">
@@ -59,51 +59,30 @@
                                    </thead>
                                    <tbody>
                                      <tr>
-                                        <td>Juanito Perez</td>
-                                        <td>1323234</td>
-                                        <td>Venezolano de Crédito</td>
-                                        <td>121324344</td>
-                                        <td>100</td>
-                                        <td>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                                <i class="fas fa-door-open"></i>
-                                            </a>
-                                        </td>
-                                     </tr>
-
-                                     <tr>
-                                        <td>Milagros del cielo</td>
-                                        <td>124345</td>
-                                        <td>Banco de Venezuela</td>
-                                        <td>5467764564</td>
-                                        <td>500</td>
-                                        <td>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                                <i class="fas fa-door-open"></i>
-                                            </a>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>Un Desconocido</td>
-                                        <td>34636356</td>
-                                        <td>Banesco</td>
-                                        <td>32543453</td>
-                                        <td>200</td>
-                                        <td>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                                <i class="fas fa-door-open"></i>
-                                            </a>
-                                        </td>
-                                      </tr>                  
+                                        {% for pagador in pagador_list %}
+                                            
+                                            {% if pagador.autor_trabajo == autor_trabajo%}
+                                                <td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
+                                                <td>{{ pagador.datos_pagador.cedula }}</td>
+                                                
+                                                {% for factura in factura_list %}
+                                                    {% if factura.pagador == pagador %}
+                                                        <td>{{ factura.pago.banco_origen }}</td>
+                                                        <td>{{ factura.pago.numero_transferencia }}</td>
+                                                        <td>{{ factura.monto_total}}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <td>
+                                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                                        <i class="fas fa-door-open"></i>
+                                                    </a>
+                                                </td>
+                                            {% endif %}
+                                        {% endfor %}
+                                     </tr>                 
                                    </tbody>
                                  </table>
                                <!-- End table  -->

@@ -129,6 +129,7 @@ class Factura(models.Model):
 	monto_subtotal = models.FloatField()
 	fecha_emision = models.DateField()
 	iva = models.FloatField()
+	monto_total = models.FloatField()
 	
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
