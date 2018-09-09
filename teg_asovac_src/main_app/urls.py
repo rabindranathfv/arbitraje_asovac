@@ -54,6 +54,7 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/actualizar$',views.update_user_modal,name='actualizar_usuario'),
     url(r'^usuario/(?P<id>\d+)/eliminar$',views.delete_user_modal,name='eliminar_usuario'),
     url(r'^usuario/(?P<id>\d+)/rol/actualizar$',views.update_rol_modal,name='actualizar_rol'),
+    url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
     
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
 

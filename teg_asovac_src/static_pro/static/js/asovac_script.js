@@ -70,27 +70,38 @@ $(document).ready(function(){
 // Se valida el acceso al evento segun el rol y su clave 
 var ValidateAccess= function(){
     var form= $(this);
-    alert('ValidateAccess');
+    // alert('ValidateAccess');
     $.ajax({
         url: form.attr('data-url'),
         data: form.serialize(),
         type: form.attr('method'),
         dataType: 'json',
-
+        beforeSend: function(){
+            $('#rol_validate').modal('show');  
+          },
         success: function(data){
 
             if(data.form_is_valid){
-                // console.log('data is saved')
-                $('#show_users tbody').html(data.user_list);
-                $('#modal-user').modal('hide');
+                if (data.method == 'get') {
+                    console.log('Caso valido, metodo get')
+                    $('#rol_validate .modal-content').html(data.html_form)
+                }else{
+                    console.log('Caso valido, metodo post')
+                    $('#rol_validate .modal-content').html(data.html_form)
+                }
             }else{
-                // console.log('data is invalid')
-                $('#modal-user .modal-content').html(data.html_form)
+                console.log('Caso no valido')
+                $('#rol_validate .modal-content').html(data.html_form)
             }
         }
     });
     return false;
 };
+    // Para manejar la selección de rol y contraseña
+    $('#rol').change(function(){
+        alert("rol cambiado");
+        console.log("El rol fue cambiado a "+rol);
+    });
 
     // Para manejar la seleccion de areas y mostrar subareas conventana modal
     $('#area_select').change(function(){
@@ -154,5 +165,6 @@ var ValidateAccess= function(){
     $('#modal-user').on('submit','.change_area',SaveForm);
    
     // validate ValidateAccess
+    $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
 });

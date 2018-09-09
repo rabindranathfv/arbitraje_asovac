@@ -26,7 +26,7 @@
                         <!-- dynamic content-->
                         {% if arb_data %}
                             {% for arb, state, allow in arb_data %}
-                                <div class="panel-body">
+                                <div class="panel-body" id="show-arbitraje">
                                     <div class="container-fluid">
                                         <div class="row middle-content">
                                             <div class="col-sm-4">
@@ -40,8 +40,16 @@
                                             </div>
                                             {% if allow %}
                                             <div class="col-sm-3 text-center">
-                                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                                            </div>
+                                                {%if params_validations.is_admin == 1 and params_validations.cant == 1 %}
+                                                    <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                                {% else %}
+                                                    {%if params_validations.cant > 1 %}
+                                                        <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                                    {% else %}
+                                                        <a class="btn btn-primary btn-lg btn-block"  src="#" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>                                
                                             {% endif %}
                                         </div>
                                     </div>
@@ -66,4 +74,14 @@
         </div>
     </div>
 </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+       
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
