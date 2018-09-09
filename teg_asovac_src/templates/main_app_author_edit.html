@@ -1,116 +1,96 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container min-height-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Editar autores</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="jumbotron RLcard">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
 
-                        <h2 class="text-left">Datos del autor</h2>
-                        {% include "errors_form.html" %}
-                    <!-- init form -->
-                        <form id="login-form" method="post">
-                            {% csrf_token %}
+				<h2 class="text-left">Datos del autor</h2>
+				{% include "errors_form.html" %}
 
-                            <div class="row">
-                                <div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="first_name" class="control-label  requiredField">
-                                    Nombres
-                                    <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+				<form id="login-form" method="post">
+					{% csrf_token %}
 
-                            <div class="row">
-                                <div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="last_name" class="control-label  requiredField">
-                                        Apellidos
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="first_name" class="control-label  requiredField">
+								Nombres
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="email" class="control-label  requiredField">
-                                        Correo electrónico
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="last_name" class="control-label  requiredField">
+								Apellidos
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="identifier" class="control-label  requiredField">
-                                        Cedula
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="email" class="control-label  requiredField">
+								Correo Electrónico
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_institution" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="id_institution" class="control-label  requiredField">
-                                        Universidad
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="institution" required="" id="institution" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="identifier" class="control-label  requiredField">
+								Cédula
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div class="form-group col-sm-6 col-sm-offset-3">
-                                    <div class="controls ">
-                                        <input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    <!-- end form -->
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-sm-offset-3">
-                                <a href="{% url 'autores:authors_list' %}" class="btn btn-block btn-danger" role="button">Cancelar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+					<div class="row">
+						<div id="div_id_institution" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="id_institution" class="control-label  requiredField">
+								Universidad
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="institution" required="" id="institution" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group col-sm-6 col-sm-offset-3">
+							<div class="controls ">
+								<input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="row">
+					<div class="form-group col-sm-6 col-sm-offset-3">
+						<a href="{% url 'autores:authors_list' %}" class="btn btn-block btn-danger" role="button">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 {% endblock %}

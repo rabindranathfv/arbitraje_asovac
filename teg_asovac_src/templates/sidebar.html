@@ -49,7 +49,7 @@
 					{% if "assing_general_coordinator" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:coord_general' arbitraje_id %}">
-							Asignar Coordinador General
+							Asignar un Coordinador General
 						</a>
 					</li>
 					{% endif %}
@@ -57,7 +57,7 @@
 					{% if "assing_area_coordinator" in items.sidebar_options %}
 					<li>
 						<a href="{% url 'main_app:coord_area' arbitraje_id %}">
-							Asignar Coordinador de Área
+							Asignar un Coordinador de Área
 						</a>
 					</li>
 					{% endif %}
@@ -78,7 +78,7 @@
 					</li>
 					<li>
 						<a href="{% url 'recursos:resources_referee' %}">
-							Arbitros
+							Árbitros
 						</a>
 					</li>
 					<li>
@@ -110,7 +110,7 @@
 		{% if "areas_subareas" in items.sidebar_options %}
 		<li>
 			<a href="{% url 'arbitrajes:arbitrations_areas_subareas' %}">
-				Areas y Subáreas
+				Áreas y Subáreas
 			</a>
 		</li>
 		{% endif %}
@@ -126,7 +126,7 @@
 		{% if "arbiters" in items.sidebar_options %}
 		<li>
 			<a href="{% url 'arbitrajes:referee_list' %}">
-				Arbitros
+				Árbitros
 			</a>
 		</li>
 		{% endif %}
@@ -134,7 +134,7 @@
 		{% if "assing_session" in items.sidebar_options %}
 		<li>
 			<a href="{% url 'arbitrajes:asignacion_de_sesion' %}">
-				Asignacion de Sesión
+				Asignación de Sesión
 			</a>
 		</li>
 		{% endif %}
@@ -150,7 +150,7 @@
 		{% if "session_arbitration" in items.sidebar_options %}
 		<li>
 			<a href="{% url 'sesiones:sesions_list' %}">
-				Lista de sesion de arbitraje
+				Lista de Sesión de Arbitraje
 			</a>
 		</li>
 		{% endif %}
@@ -179,21 +179,21 @@
 		{% if "events" in items.sidebar_options %}
 		<li>
 			<a href="{% url 'eventos:event_create' %}">
-				Organizar evento
+				Organizar Evento
 			</a>
 		</li>
 
 			{% if "event_space" in items.sidebar_options %}
 			<li>
 				<a href="{% url 'sesiones:sesions_space_list' %}">
-					Espacio
+					Espacios
 				</a>
 			</li>
 			{% endif %}
 
 		<li>
 			<a href="{% url 'eventos:event_list' %}">
-				Lista de eventos
+				Lista de Eventos
 			</a>
 		</li>
 		{% endif %}

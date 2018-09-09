@@ -1,137 +1,98 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-    <nav id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-          <li class="sidebar-brand">
-            <a href="#">
-              Sidebar Header
-            </a>
-          </li>
-         
-          <li>
-            <a href="#">Autores</a>
-          </li>
-          <li>
-            <a href="#">Arbitros</a>
-          </li>
-          <li>
-            <a href="#">Sesion de arbitraje</a>
-          </li>
-          <li>
-            <a href="#">Arbitraje</a>
-          </li>
-        </ul>
-      </nav>
-   
-        <!-- Page Content -->
-        <div class="container min-height-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Editar espacio</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="jumbotron RLcard">
 
-                        <h2 class="text-left">Datos del espacio</h2>
-                        {% include "errors_form.html" %}
-                    <!-- init form -->
-                        <form id="login-form" method="post">
-                            {% csrf_token %}
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
 
-                            <div class="row">
-                                <div id="div_id_type" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="type" class="control-label  requiredField">
-                                    Tipo
-                                    <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="type" id="type" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+				<h2 class="text-left">Datos del espacio</h2>
+				{% include "errors_form.html" %}
 
-                            <div class="row">
-                                <div id="div_id_occupation_date" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="occupation_date" class="control-label  requiredField">
-                                        Fecha de ocupación
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="occupation_date" id="occupation_date" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+				<form id="login-form" method="post">
+					{% csrf_token %}
 
-                            <div class="row">
-                                <div id="div_id_capacity" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="capacity" class="control-label  requiredField">
-                                        Capacidad
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="capacity" id="capacity" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_type" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="type" class="control-label  requiredField">
+								Tipo
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="type" id="type" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_turn" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="turn" class="control-label  requiredField">
-                                        Turno
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="turn" id="turn" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_occupation_date" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="occupation_date" class="control-label  requiredField">
+								Fecha de ocupación
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="occupation_date" id="occupation_date" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_date_name_route" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="date_name_route" class="control-label  requiredField">
-                                        Nombre/Url
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="date_name_route" id="date_name_route" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_capacity" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="capacity" class="control-label  requiredField">
+								Capacidad
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="capacity" id="capacity" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div class="form-group col-sm-6 col-sm-offset-3">
-                                    <div class="controls ">
-                                        <input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    <!-- end form -->
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-sm-offset-3">
-                                <a href="{% url 'sesiones:sesions_space_list'%}" class="btn btn-block btn-danger" role="button">Cancelar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+					<div class="row">
+						<div id="div_id_turn" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="turn" class="control-label  requiredField">
+								Turno
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="turn" id="turn" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div id="div_id_date_name_route" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="date_name_route" class="control-label  requiredField">
+								Nombre/Url
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="date_name_route" id="date_name_route" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group col-sm-6 col-sm-offset-3">
+							<div class="controls ">
+								<input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<div class="row">
+					<div class="form-group col-sm-6 col-sm-offset-3">
+						<a href="{% url 'sesiones:sesions_space_list'%}" class="btn btn-block btn-danger" role="button">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
-
 {% endblock %}

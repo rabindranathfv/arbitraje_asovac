@@ -1,115 +1,94 @@
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container min-height-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Editar sesión</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="jumbotron RLcard">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
 
-                        <h2 class="text-left">Datos de la sesión</h2>
-                        {% include "errors_form.html" %}
-                    <!-- init form -->
-                        <form id="login-form" method="post">
-                            {% csrf_token %}
+				<h2 class="text-left">Datos de la sesión</h2>
+				{% include "errors_form.html" %}
+				<form id="login-form" method="post">
+					{% csrf_token %}
 
-                            <div class="row">
-                                <div id="div_id_jobs" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="jobs" class="control-label  requiredField">
-                                    Trabajo
-                                    <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="jobs" id="jobs" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_jobs" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="jobs" class="control-label  requiredField">
+								Trabajo
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="jobs" id="jobs" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_space" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="space" class="control-label  requiredField">
-                                        Espacio
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="space" id="space" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_space" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="space" class="control-label  requiredField">
+								Espacio
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="space" id="space" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_coordinator" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="coordinator" class="control-label  requiredField">
-                                        Coordinadores
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="coordinator" id="coordinator" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_coordinator" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="coordinator" class="control-label  requiredField">
+								Coordinadores
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="coordinator" id="coordinator" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="identifier" class="control-label  requiredField">
-                                        Modalidad 
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="identifier" class="control-label  requiredField">
+								Modalidad 
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div id="div_id_date_presentation" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="date_presentation" class="control-label  requiredField">
-                                        Fecha de presentación 
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="date_presentation" id="date_presentation" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
+					<div class="row">
+						<div id="div_id_date_presentation" class="form-group col-sm-6 col-sm-offset-3">
+							<label for="date_presentation" class="control-label  requiredField">
+								Fecha de presentación 
+								<span class="asteriskField">*</span>
+							</label>
+							<div class="controls ">
+								<input type="text" name="date_presentation" id="date_presentation" required="" class="textinput textInput form-control" maxlength="100">
+							</div>
+						</div>
+					</div>
 
-                            <div class="row">
-                                <div class="form-group col-sm-6 col-sm-offset-3">
-                                    <div class="controls ">
-                                        <input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    <!-- end form -->
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-sm-offset-3">
-                                <a href="{% url 'sesiones:sesions_list'%}" class="btn btn-block btn-danger" role="button">Cancelar</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+					<div class="row">
+						<div class="form-group col-sm-6 col-sm-offset-3">
+							<div class="controls ">
+								<input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
+							</div>
+						</div>
+					</div>
+				</form>
+				<div class="row">
+					<div class="form-group col-sm-6 col-sm-offset-3">
+						<a href="{% url 'sesiones:sesions_list'%}" class="btn btn-block btn-danger" role="button">Cancelar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}

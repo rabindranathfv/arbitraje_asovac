@@ -1,58 +1,56 @@
-{% extends "base.html" %}
+{% extends "content_wrapper.html" %}
 {% load static %}
 
-{% block content %}
-<div class="min-height-content">
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-sm-10 col-sm-offset-1">
-				<div class="jumbotron RLcard">
-					<div class="container-fluid">
-						<div class="row middle-content">
-							<div class="col-sm-12">
-								<h2><i class="fas fa-home"></i> Inicio</h2>
-							</div>
+{% block inner_content %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<div class="jumbotron RLcard">
+				<div class="container-fluid">
+					<div class="row middle-content">
+						<div class="col-sm-12">
+							<h2><i class="fas fa-home"></i> Inicio</h2>
 						</div>
-						<div class="row middle-content">
-							<div class="col-sm-10">
-								<h3>Arbitrajes Disponibles</h3>
-							</div>
-							<div class="col-sm-2">
-								<a href="{% url 'main_app:create_arbitraje' %}" class="btn btn-warning btn-block">
-									<i class="fas fa-plus-circle"></i> Crear Arbitraje
-								</a>
-							</div>
+					</div>
+					<div class="row middle-content">
+						<div class="col-sm-10">
+							<h3>Arbitrajes Disponibles</h3>
 						</div>
-						{% if arb_data %}
-							{% for arb, state, allow in arb_data %}
-							<div class="row middle-content jumbotron RLcard half-padding small-bot-margin">
-								<div class="col-sm-5">
-									<p>{{ arb.nombre }}</p>
-									<h5>{{ arb.fecha_inicio_arbitraje }}</h5>
-									<h5>{{ arb.fecha_fin_arbitraje }}</h5>
-								</div>
-								<div class="col-sm-4">
-									<span class="">Estado:</span>
-									<p class="text-primary">{{ state }}</p>
-								</div>
-								{% if allow %}
-								<div class="col-sm-2 text-center">
-									<a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button">
-										<i class="fas fa-door-open"></i> Entrar
-									</a>
-								</div>
-								{% endif %}
-							</div>
-							{% endfor %}
-						{% else %}
-						<div class="row middle-content">
-							<div class="col-sm-6 col-sm-offset-3">
-								<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-								<h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
-							</div>
+						<div class="col-sm-2">
+							<a href="{% url 'main_app:create_arbitraje' %}" class="btn btn-warning btn-block">
+								<i class="fas fa-plus-circle"></i> Crear Arbitraje
+							</a>
+						</div>
+					</div>
+					{% if arb_data %}
+					{% for arb, state, allow in arb_data %}
+					<div class="row middle-content jumbotron RLcard half-padding small-bot-margin">
+						<div class="col-sm-5">
+							<p>{{ arb.nombre }}</p>
+							<h5>{{ arb.fecha_inicio_arbitraje }}</h5>
+							<h5>{{ arb.fecha_fin_arbitraje }}</h5>
+						</div>
+						<div class="col-sm-4">
+							<span class="">Estado:</span>
+							<p class="text-primary">{{ state }}</p>
+						</div>
+						{% if allow %}
+						<div class="col-sm-2 text-center">
+							<a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button">
+								<i class="fas fa-door-open"></i> Entrar
+							</a>
 						</div>
 						{% endif %}
 					</div>
+					{% endfor %}
+					{% else %}
+					<div class="row middle-content">
+						<div class="col-sm-6 col-sm-offset-3">
+							<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+							<h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
+						</div>
+					</div>
+					{% endif %}
 				</div>
 			</div>
 		</div>

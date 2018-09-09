@@ -1,96 +1,72 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-    {% include 'sidebar.html'%}   
-        <!-- Page Content -->
-        <div class="container min-height-content col-sm-10" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                <!--
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-right" id="menu-toggle-icon"></i>
-                    </a>
-                --> 
-                    <h3 class="user-title">Totales</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <div class="col-sm-3">
-                        <h2 class="text-left">Resultados</h2>
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-3 btn-lg">
-                      <form class="form-inline text-right">
-                          <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                          <button class="btn btn-primary" type="submit">Buscar</button>
-                      </form>
-                    </div>
-                    <div class="col-sm-2 btn-lg">
-                        <div class="btn-group">
-                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-download" id="menu-toggle-icon" style="color:black"></i> Descargar Resultados</a>
-                              </li>
-                          </ul>
-                        </div>
-                    </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
 
-                    <br>
-                           <table class="table table-bordered">
-                               <thead>
-                                 <tr>
-                                   <th>Área</th>
-                                   <th>Subarea</th>
-                                   <th>Trabajos inscritos</th>
-                                   <th>Rechazados</th>
-                                   <th>Aprobados</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 
-                                  <tr>
-                                    <td>Biologia</td>
-                                    <td>Crecimiento de las plantas</td>
-                                    <td>20</td>
-                                    <td>5</td>
-                                    <td>15</td>
-                                  </tr>
-                                  <tr>
-                                        <td>Biologia</td>
-                                        <td>Crecimiento de las plantas</td>
-                                        <td>20</td>
-                                        <td>5</td>
-                                        <td>15</td>
-                                      </tr>
-                                      <tr>
-                                            <td>Biologia</td>
-                                            <td>Crecimiento de las plantas</td>
-                                            <td>20</td>
-                                            <td>5</td>
-                                            <td>15</td>
-                                          </tr>
-                                 
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
+				<div class="col-sm-3">
+					<h2 class="text-left">Resultados</h2>
+				</div>
+				<div class="col-sm-4 col-sm-offset-3 btn-lg">
+					<form class="form-inline text-right">
+						<input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+						<button class="btn btn-primary" type="submit">Buscar</button>
+					</form>
+				</div>
+				<div class="col-sm-2 btn-lg">
+					<div class="btn-group">
+						<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-download" id="menu-toggle-icon" style="color:black"></i> Descargar Resultados</a>
+							</li>
+						</ul>
+					</div>
+				</div>
 
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+				<br>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Área</th>
+							<th>Subarea</th>
+							<th>Trabajos inscritos</th>
+							<th>Rechazados</th>
+							<th>Aprobados</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Biologia</td>
+							<td>Crecimiento de las plantas</td>
+							<td>20</td>
+							<td>5</td>
+							<td>15</td>
+						</tr>
+						<tr>
+							<td>Biologia</td>
+							<td>Crecimiento de las plantas</td>
+							<td>20</td>
+							<td>5</td>
+							<td>15</td>
+						</tr>
+						<tr>
+							<td>Biologia</td>
+							<td>Crecimiento de las plantas</td>
+							<td>20</td>
+							<td>5</td>
+							<td>15</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
 </div>
-
 {% endblock %}

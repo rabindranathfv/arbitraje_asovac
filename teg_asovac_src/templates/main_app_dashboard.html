@@ -1,14 +1,10 @@
 {% extends "content_wrapper_with_sidebar.html" %}
 
-{% block intern_content %}
+{% block inner_content %}
 <div class="container-fluid" id="content-wrapper">
-	<div class="row">
-		<div class="col-sm-12">
-			<a href="#menu-toggle" class="btn btn-primary" id="menu-toggle"><i class="fas fa-angle-double-left" id="menu-toggle-icon"></i></a>
-			<h3 class="user-title">Panel Principal de Arbitraje</h3>
-		</div>
-	</div>
-	<!-- First Row -->
+
+	{% include "toggle_title.html" %}
+
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">

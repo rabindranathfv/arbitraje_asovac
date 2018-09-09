@@ -1,64 +1,63 @@
-{% extends "base.html" %}
-
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-<div class="min-height-content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-10 col-sm-offset-1">
-                <div class="jumbotron RLcard">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <div class="col-sm-3">
-                                <h2>Autor</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4>Detalles Trabajo</h4>
-                        </div>
-                        <div class="panel-body">
-                            <div class="container-fluid">
-                                <div class="row middle-content">
-                                    <div class="col-sm-12">
-                                        {% crispy form %}
-                                        <div class="col-sm-2 col-sm-offset-8">
-                                            <a href="{% url 'trabajos:trabajos' %}" class="btn btn-danger btn-block btn-lg">Cancelar</a>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">Guardar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+{% block inner_content %}
+<div class="container-fluid">
+
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<div class="jumbotron RLcard">
+				<div class="container-fluid">
+					<div class="row middle-content">
+						<div class="col-sm-3">
+							<h2>Autor</h2>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4>Detalles Trabajo</h4>
+					</div>
+					<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row middle-content">
+								<div class="col-sm-12">
+									{% crispy form %}
+									<div class="col-sm-2 col-sm-offset-8">
+										<a href="{% url 'trabajos:trabajos' %}" class="btn btn-danger btn-block btn-lg">Cancelar</a>
+									</div>
+									<div class="col-sm-2">
+										<button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">Guardar</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Editar Trabajo</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body text-center content-modal">
-         <p class="">¿Está seguro que desea guardar los cambios?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-success">Guardar</button>
-      </div>
-    </div>
-  </div>
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title text-center" id="ModalLongTitle">Editar Trabajo</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-center content-modal">
+				<p>¿Está seguro que desea guardar los cambios?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+				<button type="submit" class="btn btn-primary btn-success">Guardar</button>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}

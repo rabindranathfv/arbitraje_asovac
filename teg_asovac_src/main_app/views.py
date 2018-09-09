@@ -290,7 +290,7 @@ def dashboard(request, arbitraje_id):
         # print item, ":", val[0]
 
     context = {
-        'nombre_vista' : 'Dashboard',
+        'nombre_vista' : 'Panel Principal del Arbitraje',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje' : arbitraje,
@@ -310,7 +310,7 @@ def dashboard(request, arbitraje_id):
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
     context = {
-                    'nombre_vista' : 'Crear Arbitraje',
+                    'nombre_vista' : 'Crear un Arbitraje',
                     'username' : request.user.username,
                     'form' : form,
                 }
@@ -320,7 +320,8 @@ def create_arbitraje(request):
             form.save()
             # print(form)
             arbitraje_data = Sistema_asovac.objects.all()
-            context = {        
+            context = {
+                'nombre_vista' : 'Crear un Arbitraje',
                 'username' : request.user.username,
                 'form' : form,
                 'arb_data': arbitraje_data,
@@ -343,7 +344,7 @@ def email_test(request):
 
 def listado_trabajos(request):
     context = {
-        'nombre_vista' : 'Lista de Trabajos',
+        'nombre_vista' : 'Listado de Trabajos',
         'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'main_app_resumenes_trabajos_list.html', context)
@@ -352,7 +353,7 @@ def listado_trabajos(request):
 
 def detalles_resumen(request):
     context = {
-        'nombre_vista' : 'Detalles de Resumen',
+        'nombre_vista' : 'Detalles de Trabajo',
         'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'main_app_detalle_resumen.html', context)
@@ -481,7 +482,7 @@ def data_basic(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Configuracion general',
+        'nombre_vista' : 'Editar Configuración General',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -497,10 +498,6 @@ def data_basic(request, arbitraje_id):
     return render(request, 'main_app_data_basic.html', context)
 
 def state_arbitration(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     rol_id=get_roles(request.user.id)
 
@@ -512,7 +509,7 @@ def state_arbitration(request, arbitraje_id):
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf = get_route_configuracion(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -540,8 +537,7 @@ def state_arbitration(request, arbitraje_id):
     # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
     estado = request.session['estado']
     context = {
-        'nombre_vista' : 'Configuracion general',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Cambiar Estado del Arbitraje',
         'estado' : estado,
         'form':form,
         'rol_id' : rol_id,
@@ -557,13 +553,6 @@ def state_arbitration(request, arbitraje_id):
     return render(request, 'main_app_status_arbitration.html', context)
 
 def users_list(request, arbitraje_id):
-
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
     rol_id = get_roles(request.user.id)
     users = User.objects.all()
     
@@ -582,9 +571,9 @@ def users_list(request, arbitraje_id):
     arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items = validate_rol_status(estado,rol_id,item_active)
+    items = validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf = get_route_configuracion(estado,rol_id)
+    route_conf = get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
@@ -593,8 +582,7 @@ def users_list(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Listado de Usuarios',
         'users' : users,
         'estado' : estado,
         'rol_id' : rol_id,
@@ -612,11 +600,6 @@ def users_list(request, arbitraje_id):
 
 
 def user_edit(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
@@ -634,8 +617,7 @@ def user_edit(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Editar Usuario',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -652,10 +634,6 @@ def user_edit(request, arbitraje_id):
 
 
 def user_roles(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
     rol_id=get_roles(request.user.id)
 
@@ -675,8 +653,7 @@ def user_roles(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Roles de los Usuarios',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -693,11 +670,6 @@ def user_roles(request, arbitraje_id):
 
 
 def coord_general(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
@@ -723,8 +695,7 @@ def coord_general(request, arbitraje_id):
             form.save()
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Asignar Coordinador General',
         'estado' : estado,
         'rol_id' : rol_id,
         'form': form,
@@ -743,11 +714,6 @@ def coord_general(request, arbitraje_id):
 
 
 def coord_area(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
@@ -766,8 +732,7 @@ def coord_area(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Asignar Coordinador de Área',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -782,11 +747,6 @@ def coord_area(request, arbitraje_id):
     return render(request, 'main_app_coord_area.html', context)
 
 def total(request, arbitraje_id):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': True},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
@@ -805,8 +765,7 @@ def total(request, arbitraje_id):
     # print items
 
     context = {
-        'nombre_vista' : 'Usuarios',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Total',
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -821,17 +780,8 @@ def total(request, arbitraje_id):
     return render(request, 'main_app_totales.html', context)
 
 def apps_selection(request):
-    # queryset
-    # arbitraje_data = Sistema_asovac.objects.all()
-
-    # if request.method == 'POST':
-    #     context = {
-    #         'nombre_vista' : 'Home',
-    #         'arb_data' : arbitraje_data,
-    #     }
-    #     return render(request, 'main_app_home.html',context)
     context = {
-    
+        'nombre_vista' : 'Selección de Aplicación',
     }
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
