@@ -1001,7 +1001,7 @@ def validate_access_modal(request,id):
         rol=request.POST['rol']
         data_arbitraje=Sistema_asovac.objects.get(pk=arbitraje_id) 
       
-        print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
+        # print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
         if validate_access(rol,data_arbitraje,clave) == 1:
             params_validations= create_params_validations(request)
             data['form_is_valid']= True
