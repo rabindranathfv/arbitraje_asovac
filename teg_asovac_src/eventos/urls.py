@@ -18,13 +18,21 @@ from . import views
 
 urlpatterns = [
     #url(r'^$', views.eventos_pag, name= 'eventos'),
-    url(r'^lista-eventos/$',views.event_list,name='event_list'),
+    url(r'^listar-eventos/$',views.event_list,name='event_list'),
     url(r'^editar-evento/$',views.event_edit,name='event_edit'),
     url(r'^crear-evento/$',views.event_create,name='event_create'),
+    url(r'^detalles-evento/$',views.event_detail,name='event_detail'),
+    url(r'^eliminar-evento/$',views.event_delete,name='event_delete'),
 
     url(r'^crear-organizador/$',views.organizer_create,name='organizer_create'),
     url(r'^listar-organizadores/$',views.organizer_list,name='organizer_list'),
     url(r'^editar-organizador/$',views.organizer_edit,name='organizer_edit'),
     url(r'^eliminar-organizador/$',views.organizer_delete,name='organizer_delete'),
     url(r'^detalles-organizador/$',views.organizer_detail,name='organizer_detail'),
+
+    url(r'^crear-locacion/$',views.event_place_create,name='event_place_create'),
+    url(r'^listar-locaciones/$',views.event_place_list,name='event_place_list'),
+    url(r'^editar-locacion/$',views.event_place_edit,name='event_place_edit'),
+    url(r'^eliminar-locacion/$',views.event_place_delete,name='event_place_delete'),
+    url(r'^detalles-locacion/$',views.event_place_detail,name='event_place_detail'),
 ]

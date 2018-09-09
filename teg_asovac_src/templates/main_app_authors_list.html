@@ -1,138 +1,99 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-
-        {% include 'sidebar.html'%}
-        <!-- Page Content -->
-        <div class="container login-content col-sm-11" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">{{nombre_vista}}</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                    <div class="col-sm-3">
-                      <h2 class="text-left">Lista de autores</h2>
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-3 btn-lg">
-                      <form class="form-inline text-right">
-                          <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                          <button class="btn btn-primary" type="submit">Buscar</button>
-                      </form>
-                    </div>
-                    <div class="col-sm-2 btn-lg">
-                        <div class="btn-group">
-                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
-                              </li>
-                          </ul>
-                        </div>
-                    </div>
-                    <br>
-                           <table class="table table-bordered gray-header">
-                               <thead>
-                                 <tr>
-                                   <th>Nombres</th>
-                                   <th>Apellidos</th>
-                                   <th>Correo electrónico</th>
-                                   <th>Cedula</th>
-                                   <th>Universidad</th>
-                                   <th >Acciones</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 <tr>
-                                   <td>Pedro Manuel</td>
-                                   <td>Camacho Rodriguez</td>
-                                   <td>PedroManuel@gmail.com</td>
-                                   <td>30687908</td>
-                                   <td>UCAB</td>
-                                   <td >
-                                      <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
-                                          <i class="fas fa-edit"></i>
-                                      </a>
-                                      <a href="#" class="btn btn-info" role="button">
-                                          <i class="fas fa-times"></i>
-                                      </a>
-                                      <a href="#" class="btn btn-info" role="button">
-                                          <i class="fas fa-envelope"></i>
-                                      </a>
-                                      <a href="" class="btn btn-info" role="button">
-                                          <i class="fas fa-door-open"></i>
-                                      </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
-                                    <td>Pedro Manuel</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel@gmail.com</td>
-                                    <td>30687908</td>
-                                    <td>UCAB</td>
-                                    <td >
-                                        <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>Pedro Manuel</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>PedroManuel@gmail.com</td>
-                                    <td>30687908</td>
-                                    <td>UCAB</td>
-                                    <td >
-                                        <a href="{% url 'autores:author_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                    </td>
-                                  </tr>
-                                 
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
-
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row middle-content">
+					<div class="col-sm-6">
+						<h2 class="text-left">Lista de Autores</h2>
+					</div>
+					<div class="col-sm-4">
+						<form class="form-inline text-right">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2 btn-lg">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<br>
+				<table class="table table-bordered gray-header">
+					<thead>
+						<tr>
+							<th>Nombres</th>
+							<th>Apellidos</th>
+							<th>Correo electrónico</th>
+							<th>Cedula</th>
+							<th>Universidad</th>
+							<th >Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Pedro Manuel</td>
+							<td>Camacho Rodriguez</td>
+							<td>PedroManuel@gmail.com</td>
+							<td>30687908</td>
+							<td>UCAB</td>
+							<td >
+								<a href="{% url 'autores:author_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td>Pedro Manuel</td>
+							<td>Camacho Rodriguez</td>
+							<td>PedroManuel@gmail.com</td>
+							<td>30687908</td>
+							<td>UCAB</td>
+							<td >
+								<a href="{% url 'autores:author_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}
 
 

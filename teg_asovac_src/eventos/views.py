@@ -1,138 +1,89 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
 
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from django.shortcuts import render,redirect
+from django.urls import reverse
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
-from .forms import CreateOrganizerForm
+#Import forms
+from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm
+
+#Import Models
+from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
 from .models import Organizador,Organizador_evento,Evento,Locacion_evento
+from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
-def event_list(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
-
-    # rol_id = get_roles(request.user.id)
-
-    #print (rol_id)
-    # estado = request.session['estado']
-    # arbitraje_id = request.session['arbitraje_id']
-
-    # item_active = 4
-    # items=validate_rol_status(estado,rol_id,item_active)
-
-    # route_conf= get_route_configuracion(estado,rol_id)
-    # route_seg= get_route_seguimiento(estado,rol_id)
-    # route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    # route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    # route_resultados = get_route_resultados(estado,rol_id)
-    # print items
-
+def event_create(request):
+    form = CreateEventForm()
 
     context = {
+        'username' : request.user.username,
+        'form' : form,
+    }
+    if request.method == 'POST':
+        form = CreateEventForm(request.POST or None)
+        if form.is_valid():
+            form.save(commit=False)
+            #lIMPIANDO DATA
+            form.nombre = form.clean_name()
+            form.categoria = form.clean_category()
+            form.descripcion = form.clean_description()
+            form.tipo = form.clean_type()
+            form.fecha_inicio = form.clean_start_date()
+
+            form.fecha_fin = form.clean_end_date()
+            form.dia_asignado = form.clean_day()
+            form.duracion = form.clean_duration()
+            form.horario_preferido = form.clean_preffer_hour()
+            form.fecha_preferida = form.clean_preffer_date()
+
+            form.observaciones = form.clean_observations()
+            form.url_anuncio_evento = form.clean_url_event()
+            form.organizador_id = form.clean_organizer_id()
+
+            form.locacion_evento = form.clean_locacion_evento()
+
+            print("El form es valido y se guardo satisfactoriamente el EVENTO")
+            form.save()
+            return redirect(reverse('eventos:event_list')) 
+    return render(request, 'eventos_event_create.html',context)
+
+def event_list(request):
+    event_data = Evento.objects.all().order_by('-id')
+    #for data in event_data:
+        #print("nombre " + data.nombre)
+    context = {
         'nombre_vista' : 'Eventos',
-        'main_navbar_options' : main_navbar_options,
-        # 'estado' : estado,
-        # 'rol_id' : rol_id,
-        # 'arbitraje_id' : arbitraje_id,
-        # 'item_active' : item_active,
-        # 'items':items,
-        # 'route_conf':route_conf,
-        # 'route_seg':route_seg,
-        # 'route_trabajos_sidebar':route_trabajos_sidebar,
-        # 'route_trabajos_navbar': route_trabajos_navbar,
-        # 'route_resultados': route_resultados,
+        'username': request.user.username,
+        'event_data': event_data,
     }
     return render(request, 'eventos_event_list.html', context)
 
 
 def event_edit(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
-
-    rol_id=get_roles(request.user.id)
-
-    # print (rol_id)
-    # estado = request.session['estado']
-    # arbitraje_id = request.session['arbitraje_id']
-
-    # # print (rol_id)
-    # estado = request.session['estado']
-    # event_id = request.session['arbitraje_id']
-
-    # route_conf = get_route_configuracion(estado,rol_id)
-    # route_seg = get_route_seguimiento(estado,rol_id)
-    # route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    # route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    # route_resultados = get_route_resultados(estado,rol_id)
-    # print items
-
-    # item_active = 4
-    # items=validate_rol_status(estado,rol_id,item_active)
-
+    
     context = {
         'nombre_vista' : 'Autores',
-        'main_navbar_options' : main_navbar_options,
-        # 'estado' : estado,
-        # 'rol_id' : rol_id,
-        # 'arbitraje_id' : arbitraje_id,
-        # 'item_active' : item_active,
-        # 'items':items,
-        # 'route_conf':route_conf,
-        # 'route_seg':route_seg,
-        # 'route_trabajos_sidebar':route_trabajos_sidebar,
-        # 'route_trabajos_navbar': route_trabajos_navbar,
-        # 'route_resultados': route_resultados,
+        'username': request.user.username,
     }
     return render(request, 'eventos_event_edit.html', context)
 
-def event_create(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Eventos',  'icon': 'fa-archive',   'active': True}]
-
-    #rol_id=get_roles(request.user.id)
-
-    # print (rol_id)
-    # estado = request.session['estado']
-    # arbitraje_id = request.session['arbitraje_id']
+def event_delete(request):
     
-    # item_active = 4
-    # items=validate_rol_status(estado,rol_id,item_active)
+    return render(request, 'eventos_event_delete.html',context={})
 
-    # route_conf= get_route_configuracion(estado,rol_id)
-    # route_seg= get_route_seguimiento(estado,rol_id)
-    # route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    # route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    # route_resultados = get_route_resultados(estado,rol_id)
-    # print items
+def event_detail(request):
+    
+    return render(request, 'eventos_event_detail.html',context={})  
 
-
-    context = {
-        'nombre_vista' : 'Eventos',
-        'main_navbar_options' : main_navbar_options,
-        # 'estado' : estado,
-        # 'rol_id' : rol_id,
-        # 'arbitraje_id' : arbitraje_id,
-        # 'item_active' : item_active,
-        # 'items':items,
-        # 'route_conf':route_conf,
-        # 'route_seg':route_seg,
-        # 'route_trabajos_sidebar':route_trabajos_sidebar,
-        # 'route_trabajos_navbar': route_trabajos_navbar,
-        # 'route_resultados': route_resultados,
-    }
-    return render(request, 'eventos_event_create.html', context)
+##################### Organizer Views ###########################
 
 def organizer_create(request):
     form = CreateOrganizerForm()
+
     context = {
         'username' : request.user.username,
         'form' : form,
@@ -140,20 +91,40 @@ def organizer_create(request):
     if request.method == 'POST':
         form = CreateOrganizerForm(request.POST or None)
         if form.is_valid():
+            form.save(commit=False)
+            #lIMPIANDO DATA
+            form.nombres = form.clean_names()
+            form.apellidos = form.clean_lastnames()
+            form.genero = form.clean_gender()
+
+            #print(form.genero)
+            form.cedula_o_pasaporte = form.clean_cedula_pass()
+            form.correo_electronico = form.clean_email()
+            form.institucion = form.clean_institution()
+            form.telefono_oficina = form.clean_phone_office()
+            form.telefono_habitacion_celular = form.clean_phone_personal()
+            form.direccion_correspondencia = form.clean_address()
+            form.es_miembro_asovac = form.clean_asovac_menber()
+            #print(form.es_miembro_asovac)
+            form.capitulo_asovac = form.clean_cap_asovac()
+            form.cargo_en_institucion = form.clean_position_institution()
+            form.url_organizador = form.clean_url_organizer()
+            form.observaciones = form.clean_observations()
+            form.usuario_asovac = form.clean_user_asovac()   
+            #print(form.usuario_asovac)
+
+            print("El form es valido y se guardo satisfactoriamente")
             form.save()
-            print(form)
-            organizer_data = Organizador.objects.all()
-            context = {        
-                'username' : request.user.username,
-                'form' : form,
-                'org_data': organizer_data,
-                }
-            return render(request, 'eventos_organizer_list.html', context) 
+            return redirect(reverse('eventos:organizer_list')) 
     return render(request, 'eventos_organizer_create.html',context)
 
 def organizer_list(request):
-
-    return render(request, 'eventos_organizer_list.html', context={})
+    organizer_data = Organizador.objects.all().order_by('-id')
+    context = {        
+                'username' : request.user.username,
+                'organizer_data': organizer_data,
+                }
+    return render(request, 'eventos_organizer_list.html', context)
 
 def organizer_edit(request):
 
@@ -166,3 +137,49 @@ def organizer_delete(request):
 def organizer_detail(request):
     
     return render(request, 'eventos_organizer_detail.html',context={})
+
+##################### Locacion Views ###########################
+
+def event_place_create(request):
+    form = CreateLocacionForm()
+    context = {
+        'username' : request.user.username,
+        'form' : form,
+    }
+    if request.method == 'POST':
+        form = CreateLocacionForm(request.POST or None)
+        if form.is_valid():
+            form.save(commit=False)
+            #lIMPIANDO DATA
+            form.lugar = form.clean_place()
+            form.descripcion = form.clean_description()
+            form.capacidad_de_asistentes = form.clean_capacity()
+
+            #print(form.genero)
+            form.observaciones = form.clean_observations()
+            form.equipo_requerido = form.clean_equipement()
+            
+            print("El form es valido y se guardo satisfactoriamente la Locacion del Evento")
+            form.save()
+            return redirect(reverse('eventos:event_place_list'))
+    return render(request, 'eventos_locacion_create.html', context)
+
+def event_place_list(request):
+    event_place_data = LocacionEvento.objects.all().order_by('id')
+    context = {        
+                'username' : request.user.username,
+                'event_place_data': event_place_data,
+                }
+    return render(request, 'eventos_locacion_list.html', context)
+
+def event_place_edit(request):
+    
+    return render(request, 'eventos_locacion_edit.html', context={})
+
+def event_place_delete(request):
+    
+    return render(request, 'eventos_locacion_delete.html', context={})
+
+def event_place_detail(request):
+    
+    return render(request, 'eventos_locacion_detail.html', context={})

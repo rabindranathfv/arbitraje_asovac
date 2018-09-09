@@ -1,125 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
+	{% include "head.html" %}
+</head>
+<body>
+	<!-- Top Navbar principal fija -->
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="main-navbar">
+		<div class="container-fluid">
+			<!-- Logo de la Navbar -->
+			<div class="navbar-header">
+				<a class="navbar-brand" href="{% url 'main_app:home' %}">
+					<strong>ASOVAC</strong>
+				</a>
+			</div>
 
-    {% include "head.html" %}
+			<!-- Opciones de Top navbar pasados por contexto desde el view -->
+			<ul class="nav navbar-nav">
+				{% if "configuration" in items.top_nav_options %}
+				<li>
+					<a href="{{ route_conf }}">
+						<i class ="fas fa-cogs"></i> Configuración
+					</a>
+				</li>
+				{% endif %}
 
-  </head>
+				{% if "arbitration" in items.top_nav_options %}
+				<li>
+					<a href="{{ route_seg }}">
+						<i class="fas fa-eye"></i> Arbitraje y seguimiento
+					</a>
+				</li>
+				{% endif %}
 
-  <body>
+				{% if "result" in items.top_nav_options %}
+				<li>
+					<a href="{{ route_resultados }}">
+						<i class="fas fa-chart-area"></i> Resultados
+					</a>
+				</li>
+				{% endif %}
 
-    <!-- Fixed Main Navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="main-navbar">
-      <div class="container-fluid">
-        <!-- Navbar Brand or Logo -->
-        <div class="navbar-header">
-          <a class="navbar-brand" href="{% url 'main_app:home' %}">
-            <strong>ASOVAC</strong>
-          </a>
-        </div>
+				{% if "jobs" in items.top_nav_options %}
+					{% if "job_options" in items.top_nav_options %}
+					<li>
+						<a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+							<i class="fas fa-book"></i> Trabajos
+						</a>
+						<ul class="dropdown-menu" style ="z-index:2">
+							<li>
+								<a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Crear Trabajo</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'autores:postular_trabajo' %}">Postular Trabajo</a>
+							</li>
+						</ul>
+					</li>
+					{% else %}
+					<li>
+						<a href="{% url 'trabajos:trabajos_evaluados' %}">
+							<i class="fas fa-book"></i> Trabajos
+						</a>
+					</li>
+					{% endif %}
+				{% endif %}
+			</ul>
 
-        <!-- Navbar buttons: Passed by context in the view -->
-     
-          <ul class="nav navbar-nav">
-            {% if "configuration" in items.top_nav_options %}
-              <li>
-                <a href="{{ route_conf }}">
-                  <i class ="fas fa-cogs"></i>Configuración
-                </a>
+			{% if user.username %}
+			<!-- Desplegar aqui el nombre del usuario si está autenticado -->
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<p class="navbar-text">
+						<a href="#" class="navbar-link"><i class="fas fa-user"></i> {{ user.username }}</a>
+					</p>
+				</li>
 
-              </li>
-            {% endif %}
-            {% if "arbitration" in items.top_nav_options %}
-            <li>
-                <a href="{{ route_seg }}">
-                  <i class ="fas fa-eye"></i> Arbitraje y seguimiento
-                </a>
+				<li>
+					<p class="navbar-text">
+						<a href="{% url 'logout' %}" class="navbar-link">
+							<i class="fas fa-sign-out-alt"></i> Cerrar sesión
+						</a>
+					</p>
+				</li>
+			</ul>
+			{% endif %}
+		</div>
+	</nav>
 
-            </li>
-            {% endif %}
-            {% if "result" in items.top_nav_options %}
-            <li>
-              <a href="{{ route_resultados }}">
-                <i class="fas fa-chart-area"></i> Resultados
-              </a>
+	<!-- Barra de navegacion secundaria fija de adorno -->
+	<nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style ="z-index: 1">
+		<div class="container-fluid">
+			<ul class="nav navbar-nav ">
+				<li>
+					<p class="navbar-text"> </p>
+				</li>
+			</ul>
+		</div>
+	</nav>
 
-            </li>
-            {% endif %}
+	{% block content %}{% endblock %}
 
-            {% if "jobs" in items.top_nav_options %}
-              {% if "job_options" in items.top_nav_options %}
-                <li>
-                    <a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
-                      <i class="fas fa-book"></i> Trabajos
-                    </a>
-                    <ul class="dropdown-menu" style ="z-index:2">
-                      <li>
-                        <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Crear Trabajo</a>
-                      </li>
-                      <li>
-                      <a class="dropdown-item" href="{% url 'autores:postular_trabajo' %}">Postular Trabajo</a>
-                      </li>
-                    </ul>
-                </li>
-              
-              {% else %}
-              <li>
-                    <a href="{% url 'trabajos:trabajos_evaluados' %}">
-                      <i class="fas fa-book"></i> Trabajos
-                    </a>
-              </li>
-              {% endif %}
-            {% endif %}
+	{% include "footer.html" %}
 
-          </ul> 
+	{% include "js_scripts.html" %}
 
-        {% if user.username %}
-        <!-- Username logged in -->
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <p class="navbar-text">
-              <a href="#" class="navbar-link"><i class="fas fa-user"></i> {{ user.username }}</a>
-            </p>
-          </li>
-          <li>
-            <p class="navbar-text">
-              <a href="{% url 'logout' %}" class="navbar-link"><i class="fas fa-sign-out-alt"></i>Cerrar sesión</a>
-            </p>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-    </nav>
-
-    <!-- Fixed Secondary Navbar -->
-    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style ="z-index: 1">
-      <div class="container-fluid">
-        <ul class="nav navbar-nav ">
-          <li>
-            <p class="navbar-text"> </p>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <nav class ="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar">
-        <div class="container-fluid">
-          <ul class="nav navbar-nav ">
-            <li>
-              <p class="navbar-text">
-               
-              </p>
-            </li>
-          </ul>
-        </div>
-      </nav>
-      
-    {% block content %}{% endblock %}
-
-    {% include "footer.html" %}
-
-    {% include "js_scripts.html" %}
-    
-    
-  </body>
+</body>
 </html>

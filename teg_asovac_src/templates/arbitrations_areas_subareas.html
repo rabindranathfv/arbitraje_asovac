@@ -1,59 +1,33 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content col-sm-11" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Áreas y subáreas</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <div class="col-sm-2 col-sm-offset-10 btn-lg">
-                        <div class="btn-group">
-                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Carga Areas</a>
-                              </li>
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Carga Subareas</a>
-                              </li>
-                          </ul>
-                        </div>
-                    </div>
-
-
-                    <br>
-                    <!-- init content -->
-                
-
-                    <!-- end content -->
-                           
-                    </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row">
+					<div class="col-sm-8">
+						<h2>Esto es un título</h2>
+					</div>
+					<div class="col-sm-2 col-sm-offset-2 btn-lg">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Áreas</a>
+								</li>
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Subáreas</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}

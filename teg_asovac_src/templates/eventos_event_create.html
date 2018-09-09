@@ -1,118 +1,62 @@
-
-
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container min-height-content" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Crear evento</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="jumbotron RLcard">
-
-                        <h2 class="text-left">Datos del evento</h2>
-                        {% include "errors_form.html" %}
-                    <!-- init form -->
-                        <form id="login-form" method="post">
-                            {% csrf_token %}
-
-                            <div class="row">
-                                <div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="first_name" class="control-label  requiredField">
-                                    Nombres
-                                    <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron RLcard">
+                                         
+                    <div class="col-sm-12">
+                            <div class="col-sm-10">
+                                    <h2 class="text-left">Crear Evento</h2>
                             </div>
-
-                            <div class="row">
-                                <div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="last_name" class="control-label  requiredField">
-                                        Apellidos
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
+                            <div class="col-sm-2">
+                                <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
                             </div>
-
-                            <div class="row">
-                                <div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="email" class="control-label  requiredField">
-                                        Correo electrónico
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="identifier" class="control-label  requiredField">
-                                        Cedula
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div id="div_id_institution" class="form-group col-sm-6 col-sm-offset-3">
-                                    <label for="id_institution" class="control-label  requiredField">
-                                        Universidad
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    <div class="controls ">
-                                        <input type="text" name="institution" required="" id="institution" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="form-group col-sm-6 col-sm-offset-3">
-                                    <div class="controls ">
-                                        <input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    <!-- end form -->
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-sm-offset-3">
-                                <a href="{% url 'autores:authors_list' %}" class="btn btn-block btn-danger" role="button">Cancelar</a>
-                            </div>
-                        </div>
                     </div>
-                </div>
-            </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+                  
+				<div class="col-sm-12">
+					<div class="col-sm-10">
+						<h2 class="text-left">Crear Evento</h2>
+					</div>
+					<div class="col-sm-2">
+						<a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg ">Atras</a> 
+					</div>
+				</div>
+
+				{% include "errors_form.html" %}
+
+				{% crispy form %}
+
+			</div>
+		</div>
+	</div>
 </div>
 
+<!-- Modal -->
+<div id="modal-success" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-lg top-margin-128">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="col-sm-offset-1">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3 class="modal-title text-center"> Agregar Organizador </h3>
+				</div>
+			</div>
+			<div class="modal-body">
+				<h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
+				<p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

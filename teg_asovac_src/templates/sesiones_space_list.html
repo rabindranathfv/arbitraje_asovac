@@ -1,130 +1,91 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row">
+					<div class="col-sm-8">
+						<h2 class="text-left">Listado de Espacios</h2>
+					</div>
+					<div class="col-sm-4">
+						<form class="form-inline text-right">
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+									<span class="input-group-btn">
+										<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+									</span>
+								</div>
+						</form>
+					</div>
+				</div>
+				
+				<br>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Tipo</th>
+							<th>Fecha de ocupación</th>
+							<th>Capacidad</th>
+							<th>Turno</th>
+							<th>Nombre/Url</th>
+							<th >Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Fisico</td>
+							<td>10/12/2018</td>
+							<td>20</td>
+							<td>tarde</td>
+							<td>Aula 5</td>
+							<td >
+								<a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td>Fisico</td>
+							<td>10/12/2018</td>
+							<td>20</td>
+							<td>tarde</td>
+							<td>Aula 5</td>
+							<td >
+								<a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a>
+							</td>
+						</tr>
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Espacios</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de espacios</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
-                    </div>
-                    <br>
-                           <table class="table table-bordered">
-                               <thead>
-                                 <tr>
-                                   <th>Tipo</th>
-                                   <th>Fecha de ocupación</th>
-                                   <th>Capacidad</th>
-                                   <th>Turno</th>
-                                   <th>Nombre/Url</th>
-                                   <th >Acciones</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 <tr>
-                                   <td>Fisico</td>
-                                   <td>10/12/2018</td>
-                                   <td>20</td>
-                                   <td>tarde</td>
-                                   <td>Aula 5</td>
-                                   <td >
-                                        <a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-info" role="button">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                   </td>
-                                 </tr>
-
-                                 <tr>
-                                    <td>Fisico</td>
-                                    <td>10/12/2018</td>
-                                    <td>20</td>
-                                    <td>tarde</td>
-                                    <td>Aula 5</td>
-                                    <td >
-                                         <a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-info" role="button">
-                                             <i class="fas fa-edit"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-times"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-envelope"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button">
-                                             <i class="fas fa-door-open"></i>
-                                         </a>
-                                    </td>
-                                  </tr>
-
-                                  <tr>
-                                    <td>Fisico</td>
-                                    <td>10/12/2018</td>
-                                    <td>20</td>
-                                    <td>tarde</td>
-                                    <td>Aula 5</td>
-                                    <td >
-                                         <a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-info" role="button">
-                                             <i class="fas fa-edit"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-times"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-envelope"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button">
-                                             <i class="fas fa-door-open"></i>
-                                         </a>
-                                    </td>
-                                  </tr>
-     
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
-                           
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}
 
 
