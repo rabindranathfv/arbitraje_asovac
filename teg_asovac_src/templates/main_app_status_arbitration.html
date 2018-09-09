@@ -1,67 +1,46 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Configuración general</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="jumbotron RLcard">
-                    <h2 class="text-left">Cambiar el estado del arbitraje:</h2>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-8 col-sm-offset-2">
-                            <div class="col-md-12">
-                                <form method="POST">
-                                    <div class="row">
-                                        <div class="col-sm-10 col-sm-offset-1">
-                                            {% csrf_token %}
-                                            {{ form.non_field_errors }}
-                                            {% for error in form.coordinador_general.errors %}
-                                            <div class="alert alert-danger">
-                                                <strong>{{ error|escape }}</strong>
-                                            </div>
-                                            {% endfor %}
-                                            {{ form.coordinador_general }}
-                                            <div class="form-group">
-                                                {{ form.estado_arbitraje.errors }}
-                                                {{ form.estado_arbitraje }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-2 col-sm-offset-10">
-                                            <button type="submit" class="btn btn-success">Aceptar</button>
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-           </div>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<h2 class="text-left">Cambiar el estado del arbitraje:</h2>
+				<br>
+				<div class="row">
+					<div class="col-md-8 col-sm-offset-2">
+						<div class="col-md-12">
+							<form method="POST">
+								<div class="row">
+									<div class="col-sm-10 col-sm-offset-1">
+										{% csrf_token %}
+										{{ form.non_field_errors }}
+										{% for error in form.coordinador_general.errors %}
+										<div class="alert alert-danger">
+											<strong>{{ error|escape }}</strong>
+										</div>
+										{% endfor %}
+										{{ form.coordinador_general }}
+										<div class="form-group">
+											{{ form.estado_arbitraje.errors }}
+											{{ form.estado_arbitraje }}
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-4">
+										<button type="submit" class="btn btn-success btn-block">Aceptar</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}

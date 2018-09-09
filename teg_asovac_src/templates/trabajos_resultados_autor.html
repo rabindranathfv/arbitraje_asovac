@@ -1,69 +1,48 @@
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-right" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Trabajos</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                    <div class="col-sm-3">
-                        <h2 class="text-left">Lista de trabajos</h2>
-                    </div>
-                           <table class="table table-bordered">
-                               <thead>
-                                 <tr>
-                                    <th class="col-sm-3">Area</th>
-                                    <th class="col-sm-3">Subarea</th>                 
-                                    <th class="col-sm-1">Nombre del trabajo</th>
-                                    <th class="col-sm-3">Resultado del arbitraje</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 <tr>
-                                    <td>Computación</td>
-                                    <td>Gráficas</td>
-                                    <td>Trabajo</td>
-                                    <td><span class="label label-success lb-md center-block">Aprobado</span></td>
-                                  </tr>
-                                 <tr>
-                                    <td>Area</td>
-                                    <td>Subarea</td>
-                                    <td>Nombre</td>
-                                    <td><span class="label label-warning lb-md center-block">Aprobado con observaciones</span></td>
-                                 </tr>
-                                 <tr>
-                                    <td>Area2</td>
-                                    <td>Subarea2</td>
-                                    <td class="col-sm-1">Nombre2</td>
-                                    <td><span class="label label-danger lb-md center-block">Rechazado</span></td>
-                                 </tr>
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
-                           
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="col-sm-3">
+					<h2 class="text-left">Lista de trabajos</h2>
+				</div>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th class="col-sm-3">Área</th>
+							<th class="col-sm-3">Subárea</th>                 
+							<th class="col-sm-1">Nombre del trabajo</th>
+							<th class="col-sm-3">Resultado del arbitraje</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Computación</td>
+							<td>Gráficas</td>
+							<td>Trabajo</td>
+							<td><span class="label label-success lb-md center-block">Aprobado</span></td>
+						</tr>
+						<tr>
+							<td>Area</td>
+							<td>Subarea</td>
+							<td>Nombre</td>
+							<td><span class="label label-warning lb-md center-block">Aprobado con observaciones</span></td>
+						</tr>
+						<tr>
+							<td>Area2</td>
+							<td>Subarea2</td>
+							<td class="col-sm-1">Nombre2</td>
+							<td><span class="label label-danger lb-md center-block">Rechazado</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}

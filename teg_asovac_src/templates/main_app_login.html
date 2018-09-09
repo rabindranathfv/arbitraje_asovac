@@ -1,54 +1,53 @@
-{% extends "base_users.html" %}
+{% extends "content_wrapper.html" %}
 
-{% load crispy_forms_tags %}
+{% block inner_content %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-4 col-sm-offset-4">
+			<div class="jumbotron RLcard">
+				<h3 class="text-center">Sistema AsoVAC</h3>
+				<h5 class="text-muted">Por favor, ingrese sus credenciales a continuación:</h5>
 
-    {% block content %}
-    
-    <div class="login-content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-4 col-sm-offset-4">
-            <div class="jumbotron RLcard">
-              <h3 class="text-center">ASOVAC</h3>
-              <!-- init form -->
-              <!-- {% crispy form %} -->
-              {% include "success_messages.html" %}
-              {% include "errors_form.html" %}
-              <form id="login-form" method="post"> 
-                {% csrf_token %}
-                <div id="div_id_username" class="form-group"> 
-                  <label for="id_username" class="control-label  requiredField">
-                    Usuario<span class="asteriskField">*</span> 
-                  </label> 
-                  <div class="controls "> 
-                    <input type="text" name="username" id="id_username" required="" class="textinput textInput form-control" maxlength="100"> 
-                  </div> 
-                </div> 
-                <div id="div_id_password" class="form-group"> 
-                  <label for="id_password" class="control-label  requiredField">
-                    Contraseña<span class="asteriskField">*</span> 
-                  </label> 
-                  <div class="controls "> 
-                    <input type="password" name="password" id="id_password" required="" class="textinput textInput form-control" maxlength="100"> 
-                    <div class="invalid-feedback">
-                    </div>
-                  </div> 
-                </div> 
-                <div class="form-group"> 
-                  <div class="controls "> 
-                    <input type="submit" name="submit" value="Ingresar" class="btn btn-primary btn-block" id="submit-id-submit"> 
-                  </div> 
-                </div> 
-              </form>
-              <!-- end form -->
-              <a href="{% url 'password_reset' %}" class="btn btn-block btn-warning" role="button">¿Olvidaste tu contraseña?</a>
-              <div class="text-center">
-                <h5>¿No tienes cuenta? <a href="{% url 'main_app:register' %}" class="" role="button">Registrarme</a></h5>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+				{% include "success_messages.html" %}
 
-    {% endblock %}
+				{% include "errors_form.html" %}
+
+				<form id="login-form" method="post">
+
+					{% csrf_token %}
+
+					<div id="div_id_username" class="form-group">
+						<label for="id_username" class="control-label requiredField">
+							Usuario<span class="asteriskField">*</span>
+						</label>
+						<div class="controls ">
+							<input type="text" name="username" id="id_username" required="" class="textinput textInput form-control" maxlength="100">
+						</div>
+					</div>
+
+					<div id="div_id_password" class="form-group">
+						<label for="id_password" class="control-label  requiredField">
+							Contraseña<span class="asteriskField">*</span>
+						</label>
+						<div class="controls ">
+							<input type="password" name="password" id="id_password" required="" class="textinput textInput form-control" maxlength="100">
+							<div class="invalid-feedback">
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="controls ">
+							<input type="submit" name="submit" value="Ingresar" class="btn btn-primary btn-block" id="submit-id-submit">
+						</div>
+					</div>
+				</form>
+				<a href="{% url 'password_reset' %}" class="btn btn-block btn-warning" role="button">¿Olvidaste tu contraseña?</a>
+				<div class="text-center">
+					<h5>¿No tienes cuenta? <a href="{% url 'main_app:register' %}" class="" role="button">Registrate aquí</a></h5>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

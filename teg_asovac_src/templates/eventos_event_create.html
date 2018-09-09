@@ -1,27 +1,12 @@
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container min-height-content" id="content-wrapper">
 
-    {% include 'sidebar.html'%}
+	{% include "toggle_title.html" %}
 
-    <!-- Page Content -->
-    <div class="container login-content" id="content-wrapper">
-        <!-- Title content--> 
-        <div class="row">
-            <div class="col-sm-12">
-                <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                    <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                </a>
-                <h3 class="user-title">Evento</h3>
-            </div>
-        </div>
-         <!-- EndTitle content-->
-
-         <!-- First Row -->
         <div class="row">
             <div class="col-sm-12">
                 <div class="jumbotron RLcard">
@@ -34,45 +19,44 @@
                                 <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
                             </div>
                     </div>
+                  
+				<div class="col-sm-12">
+					<div class="col-sm-10">
+						<h2 class="text-left">Crear Evento</h2>
+					</div>
+					<div class="col-sm-2">
+						<a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg ">Atras</a> 
+					</div>
+				</div>
 
-                    {% include "errors_form.html" %}
-                <!-- init form -->
-                {% crispy form %}
-                <!-- end form -->
-                <br><br><br>
-                </div>
-            </div>
-        </div>
-         <!-- EndFirst Row -->
+				{% include "errors_form.html" %}
 
-    </div>
+				{% crispy form %}
+
+			</div>
+		</div>
+	</div>
 </div>
-
-
 
 <!-- Modal -->
 <div id="modal-success" class="modal fade" role="dialog">
-<div class="modal-dialog modal-lg top-margin-128">
-    <!-- Modal content-->
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="col-sm-offset-1">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h3 class="modal-title"> Agregar organizador </h3>
-            </div>
-        </div>
-        <div class="modal-body">
-            <h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
-            <p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg top-margin-128">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<div class="col-sm-offset-1">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3 class="modal-title text-center"> Agregar Organizador </h3>
+				</div>
+			</div>
+			<div class="modal-body">
+				<h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
+				<p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
+			</div>
+		</div>
+	</div>
 </div>
-</div>
-
-
-
-
 {% endblock %}

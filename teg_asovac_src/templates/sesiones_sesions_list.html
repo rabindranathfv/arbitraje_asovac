@@ -1,155 +1,108 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Sesiones</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    
-                    <div class="col-sm-3">
-                        <h2 class="text-left">Lista de sesiones</h2>
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-3 btn-lg">
-                      <form class="form-inline text-right">
-                          <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                          <button class="btn btn-primary" type="submit">Buscar</button>
-                      </form>
-                    </div>
-                    <div class="col-sm-2 btn-lg">
-                        <div class="btn-group">
-                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-clock" id="menu-toggle-icon" style="color:black"></i> Carga de horarios</a>
-                              </li>
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-building" id="menu-toggle-icon" style="color:black"></i> Carga de Lugares</a>
-                              </li>
-                          </ul>
-                        </div>
-                    </div>
-
-                    <br>
-                           <table class="table table-bordered">
-                               <thead>
-                                 <tr>
-                                   <th>Trabajo</th>
-                                   <th>Espacio</th>
-                                   <th>Coordinadores</th>
-                                   <th>Modalidad</th>
-                                   <th>Fecha de presentación</th>
-                                   <th >Acciones</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                 <tr>
-                                   <td>Trabajo 1</td>
-                                   <td>Aula 5</td>
-                                   <td>Camacho Rodriguez</td>
-                                   <td>Presencial</td>
-                                   <td>21/07/2018</td>
-                                   <td >
-                                        <a href="{% url 'sesiones:sesions_edit'%}" class="btn btn-info" role="button" data-toggle="tooltip" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" title="Eliminar">
-                                            <i class="fas fa-times"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-info" role="button" title="Enviar">
-                                            <i class="fas fa-envelope"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button" title="Entrar">
-                                            <i class="fas fa-door-open"></i>
-                                        </a>
-                                        <a href="" class="btn btn-info" role="button" title="Comentar">
-                                            <i class="fa fa-comment"></i>
-                                        </a>
-                                   </td>
-                                 </tr>
-                                 <tr>
-                                    <td>Trabajo 1</td>
-                                    <td>Aula 5</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>Presencial</td>
-                                    <td>21/07/2018</td>
-                                    <td >
-                                         <a href="{% url 'sesiones:sesions_edit'%}" class="btn btn-info" role="button">
-                                             <i class="fas fa-edit"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-times"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-envelope"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button">
-                                             <i class="fas fa-door-open"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button" title="Comentar">
-                                            <i class="fa fa-comment"></i>
-                                        </a>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <td>Trabajo 1</td>
-                                    <td>Aula 5</td>
-                                    <td>Camacho Rodriguez</td>
-                                    <td>Presencial</td>
-                                    <td>21/07/2018</td>
-                                    <td >
-                                         <a href="{% url 'sesiones:sesions_edit'%}" class="btn btn-info" role="button">
-                                             <i class="fas fa-edit"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-times"></i>
-                                         </a>
-                                         <a href="#" class="btn btn-info" role="button">
-                                             <i class="fas fa-envelope"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button">
-                                             <i class="fas fa-door-open"></i>
-                                         </a>
-                                         <a href="" class="btn btn-info" role="button" title="Comentar">
-                                            <i class="fa fa-comment"></i>
-                                        </a>
-                                    </td>
-                                  </tr>
-                                  
-
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
-                           
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row">
+					<div class="col-sm-6">
+						<h2>Lista de sesiones</h2>
+					</div>
+					<div class="col-sm-4">
+						<form class="form-inline text-right">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2 btn-lg">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-clock" id="menu-toggle-icon" style="color:black"></i> Carga de horarios</a>
+								</li>
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-building" id="menu-toggle-icon" style="color:black"></i> Carga de Lugares</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<br>
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Trabajo</th>
+							<th>Espacio</th>
+							<th>Coordinadores</th>
+							<th>Modalidad</th>
+							<th>Fecha de presentación</th>
+							<th >Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Trabajo 1</td>
+							<td>Aula 5</td>
+							<td>Camacho Rodriguez</td>
+							<td>Presencial</td>
+							<td>21/07/2018</td>
+							<td >
+								<a href="{% url 'sesiones:sesions_edit'%}" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" title="Editar">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button" title="Eliminar">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button" title="Enviar">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button" title="Entrar">
+									<i class="fas fa-door-open"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button" title="Comentar">
+									<i class="fa fa-comment"></i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td>Trabajo 1</td>
+							<td>Aula 5</td>
+							<td>Camacho Rodriguez</td>
+							<td>Presencial</td>
+							<td>21/07/2018</td>
+							<td >
+								<a href="{% url 'sesiones:sesions_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button" title="Comentar">
+									<i class="fa fa-comment"></i>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}
 
 
