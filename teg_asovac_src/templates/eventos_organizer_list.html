@@ -1,103 +1,75 @@
-
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Organizadores</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de Organizadores</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
-                    </div>
-                    <br>
-                        <div class="table-responsive">
-                           <table class="table table-bordered">
-                            {% if organizer_data %}
-                               <thead>
-                                 <tr>
-                                   <th>Nombres</th>
-                                   <th>Apellidos</th>
-                                   <th>Correo electronico</th>
-                                   <th>Institución</th>
-                                   <th>Capitulo Asovac</th>
-                                   <th>Mienbro Asovac</th> 
-                                   <th>Acciones</th>                                  
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                
-                                    {% for org_data in organizer_data %}
-                                    <tr>
-                                    <td>{{ org_data.nombres }}</td>
-                                    <td>{{ org_data.apellidos }}</td>
-                                    <td>{{ org_data.correo_electronico }}</td>
-                                    <td>{{ org_data.institucion }}</td>
-                                    <td>{{ org_data.capitulo_asovac }}</td>
-                                    <td>{{ org_data.es_mienbro_asovac }}</td>
-                                    <td>
-                                            <a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'eventos:organizer_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        
-                                            <a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                                                                
-                                            <a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
-                                                <i class="fa fa-comment"></i>
-                                            </a>
-                                    </td>
-                                    </tr>
-                                    
-                                    {% endfor %}
-                                </tbody>
-                                    
-                            {% else %}
-                            
-                                    <div class="well well-lg">
-                                        <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                                            <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-                                    </div>                                                               
-                               
-                            {% endif %}
-                             </table>
-                           <!-- End table responsive  -->
-                        </div>
-                        <!--end jumbotrom-->
-                    </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+
+				<h2 class="text-left">Lista de Organizadores</h2>
+				<div>
+					<form class="form-inline text-right">
+						<input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+						<button class="btn btn-primary" type="submit">Buscar</button>
+					</form>
+				</div>
+				<br>
+				<div class="table-responsive">
+					<table class="table table-bordered">
+						{% if organizer_data %}
+							<thead>
+								<tr>
+									<th>Nombres</th>
+									<th>Apellidos</th>
+									<th>Correo Electrónico</th>
+									<th>Institución</th>
+									<th>Capitulo Asovac</th>
+									<th>Mienbro Asovac</th> 
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for org_data in organizer_data %}
+								<tr>
+									<td>{{ org_data.nombres }}</td>
+									<td>{{ org_data.apellidos }}</td>
+									<td>{{ org_data.correo_electronico }}</td>
+									<td>{{ org_data.institucion }}</td>
+									<td>{{ org_data.capitulo_asovac }}</td>
+									<td>{{ org_data.es_mienbro_asovac }}</td>
+									<td>
+										<a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
+											<i class="fas fa-edit"></i>
+										</a>
+										<a href="{% url 'eventos:organizer_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
+											<i class="fas fa-times"></i>
+										</a>
+
+										<a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
+											<i class="fas fa-eye"></i>
+										</a>
+
+										<a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
+											<i class="fa fa-comment"></i>
+										</a>
+									</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						{% else %}
+							<div class="well well-lg">
+								<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+								<strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+							</div>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-
 {% endblock %}
