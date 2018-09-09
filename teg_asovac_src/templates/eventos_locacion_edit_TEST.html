@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div class="col-sm-12">
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Locacion de Evento</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="jumbotron RLcard">
+                                             
+                        <div class="col-sm-12">
+                                <div class="col-sm-10">
+                                        <h2 class="text-left">Editar Locacion de Evento</h2>
+                                </div>
+                                <div class="col-sm-2">
+                                    <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_place_list' %}">Atras</a> 
+                                </div>
+                        </div>
+
+                        {% include "errors_form.html" %}
+                    <!-- init form -->
+                    
+                    <form method="POST" class="form-horizontal" id="edit-locacion-form">
+                            {% csrf_token %}   
+                        <!-- 
+                        <div class="form-group">
+                                <legend>Editar Locacion</legend>
+                         </div>
+                        -->
+
+                         <div id="div_id_lugar" class="form-group">
+                             <label for="id_lugar" class="control-label col-sm-3 requiredField">
+                                Lugar
+                            </label> 
+                            <div class="controls col-sm-7"> 
+                                <input type="text" name="lugar" id="id_lugar" required="" class="textinput textInput form-control" maxlength="100"> 
+                            </div>
+                        </div>
+
+                        <div id="div_id_descripcion" class="form-group">
+                            <label for="id_descripcion" class="control-label col-sm-3 requiredField">
+                                Descripción
+                            </label>
+                            <div class="controls col-sm-7"> 
+                                <input type="text" name="descripcion" id="id_descripcion" required="" class="textinput textInput form-control" maxlength="255"> 
+                            </div>
+                        </div>
+                    
+                        <div id="div_id_capacidad_de_asistentes" class="form-group"> 
+                            <label for="id_capacidad_de_asistentes" class="control-label col-sm-3 requiredField">
+                                Capacidad de Asistentes
+                            </label> 
+                            <div class="controls col-sm-7">
+                                    <input type="number" name="capacidad_de_asistentes" value="0" required="" class="numberinput form-control" id="id_capacidad_de_asistentes">
+                            </div>
+                        </div> 
+                        
+                        <div id="div_id_observaciones" class="form-group">
+                            <label for="id_observaciones" class="control-label col-sm-3">
+                                Observaciones
+                            </label> 
+                            <div class="controls col-sm-7"> 
+                                <textarea name="observaciones" maxlength="400" id="id_observaciones" rows="10" class="textarea form-control" cols="40">
+
+                                </textarea>
+                            </div>
+                        </div>
+
+                        <div id="div_id_equipo_requerido" class="form-group" style="background-color: red">
+                            <label for="id_equipo_requerido" class="control-label col-sm-3 requiredField">
+                                Equipo Requerido
+                            </label>
+                            <div class="controls col-sm-7">
+                                <input type="text" name="equipo_requerido" id="id_equipo_requerido" required="" class="textinput textInput form-control" maxlength="255"> 
+                            </div>
+                        </div>
+                    
+                        <div class="col-sm-12" style="background-color: blue;"> 
+                            <div class="col-sm-6"> <span></span> </div>
+                            <div class="col-sm-2">
+                                <a href="{% url 'eventos:event_place_list' %}" class="btn btn-danger btn-block btn-lg">Cancelar</a>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="submit" name="submit" value="Crear Locacion de Eventos " class="btn btn-primary btn-success btn-lg btn-block" id="btn-modal-success">               
+                            </div>
+                        </div>
+
+                    </form>
+                    <!-- end form -->
+                    
+                </div>
+                </div>
+            </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+
+
+<!-- Modal -->
+<div id="modal-success" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg top-margin-128">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="col-sm-offset-1">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title"> Agregar organizador </h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
+                <p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

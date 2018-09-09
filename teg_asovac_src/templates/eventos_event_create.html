@@ -1,7 +1,5 @@
-
-
 {% extends "content_wrapper_with_sidebar.html" %}
-
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block inner_content %}
@@ -9,10 +7,19 @@
 
 	{% include "toggle_title.html" %}
 
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
-
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="jumbotron RLcard">
+                                         
+                    <div class="col-sm-12">
+                            <div class="col-sm-10">
+                                    <h2 class="text-left">Crear Evento</h2>
+                            </div>
+                            <div class="col-sm-2">
+                                <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
+                            </div>
+                    </div>
+                  
 				<div class="col-sm-12">
 					<div class="col-sm-10">
 						<h2 class="text-left">Crear Evento</h2>

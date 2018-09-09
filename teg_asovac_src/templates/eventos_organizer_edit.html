@@ -7,115 +7,165 @@
 	{% include "toggle_title.html" %}
 
 	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
+			<div class="col-sm-12">
+					<div class="jumbotron RLcard">
 
-				<h2 class="text-left">Datos del evento</h2>
-				{% include "errors_form.html" %}
-
-				<form id="login-form" method="post">
-					{% csrf_token %}
-
-					<div class="row">
-						<div id="div_id_organizador" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="organizador" class="control-label  requiredField">
-								Organizador
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="organizador" id="organizador" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
+							<div class="col-sm-12">
+									<div class="col-sm-10">
+													<h2 class="text-left">Datos del Evento</h2>
+									</div>
+									<div class="col-sm-2">
+											<a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg " href="{% url 'eventos:event_list' %}">Atras</a> 
+									</div>
 					</div>
+							{% include "errors_form.html" %}
+					<!-- init form -->
+							<form class="form-horizontal" id="edit-event-form" method="POST">
+									{% csrf_token %}
+									<div id="div_id_nombre" class="form-group">
+											<label for="id_nombre" class="control-label col-sm-3 requiredField">
+											Nombre del Evento
+											</label> 
+											<div class="controls col-sm-8"> 
+													<input type="text" name="nombre" id="id_nombre" required class="textinput textInput form-control" maxlength="150" /> 
+											</div> 
+									</div>
 
-					<div class="row">
-						<div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="first_name" class="control-label  requiredField">
-								Nombre
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
+									<div id="div_id_categoria" class="form-group"> 
+											<label for="id_categoria" class="control-label col-sm-3 requiredField">
+											Categoria del Evento
+											</label> 
+											<div class="controls col-sm-8"> 
+													<input type="text" name="categoria" id="id_categoria" required class="textinput textInput form-control" maxlength="50" /> 
+											</div>
+									</div> 
+									
+									<div id="div_id_descripcion" class="form-group"> 
+											<label for="id_descripcion" class="control-label col-sm-3 requiredField">
+											Descripción
+											</label> 
+											<div class="controls col-sm-8"> 
+													<textarea name="descripcion" rows="10" maxlength="150" id="id_descripcion" required class="textarea form-control" cols="40"></textarea> 
+											</div>
+									</div> 
+									
+									<div id="div_id_tipo" class="form-group"> 
+											<label for="id_tipo" class="control-label col-sm-3 requiredField">
+											Tipo de Evento
+											 </label>
+											<div class="controls col-sm-8"> 
+													<input type="text" name="tipo" id="id_tipo" required class="textinput textInput form-control" maxlength="50" /> 
+											</div>
+									</div> 
+									
+									<div id="div_id_fecha_inicio" class="form-group"> 
+											<label for="id_fecha_inicio" class="control-label col-sm-3 requiredField">    
+											Fecha de Inicio
+											</label>
+											<div class="controls col-sm-8"> 
+													<input type="text" name="fecha_inicio" required class="dateinput form-control" id="id_fecha_inicio" /> 
+											</div>
+									</div>
+									
+									<div id="div_id_fecha_fin" class="form-group"> 
+											<label for="id_fecha_fin" class="control-label col-sm-3 requiredField">
+											Fecha de Finalizacion 
+											</label>
+													<div class="controls col-sm-8">
+															<input type="text" name="fecha_fin" required class="dateinput form-control" id="id_fecha_fin" /> 
+													</div>
+									</div> 
+											
+									<div id="div_id_dia_asignado" class="form-group"> 
+											<label for="id_dia_asignado" class="control-label col-sm-3 requiredField">
+											Dia Asignado
+											 </label> 
+											<div class="controls col-sm-8">
+													<input type="text" name="dia_asignado" required class="dateinput form-control" id="id_dia_asignado" />
+											</div>
+									</div>
+									
+									<div id="div_id_duracion" class="form-group">
+											<label for="id_duracion" class="control-label col-sm-3 requiredField">
+											Duracion del Evento
+											</label>
+											<div class="controls col-sm-8"> 
+													<input type="text" name="duracion" id="id_duracion" required class="textinput textInput form-control" maxlength="50" />
+											</div>
+									</div>
 
-					<div class="row">
-						<div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="last_name" class="control-label  requiredField">
-								Categoría
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
+									<div id="div_id_horario_preferido" class="form-group">
+											<label for="id_horario_preferido" class="control-label col-sm-3 requiredField">
+											Horario Preferido
+											</label>
+											<div class="controls col-sm-8"> 
+													<input type="text" name="horario_preferido" id="id_horario_preferido" required class="textinput textInput form-control" maxlength="50" /> 
+											</div>
+									</div>
+									
+									<div id="div_id_fecha_preferida" class="form-group"> 
+											<label for="id_fecha_preferida" class="control-label col-sm-3 requiredField">
+											Fecha Preferida
+											</label>
+											<div class="controls col-sm-8"> 
+													<input type="text" name="fecha_preferida" required class="timeinput form-control" id="id_fecha_preferida" /> 
+											</div>
+									</div>
+									
+									<div id="div_id_observaciones" class="form-group">
+											<label for="id_observaciones" class="control-label col-sm-3">
+											Observaciones
+											</label>
+											<div class="controls col-sm-8"> <textarea name="observaciones" maxlength="400" id="id_observaciones" rows="10" class="textarea form-control" cols="40">
+											</textarea> 
+											</div>
+									</div>
+									
+									<div id="div_id_url_anuncio_evento" class="form-group">
+											<label for="id_url_anuncio_evento" class="control-label col-sm-3">
+											Enlace del Evento
+											</label>
+											<div class="controls col-sm-8">
+													<input type="text" name="url_anuncio_evento" id="id_url_anuncio_evento" class="textinput textInput form-control" maxlength="200" />
+											</div> 
+									</div> 
+									
+									<div id="div_id_organizador_id" class="form-group"> <label for="id_organizador_id" class="control-label col-sm-3 requiredField">
+											Seleccione el Organizador
+											</label>
+											<div class="controls col-sm-8"> 
+													<select name="organizador_id" required multiple="multiple" class="selectmultiple form-control" id="id_organizador_id">
+													</select> 
+											</div> 
+									</div>
+									
+									<div id="div_id_locacion_evento" class="form-group"> 
+											<label for="id_locacion_evento" class="control-label col-sm-3 requiredField">
+											Localizacion del Evento
+											</label> 
+											<div class="controls col-sm-8"> 
+													<select name="locacion_evento" required class="select form-control" id="id_locacion_evento"> 
+															<option value="" selected>---------</option>
+													</select>
+											</div>
+									</div>
 
-					<div class="row">
-						<div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="email" class="control-label  requiredField">
-								Lugar
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
+									<div class="col-sm-12"> 
+											<div class="col-sm-7">
+													<span></span>
+											</div>
+											<div class="col-sm-2" >
+													<a href="{% url 'eventos:event_list' %}" class="btn btn-danger btn-block btn-lg">Cancelar</a>
+											</div>
+											<div class="col-sm-3" > 
+													<input type="submit" name="submit" value="Crear_Evento" class="btn btn-primary btn-success btn-lg btn-block" id="btn-modal-success" />  
+											</div>
+									</div>
+									
+							</form>
+					<!-- end form -->
 					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Capacidad
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Fecha inicio
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Fecha fin
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="form-group col-sm-6 col-sm-offset-3">
-							<div class="controls ">
-								<input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-							</div>
-						</div>
-					</div>
-				</form>
-				<!-- end form -->
-				<div class="row">
-					<div class="form-group col-sm-6 col-sm-offset-3">
-						<a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
-					</div>
-				</div>
 			</div>
-		</div>
 	</div>
 </div>
 {% endblock %}
