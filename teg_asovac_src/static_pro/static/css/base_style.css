@@ -1,5 +1,5 @@
 body {
-    padding-top: 80px;
+    padding-top: 70px;
     background-color: #EEEEEE;
 }
 
@@ -89,7 +89,7 @@ body {
     margin-top: 41px;
     font-size: 16px;
     font-weight: 600;
-    min-height:40px !important;
+    min-height: 30px !important;
 }
 
 .secondary-navbar ul > li {
@@ -107,7 +107,7 @@ body {
     padding-right:15px !important;
     padding-bottom:10px !important;
     margin:0;
-    height: 40px;
+    height: 30px;
 }
 
 /*============================ Secondary Navbar colors ============================*/
@@ -277,12 +277,24 @@ body {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-/*================= Login content box =================*/
-.login-content {
-    min-height: calc(100vh - 130px);
-    padding-top: 40px;
+.RLcard.half-padding {
+    padding: 15px 12px !important;
 }
 
+.RLcard.small-bot-margin {
+    margin-bottom: 10px;
+}
+
+/*================= Min height content box =================*/
+/* Esta regla se usa para mantener al footer pegado a la parte inferior de la página
+incluso cuando el contenido de la página es muy corto */
+.min-height-content {
+    min-height: calc(100vh - 120px);
+}
+
+.top-padding-40 {
+    padding-top: 40px;
+}
 /*================= Bootstrap button colors override =================*/
 .btn-primary{
     background-color: #2869BC;
@@ -324,6 +336,14 @@ body {
 /*================= Defined margin classes =================*/
 .top-margin-18{
     margin-top: 18px;
+}
+
+.top-margin-36{
+    margin-top: 36px;
+}
+
+.top-margin-6{
+    margin-top: 6px;
 }
 
 .top-margin-128{

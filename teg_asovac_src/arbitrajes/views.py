@@ -13,17 +13,12 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 # Create your views here.
 def arbitrajes_pag(request):
     context = {
-        "nombre_vista": 'arbitrajes'
+        "nombre_vista": 'Arbitrajes'
     }
     return render(request,"test_views.html",context)
 
 
 def listado_trabajos(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
@@ -41,12 +36,11 @@ def listado_trabajos(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Arbitros',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Listado de Trabajos',
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
+        'arbitraje_id' : event_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,
@@ -60,16 +54,10 @@ def listado_trabajos(request):
 def detalles_resumen(request):
     context = {
         'nombre_vista' : 'Detalles de Resumen',
-        'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'arbitrajes_detalle_resumen.html', context)
 
 def referee_list(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
@@ -84,13 +72,9 @@ def referee_list(request):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    # print items
-
     context = {
-        'nombre_vista' : 'Arbitros',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Listado de Arbitros',
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -104,11 +88,6 @@ def referee_list(request):
     return render(request, 'main_app_referee_list.html', context)
 
 def referee_edit(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
@@ -127,9 +106,7 @@ def referee_edit(request):
 
     context = {
         'nombre_vista' : 'Arbitros',
-        'main_navbar_options' : main_navbar_options,
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -143,11 +120,6 @@ def referee_edit(request):
     return render(request, 'main_app_referee_edit.html', context)
 
 def areas_subareas(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
@@ -165,10 +137,8 @@ def areas_subareas(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Dashboard',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Áreas y Subáreas',
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
@@ -183,11 +153,6 @@ def areas_subareas(request):
 
 
 def asignacion_de_sesion(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
@@ -205,12 +170,11 @@ def asignacion_de_sesion(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Dashboard',
-        'main_navbar_options' : main_navbar_options,
+        'nombre_vista' : 'Asignar Sesiónes | Lista de Árbitros según Subáreas',
         'estado' : estado,
-        #'rol' : rol,
         'rol_id' : rol_id,
         'event_id' : event_id,
+        'arbitraje_id' : event_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,

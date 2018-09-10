@@ -1,29 +1,41 @@
-
-
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Eventos</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include "toggle_title.html" %}
 
-             <!-- First Row -->
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+
+				<h2 class="text-left">Listado de Eventos</h2>
+				<div>
+					<form class="form-inline text-right">
+						<input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
+						<button class="btn btn-primary" type="submit">Buscar</button>
+					</form>
+				</div>
+				<br>
+				<div class="table-responsive">
+					<table class="table table-bordered">
+						{% if event_data %}
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Categoria</th>
+								<th>Tipo</th>
+								<th>Fecha Inicio</th>
+								<th>Fecha Fin</th>
+								<th>Dia Asignado</th>
+								<th>Duracion</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for evt_data in event_data  %}
+
              <div class="row">
                <div class="col-sm-12">
                    <div class="jumbotron RLcard">
@@ -38,58 +50,59 @@
                     <br>
                     <div class="table-responsive">
                         <table class="table table-bordered">
-                        {% if event_data %}
+                            {% if event_data %}
                             <thead>
                               <tr>
                                 <th>Nombre</th>
-                                <th>Categoria</th>
                                 <th>Tipo</th>
                                 <th>Fecha Inicio</th>
                                 <th>Fecha Fin</th>
                                 <th>Dia Asignado</th>
                                 <th>Duracion</th>
-                                <th>Acciones</th>
+                                <th>Enlace del Evento</th> 
+                                <th>Acciones</th>                                  
                               </tr>
                             </thead>
                             <tbody>
-                            {% for evt_data in event_data  %}
-                                
-                              <tr>
-                                <td>{{ evt_data.nombre }}<td>
-                                <td>{{ evt_data.categoria }}</td>
-                                <td>{{ evt_data.tipo }}</td>
-                                <td>{{ evt_data.fecha_inicio }}</td>
-                                <td>{{ evt_data.fecha_fin }}</td>
-                                <td>{{ evt_data.dia_asignado }}</td>
-                                <td>{{ evt_data.duracion }}</td>
-                                <td >
-                                     <a href="{% url 'eventos:event_edit'%}" class="btn btn-info" role="button" title="Editar Evento">
-                                         <i class="fas fa-edit"></i>
-                                     </a>
-                                     <a href="{% url 'eventos:event_delete' %}" class="btn btn-info" role="button" title="Eliminar Evento">
-                                         <i class="fas fa-times"></i>
-                                     </a>
+                             
+                                 {% for evt_data in event_data %}
+                                 <tr>
+                                 <td class="text-center">{{ evt_data.nombre }}</td>
+                                 <td class="text-center">{{ evt_data.tipo | lower }}</td>
+                                 <td class="text-center">{{ evt_data.fecha_inicio }}</td>
+                                 <td class="text-center">{{ evt_data.fecha_fin }}</td>
+                                 <td class="text-center">{{ evt_data.dia_asignado }}</td>
+                                 <td class="text-center">{{ evt_data.duracion }}</td>
+                                 <td class="text-center">{{ evt_data.url_anuncio_evento }}</td>
+                                 <td class="text-center">
+                                         <a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info btn-sm" role="button" title="Editar Organizador">
+                                             <i class="fas fa-edit"></i>
+                                         </a>
+                                         <a href="{% url 'eventos:organizer_delete' %}" class="btn btn-info btn-sm" role="button" title="Eliminar Organizador">
+                                             <i class="fas fa-times"></i>
+                                         </a>
                                      
-                                     <a href="{% url 'eventos:event_detail' %}" class="btn btn-info" role="button" title="Ver Detalles del Evento">
-                                         <i class="fas fa-eye"></i>
-                                     </a>
+                                         <a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles Organizador">
+                                             <i class="fas fa-eye"></i>
+                                         </a>
                                                                              
-                                     <a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
-                                         <i class="fa fa-comment"></i>
-                                     </a>
-                                </td>
-                              </tr>
-                              
-                            {% endfor %}                             
-                            </tbody>
-
-                        {% else %}
-                      
-                            <div class="well well-lg">
-                                <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                                <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-                            </div>
-                        {% endif %}
+                                         <a href="" class="btn btn-info btn-sm" role="button" title="Realizar Comentarios">
+                                             <i class="fa fa-comment"></i>
+                                         </a>
+                                 </td>
+                                 </tr>
+                                 
+                                 {% endfor %}
+                             </tbody>
+                                 
+                         {% else %}
+                         
+                                 <div class="well well-lg">
+                                     <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                         <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+                                 </div>                                                               
+                            
+                         {% endif %}
                         </table> 
                         <!-- End table  -->
                     </div>
@@ -97,9 +110,30 @@
                     </div>
                </div>
             </div>
-             <!-- EndFirst Row -->
+             
    
         </div>
 </div>
 
+
+									<a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
+										<i class="fa fa-comment"></i>
+									</a>
+								</td>
+							</tr>
+
+							{% endfor %}
+						</tbody>
+						{% else %}
+							<div class="well well-lg">
+								<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+								<strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+							</div>
+						{% endif %}
+					</table> 
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

@@ -1,100 +1,81 @@
+{% extends "content_wrapper_with_sidebar.html" %}
 
+{% block inner_content %}
+<div class="container" id="content-wrapper">
 
-{% extends "base.html" %}
-{% load crispy_forms_tags %}
+	{% include "toggle_title.html" %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
-
-    {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content col-sm-11" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-md-9">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Trabajos</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
-
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                    <div class="col-sm-3">
-                        <h2 class="text-left">Lista de trabajos</h2>
-                    </div>
-                    <div class="col-sm-4 col-sm-offset-3 btn-lg">
-                      <form class="form-inline text-right">
-                          <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                          <button class="btn btn-primary" type="submit">Buscar</button>
-                      </form>
-                    </div>
-                    <div class="col-sm-2 btn-lg">
-                        <div class="btn-group">
-                          <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                              <li>
-                                <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Importar Trabajos</a>
-                              </li>
-                          </ul>
-                        </div>
-                    </div>
-
-                    <br>
-                        <!-- El id show_users se usa para referenciar el contenido a actualizar usando ajax -->
-                           <table class="table table-bordered gray-header" id="show_users">
-                               <thead>
-                                 <tr>
-                                   <th>Autor principal</th>
-                                   <th>Título</th>
-                                   <th>Forma de presentación</th>
-                                   <th>Área</th>
-                                   <th>Subárea</th>
-                                   <th >Acciones</th>
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                    <!-- Se carga contenido de forma dinamica con ajax para filtrar areas -->
-                                    {% include 'ajax/dinamic_jobs_list.html' %}                 
-                               </tbody>
-                             </table>
-                           <!-- End table  -->
-                           
-                       </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
-        </div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="row middle-content">
+					<div class="col-sm-6">
+						<h2 class="text-left">Lista de trabajos</h2>
+					</div>
+					<div class="col-sm-4">
+						<form class="form-inline text-right">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+								<span class="input-group-btn">
+									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+								</span>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2 btn-lg">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Importar Trabajos</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<br>
+				 <!-- El id show_users se usa para referenciar el contenido a actualizar usando ajax -->
+				<table class="table table-bordered" id="show_users">
+					<thead>
+						<tr>
+							<th>Autor principal</th>
+							<th>Título</th>
+							<th>Forma de presentación</th>
+							<th>Área</th>
+							<th>Subárea</th>
+							<th >Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Se carga contenido de forma dinamica con ajax para filtrar areas -->
+						{% include 'ajax/dinamic_jobs_list.html' %}  
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </div>
 
 <!-- Modal Carga Excel-->
 <div class="modal fade" id="ModalTrabajosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body text-center content-modal">
-        ¿Está seguro que desea cargar trabajos por el excel?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-success">Cargar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body text-center content-modal">
+					¿Está seguro que desea cargar trabajos por el excel?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary btn-success">Cargar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 

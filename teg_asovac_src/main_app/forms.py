@@ -123,6 +123,7 @@ class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     class Meta:
         model = Sistema_asovac
         fields = ['coordinador_general']
+        widgets = {'coordinador_general': forms.Select(attrs={'class': 'form-control'})}
 
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
