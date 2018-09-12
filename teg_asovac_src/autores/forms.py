@@ -33,8 +33,8 @@ class DatosPagadorForm(forms.ModelForm):
 		self.fields['direccion_fiscal'].label = "Dirección Fiscal"
 		self.helper.layout = Layout(
 			'cedula',
-			'nombre',
-			'apellido',
+			'nombres',
+			'apellidos',
 			'pasaporte_rif',
 			'telefono_oficina',
 			'telefono_habitacion_celular',
@@ -43,8 +43,8 @@ class DatosPagadorForm(forms.ModelForm):
                 Div(
 					HTML("<a href=\"{% url 'autores:postular_trabajo' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2  col-sm-offset-8'),
                 Div(
-                	#Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
-                	HTML("<a href=\"{% url 'autores:postular_trabajo_pago' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
+                	Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
+                	#HTML("<a href=\"{% url 'autores:postular_trabajo_pago' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
                 css_class="row"),
 			)
 		
@@ -83,10 +83,10 @@ class PagoForm(forms.ModelForm):
 			'comprobante_pago',
 			Div(
                 Div(
-					HTML("<a href=\"{% url 'autores:postular_trabajo_pagador' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2  col-sm-offset-8'),
+					HTML("<a href=\"{% url 'autores:postular_trabajo_factura' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2  col-sm-offset-8'),
                 Div(
-                	#Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
-                	HTML("<a href=\"{% url 'autores:postular_trabajo_factura' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
+                	Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2'),
+                	#HTML("<a href=\"{% url 'autores:postular_trabajo_factura' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
                 css_class="row"),
 			)
 		
@@ -97,7 +97,7 @@ class FacturaForm(forms.ModelForm):
 	
 	class Meta:
 		model = Factura
-		fields = ['monto_subtotal','fecha_emision', 'iva']
+		fields = ['monto_subtotal','fecha_emision', 'iva', 'monto_total']
 
 	def __init__(self, *args, **kwargs):
 		super(FacturaForm,self).__init__(*args, **kwargs)
@@ -110,16 +110,18 @@ class FacturaForm(forms.ModelForm):
 		self.fields['monto_subtotal'].label = "Monto Subtotal"
 		self.fields['fecha_emision'].label = "Fecha de emisión"
 		self.fields['iva'].label = "IVA"
+		self.fields['monto_total'].label = "Monto Total"
 		self.helper.layout = Layout(
 			'monto_subtotal',
 			'fecha_emision',
 			'iva',
+			'monto_total',
 			Div(
                 Div(
-					HTML("<a href=\"{% url 'autores:postular_trabajo_pago' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2 col-sm-offset-8'),
+					HTML("<a href=\"{% url 'autores:postular_trabajo_pagador' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2 col-sm-offset-8'),
                 Div(
-                	#Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 '),
-                	HTML("<a href=\"{% url 'autores:postular_trabajo' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
+                	Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 '),
+                	#HTML("<a href=\"{% url 'autores:postular_trabajo' %}\" class=\"btn btn-success btn-lg btn-block\">Crear</a>"),css_class='col-sm-2'),
                 css_class="row"),
 			
 			)

@@ -65,7 +65,7 @@ class Autores_trabajos(models.Model):
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{}".format(self.autor.nombres)#.encode('utf-8', errors='replace')
+		return "{} - {}".format(self.autor.nombres, self.trabajo.titulo_espanol)#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -73,7 +73,7 @@ Datos_pagador Model
 """""""""""""""""""""""""""
 class Datos_pagador(models.Model):
     	
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac', blank = True)
 	
 	cedula = models.CharField(max_length=10) 
 	nombres = models.CharField(max_length=50)
@@ -96,7 +96,7 @@ class Pagador(models.Model):
 	categorias_pago = models.CharField(max_length=20, blank = True)
 
 	def __str__(self):
-		return self.categorias_pago#.encode('utf-8', errors='replace')
+		return self.autor_trabajo.autor.nombres#.encode('utf-8', errors='replace')
 
 
 

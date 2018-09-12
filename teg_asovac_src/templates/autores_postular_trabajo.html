@@ -21,7 +21,7 @@
             </div>
              <!-- EndTitle content-->
 
-            {%for autor_trabajo in autores_trabajos_list%} 
+            {% for autor_trabajo in autores_trabajos_list %} 
                  <!-- First Row New-->
                  <div class="row">
                    <div class="col-sm-12">
@@ -32,15 +32,19 @@
 
                         <div class="row middle-content">
                             <div class="col-sm-10">
-                                <h3>Datos de pagadores del trabajo '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
+                                <h3>Datos de pagadores del trabajo: '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
                             </div>
-                            {% if  autor_trabajo.monto_total != 0 %}
-                                <div class="col-sm-2">
-                                    <a href="{% url 'autores:postular_trabajo_pagador' %}" class="btn btn-primary btn-block">Añadir Pago</a>
+                            {% if  autor_trabajo.monto_total > 0 %}
+                                <div class="col-sm-3 text-center">
+                                    <form method="POST" action=".">
+                                        {% csrf_token %}
+                                        <input class="" name="autor_trabajo_id" type='hidden' value="{{ autor_trabajo.id }}">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" >Añadir Pago</button>
+                                    </form>
                                 </div>
                             {% else %}
-                                <div class="col-sm-2">
-                                    <a href="#" class="btn btn-success btn-block">Pagado</a>
+                                <div class="col-sm-2 text-center">
+                                    <a href="#" class="btn btn-lg btn-success btn-block" >Pagado</a>
                                 </div>
                             {% endif %}
                         </div>
@@ -50,7 +54,7 @@
                                    <thead>
                                      <tr>
                                         <th class="col-sm-3">Nombre</th>
-                                        <th class="col-sm-2">Cedula</th>                 
+                                        <th class="col-sm-2">Cédula</th>                 
                                         <th class="col-sm-2">Banco Origen</th>
                                         <th class="col-sm-2">N° de Transferencia</th>
                                         <th class="col-sm-2">Total</th>
@@ -58,31 +62,30 @@
                                      </tr>
                                    </thead>
                                    <tbody>
+                                     {% for pagador in pagador_list %}
                                      <tr>
-                                        {% for pagador in pagador_list %}
+                                        {% if pagador.autor_trabajo == autor_trabajo%}
+                                            <td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
+                                            <td>{{ pagador.datos_pagador.cedula }}</td>
                                             
-                                            {% if pagador.autor_trabajo == autor_trabajo%}
-                                                <td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
-                                                <td>{{ pagador.datos_pagador.cedula }}</td>
-                                                
-                                                {% for factura in factura_list %}
-                                                    {% if factura.pagador == pagador %}
-                                                        <td>{{ factura.pago.banco_origen }}</td>
-                                                        <td>{{ factura.pago.numero_transferencia }}</td>
-                                                        <td>{{ factura.monto_total}}</td>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                <td>
-                                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                                        <i class="fas fa-door-open"></i>
-                                                    </a>
-                                                </td>
-                                            {% endif %}
-                                        {% endfor %}
-                                     </tr>                 
+                                            {% for factura in factura_list %}
+                                                {% if factura.pagador == pagador %}
+                                                    <td>{{ factura.pago.banco_origen }}</td>
+                                                    <td>{{ factura.pago.numero_transferencia }}</td>
+                                                    <td>{{ factura.monto_total}}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <td>
+                                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+                                                    <i class="fas fa-door-open"></i>
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                     </tr> 
+                                     {% endfor %}                
                                    </tbody>
                                  </table>
                                <!-- End table  -->
