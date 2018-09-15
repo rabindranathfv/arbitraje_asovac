@@ -15,6 +15,10 @@ $(".submenu-toggle").click(function(e) {
 
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
+
+    $( function(){
+        $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
+    });
 });
 
 
