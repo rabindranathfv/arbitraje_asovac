@@ -24,8 +24,8 @@ urlpatterns = [
     url(r'^editar-sesion/$', views.jobs_edit, name= 'jobs_edit'),
   
     url(r'^$', views.trabajos, name= 'trabajos'),
-    url(r'^editar-trabajo/(?P<trabajo_id>\d+)$', views.edit_trabajo, name= 'edit_trabajo'),
-    url(r'^detalles/(?P<trabajo_id>\d+)$', views.detalles_trabajo, name= 'detalles_trabajo'),
+    url(r'^editar-trabajo/(?P<trabajo_id>\d+)/$', views.edit_trabajo, name= 'edit_trabajo'),
+    url(r'^detalles/(?P<trabajo_id>\d+)/$', views.detalles_trabajo, name= 'detalles_trabajo'),
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
     url(r'^resultados/$', views.trabajos_resultados_autor, name = 'trabajos_resultados_autor'),
 

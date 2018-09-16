@@ -355,3 +355,58 @@ def postular_trabajo_factura(request):
 
 	return render(request,"autores_postular_trabajo_factura.html",context)
 
+
+#Detalles del pago
+def detalles_pago(request, pagador_id):
+
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+	rol_id=get_roles(request.user.id)
+
+	# print (rol_id)
+	estado = request.session['estado']
+	event_id = request.session['arbitraje_id']
+	
+	item_active = 0
+	items=validate_rol_status(estado,rol_id,item_active, event_id)
+
+	route_conf= get_route_configuracion(estado,rol_id, event_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, event_id)
+
+	# print items
+	usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+	autor = Autor.objects.get(usuario = usuario_asovac)
+	sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+
+	pagador = get_object_or_404(Pagador, id = pagador_id)
+	factura = get_object_or_404(Factura, pagador = pagador)
+	autor_trabajo = get_object_or_404(Autores_trabajos ,autor = autor, sistema_asovac = sistema_asovac, trabajo = pagador.autor_trabajo.trabajo)
+	
+
+	
+
+	context = {
+		"nombre_vista": 'Postular Trabajo - Detalles del pago',
+		'main_navbar_options' : main_navbar_options,
+		'estado' : estado,
+		'rol_id' : rol_id,
+		'event_id' : event_id,
+		'item_active' : item_active,
+		'items':items,
+		'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'pagador': pagador,
+        'autor_trabajo': autor_trabajo,
+        'factura': factura,
+    }
+
+	return render(request,"autores_detalles_pago.html",context)

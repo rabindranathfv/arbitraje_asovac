@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper" class="toggled">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-11" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div>
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Datos del pago</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h2 class="text-center">Pago del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h2>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid top-margin-18">
+                            <div class="row content">
+                                <div class="col-sm-4">
+                                    <h2 class="text-center"> Datos del Pagador </h2>
+                                   <p><strong>Cédula:</strong> {{ pagador.datos_pagador.cedula }} </p>
+                                   <p><strong>Nombre:</strong> {{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos }}</p>
+                                   <p><strong>Pasaporte/RIF:</strong>{{ pagador.datos_pagador.pasaporte_rif }}</p>
+                                   <p><strong>Teléfono de oficina:</strong>{{ pagador.datos_pagador.telefono_oficina }}</p>
+                                   <p><strong>Teléfono de habitación/celular:</strong>{{ pagador.datos_pagador.telefono_habitacion_celular }}</p>
+                                   <p><strong>Dirección Fiscal:</strong>{{ pagador.datos_pagador.direccion_fiscal }}</p>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <h2 class="text-center"> Datos del pago</h2>
+                                   <p><strong>Tipo de pago:</strong> {{ factura.pago.tipo_pago }} </p>
+                                   <p><strong>Número de cuenta origen:</strong> {{ factura.pago.numero_cuenta_origen }} </p>
+                                   <p><strong>Banco origen:</strong> {{ factura.pago.banco_origen }} </p>
+                                   <p><strong>Número de transferencia:</strong> {{ factura.pago.numero_transferencia }} </p>
+                                   <p><strong>Número de cheque:</strong> {{ factura.pago.numero_cheque }} </p>
+                                   <p><strong>Fecha de pago:</strong> {{ factura.pago.fecha_pago }} </p>
+                                   <p><strong>Observaciones:</strong> {{ factura.pago.observaciones }} </p>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <h2 class="text-center"> Datos de factura</h2>
+                                    <p><strong>Fecha de emisión:</strong> {{ factura.fecha_emision }} </p>
+                                    <p><strong>Monto subtotal:</strong> {{ factura.monto_subtotal }} </p>
+                                    <p><strong>IVA:</strong> {{ factura.iva }} </p>
+                                    <p><strong>Monto Total:</strong> {{ factura.pago.monto_total }} </p>
+                                </div>
+                            </div>
+                        </div>
+                           <!-- End table  -->
+                    </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+   
+        </div>
+</div>
+
+{% endblock %}

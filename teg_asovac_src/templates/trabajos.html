@@ -73,7 +73,7 @@
                                       <td class="col-sm-1">2.0</td>
                                       <td class="col-sm-1 text-center">
                                           
-                                      {% if trabajo.monto_total != 0 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado -->
+                                      {% if trabajo.monto_total > 0 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado -->
                                           <a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
                                               <i class="fas fa-edit"></i>
                                           </a>
@@ -81,7 +81,7 @@
                                               <i class="fas fa-times"></i>
                                           </a>
                                       {% endif %}
-                                          <a href="" class="btn btn-info" role="button" title="Ver trabajo">
+                                          <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
                                               <i class="fas fa-door-open"></i>
                                           </a>
                                       </td>

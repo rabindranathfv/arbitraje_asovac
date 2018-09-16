@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^postular-trabajo/pagador/$', views.postular_trabajo_pagador, name= 'postular_trabajo_pagador'),
     url(r'^postular-trabajo/pago/$', views.postular_trabajo_pago, name= 'postular_trabajo_pago'),
     url(r'^postular-trabajo/factura/$', views.postular_trabajo_factura, name= 'postular_trabajo_factura'),
+    url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
 ]
