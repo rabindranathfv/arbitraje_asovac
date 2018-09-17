@@ -159,3 +159,12 @@ class SubareaForm(forms.ModelForm):
     class Meta:
         model= Sub_area
         fields=['nombre']
+
+class SubAreaRegistForm(forms.ModelForm):
+    class Meta:
+        model= Usuario_asovac
+        fields=['sub_area',]
+        labels={'sub_area':'Subrea',}
+        widget={
+            'sub_area': forms.CheckboxSelectMultiple(),
+        }

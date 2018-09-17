@@ -108,6 +108,10 @@ var ValidateAccess= function(){
 
         var area = $(this).val();
         $('#enviar').attr('disabled', true);
+        $("#subarea_select option").each(function(){
+                 $(this).css('display','block');
+         });
+        
         if(area != ""){
             $('#content_subarea').css("display", "block");
             
@@ -133,8 +137,8 @@ var ValidateAccess= function(){
     
     });
 
-    //Para habilitar boton de cambio de área y subarea 
-    $('#subarea_select').change(function(){
+     //Para habilitar boton de cambio de área y subarea 
+     $('#subarea_select').change(function(){
         
         if($(this).val() != ""){
             $('#enviar').removeAttr("disabled");
@@ -142,7 +146,6 @@ var ValidateAccess= function(){
             $('#enviar').attr('disabled', true);
         }
     });
-
 
     // create
     $('.show-form').click(ShowForm);

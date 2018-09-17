@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404, render_to_resp
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
@@ -246,17 +246,46 @@ def login(request):
 def register(request):
     if request.method == 'POST':
         form= RegisterForm(request.POST)
+        form2=SubAreaRegistForm(request.POST)
         if form.is_valid():
-            form.save()
+            user= form.save()
+            usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
+
+            subarea= request.POST.getlist("subarea_select")
+            for item in subarea:
+                usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+            usuario_asovac.save()
+            # list_subareas = request.POST.getlist("subarea_select")
+            # print "Se envian las subareas "
+            # print list_subareas
             messages.success(request, 'Se ha registrado Exitosamente.')
             context={"form":form,}
             return redirect('login')
+            
         else:
-            context={"form":form,}
+            areas= Area.objects.all()
+            subareas= Sub_area.objects.all()
+            form = RegisterForm()
+            subareaform=SubAreaRegistForm()
+            context={
+                    "form":form,
+                    "subareaform":form2,
+                    "areas":areas,
+                    "subareas":subareas,
+                }
             return render(request,'main_app_register.html',context)
     else:
+        areas= Area.objects.all()
+        subareas= Sub_area.objects.all()
         form = RegisterForm()
-        context={"form":form,}
+        subareaform=SubAreaRegistForm()
+        context={
+                "form":form,
+                "subareaform":subareaform,
+                "areas":areas,
+                "subareas":subareas,
+            }
+        
         return render(request,'main_app_register.html',context)
 
 
