@@ -26,7 +26,6 @@ Rol Model
 """""""""""""""""""""""""""
 class Rol(models.Model):
 
-	
 	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	
@@ -37,7 +36,7 @@ class Rol(models.Model):
 Area Model
 """""""""""""""""""""""""""
 class Area(models.Model):
-	
+
 	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=150, blank = True)
 	
@@ -49,7 +48,7 @@ class Area(models.Model):
 Sub_area Model
 """""""""""""""""""""""""""
 class Sub_area(models.Model):
-	
+
 	area = models.ForeignKey(Area, on_delete = models.CASCADE)
 
 	nombre = models.CharField(max_length=80)
@@ -63,7 +62,7 @@ class Sub_area(models.Model):
 Sistema_asovac Model
 """""""""""""""""""""""""""
 class Sistema_asovac(models.Model):
-	
+
 	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
@@ -110,7 +109,7 @@ class Usuario_asovac(models.Model):
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
-    	
+
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)
