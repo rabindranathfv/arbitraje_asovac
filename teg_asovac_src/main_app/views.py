@@ -255,9 +255,6 @@ def register(request):
             for item in subarea:
                 usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
             usuario_asovac.save()
-            # list_subareas = request.POST.getlist("subarea_select")
-            # print "Se envian las subareas "
-            # print list_subareas
             messages.success(request, 'Se ha registrado Exitosamente.')
             context={"form":form,}
             return redirect('login')
