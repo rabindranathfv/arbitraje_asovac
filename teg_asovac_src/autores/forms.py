@@ -205,4 +205,37 @@ class FacturaForm(forms.ModelForm):
                 css_class="row"),
 			
 			)
+
+# Form para vista de Factura
+class EditarFacturaForm(forms.ModelForm):
+	
+	class Meta:
+		model = Factura
+		fields = ['monto_subtotal','fecha_emision', 'iva', 'monto_total']
+
+	def __init__(self, *args, **kwargs):
+		super(EditarFacturaForm,self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'factura-form'
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
+		self.fields['monto_subtotal'].label = "Monto Subtotal"
+		self.fields['fecha_emision'].label = "Fecha de emisión"
+		self.fields['iva'].label = "IVA"
+		self.fields['monto_total'].label = "Monto Total"
+		self.helper.layout = Layout(
+			'monto_subtotal',
+			'fecha_emision',
+			'iva',
+			'monto_total',
+			Div(
+                Div(
+					HTML("<a href=\"{% url 'autores:postular_trabajo' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),css_class='col-sm-2 col-sm-offset-8'),
+                Div(
+                	Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block'),css_class='col-sm-2 '),
+                css_class="row"),
+			
+			)
 			

@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
     url(r'^postular-trabajo/editar/datos-pagador/(?P<pagador_id>\d+)/$', views.editar_datos_pagador, name= 'editar_datos_pagador'),
     url(r'^postular-trabajo/editar/pago/(?P<pago_id>\d+)/$', views.editar_pago, name= 'editar_pago'),
+    url(r'^postular-trabajo/editar/factura/(?P<factura_id>\d+)/$', views.editar_factura, name= 'editar_factura'),
 ]
