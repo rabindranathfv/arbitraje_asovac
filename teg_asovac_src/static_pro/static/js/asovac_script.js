@@ -23,27 +23,6 @@ $('#myModal').on('shown.bs.modal', function () {
 
 $(document).ready(function(){
 
-////////////////////Nuevo/////////////////////////
-    var ShowInfoJob= function()
-    {   
-        var btn= $(this);
-        $.ajax({
-            url:btn.attr('data-url'),
-            type:'get',
-            dataType:'json',
-            beforeSend: function(){
-                $('#modal-job').modal('show');
-            },
-            success: function(data){
-                console.log("Esta mierda funciona?")
-                $('#modal-job .modal-content').html(data.html_form);
-            },
-            error: function(){
-                alert('failure');
-            }
-        })
-    };
-
     var SaveJobForm= function(){
         var form= $(this);
         // alert('SaveForm');
@@ -76,11 +55,11 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user').modal('show');  
+              $('#modal-user, #modal-job').modal('show');  
             },
             success: function (data){
                 // console.log(data.html_form);
-                $('#modal-user .modal-content').html(data.html_form);
+                $('#modal-user .modal-content, #modal-job .modal-content').html(data.html_form);
             }
         });
     };
@@ -125,6 +104,6 @@ $(document).ready(function(){
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
     // Delete Job
-    $('#show-job').on('click','.show-form-delete',ShowInfoJob);
+    $('#show-job').on('click','.show-form-delete',ShowForm);
 });
      
