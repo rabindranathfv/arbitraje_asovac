@@ -29,4 +29,6 @@ urlpatterns = [
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
     url(r'^resultados/$', views.trabajos_resultados_autor, name = 'trabajos_resultados_autor'),
 
+    # Ajax
+    url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),
 ]

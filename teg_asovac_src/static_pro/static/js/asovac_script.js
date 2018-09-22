@@ -13,9 +13,6 @@ $(".submenu-toggle").click(function(e) {
 });
 
 
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-});
 
 
 $('#myModal').on('shown.bs.modal', function () {
@@ -25,6 +22,52 @@ $('#myModal').on('shown.bs.modal', function () {
 // Ajax para modales
 
 $(document).ready(function(){
+
+////////////////////Nuevo/////////////////////////
+    var ShowInfoJob= function()
+    {   
+        var btn= $(this);
+        $.ajax({
+            url:btn.attr('data-url'),
+            type:'get',
+            dataType:'json',
+            beforeSend: function(){
+                $('#modal-job').modal('show');
+            },
+            success: function(data){
+                console.log("Esta mierda funciona?")
+                $('#modal-job .modal-content').html(data.html_form);
+            },
+            error: function(){
+                alert('failure');
+            }
+        })
+    };
+
+    var SaveJobForm= function(){
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                if(data.form_is_valid){
+                    // console.log('data is saved')
+                    $('#show_users tbody').html(data.user_list);
+                    $('#modal-user').modal('hide');
+                }else{
+                    // console.log('data is invalid')
+                    $('#modal-book .modal-content').html(data.html_form)
+                }
+            }
+        });
+        return false;
+    };
+//////////////////////////////////////////////////
+
     var ShowForm= function(){
         var btn= $(this);
         // alert('ShowForm');
@@ -81,4 +124,7 @@ $(document).ready(function(){
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
+    // Delete Job
+    $('#show-job').on('click','.show-form-delete',ShowInfoJob);
 });
+     

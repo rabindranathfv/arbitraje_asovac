@@ -1,0 +1,27 @@
+{% load crispy_forms_tags %}
+<form method="post" class="delete-job-form" action="{% url 'trabajos:delete_job' trabajo.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Eliminar trabajo</h4>
+    </div>
+    <div class="modal-body">
+        <p> Confirme si desea eliminar el siguiente trabajo:</p>
+        <strong>Título:</strong> <p>{{ trabajo.titulo_espanol }} </p>
+        <strong>Área:</strong> <p> {{ trabajo.area }} </p>
+        <strong>Subarea1:</strong> <p> {{ trabajo.subarea1 }}</p>
+        <strong>Subarea2:</strong> <p> {{ trabajo.subarea2 }}</p>
+        <strong>Subarea3:</strong> <p> {{ trabajo.subarea3 }}</p>
+        <strong>Resumen:</strong> <p>  {{trabajo.resumen}}</p>
+        <strong>URL del trabajo:</strong> <p> {{ trabajo.url_trabajo }} </p>
+        <strong>Versión:</strong> <p> {{ trabajo.version }}</p>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Eliminar</button>
+    </div>
+</form>

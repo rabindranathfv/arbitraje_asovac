@@ -40,7 +40,7 @@
                     </div>
 
                     <br>
-                           <table class="table table-bordered">
+                           <table class="table table-bordered" id = "show-job">
                                <thead>
                                  <tr>
                                     <th class="col-sm-2">Título</th>
@@ -73,13 +73,18 @@
                                       <td class="col-sm-1">2.0</td>
                                       <td class="col-sm-1 text-center">
                                           
-                                      {% if trabajo.monto_total > 0 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado -->
+                                      {% if trabajo.monto_total > 0 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado, luego hay que cambiarlo por el valor inicial, ya que una vez hecho el pago no se puede eliminar o editar un trabajo-->
                                           <a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
                                               <i class="fas fa-edit"></i>
                                           </a>
-                                          <a href="#" class="btn btn-info" role="button" data-toggle="modal" data-target="#ModalDelete" title="Borrar">
+
+                                          <!-- Esto es lo que hay que verificar -->
+                                          <button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
                                               <i class="fas fa-times"></i>
-                                          </a>
+                                          </button>
+                                      
+
+
                                       {% endif %}
                                           <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
                                               <i class="fas fa-door-open"></i>
@@ -117,14 +122,6 @@
                                     <div class="row middle-content">
                                         <div class="col-sm-12">
                                             {% crispy form %}
-                                            <!--
-                                            <div class="col-sm-2 col-sm-offset-8">
-                                                <a href="#accordion" class="btn btn-danger btn-block btn-lg" data-toggle="collapse">Cancelar</a>
-                                            </div>
-                                            <div class="col-sm-2">
-                                                <button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">Guardar</button>
-                                            </div>
-                                            -->
                                         </div>
                                     </div>
                                 </div>
@@ -138,45 +135,12 @@
         </div>
 </div>
 
-<!-- Modal Crear Trabajo-->
-<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Crear Trabajo</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<!-- modal -->
+<div class="modal fade" id="modal-job">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        
       </div>
-      <div class="modal-body text-center content-modal">
-        ¿Está seguro que desea crear el trabajo?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-success">Crear</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Eliminar Trabajo-->
-<div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Eliminar Trabajo</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body text-center content-modal">
-        ¿Está seguro que desea ELIMINAR el trabajo?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-success">Eliminar</button>
-      </div>
-    </div>
   </div>
 </div>
 

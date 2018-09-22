@@ -14,6 +14,9 @@ from autores.models import Autor, Autores_trabajos
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from .forms import TrabajoForm, EditTrabajoForm
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
     form = TrabajoForm()
@@ -345,4 +348,17 @@ def trabajos_resultados_autor(request):
     }
     return render(request,"trabajos_resultados_autor.html",context)
 
+def delete_job(request, trabajo_id):
+    
+    data = dict()
+    trabajo = get_object_or_404(Trabajo, id = trabajo_id)
+    if request.method == "POST":
+        trabajo.delete()
+        return redirect('trabajos:trabajos') 
+    else:
+        context = {
+            'trabajo':trabajo,
+        }
+        data['html_form'] = render_to_string('ajax/job_delete.html',context,request=request)
+    return JsonResponse(data)
 
