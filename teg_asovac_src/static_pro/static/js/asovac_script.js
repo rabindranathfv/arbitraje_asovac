@@ -107,6 +107,6 @@ $(document).ready(function(){
     $('#show-job').on('click','.show-form-delete',ShowForm);
 
     // Editar datos de pago
-    $('#show-pays').on('click','.show-edit-pay',ShowForm);
+    $('.show-pays').on('click','.show-edit-pay',ShowForm);
 });
      
