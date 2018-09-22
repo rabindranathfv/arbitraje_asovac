@@ -60,7 +60,7 @@
                         </div>
 
                         <br>
-                               <table class="table table-bordered">
+                               <table class="table table-bordered" id = "show-pays">
                                    <thead>
                                      <tr>
                                         <th class="col-sm-3">Nombre</th>
@@ -86,9 +86,9 @@
                                                 {% endif %}
                                             {% endfor %}
                                             <td>
-                                                <a href="#" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                                                <button class="btn btn-info show-edit-pay" data-url="{% url 'autores:postular_editar' pagador.id %}" data-toggle="tooltip" data-placement="top" title="Editar">
                                                     <i class="fas fa-edit"></i>
-                                                </a>
+                                                </button>
                                                 <a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
                                                     <i class="fas fa-door-open"></i>
                                                 </a>
@@ -107,6 +107,16 @@
                 {% endfor %}
    
         </div>
+</div>
+
+
+<!-- modal -->
+<div class="modal fade" id="modal-pay">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        
+      </div>
+  </div>
 </div>
 
 {% endblock %}

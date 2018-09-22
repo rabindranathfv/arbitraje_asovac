@@ -12,6 +12,10 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from .forms import DatosPagadorForm, PagoForm, FacturaForm, EditarDatosPagadorForm, EditarPagoForm, EditarFacturaForm
 
 from django.contrib import messages
+
+
+from django.http import JsonResponse
+from django.template.loader import render_to_string
 # Create your views here.
 def autores_pag(request):
     context = {
@@ -444,8 +448,8 @@ def editar_datos_pagador(request, pagador_id):
 	autor_trabajo = get_object_or_404(Autores_trabajos ,autor = autor, sistema_asovac = sistema_asovac, trabajo = pagador.autor_trabajo.trabajo)
 
 	if request.method == "POST":
+		form = EditarDatosPagadorForm(request.POST, instance = pagador.datos_pagador)
 		if form.is_valid():
-			form = EditarDatosPagadorForm(request.POST, instance = pagador.datos_pagador)
 			form.save()
 			messages.success(request, 'Sus cambios en los datos del pagador han sido guardados con éxito.')
 			return redirect('autores:postular_trabajo')
@@ -506,8 +510,8 @@ def editar_pago(request, pago_id):
 	autor_trabajo = get_object_or_404(Autores_trabajos ,autor = autor, sistema_asovac = sistema_asovac, trabajo = factura.pagador.autor_trabajo.trabajo)
 
 	if request.method == "POST":
+		form = EditarPagoForm(request.POST, instance = pago)
 		if form.is_valid():
-			form = EditarPagoForm(request.POST, instance = pago)
 			form.save()
 			messages.success(request, 'Sus cambios en los datos del pago han sido guardados con éxito.')
 			return redirect('autores:postular_trabajo')
@@ -596,3 +600,20 @@ def editar_factura(request, factura_id):
     }
 
 	return render(request,"autores_editar_factura.html",context)
+
+
+def postular_editar(request, pagador_id):
+    
+	data = dict()
+	pagador = get_object_or_404(Pagador, id = pagador_id)
+	factura = get_object_or_404(Factura, pagador = pagador)
+	pago = factura.pago
+	autor_trabajo = factura.pagador.autor_trabajo
+	context = {
+		'pagador': pagador,
+		'factura': factura,
+		'pago': pago,
+	}
+	data['html_form'] = render_to_string('ajax/pay_update.html',context,request=request)
+	print(data['html_form'])
+	return JsonResponse(data)
