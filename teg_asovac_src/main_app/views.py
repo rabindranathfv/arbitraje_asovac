@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 import random, string
 from decouple import config
-
+from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -1048,3 +1048,14 @@ def validate_access_modal(request,id):
     # print subareas
     # request.session['areas']
     # request.session['subareas']
+
+
+# Para obtener la lista de subareas asociadas a un area
+def get_subareas(request,id):
+    data= dict()
+
+    subareas=Sub_area.objects.filter(area_id=id)
+    context={'subareas': subareas,}
+    data['html_select']= render_to_string('ajax/show_subareas.html',context, request=request)
+    
+    return JsonResponse(data)
