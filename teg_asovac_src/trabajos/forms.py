@@ -128,6 +128,6 @@ class AutorObservationsFinalVersionJobForm(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
-		self.helper.field_class = 'col-sm-7 col-sm-offset-2'
+		self.helper.field_class = 'col-sm-8'
 		self.fields['observaciones'].label = "Observaciones"
 		self.fields['observaciones'].widget.attrs['rows'] = 4
