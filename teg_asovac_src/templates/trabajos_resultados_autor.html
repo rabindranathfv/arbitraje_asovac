@@ -27,7 +27,7 @@
                     <div class="col-sm-3">
                         <h2 class="text-left">Lista de trabajos</h2>
                     </div>
-                           <table class="table table-bordered">
+                           <table class="table table-bordered " id = "show-job-final-version">
                                <thead>
                                  <tr>
                                     <th class="col-sm-3">Nombre del trabajo</th>
@@ -56,12 +56,10 @@
                                             <button class="btn btn-info show-form-job-observations" data-url="" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
                                                     <i class="fas fa-comment"></i>
                                             </button>
-                                            <button class="btn btn-info show-job-observations" data-url="" data-toggle="tooltip" data-placement="top" title="Ver observaciones">
+                                            <button class="btn btn-info show-job-observations" data-url="{% url 'trabajos:show_job_observations' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Ver observaciones">
                                                     <i class="fas fa-info"></i>
                                             </button>
                                         </td>
-
-
                                       </tr>
                                 {% endfor %}
                                </tbody>
@@ -74,5 +72,14 @@
              <!-- EndFirst Row -->
    
         </div>
+</div>
+
+<!-- modal -->
+<div class="modal fade" id="modal-observations">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        
+      </div>
+  </div>
 </div>
 {% endblock %}

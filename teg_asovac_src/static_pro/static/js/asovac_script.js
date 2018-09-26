@@ -55,11 +55,11 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user, #modal-job, #modal-pay').modal('show');  
+              $('#modal-user, #modal-job, #modal-pay, #modal-observations' ).modal('show');  
             },
             success: function (data){
                 // console.log(data.html_form);
-                $('#modal-user .modal-content, #modal-job .modal-content, #modal-pay .modal-content').html(data.html_form);
+                $('#modal-user .modal-content, #modal-job .modal-content, #modal-pay .modal-content, #modal-observations .modal-content').html(data.html_form);
             }
         });
     };
@@ -108,5 +108,8 @@ $(document).ready(function(){
 
     // Editar datos de pago
     $('.show-pays').on('click','.show-edit-pay',ShowForm);
+
+    //Mostrar información 
+    $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
 });
      

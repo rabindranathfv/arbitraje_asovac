@@ -380,3 +380,13 @@ def delete_job(request, trabajo_id):
         data['html_form'] = render_to_string('ajax/job_delete.html',context,request=request)
     return JsonResponse(data)
 
+
+def show_job_observations(request, trabajo_version_final_id):
+    data = dict()
+    trabajo_version_final = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
+    context = {
+        'trabajo_version_final': trabajo_version_final,
+    }
+    data['html_form'] = render_to_string('ajax/job_observations.html',context, request=request)
+    return JsonResponse(data)
+
