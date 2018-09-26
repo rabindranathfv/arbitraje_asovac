@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 
-from .models import Trabajo
+from .models import Trabajo, Detalle_version_final
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from autores.models import Autor, Autores_trabajos
 
@@ -332,6 +332,23 @@ def trabajos_resultados_autor(request):
     route_resultados = get_route_resultados(estado,rol_id, event_id)
 
     # print items
+    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    autor = Autor.objects.get(usuario = usuario_asovac)
+    autor_trabajo_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = event_id)
+
+    trabajo_version_final_list = Detalle_version_final.objects.all()
+
+    trabajo_list= []
+    for autor_trabajo in autor_trabajo_list:
+        for trabajo_version_final in trabajo_version_final_list:
+            if autor_trabajo.trabajo == trabajo_version_final.trabajo and trabajo_version_final.estatus_final != "Pendiente":
+                trabajo_list.append(trabajo_version_final)
+                break
+
+    for trabajo_version_final in trabajo_list:
+        print (trabajo_version_final.trabajo.titulo_espanol)
+
+
     context = {
         'nombre_vista' : 'Trabajos',
         'main_navbar_options' : main_navbar_options,
@@ -345,6 +362,7 @@ def trabajos_resultados_autor(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'trabajo_list': trabajo_list,
     }
     return render(request,"trabajos_resultados_autor.html",context)
 
