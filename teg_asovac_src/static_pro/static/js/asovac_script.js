@@ -23,30 +23,6 @@ $('#myModal').on('shown.bs.modal', function () {
 
 $(document).ready(function(){
 
-    var SaveJobForm= function(){
-        var form= $(this);
-        // alert('SaveForm');
-        $.ajax({
-            url: form.attr('data-url'),
-            data: form.serialize(),
-            type: form.attr('method'),
-            dataType: 'json',
-
-            success: function(data){
-                if(data.form_is_valid){
-                    // console.log('data is saved')
-                    $('#show_users tbody').html(data.user_list);
-                    $('#modal-user').modal('hide');
-                }else{
-                    // console.log('data is invalid')
-                    $('#modal-book .modal-content').html(data.html_form)
-                }
-            }
-        });
-        return false;
-    };
-//////////////////////////////////////////////////
-
     var ShowForm= function(){
         var btn= $(this);
         // alert('ShowForm');
@@ -109,7 +85,10 @@ $(document).ready(function(){
     // Editar datos de pago
     $('.show-pays').on('click','.show-edit-pay',ShowForm);
 
-    //Mostrar información 
+    //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
+
+    //Añadir observaciones a la versión final del trabajo
+    $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
 });
      

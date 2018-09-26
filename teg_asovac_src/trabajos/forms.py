@@ -6,7 +6,7 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from .models import Trabajo
+from .models import Trabajo, Detalle_version_final
 
 
 #Form para introducir datos de un trabajo, sea para editar o para crear
@@ -114,3 +114,20 @@ class EditTrabajoForm(forms.ModelForm):
 			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h3 class=\"modal-title\" id=\"ModalLongTitle\">Editar Trabajo</h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea editar el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-primary btn-success\">Postular</button></div></div></div></div>"),
 			)
 
+#Form para colocar observaciones a la versión final del trabajo
+class AutorObservationsFinalVersionJobForm(forms.ModelForm):
+
+	class Meta:
+		model = Detalle_version_final
+		fields = ['observaciones']
+
+	def __init__(self, *args, **kwargs):
+		super(AutorObservationsFinalVersionJobForm,self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'job-observations-form'
+		self.helper.form_method = 'post'
+		self.helper.form_class = 'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-7 col-sm-offset-2'
+		self.fields['observaciones'].label = "Observaciones"
+		self.fields['observaciones'].widget.attrs['rows'] = 4

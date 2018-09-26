@@ -53,7 +53,7 @@
                                             {% endif %}                                  
                                         </td>
                                         <td class="text-center">
-                                            <button class="btn btn-info show-form-job-observations" data-url="" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
+                                            <button class="btn btn-info show-form-job-observations" data-url="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
                                                     <i class="fas fa-comment"></i>
                                             </button>
                                             <button class="btn btn-info show-job-observations" data-url="{% url 'trabajos:show_job_observations' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Ver observaciones">
