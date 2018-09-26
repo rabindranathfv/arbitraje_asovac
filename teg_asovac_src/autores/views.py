@@ -7,6 +7,7 @@ from django.shortcuts import render,redirect, get_object_or_404
 
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from .forms import DatosPagadorForm, PagoForm, FacturaForm, EditarDatosPagadorForm, EditarPagoForm, EditarFacturaForm
@@ -269,7 +270,10 @@ def postular_trabajo_pago(request):
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
 			autor_trabajo.save()
-			request.session['pagador_forms'] = 1
+			if autor_trabajo.monto_total <= 0:
+				trabajo_version_final = Detalle_version_final(trabajo = autor_trabajo.trabajo)
+				trabajo_version_final.save()
+			request.session['pagador_forms'] = 0
 			return redirect('autores:postular_trabajo')
 	context = {
 		"nombre_vista": 'Postular Trabajo - Pago',
