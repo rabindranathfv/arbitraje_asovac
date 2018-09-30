@@ -197,14 +197,12 @@ def update_state_arbitration(arbitraje_id,estado):
     return estado
 
 #Verifica si el usuario tiene rol de admin
-def is_admin(rols,total_rols):
-    
-    if total_rols == 1:
-        for name in rols:
-            if name.id == 1:
-                return 1
+def is_admin(rol):
+    if rol.id == 1:
+        return 1
     else:
         return 0
+
 #Validar accesos segun rol clave y arbitraje seleccionado
 def validate_access(rol,data_arbitraje,clave):
     if rol == '2':
@@ -230,7 +228,7 @@ def create_params_validations(request,status):
     params_validations['rol_name']=get_names_roles(request.user.id)
     # params_validations['cant']=len(params_validations['rol_name'])
     params_validations['cant']=params_validations['rol_name']
-    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
+    params_validations['is_admin']=is_admin( params_validations['rol_name'])
     params_validations['status']=status
     return params_validations
 
@@ -308,8 +306,8 @@ def home(request):
 
     params_validations['rol_name']=get_names_roles(request.user.id)
     params_validations['cant']=params_validations['rol_name']
-    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
-   
+    params_validations['is_admin']=is_admin( params_validations['rol_name'])
+
     # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
     allow_entry_list = []
     # Lista de strings de estados de los arbitrajes
@@ -998,10 +996,15 @@ def validate_access_modal(request,id):
             data['method']= 'post'
             # para enviar area a la cual pertenece el usuari por sesion 
             subareas= user.sub_area.all()
-            # print subareas[0].id
-            # print subareas[0].area.id
-            request.session['area']=subareas[0].area.id
-            request.session['subarea']=subareas[0].id
+            # area y subarea a enviar por sesion 
+            area_session=subareas.first().area.nombre
+            subarea_session=subareas.first().nombre
+            # print "Area y Subarea enviadas por sesion"
+            # print area_session
+            # print subarea_session
+          
+            request.session['area']= area_session
+            request.session['subarea']=subarea_session
 
             context = {
                 'params_validations' : params_validations,
