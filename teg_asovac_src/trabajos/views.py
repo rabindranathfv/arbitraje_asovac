@@ -32,21 +32,21 @@ def trabajos(request):
     # print (rol_id)
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, event_id)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
    
-    route_conf= get_route_configuracion(estado,rol_id, event_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, event_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
 
     usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     autor = Autor.objects.get(usuario = usuario_asovac)
-    sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+    sistema_asovac = Sistema_asovac.objects.get(id = arbitraje_id)
 
     # print items
     if request.method =='POST':
@@ -86,7 +86,7 @@ def trabajos(request):
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,
@@ -333,21 +333,21 @@ def trabajos_resultados_autor(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
-    items=validate_rol_status(estado,rol_id,item_active, event_id)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id, event_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, event_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
     usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     autor = Autor.objects.get(usuario = usuario_asovac)
-    autor_trabajo_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = event_id)
+    autor_trabajo_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = arbitraje_id)
 
     trabajo_version_final_list = Detalle_version_final.objects.all()
 
@@ -367,7 +367,7 @@ def trabajos_resultados_autor(request):
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,
