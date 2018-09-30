@@ -16,7 +16,7 @@ estados_arbitraje = {	'0':'Desactivado',
 						'2':'En Selección y Asignación de Coordinadores de Área',
 						'3':'En Carga de Trabajos',
 						'4':'En Asignación de Trabajos a las Áreas',
-						'5':'En En Arbitraje',
+						'5':'En Arbitraje',
 						'6':'En Cierre de Arbitraje',
 						'7':'En Asignación de Secciones',
 						'8':'En Resumen'}
@@ -26,21 +26,44 @@ Rol Model
 """""""""""""""""""""""""""
 class Rol(models.Model):
 
-	
-	nombre = models.CharField(max_length=20)
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
 
+"""""""""""""""""""""""""""
+Area Model
+"""""""""""""""""""""""""""
+class Area(models.Model):
+
+	nombre = models.CharField(max_length=80)
+	descripcion = models.TextField(max_length=150, blank = True)
+	
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
+
+
+"""""""""""""""""""""""""""
+Sub_area Model
+"""""""""""""""""""""""""""
+class Sub_area(models.Model):
+
+	area = models.ForeignKey(Area, on_delete = models.CASCADE)
+
+	nombre = models.CharField(max_length=80)
+	descripcion = models.TextField(max_length=150, blank = True)
+
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
 Sistema_asovac Model
 """""""""""""""""""""""""""
 class Sistema_asovac(models.Model):
-	
-	nombre = models.CharField(max_length=20)
+
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
@@ -62,7 +85,7 @@ class Usuario_asovac(models.Model):
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
 	rol = models.ManyToManyField(Rol,blank=True)
 	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
-	area_id = models.ManyToManyField('arbitrajes.Area',blank=True)
+	sub_area = models.ManyToManyField(Sub_area, blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
 
@@ -86,7 +109,7 @@ class Usuario_asovac(models.Model):
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
-    	
+
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)

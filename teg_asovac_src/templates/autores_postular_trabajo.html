@@ -1,122 +1,109 @@
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
-{% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container min-height-content col-sm-11" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content col-sm-11" id="content-wrapper">
-            <!-- Title content--> 
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                        {{ message }}
-                    </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            <div class="row">
-                <div>
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Trabajos</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+	{% include 'sidebar.html'%}
 
-            {% for autor_trabajo in autores_trabajos_list %} 
-                 <!-- First Row New-->
-                 <div class="row">
-                   <div class="col-sm-12">
-                       <div class="jumbotron RLcard">
-                        <div class="row">
-                            <h2 class="text-left">Autor</h2>
-                        </div>
+	<!-- Title content--> 
+	{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+		{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+		{{ message }}
+	</li>
+	{% endfor %}
+	</ul>
+	{% endif %}
+	{% include "toggle_title.html" %}
+	<!-- EndTitle content-->
 
-                        <div class="row middle-content">
-                            <div class="col-sm-10">
-                                <h3>Datos de pagadores del trabajo: '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
-                            </div>
-                            {% if  autor_trabajo.monto_total > 0 %}
-                                <div class="col-sm-3 text-center">
-                                    <form method="POST" action=".">
-                                        {% csrf_token %}
-                                        <input class="" name="autor_trabajo_id" type='hidden' value="{{ autor_trabajo.id }}">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block" role="button" >Añadir Pago</button>
-                                    </form>
-                                </div>
-                            {% else %}
-                                <div class="col-sm-2 text-center">
-                                    <a href="#" class="btn btn-lg btn-success btn-block" >Pagado</a>
-                                </div>
-                            {% endif %}
-                        </div>
+	{% for autor_trabajo in autores_trabajos_list %} 
+		<!-- First Row New-->
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="jumbotron RLcard">
+					<div class="row">
+						<h2 class="text-left">Autor</h2>
+					</div>
 
-                        <br>
-                               <table class="table table-bordered show-pays">
-                                   <thead>
-                                     <tr>
-                                        <th class="col-sm-3">Nombre</th>
-                                        <th class="col-sm-2">Cédula</th>                 
-                                        <th class="col-sm-2">Banco Origen</th>
-                                        <th class="col-sm-2">N° de Transferencia</th>
-                                        <th class="col-sm-2">Total</th>
-                                        <th class="col-sm-1">Acciones</th>
-                                     </tr>
-                                   </thead>
-                                   <tbody>
-                                     {% for pagador in pagador_list %}
-                                     <tr>
-                                        {% if pagador.autor_trabajo == autor_trabajo%}
-                                            <td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
-                                            <td>{{ pagador.datos_pagador.cedula }}</td>
-                                            
-                                            {% for factura in factura_list %}
-                                                {% if factura.pagador == pagador %}
-                                                    <td>{{ factura.pago.banco_origen }}</td>
-                                                    <td>{{ factura.pago.numero_transferencia }}</td>
-                                                    <td>{{ factura.monto_total}}</td>
-                                                {% endif %}
-                                            {% endfor %}
-                                            <td>
-                                                <button class="btn btn-info show-edit-pay" data-url="{% url 'autores:postular_editar' pagador.id %}" data-toggle="tooltip" data-placement="top" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-                                                    <i class="fas fa-door-open"></i>
-                                                </a>
-                                            </td>
-                                        {% endif %}
-                                     </tr> 
-                                     {% endfor %}                
-                                   </tbody>
-                                 </table>
-                               <!-- End table  -->
-                               
-                           </div>
-                   </div>
-                 </div>
-                 <!-- EndFirst Row New-->
-                {% endfor %}
-   
-        </div>
+					<div class="row middle-content">
+						<div class="col-sm-10">
+							<h3>Datos de pagadores del trabajo: '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
+						</div>
+						{% if  autor_trabajo.monto_total > 0 %}
+						<div class="col-sm-3 text-center">
+							<form method="POST" action=".">
+								{% csrf_token %}
+								<input class="" name="autor_trabajo_id" type='hidden' value="{{ autor_trabajo.id }}">
+								<button type="submit" class="btn btn-primary btn-lg btn-block" role="button" >Añadir Pago</button>
+							</form>
+						</div>
+						{% else %}
+						<div class="col-sm-2 text-center">
+							<a href="#" class="btn btn-lg btn-success btn-block" >Pagado</a>
+						</div>
+						{% endif %}
+					</div>
+
+					<br>
+					<table class="table table-bordered show-pays">
+						<thead>
+							<tr>
+								<th class="col-sm-3">Nombre</th>
+								<th class="col-sm-2">Cédula</th>                 
+								<th class="col-sm-2">Banco Origen</th>
+								<th class="col-sm-2">N° de Transferencia</th>
+								<th class="col-sm-2">Total</th>
+								<th class="col-sm-1">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for pagador in pagador_list %}
+							<tr>
+								{% if pagador.autor_trabajo == autor_trabajo%}
+								<td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
+								<td>{{ pagador.datos_pagador.cedula }}</td>
+
+								{% for factura in factura_list %}
+								{% if factura.pagador == pagador %}
+								<td>{{ factura.pago.banco_origen }}</td>
+								<td>{{ factura.pago.numero_transferencia }}</td>
+								<td>{{ factura.monto_total}}</td>
+								{% endif %}
+								{% endfor %}
+								<td>
+									<button class="btn btn-info show-edit-pay" data-url="{% url 'autores:postular_editar' pagador.id %}" data-toggle="tooltip" data-placement="top" title="Editar">
+										<i class="fas fa-edit"></i>
+									</button>
+									<a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+										<i class="fas fa-door-open"></i>
+									</a>
+								</td>
+								{% endif %}
+							</tr> 
+							{% endfor %}                
+						</tbody>
+					</table>
+					<!-- End table  -->
+
+				</div>
+			</div>
+		</div>
+		<!-- EndFirst Row New-->
+	{% endfor %}
 </div>
 
 
 <!-- modal -->
 <div class="modal fade" id="modal-pay">
-  <div class="modal-dialog">
-      <div class="modal-content">
-        
-      </div>
-  </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			
+		</div>
+	</div>
 </div>
 
 {% endblock %}

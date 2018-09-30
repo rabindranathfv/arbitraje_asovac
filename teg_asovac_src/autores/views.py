@@ -9,6 +9,7 @@ from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pa
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+from trabajos.views import show_areas_modal
 
 from .forms import DatosPagadorForm, PagoForm, FacturaForm, EditarDatosPagadorForm, EditarPagoForm, EditarFacturaForm
 
@@ -30,6 +31,9 @@ def authors_list(request):
 							{'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
 							{'title':'Resultados',      'icon': 'fa-chart-area','active': False},
 							{'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+	# request.session para almacenar el item seleccionado del sidebar
+	request.session['sidebar_item'] = "Autores"
 
 	rol_id=get_roles(request.user.id)
 
@@ -161,6 +165,7 @@ def postular_trabajo(request):
 		'estado' : estado,
 		'rol_id' : rol_id,
 		'event_id' : event_id,
+		'arbitraje_id' : event_id,
 		'item_active' : item_active,
 		'items':items,
 		'route_conf':route_conf,

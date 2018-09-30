@@ -6,8 +6,9 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,InlineRadios
 from django import forms
 from django.core.urlresolvers import reverse
+from django.core.validators import EmailValidator,URLValidator
 
-#from eventos.validators import 
+from eventos.validators import validate_ced_passport,validate_phone_office,validate_phone_personal,validate_cap_asovac 
 from eventos.models import Organizador,Evento,Locacion_evento,Organizador_evento
 
 
@@ -97,7 +98,7 @@ class CreateOrganizerForm(forms.ModelForm):
                 css_class='col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Agregar Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
 
                 # Div(
@@ -193,9 +194,9 @@ class CreateEventForm(forms.ModelForm):
         self.fields['horario_preferido'].label = 'Horario Preferido'
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['observaciones'].label = 'Observaciones'
-        self.fields['url_anuncio_evento'] = 'Enlace del Evento'
-        self.fields['organizador_id'] = 'Organizador ID'
-        self.fields['locacion_evento'] = 'Locacizacion del Evento'
+        self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
+        self.fields['organizador_id'].label = 'Seleccione el Organizador'
+        self.fields['locacion_evento'].label = 'Localizacion del Evento'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
@@ -232,3 +233,131 @@ class CreateEventForm(forms.ModelForm):
 
             css_class='col-sm-12')
         )
+
+    def clean_name(self):
+        name_data = self.cleaned_data['nombre']
+        return name_data
+    
+    def clean_category(self):
+        category_data = self.cleaned_data['categoria']
+        return category_data
+    
+    def clean_description(self):
+        desription_data = self.cleaned_data['descripcion']
+        return desription_data
+
+    def clean_type(self):
+        type_data = self.cleaned_data['tipo']
+        return type_data
+
+    def clean_start_date(self):
+        start_date_data = self.cleaned_data['fecha_inicio']
+        return start_date_data
+
+    def clean_end_date(self):
+        end_date_data = self.cleaned_data['fecha_fin']
+        return end_date_data
+
+    def clean_day(self):
+        day_data = self.cleaned_data['dia_asignado']
+        return day_data
+
+    def clean_duration(self):
+        duration_data = self.cleaned_data['duracion']
+        return duration_data
+
+    def clean_preffer_hour(self):
+        preffer_hour_data = self.cleaned_data['horario_preferido']
+        return preffer_hour_data
+
+    def clean_preffer_date(self):
+        preffer_date_data = self.cleaned_data['fecha_preferida']
+        return preffer_date_data
+
+    def clean_observations(self):
+        observations_data = self.cleaned_data['observaciones']       
+        return observations_data
+
+    def clean_url_event(self):
+        url_event_data = self.cleaned_data['url_anuncio_evento']
+        return url_event_data
+
+    def clean_organizer_id(self):
+        organizer_id_data = self.cleaned_data['organizador_id']
+        return organizer_id_data
+
+    def clean_locacion_evento(self):
+        locacion_event_data = self.cleaned_data['locacion_evento'] 
+        return locacion_event_data
+
+
+class CreateLocacionForm(forms.ModelForm):
+
+    class Meta:
+        model = Locacion_evento
+        fields = ['lugar','descripcion','capacidad_de_asistentes','observaciones','equipo_requerido']
+
+    def __init__(self, *args, **kwargs):
+        super(CreateLocacionForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'create-locacion-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-7'
+        self.fields['lugar'].label = "Lugar"
+        self.fields['descripcion'].label = "Descripción"
+        self.fields['capacidad_de_asistentes'].label = "Capacidad de Asistentes"
+        self.fields['observaciones'].label = "Observaciones"
+        self.fields['equipo_requerido'].label = "Equipo Requerido"
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            #Field('lugar',readonly=True),
+            'lugar',
+            'descripcion',
+            'capacidad_de_asistentes',
+            'observaciones',
+            'equipo_requerido',
+            Div(
+                Div(
+                    HTML("<span></span>"),
+                css_class='col-sm-6'),
+
+                Div(
+                    HTML("<a href=\"{% url 'eventos:event_place_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-2'),
+
+                Div(
+                    Submit('submit', 'Crear Locacion de Eventos ', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                css_class='col-sm-4'),
+
+                # Div(
+                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
+                # css_class='col-sm-1'),
+
+            css_class='col-sm-12')
+        )
+    def can_udpate_location(self, locacion_id):
+        
+        return True
+
+    def clean_place(self):
+        place_data = self.cleaned_data['lugar']
+        return place_data
+    
+    def clean_description(self):
+        description_data = self.cleaned_data['descripcion']
+        return description_data
+    
+    def clean_capacity(self):
+        capacity_data = self.cleaned_data['capacidad_de_asistentes']
+        return capacity_data
+
+    def clean_observations(self):
+        observations_data = self.cleaned_data['observaciones']
+        return observations_data
+
+    def clean_equipement(self):
+        equipement_data = self.cleaned_data['equipo_requerido']
+        return equipement_data
