@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- Fixed Sidebar & Content-->
+<div id="wrapper">
+
+        {% include 'sidebar.html'%}
+   
+        <!-- Page Content -->
+        <div class="container login-content col-sm-10" id="content-wrapper">
+            <!-- Title content--> 
+            <div class="row">
+                <div>
+                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
+                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
+                    </a>
+                    <h3 class="user-title">Trabajos</h3>
+                </div>
+            </div>
+             <!-- EndTitle content-->
+
+             <!-- First Row -->
+             <div class="row">
+               <div class="col-sm-12">
+                   <div class="jumbotron RLcard">
+                    <div class="row">
+                        <h2 class="text-left">Autor</h2>
+                    </div>
+
+                    <div class="row middle-content">
+                        <div class="col-sm-10">
+                            <h3>Título del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
+                        </div>
+                        <div class="col-sm-2">
+                            <a href="{% url 'autores:postular_trabajo'%}" class="btn btn-warning btn-block">Atrás</a>
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>Editar datos de pagador</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container-fluid">
+                                <div class="row middle-content">
+                                    <div class="col-sm-12">
+                                        {% crispy pagadorform %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                           <!-- End Form -->
+                           
+                       </div>
+               </div>
+             </div>
+             <!-- EndFirst Row -->
+        </div>
+</div>
+
+{% endblock %}

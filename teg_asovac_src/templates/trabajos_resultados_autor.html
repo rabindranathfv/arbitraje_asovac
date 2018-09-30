@@ -3,45 +3,77 @@
 {% block inner_content %}
 <div class="container" id="content-wrapper">
 
-	{% include "toggle_title.html" %}
+	{% if messages %}
+		<ul class="messages">
+			{% for message in messages %}
+				<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+				{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+				{{ message }}
+				</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
 
+	{% include "toggle_title.html" %}
+	<!-- First Row -->
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
 				<div class="col-sm-3">
 					<h2 class="text-left">Lista de trabajos</h2>
 				</div>
-				<table class="table table-bordered">
+				<table class="table table-bordered " id = "show-job-final-version">
 					<thead>
 						<tr>
-							<th class="col-sm-3">Área</th>
-							<th class="col-sm-3">Subárea</th>                 
-							<th class="col-sm-1">Nombre del trabajo</th>
+							<th class="col-sm-3">Nombre del trabajo</th>
+							<th class="col-sm-2">Area</th>
+							<th class="col-sm-2">Subarea</th>                 
 							<th class="col-sm-3">Resultado del arbitraje</th>
+							<th class="col-sm-2">Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
+						{% for trabajo_version_final in trabajo_list %}
 						<tr>
-							<td>Computación</td>
-							<td>Gráficas</td>
-							<td>Trabajo</td>
-							<td><span class="label label-success lb-md center-block">Aprobado</span></td>
+							<td>{{ trabajo_version_final.trabajo.titulo_espanol }}</td>
+							<td>{{ trabajo_version_final.trabajo.area }}</td>
+							<td>{{ trabajo_version_final.trabajo.subarea1 }}</td>
+							<td>
+								{% if trabajo_version_final.estatus_final == "Aprobado" %}
+								<span class="label label-success lb-md center-block">Aprobado</span>
+								{% elif trabajo_version_final.estatus_final == "Rechazado" %}
+								<span class="label label-danger lb-md center-block">Rechazado</span>
+								{% elif trabajo_version_final.estatus_final == "Aprobado con observaciones" %}
+								<span class="label label-warning lb-md center-block">Aprobado con observaciones</span>
+								{% endif %}                                  
+							</td>
+							<td class="text-center">
+								<button class="btn btn-info show-form-job-observations" data-url="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
+									<i class="fas fa-comment"></i>
+								</button>
+								<button class="btn btn-info show-job-observations" data-url="{% url 'trabajos:show_job_observations' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Ver observaciones">
+									<i class="fas fa-info"></i>
+								</button>
+							</td>
 						</tr>
-						<tr>
-							<td>Area</td>
-							<td>Subarea</td>
-							<td>Nombre</td>
-							<td><span class="label label-warning lb-md center-block">Aprobado con observaciones</span></td>
-						</tr>
-						<tr>
-							<td>Area2</td>
-							<td>Subarea2</td>
-							<td class="col-sm-1">Nombre2</td>
-							<td><span class="label label-danger lb-md center-block">Rechazado</span></td>
-						</tr>
+						{% endfor %}
 					</tbody>
 				</table>
+				<!-- End table  -->
+
 			</div>
+		</div>
+	</div>
+	<!-- EndFirst Row -->
+
+</div>
+
+
+<!-- modal -->
+<div class="modal fade" id="modal-observations">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			
 		</div>
 	</div>
 </div>

@@ -19,6 +19,15 @@
 					</div>
 				</div>
 
+				<div class="row middle-content">
+					<div class="col-sm-10">
+						<h3>Título del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
+					</div>
+					<div class="col-sm-2">
+						<a href="{% url 'autores:postular_trabajo_factura' %}" class="btn btn-warning btn-block">Atrás</a>
+					</div>
+				</div>
+
 				<br>
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -34,9 +43,12 @@
 						</div>
 					</div>
 				</div>
+				<!-- End Form -->
+				
 			</div>
 		</div>
 	</div>
+	<!-- EndFirst Row -->
 </div>
 
 {% endblock %}
