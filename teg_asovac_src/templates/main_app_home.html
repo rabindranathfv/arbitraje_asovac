@@ -36,14 +36,14 @@
 						</div>
 						{% if allow %}
 						<div class="col-sm-2 text-center">
-                            {%if params_validations.is_admin == 1 and params_validations.cant == 1 %}
-                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                            {%if params_validations.is_admin == 1 %}
+                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
                             {% else %}
-                            {%if params_validations.cant > 1 %}
-                            <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                            {% else %}
-                            <a class="btn btn-primary btn-lg btn-block"  src="#" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                            {% endif %}
+                                {%if params_validations.rol_name.id != 5 %}
+                                    <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                {% else %}
+                                    <a class="btn btn-primary btn-lg btn-block"  href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                {% endif %}
                             {% endif %}
                         </div>
                         {% else %}

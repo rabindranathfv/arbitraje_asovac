@@ -16,21 +16,26 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label for="area_select"> Seleccione un Área</label>
-                    <br>
                         <select name="area_select" class="form-control" id="area_select">
                             <option value="">Seleccione un Área</option>
                             {% for area in areas %}
-                            <!-- <option value="{{area.id}}">{{ area.nombre }}</option> -->
                             <option value="{{area.nombre}}">{{ area.nombre }}</option>
                             {% endfor %}
                         </select>
+                        <!-- <div class="form-group">
+                            <label for=""> 
+                                Su area es: "{{areas.nombre}}"
+                            </label>
+                        </div> -->
                     </div>
+                   
+                    
                 </div>
                 <br>
 
                 <div class="row"  style="display: none" id="content_subarea">
                     <div class="col-md-12">
-                        <label for="area_select"> Seleccione una Subárea</label>
+                        <label for="area_select"> Seleccione una Subárea:</label>
                         <br>
                         <select name="subarea_select" class="form-control" id="subarea_select">
                             <option value="">Seleccione una Subárea</option>
