@@ -84,6 +84,7 @@ class Datos_pagador(models.Model):
 	telefono_oficina = models.CharField(max_length=20, blank = True)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
+	categorias_pago = models.CharField(max_length=20, blank = True)
 	def __str__(self):
 		return self.cedula#.encode('utf-8', errors='replace')
 
@@ -95,7 +96,6 @@ class Pagador(models.Model):
 	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
-	categorias_pago = models.CharField(max_length=20, blank = True)
 
 	def __str__(self):
 		return self.autor_trabajo.autor.nombres#.encode('utf-8', errors='replace')
@@ -106,6 +106,7 @@ class Pagador(models.Model):
 Pago Model
 """""""""""""""""""""""""""
 class Pago(models.Model):
+
 
 	tipo_pago = models.CharField(max_length=50)
 	numero_cuenta_origen = models.CharField(max_length=50)
