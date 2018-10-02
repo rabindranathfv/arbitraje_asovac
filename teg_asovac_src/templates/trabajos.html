@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block inner_content %}
-<div class="container" id="content-wrapper">
+<div class="container col-sm-10" id="content-wrapper">
 	{% if messages %}
 		<ul class="messages">
 			{% for message in messages %}
@@ -39,43 +39,46 @@
 					</thead>
 					<tbody>
 						{% for trabajo in trabajos %}
-						<tr>
-							<td>{{ trabajo.trabajo.titulo_espanol }}</td>
-							<td>{{ trabajo.trabajo.area }}</td>
-							<td>{{ trabajo.trabajo.subarea1 }}</td>
-							<td>
-								{{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
-							</td>
-							<td>
-								{% if trabajo.trabajo.estatus == "Pendiente" %}
-								<span class="label label-warning lb-md center-block">Pendiente</span>
-								{% elif trabajo.trabajo.estatus == "Aprobado" %}
-								<span class="label label-success lb-md center-block">Aprobado</span>
-								{% elif trabajo.trabajo.estatus == "Rechazado" %}
-								<span class="label label-danger lb-md center-block">Rechazado</span>
-								{% endif %}
-							</td>
-							<td class="col-sm-1">2.0</td>
-							<td class="col-sm-1 text-center">
-								
-								{% if trabajo.monto_total > 0 and trabajo.autor_principal %}<!-- Esto es para corroborar que el trabajo no ha sido postulado, luego hay que cambiarlo por el valor inicial, ya que una vez hecho el pago no se puede eliminar o editar un trabajo-->
-								<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-									<i class="fas fa-edit"></i>
-								</a>
-
-								<!-- Esto es lo que hay que verificar -->
-								<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
-									<i class="fas fa-times"></i>
-								</button>
-								
+							<tr>
+								<td>{{ trabajo.trabajo.titulo_espanol }}</td>
+								<td>{{ trabajo.trabajo.area }}</td>
+								<td>{{ trabajo.trabajo.subarea1 }}</td>
+								<td>
+									{{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
+								</td>
+								<td>
+									{% if trabajo.trabajo.estatus == "Pendiente" %}
+										<span class="label label-warning lb-md center-block">Pendiente</span>
+									{% elif trabajo.trabajo.estatus == "Aprobado" %}
+										<span class="label label-success lb-md center-block">Aprobado</span>
+									{% elif trabajo.trabajo.estatus == "Rechazado" %}
+										<span class="label label-danger lb-md center-block">Rechazado</span>
+									{% endif %}
+								</td>
+								<td class="col-sm-1">{{ trabajo.trabajo.version }}</td>
+								<td class="col-sm-1 text-center">
+									
+									{% if trabajo.monto_total > 0 and trabajo.es_autor_principal %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
+										<button class="btn btn-info show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor">
+											<i class="fas fa-user"></i>
+										</button>
 
 
-								{% endif %}
-								<a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
-									<i class="fas fa-eye"></i>
-								</a>
-							</td>
-						</tr>
+										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+											<i class="fas fa-edit"></i>
+										</a>
+
+										<!-- Esto es lo que hay que verificar -->
+										<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
+											<i class="fas fa-times"></i>
+										</button>
+										
+									{% endif %}
+									<a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
+										<i class="fas fa-eye"></i>
+									</a>
+								</td>
+							</tr>
 						{% endfor %}              
 					</tbody>
 				</table>
@@ -120,14 +123,6 @@
 </div>
 
 
-<!-- modal -->
-<div class="modal fade" id="modal-job">
-  <div class="modal-dialog">
-      <div class="modal-content">
-        
-      </div>
-  </div>
-</div>
 
 
 {% endblock %}

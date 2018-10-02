@@ -101,11 +101,11 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user, #modal-job, #modal-pay, #modal-observations' ).modal('show');  
+              $('#modal-user, #modal-pay, #modal-observations' ).modal('show');  
             },
             success: function (data){
                 // console.log(data.html_form);
-                $('#modal-user .modal-content, #modal-job .modal-content, #modal-pay .modal-content, #modal-observations .modal-content').html(data.html_form);
+                $('#modal-user .modal-content, #modal-pay .modal-content, #modal-observations .modal-content').html(data.html_form);
             }
         });
     };
@@ -253,6 +253,9 @@ var ValidateAccess= function(){
 
     // Delete Job
     $('#show-job').on('click','.show-form-delete',ShowForm);
+
+    // Añadir autores al trabajo
+    $('#show-job').on('click','.show-form-add-author',ShowForm);
 
     // Editar datos de pago
     $('.show-pays').on('click','.show-edit-pay',ShowForm);
