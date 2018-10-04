@@ -225,6 +225,8 @@ body {
     line-height: 30px
 }
 
+
+
 /*============================ Content styling ============================*/
 
 /*================= Dashboard content spacing =================*/
@@ -393,3 +395,4 @@ textarea{
 .img-responsive {
     margin: 0 auto !important;
 }
+

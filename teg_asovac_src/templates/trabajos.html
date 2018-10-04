@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block inner_content %}
-<div class="container col-sm-10" id="content-wrapper">
+<div class="container col-sm-11" id="content-wrapper">
 	{% if messages %}
 		<ul class="messages">
 			{% for message in messages %}
@@ -40,13 +40,20 @@
 					<tbody>
 						{% for trabajo in trabajos %}
 							<tr>
-								<td>{{ trabajo.trabajo.titulo_espanol }}</td>
-								<td>{{ trabajo.trabajo.area }}</td>
-								<td>{{ trabajo.trabajo.subarea1 }}</td>
-								<td>
+								<td style="vertical-align: middle;">{{ trabajo.trabajo.titulo_espanol }}</td>
+								<td style="vertical-align: middle;">{{ trabajo.trabajo.area }}</td>
+								<td style="vertical-align: middle;">{{ trabajo.trabajo.subarea1 }}</td>
+								<td style="vertical-align: middle;">
 									{{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
+									<br>
+									{% for autor_trabajo in autores_trabajos_list %}
+										{% if autor_trabajo.autor != trabajo.autor and autor_trabajo.trabajo == trabajo.trabajo %}
+											{{ autor_trabajo.autor.nombres }} {{ autor_trabajo.autor.apellidos }}
+											<br>
+										{% endif %}
+									{% endfor %}
 								</td>
-								<td>
+								<td style="vertical-align: middle;">
 									{% if trabajo.trabajo.estatus == "Pendiente" %}
 										<span class="label label-warning lb-md center-block">Pendiente</span>
 									{% elif trabajo.trabajo.estatus == "Aprobado" %}
@@ -55,8 +62,8 @@
 										<span class="label label-danger lb-md center-block">Rechazado</span>
 									{% endif %}
 								</td>
-								<td class="col-sm-1">{{ trabajo.trabajo.version }}</td>
-								<td class="col-sm-1 text-center">
+								<td class="col-sm-1" style="vertical-align: middle;">{{ trabajo.trabajo.version }}</td>
+								<td class="col-sm-1 text-center" style="vertical-align: middle;">
 									
 									{% if trabajo.monto_total > 0 and trabajo.es_autor_principal %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
 										<button class="btn btn-info show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor">

@@ -79,6 +79,7 @@ def trabajos(request):
 
 
     form = TrabajoForm()
+    autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
 
     context = {
         "nombre_vista": 'Autores',
@@ -95,6 +96,7 @@ def trabajos(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajos': trabajos,
+        'autores_trabajos_list': autores_trabajos_list,
     }
     return render(request,"trabajos.html",context)
 
