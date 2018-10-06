@@ -25,12 +25,16 @@
                                 <p class="p-md">
                                     <strong>Título Español:</strong> {{ autor_trabajo.trabajo.titulo_espanol }}
                                 </p>
-                                <p class="p-md">
-                                    <strong>Título Inglés:</strong> {{ autor_trabajo.trabajo.titulo_ingles }}
-                                </p>
-                                <p class="p-md">
-                                    <strong>Palabras Clave:</strong> {{ autor_trabajo.trabajo.palabras_clave }}
-                                </p>
+                                {% if autor_trabajo.trabajo.titulo_ingles %}
+                                    <p class="p-md">
+                                        <strong>Título Inglés:</strong> {{ autor_trabajo.trabajo.titulo_ingles }}
+                                    </p>
+                                {% endif %}
+                                {% if autor_trabajo.trabajo.palabras_clave %}
+                                    <p class="p-md">
+                                        <strong>Palabras Clave:</strong> {{ autor_trabajo.trabajo.palabras_clave }}
+                                    </p>
+                                {% endif %}
                                 <p class="p-md">
                                     <strong>Forma de Presentación:</strong> {{ autor_trabajo.trabajo.forma_presentacion }}
                                 </p>
@@ -40,21 +44,31 @@
                                 <p class="p-md">
                                     <strong>Subarea 1:</strong> {{ autor_trabajo.trabajo.subarea1 }}
                                 </p>
-                                <p class="p-md">
-                                    <strong>Subarea 2:</strong> {{ autor_trabajo.trabajo.subarea2 }}
-                                </p>
-                                <p class="p-md">
-                                    <strong>Subarea 3:</strong> {{ autor_trabajo.trabajo.subarea3 }}
-                                </p>
-                                <p class="p-md">
-                                    <strong>Documento Inscrito:</strong> {{ autor_trabajo.trabajo.documento_inscrito }}
-                                </p>
-                                <p class="p-md">
-                                    <strong>URL del trabajo:</strong> {{ autor_trabajo.trabajo.url_trabajo }}
-                                </p>
-                                <p class="p-md">
-                                    <strong>Versión:</strong> {{ autor_trabajo.trabajo.version }}
-                                </p>
+                                {% if autor_trabajo.trabajo.subarea2 %}
+                                    <p class="p-md">
+                                        <strong>Subarea 2:</strong> {{ autor_trabajo.trabajo.subarea2 }}
+                                    </p>
+                                {% endif %}
+                                {% if autor_trabajo.trabajo.subarea3 %}
+                                    <p class="p-md">
+                                        <strong>Subarea 3:</strong> {{ autor_trabajo.trabajo.subarea3 }}
+                                    </p>
+                                {% endif %}
+                                {% if autor_trabajo.trabajo.documento_inscrito %}
+                                    <p class="p-md">
+                                        <strong>Documento Inscrito:</strong> {{ autor_trabajo.trabajo.documento_inscrito }}
+                                    </p>
+                                {% endif %}
+                                {% if autor_trabajo.trabajo.url_trabajo %}
+                                    <p class="p-md">
+                                        <strong>URL del trabajo:</strong> {{ autor_trabajo.trabajo.url_trabajo }}
+                                    </p>
+                                {% endif %}
+                                {% if autor_trabajo.trabajo.version %}
+                                    <p class="p-md">
+                                        <strong>Versión:</strong> {{ autor_trabajo.trabajo.version }}
+                                    </p>
+                                {% endif %}
                                 <p class="p-md">
                                     <strong>Estatus:</strong>   
                                     {% if autor_trabajo.trabajo.estatus == "Pendiente" %}
@@ -68,9 +82,11 @@
                                 <p class="p-md">
                                     <strong>Resumen:</strong> {{ autor_trabajo.trabajo.resumen }}
                                 </p>
-                                <p class="p-md">
-                                    <strong>Observaciones:</strong> {{ autor_trabajo.trabajo.observaciones }}
-                                </p>
+                                {% if autor_trabajo.trabajo.observaciones %}
+                                    <p class="p-md">
+                                        <strong>Observaciones:</strong> {{ autor_trabajo.trabajo.observaciones }}
+                                    </p>
+                                {% endif %}
                             </div>
                             <div class="col-sm-7">
                                 <div class="preview-pdf">
