@@ -378,6 +378,7 @@ def trabajos_resultados_autor(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo_list': trabajo_list,
+        'autor_trabajo_list': autor_trabajo_list,
     }
     return render(request,"trabajos_resultados_autor.html",context)
 

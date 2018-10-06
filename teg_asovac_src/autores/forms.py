@@ -117,7 +117,15 @@ class PagoForm(forms.ModelForm):
 	class Meta:
 		model = Pago
 		fields = ['tipo_pago', 'numero_cuenta_origen', 'banco_origen', 'numero_transferencia', 'numero_cheque', 'fecha_pago', 'observaciones', 'comprobante_pago']
-
+		widgets = {
+            'tipo_pago': forms.TextInput(attrs={'placeholder': 'Transferencia o cheque'}),
+            'numero_cuenta_origen': forms.TextInput(attrs={'placeholder': 'XXXXXXXXXXXXXXXXXXXX'}),
+            'banco_origen': forms.TextInput(attrs={'placeholder': 'Ejemplo: Banco de Venezuela'}),
+            'numero_transferencia': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
+            'numero_cheque': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
+            'fecha_pago': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
+            'observaciones': forms.TextInput(attrs={'placeholder': 'Introduzca sus observaciones'}),
+        }
 	def __init__(self, *args, **kwargs):
 		super(PagoForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()

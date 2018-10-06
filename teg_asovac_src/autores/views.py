@@ -146,7 +146,7 @@ def postular_trabajo(request):
 	usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
 	autor = Autor.objects.get(usuario = usuario_asovac)
 	sistema_asovac = Sistema_asovac.objects.get(id = event_id)
-	autores_trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac, es_autor_principal = True)
+	autores_trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
 	pagador_list = Pagador.objects.all()
 	factura_list = Factura.objects.all()

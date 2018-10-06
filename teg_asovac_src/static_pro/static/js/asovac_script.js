@@ -101,11 +101,11 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user, #modal-observations' ).modal('show');  
+              $('#modal-user').modal('show');  
             },
             success: function (data){
                 // console.log(data.html_form);
-                $('#modal-user .modal-content, #modal-observations .modal-content').html(data.html_form);
+                $('#modal-user .modal-content').html(data.html_form);
             }
         });
     };
