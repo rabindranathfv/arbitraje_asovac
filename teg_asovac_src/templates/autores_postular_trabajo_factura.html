@@ -19,9 +19,20 @@
 					</div>
 				</div>
 
+
+				<div class="row middle-content">
+					<div class="col-sm-10">
+						<h3>Título del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
+					</div>
+					<div class="col-sm-2">
+						<a href="{% url 'autores:postular_trabajo_pagador'%}" class="btn btn-warning btn-block">Atrás</a>
+					</div>
+				</div>
+
+				<br>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h4>Datos de Factura</h4>
+						<h4>Datos de factura</h4>
 					</div>
 					<div class="panel-body">
 						<div class="container-fluid">
@@ -33,8 +44,12 @@
 						</div>
 					</div>
 				</div>
+				<!-- End Form -->
+				
 			</div>
 		</div>
 	</div>
+	<!-- EndFirst Row -->
 </div>
+
 {% endblock %}

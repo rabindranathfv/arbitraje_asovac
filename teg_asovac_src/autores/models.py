@@ -45,7 +45,8 @@ class Autor(models.Model):
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombres.encode('utf-8', errors='replace')
+
 
 
 
@@ -56,15 +57,17 @@ class Autores_trabajos(models.Model):
 	
 	autor = models.ForeignKey(Autor, on_delete = models.CASCADE)
 	trabajo = models.ForeignKey('trabajos.Trabajo', on_delete = models.CASCADE)
+	sistema_asovac = models.ForeignKey('main_app.Sistema_asovac')
 
 	es_autor_principal = models.BooleanField(default=False)
 	es_ponente = models.BooleanField(default=False)
 	es_coautor = models.BooleanField(default=False)
-	monto_total = models.FloatField()
+	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{}".format(self.autor.nombre)#.encode('utf-8', errors='replace')
+		return "{} - {}".format(self.autor.nombres, self.trabajo.titulo_espanol)#.encode('utf-8', errors='replace')
+
 
 
 """""""""""""""""""""""""""
@@ -72,7 +75,7 @@ Datos_pagador Model
 """""""""""""""""""""""""""
 class Datos_pagador(models.Model):
     	
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac', blank = True)
 	
 	cedula = models.CharField(max_length=10) 
 	nombres = models.CharField(max_length=50)
@@ -92,10 +95,10 @@ class Pagador(models.Model):
 	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
-	categorias_pago = models.CharField(max_length=20)
+	categorias_pago = models.CharField(max_length=20, blank = True)
 
 	def __str__(self):
-		return self.categorias_pago#.encode('utf-8', errors='replace')
+		return self.autor_trabajo.autor.nombres#.encode('utf-8', errors='replace')
 
 
 
@@ -109,12 +112,12 @@ class Pago(models.Model):
 	banco_origen = models.CharField(max_length=50)
 	numero_transferencia = models.CharField(max_length=50, blank = True)
 	numero_cheque = models.CharField(max_length=50, blank = True)
-	fecha_pago = models.DateTimeField()
+	fecha_pago = models.DateField()
 	observaciones = models.TextField(max_length=100,blank=True)
 	comprobante_pago = models.FileField(upload_to = 'comprobantes_de_pago/') # Hacer validacion y path
 
 	def __str__(self):
-		return self.numero_transferencia#.encode('utf-8', errors='replace')
+		return self.numero_cuenta_origen#.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -126,8 +129,9 @@ class Factura(models.Model):
 	pago = models.OneToOneField(Pago)
 
 	monto_subtotal = models.FloatField()
-	fecha_emision = models.DateTimeField()
+	fecha_emision = models.DateField()
 	iva = models.FloatField()
+	monto_total = models.FloatField()
 	
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
