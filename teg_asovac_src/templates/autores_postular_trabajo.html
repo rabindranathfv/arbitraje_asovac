@@ -57,7 +57,7 @@
 								<th class="col-sm-3">Nombre</th>
 								<th class="col-sm-2">Cédula</th>                 
 								<th class="col-sm-2">Banco Origen</th>
-								<th class="col-sm-2">N° de Transferencia</th>
+								<th class="col-sm-2">N° de Transferencia/Cheque</th>
 								<th class="col-sm-2">Monto pagado</th>
 								<th class="col-sm-1">Acciones</th>
 							</tr>
@@ -72,14 +72,17 @@
 								{% for factura in factura_list %}
 								{% if factura.pagador == pagador %}
 								<td>{{ factura.pago.banco_origen }}</td>
-								<td>{{ factura.pago.numero_transferencia }}</td>
+								<td>
+									{% if factura.pago.numero_transferencia %}
+										{{ factura.pago.numero_transferencia }}
+									{% else %}
+										{{ factura.pago.numero_cheque }}
+									{% endif %}
+								</td>
 								<td>{{ factura.monto_total}}</td>
 								{% endif %}
 								{% endfor %}
 								<td>
-									<button class="btn btn-info show-edit-pay" data-url="{% url 'autores:postular_editar' pagador.id %}" data-toggle="tooltip" data-placement="top" title="Editar">
-										<i class="fas fa-edit"></i>
-									</button>
 									<a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 										<i class="fas fa-door-open"></i>
 									</a>

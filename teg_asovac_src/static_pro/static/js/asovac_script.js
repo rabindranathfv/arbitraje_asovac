@@ -313,9 +313,6 @@ var SaveAñadirPagoForm= function(){
     // Añadir autores al trabajo
     $('#show-job').on('click','.show-form-add-author',ShowForm);
 
-    // Editar datos de pago
-    $('.show-pays').on('click','.show-edit-pay',ShowForm);
-
     //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
 

@@ -8,7 +8,7 @@
 <form method="POST" class="add-autor-form" action="{% url 'trabajos:add_author_to_job' autor_trabajo.id %}">
     <div class="modal-body">
         {% csrf_token %}
-        {{ form }}
+        {% crispy form %}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>

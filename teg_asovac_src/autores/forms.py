@@ -30,9 +30,12 @@ class AddAuthorToJobForm(forms.ModelForm):
 		self.fields['es_ponente'].label = "¿Es ponente?"
 		self.fields['es_coautor'].label = "¿Es coautor?"
 		self.helper.layout = Layout(
-			'correo',
-			'es_ponente',
-			'es_coautor',
+			Div(
+				Field('correo',placeholder="Introduzca correo electrónico del coautor"),
+				'es_ponente',
+				'es_coautor',
+				css_class= "row"
+				)
 			)
 
 # Form para datos del pagador
