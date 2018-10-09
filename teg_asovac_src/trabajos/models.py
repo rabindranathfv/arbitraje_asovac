@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from .validators import validate_file_extension
-from datetime import datetime
 # Create your models here.
 
 
@@ -29,8 +28,6 @@ class Trabajo(models.Model):
 	# autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
 
-
-	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=40)
 	titulo_ingles = models.CharField(max_length=40, blank = True)
 	palabras_clave = models.CharField(max_length=40, blank = True)
@@ -54,19 +51,19 @@ Detalle_version_final Model
 """""""""""""""""""""""""""
 class Detalle_version_final(models.Model):
 	
-	arbitraje = models.OneToOneField('arbitrajes.Arbitraje', blank = True, null = True)
+	arbitraje = models.OneToOneField('arbitrajes.Arbitraje', blank = True)
 	trabajo = models.OneToOneField(Trabajo, on_delete = models.CASCADE)
 
-	estatus_final = models.CharField(max_length=20, default="Pendiente")
+	estatus = models.CharField(max_length=20)
 	observaciones = models.TextField(max_length=255, blank = True)
 	se_recibio_version_final_corregida = models.BooleanField(default=False)
 	url_version_final_trabajo = models.CharField(max_length=35, blank = True)
-	fecha_envio_version_final = models.DateField(default = datetime.now)
+	fecha_envio_version_final = models.DateField()
 	se_recibio_version_final_presentacion = models.BooleanField(default=False)
 	url_version_final_presentacion = models.CharField(max_length=35)
-	fecha_envio_version_final_presentacion = models.DateField(blank = True, null = True)
+	fecha_envio_version_final_presentacion = models.DateField()
 	#archivo_trabajo_final = models.FileField(validators=[validate_file_extension])
 	def __str__(self):
-		return self.trabajo.titulo_espanol#.encode('utf-8', errors='replace')
+		return self.url_version_final_trabajo#.encode('utf-8', errors='replace')
 
 

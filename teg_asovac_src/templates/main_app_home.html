@@ -37,67 +37,39 @@
 						{% if allow %}
 						<div class="col-sm-2 text-center">
                             {%if params_validations.is_admin == 1 and params_validations.cant == 1 %}
-                            <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
                             {% else %}
-                            {%if params_validations.cant > 1 %}
-                            <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                            {% else %}
-                            <a class="btn btn-primary btn-lg btn-block"  src="#" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                {%if params_validations.cant > 1 %}
+                                    <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                {% else %}
+                                    <a class="btn btn-primary btn-lg btn-block"  src="#" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+                                {% endif %}
                             {% endif %}
-                            {% endif %}
-                        </div>
-                        {% else %}
-                        <div class="col-sm-3 text-center">
-                            <a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalAccessDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="row middle-content">
-                      <div class="col-sm-6 col-sm-offset-3">
-                         <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                         <h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
-                     </div>
-                 </div>
-                 {% endif %}
-             </div>
-         </div>
-     </div>
- </div>
+						</div>
+						{% endif %}
+					</div>
+					{% endfor %}
+					{% else %}
+					<div class="row middle-content">
+						<div class="col-sm-6 col-sm-offset-3">
+							<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+							<h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
-
-
-
-<!-- Modal Acceso Denegado-->
-<div class="modal fade" id="ModalAccessDenied" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Acceso Denegado</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      </div>
-      <div class="modal-body text-center content-modal">
-        En este estado del proceso, usted no participa.  
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-    </div>
-</div>
-</div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <!-- Modal -->
+  <div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-         
+       
       </div>
+    </div>
   </div>
-</div>
-
 
 {% endblock %}

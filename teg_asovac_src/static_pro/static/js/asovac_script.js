@@ -13,8 +13,6 @@ $(".submenu-toggle").click(function(e) {
 });
 
 
-<<<<<<< HEAD
-=======
 $(document).ready(function(){
     // To style only selects with the selectpicker class
     $('.selectpicker').selectpicker();
@@ -25,7 +23,6 @@ $(document).ready(function(){
         $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
     });
 });
->>>>>>> development
 
 
 $('#myModal').on('shown.bs.modal', function () {
@@ -93,7 +90,6 @@ function getCookie(name) {
 
 // Mostrar ventana modal con el contenido correspondiente
 $(document).ready(function(){
-
     var ShowForm= function(){
         var btn= $(this);
         // alert('ShowForm');
@@ -102,11 +98,11 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user, #modal-job, #modal-pay, #modal-observations' ).modal('show');  
+              $('#modal-user').modal('show');  
             },
             success: function (data){
                 // console.log(data.html_form);
-                $('#modal-user .modal-content, #modal-job .modal-content, #modal-pay .modal-content, #modal-observations .modal-content').html(data.html_form);
+                $('#modal-user .modal-content').html(data.html_form);
             }
         });
     };
@@ -250,20 +246,6 @@ var ValidateAccess= function(){
     // update rol
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
-
-
-    // Delete Job
-    $('#show-job').on('click','.show-form-delete',ShowForm);
-
-    // Editar datos de pago
-    $('.show-pays').on('click','.show-edit-pay',ShowForm);
-
-    //Mostrar observaciones de la versión final del trabajo
-    $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
-
-    //Añadir observaciones a la versión final del trabajo
-    $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
-
     
     //show areas 
     $('.show_areas').click(ShowForm);
@@ -273,4 +255,3 @@ var ValidateAccess= function(){
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
 });
-
