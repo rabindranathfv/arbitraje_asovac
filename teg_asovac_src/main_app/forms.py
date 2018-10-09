@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 
-from .models import Sistema_asovac, Usuario_asovac, Rol
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area
 
 
 estados_arbitraje = (   (0,'Desactivado'),
@@ -22,6 +22,9 @@ estados_arbitraje = (   (0,'Desactivado'),
                         (6,'En Cierre de Arbitraje'),
                         (7,'En Asignación de Secciones'),
                         (8,'En Resumen'))
+
+my_date_formats = ['%d/%m/%Y']
+my_date_format = '%d/%m/%Y'
 
 class RegisterForm(UserCreationForm):
 
@@ -45,21 +48,17 @@ class MyLoginForm(forms.Form):
 class DataBasicForm(forms.Form):
     name_arbitration = forms.CharField(label="Nombre arbitraje", max_length=20)
     description = forms.CharField(label="Descripción", max_length=255)
-    start_date = forms.DateField(label="Fecha de inicio")
-    end_date = forms.DateField(label="Fecha de fin")
-        
-        # super(MyLoginForm, self).__init__(*args, **kwargs)
-        # self.helper = FormHelper()
-        # self.helper.form_id = 'login-form'
-        # self.helper.form_method = 'post'
-        # #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
-        # self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))
+    start_date = forms.DateField(label="Fecha de inicio", input_formats=my_date_formats)
+    end_date = forms.DateField(label="Fecha de fin", input_formats=my_date_formats)
 
 class CreateArbitrajeForm(forms.ModelForm):
 
     class Meta:
         model = Sistema_asovac
         fields = ['nombre','descripcion', 'fecha_inicio_arbitraje', 'fecha_fin_arbitraje']
+        widgets = {'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
+                   'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)}
+        labels = {'descripcion': 'Descripción', 'fecha_fin_arbitraje': 'Fecha de Culminación', 'fecha_inicio_arbitraje': 'Fecha de Inicio'}
 
     def __init__(self, *args, **kwargs):
         super(CreateArbitrajeForm, self).__init__(*args, **kwargs)
@@ -146,3 +145,22 @@ class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
+
+class AreaForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre']
+
+class SubareaForm(forms.ModelForm):
+    class Meta:
+        model= Sub_area
+        fields=['nombre']
+
+class SubAreaRegistForm(forms.ModelForm):
+    class Meta:
+        model= Usuario_asovac
+        fields=['sub_area',]
+        labels={'sub_area':'Subrea',}
+        widget={
+            'sub_area': forms.CheckboxSelectMultiple(),
+        }

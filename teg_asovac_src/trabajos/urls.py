@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
     url(r'^resultados/$', views.trabajos_resultados_autor, name = 'trabajos_resultados_autor'),
 
+    #Rutas para modales ajax
+    url(r'^mostrar/(?P<id>\d+)/areas$',views.show_areas_modal,name='mostrar_areas'),
 ]

@@ -7,6 +7,7 @@ from django.shortcuts import render
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+from trabajos.views import show_areas_modal
 
 from .forms import DatosPagadorForm, PagoForm, FacturaForm
 # Create your views here.
@@ -22,6 +23,9 @@ def authors_list(request):
 							{'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
 							{'title':'Resultados',      'icon': 'fa-chart-area','active': False},
 							{'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+	# request.session para almacenar el item seleccionado del sidebar
+	request.session['sidebar_item'] = "Autores"
 
 	rol_id=get_roles(request.user.id)
 

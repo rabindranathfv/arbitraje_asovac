@@ -3,19 +3,19 @@ from __future__ import unicode_literals
 
 import random, string
 from decouple import config
-
+from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm
-from .models import Rol,Sistema_asovac,Usuario_asovac
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm
+from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -43,6 +43,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify arbitration
     if not ( ((estado == 0 or estado == 8) and 2 in rol_id) or ((estado == 0 or estado == 8) and 3 in rol_id) or 4 in rol_id or 5 in rol_id):
         top_nav_options.append('arbitration')
+        top_nav_options.append('area/subarea')
     # verify result
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 in rol_id) or ((estado != 6 and estado != 8) and 3 in rol_id) or ((estado != 8 and estado != 6) and 4 in rol_id) or (estado != 6 and 5 in rol_id)):
         top_nav_options.append('result')
@@ -169,6 +170,14 @@ def get_roles(user_id):
         rol_id.append(item.id)
     return rol_id
 
+# Obtener nombre de los roles del usuario
+def get_names_roles(user_id):
+    rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
+    rol_name=[]
+    for item in rol:
+        rol_name.append(item)
+    return rol_name
+
 #Update state of arbitration
 def update_state_arbitration(arbitraje_id,estado):
     new_state = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -177,6 +186,42 @@ def update_state_arbitration(arbitraje_id,estado):
     # save in DB
     new_state.save()
     return estado
+
+#Verifica si el usuario tiene rol de admin
+def is_admin(rols,total_rols):
+    
+    if total_rols == 1:
+        for name in rols:
+            if name.id == 1:
+                return 1
+    else:
+        return 0
+#Validar accesos segun rol clave y arbitraje seleccionado
+def validate_access(rol,data_arbitraje,clave):
+    if rol == '2':
+        if clave == data_arbitraje.clave_maestra_coordinador_general:
+            return 1
+    else:
+        if rol == '3':
+            if clave == data_arbitraje.clave_maestra_coordinador_area:
+                return 1
+        else:
+            if rol == '4':
+                if clave == data_arbitraje.clave_maestra_arbitro_subarea:
+                    return 1
+            else:
+                if rol == '5':
+                    return 1
+    
+    return 0
+
+# Parametros para validacion de arbitraje
+def create_params_validations(request):
+    params_validations = dict()
+    params_validations['rol_name']=get_names_roles(request.user.id)
+    params_validations['cant']=len(params_validations['rol_name'])
+    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
+    return params_validations
 
 def compute_progress_bar(state):
     if state == 0:
@@ -201,17 +246,43 @@ def login(request):
 def register(request):
     if request.method == 'POST':
         form= RegisterForm(request.POST)
+        form2=SubAreaRegistForm(request.POST)
         if form.is_valid():
-            form.save()
+            user= form.save()
+            usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
+
+            subarea= request.POST.getlist("subarea_select")
+            for item in subarea:
+                usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+            usuario_asovac.save()
             messages.success(request, 'Se ha registrado Exitosamente.')
             context={"form":form,}
             return redirect('login')
+            
         else:
-            context={"form":form,}
+            areas= Area.objects.all()
+            subareas= Sub_area.objects.all()
+            form = RegisterForm()
+            subareaform=SubAreaRegistForm()
+            context={
+                    "form":form,
+                    "subareaform":form2,
+                    "areas":areas,
+                    "subareas":subareas,
+                }
             return render(request,'main_app_register.html',context)
     else:
+        areas= Area.objects.all()
+        subareas= Sub_area.objects.all()
         form = RegisterForm()
-        context={"form":form,}
+        subareaform=SubAreaRegistForm()
+        context={
+                "form":form,
+                "subareaform":subareaform,
+                "areas":areas,
+                "subareas":subareas,
+            }
+        
         return render(request,'main_app_register.html',context)
 
 
@@ -220,8 +291,14 @@ def home(request):
     # Queryset
     arbitraje_data = Sistema_asovac.objects.all()
 
+    params_validations = dict()
     rol_id=get_roles(request.user.id)
+    rol_name=get_names_roles(request.user.id)
 
+    params_validations['rol_name']=get_names_roles(request.user.id)
+    params_validations['cant']=len(params_validations['rol_name'])
+    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
+   
     # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
     allow_entry_list = []
     # Lista de strings de estados de los arbitrajes
@@ -252,7 +329,10 @@ def home(request):
         'nombre_vista' : 'Inicio',
         'arb_data' : arb_data,
         'rol_id' : rol_id,
+        'params_validations' : params_validations,
     }
+    print rol_id
+    
     return render(request, 'main_app_home.html', context)
 
 
@@ -357,9 +437,6 @@ def detalles_resumen(request):
         'username' : 'Rabindranath Ferreira',
     }
     return render(request, 'main_app_detalle_resumen.html', context)
-
-
-
 
 def data_basic(request, arbitraje_id):
     form= DataBasicForm()
@@ -780,7 +857,16 @@ def total(request, arbitraje_id):
     return render(request, 'main_app_totales.html', context)
 
 def apps_selection(request):
+    
+    user_id= request.user.id
+    data= dict()
+    user= get_object_or_404(User,id=user_id)
+    
+    user= Usuario_asovac.objects.get(usuario_id=user_id)
+    user_role = user.biggest_role()
+
     context = {
+        'user_role': user_role,
         'nombre_vista' : 'Selección de Aplicación',
     }
 
@@ -879,4 +965,97 @@ def update_rol_modal(request,id):
             context={'user': user}
             data['html_form']= render_to_string('ajax/rol_read.html',context, request=request)
 
+    return JsonResponse(data)
+
+def validate_access_modal(request,id):
+    data= dict()
+    user_id= request.user.id
+    user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
+    arbitraje_id= id 
+    # print "Arbitraje:",arbitraje_id
+
+    if request.method == 'POST':
+        # print "El metodo es post"
+        clave=request.POST['password']
+        rol=request.POST['rol']
+        data_arbitraje=Sistema_asovac.objects.get(pk=arbitraje_id) 
+      
+        # print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
+        if validate_access(rol,data_arbitraje,clave) == 1:
+            params_validations= create_params_validations(request)
+            data['form_is_valid']= True
+            data['method']= 'post'
+            context = {
+                'params_validations' : params_validations,
+                'arbitraje_id' : arbitraje_id,
+            }
+            data['html_form']= render_to_string('ajax/validate_rol_success.html',context,request=request)
+        else:
+            params_validations= create_params_validations(request)
+            data['form_is_valid']= False
+            data['method']= 'post'
+            context = {
+                'params_validations' : params_validations,
+                'arbitraje_id' : arbitraje_id,
+            }
+            data['html_form']= render_to_string('ajax/validate_rol.html',context,request=request)
+            
+    else:
+        # print "El metodo es get"
+    
+        params_validations= create_params_validations(request)
+        data['form_is_valid']= True
+        data['method']= 'get'
+        context = {
+            'params_validations' : params_validations,
+            'arbitraje_id' : arbitraje_id,
+        }
+        data['html_form']= render_to_string('ajax/validate_rol.html',context,request=request)
+
+    # user= Usuario_asovac.objects.get(usuario_id=user_id)
+    
+
+    
+    
+    # if(rol== 1 or rol== 2):
+    #     areas= Area.objects.all()
+    #     subareas= Sub_area.objects.all()
+    # else:
+    #     print "Rol distinto a 1 y 2"
+    #     subareas= user.sub_area.all()
+    #     areas=[]
+    #     for subarea in subareas:
+    #         areas.append(subarea.area)
+    #         print "Area",subarea.area
+            
+    # if request.method == 'POST':
+    #     if form.is_valid():
+    #         form.save()
+    #         data['form_is_valid']= True
+    #         # users= User.objects.all()
+    #         users= Usuario_asovac.objects.all()
+    #         data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
+    #     else:
+    
+  
+    
+    return JsonResponse(data)
+
+    
+
+    # print user_role.id
+    # print areas
+    # print subareas
+    # request.session['areas']
+    # request.session['subareas']
+
+
+# Para obtener la lista de subareas asociadas a un area
+def get_subareas(request,id):
+    data= dict()
+
+    subareas=Sub_area.objects.filter(area_id=id)
+    context={'subareas': subareas,}
+    data['html_select']= render_to_string('ajax/show_subareas.html',context, request=request)
+    
     return JsonResponse(data)
