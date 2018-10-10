@@ -231,7 +231,7 @@ class CreateEventForm(forms.ModelForm):
                 #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
                 # css_class='col-sm-1'),
 
-            css_class='col-sm-12')
+            css_class='row')
         )
 
     def clean_name(self):

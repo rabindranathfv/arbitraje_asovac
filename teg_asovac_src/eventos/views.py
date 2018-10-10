@@ -24,10 +24,11 @@ def event_create(request):
         'form' : form,
     }
     if request.method == 'POST':
-        form = CreateEventForm(request.POST or None)
+        form = CreateEventForm(request.POST)
         if form.is_valid():
-            form.save(commit=False)
+            evento = form.save()
             #lIMPIANDO DATA
+            """
             form.nombre = form.clean_name()
             form.categoria = form.clean_category()
             form.descripcion = form.clean_description()
@@ -45,9 +46,8 @@ def event_create(request):
             form.organizador_id = form.clean_organizer_id()
 
             form.locacion_evento = form.clean_locacion_evento()
-
+            """
             print("El form es valido y se guardo satisfactoriamente el EVENTO")
-            form.save()
             return redirect(reverse('eventos:event_list')) 
     return render(request, 'eventos_event_create.html',context)
 
