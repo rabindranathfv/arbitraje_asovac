@@ -26,7 +26,20 @@ def event_create(request):
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
         if form.is_valid():
-            evento = form.save()
+            evento = form.save(commit=False)
+            evento.save()
+            locacion_preferida = form.cleaned_data['locacion_preferida']
+            organizador_email_list = form.cleaned_data['organizador_id']
+            for organizador_email in organizador_email_list:
+                organizador = Organizador.objects.get(correo_electronico = organizador_email)
+                organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
+                organizador_evento.save()
+            """
+            for organizador_id in form_data.organizador_id:
+                organizador = Organizador.objects.get(id = organizador_id)
+                organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = form_data.locacion_preferida)
+                organizador_evento.save()
+            """
             #lIMPIANDO DATA
             """
             form.nombre = form.clean_name()

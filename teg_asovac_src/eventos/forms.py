@@ -175,6 +175,7 @@ class CreateEventForm(forms.ModelForm):
         'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento',
         'organizador_id','locacion_evento']
 
+    locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
         super(CreateEventForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -210,6 +211,7 @@ class CreateEventForm(forms.ModelForm):
             'duracion',
             'horario_preferido',
             'fecha_preferida',
+            'locacion_preferida',
             'observaciones',
             'url_anuncio_evento',
             'organizador_id',
