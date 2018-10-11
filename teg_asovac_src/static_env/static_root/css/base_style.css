@@ -373,3 +373,8 @@ textarea{
 .img-responsive {
     margin: 0 auto !important;
 }
+
+/**=== Alineación Vertical ===*/
+.vertical-middle-align {
+    vertical-align: middle !important;
+}
