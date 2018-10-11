@@ -18,11 +18,6 @@ from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 # Create your views here.
 def event_create(request):
     form = CreateEventForm()
-
-    context = {
-        'username' : request.user.username,
-        'form' : form,
-    }
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
         if form.is_valid():
@@ -34,34 +29,12 @@ def event_create(request):
                 organizador = Organizador.objects.get(correo_electronico = organizador_email)
                 organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
                 organizador_evento.save()
-            """
-            for organizador_id in form_data.organizador_id:
-                organizador = Organizador.objects.get(id = organizador_id)
-                organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = form_data.locacion_preferida)
-                organizador_evento.save()
-            """
-            #lIMPIANDO DATA
-            """
-            form.nombre = form.clean_name()
-            form.categoria = form.clean_category()
-            form.descripcion = form.clean_description()
-            form.tipo = form.clean_type()
-            form.fecha_inicio = form.clean_start_date()
-
-            form.fecha_fin = form.clean_end_date()
-            form.dia_asignado = form.clean_day()
-            form.duracion = form.clean_duration()
-            form.horario_preferido = form.clean_preffer_hour()
-            form.fecha_preferida = form.clean_preffer_date()
-
-            form.observaciones = form.clean_observations()
-            form.url_anuncio_evento = form.clean_url_event()
-            form.organizador_id = form.clean_organizer_id()
-
-            form.locacion_evento = form.clean_locacion_evento()
-            """
             print("El form es valido y se guardo satisfactoriamente el EVENTO")
             return redirect(reverse('eventos:event_list')) 
+    context = {
+        'username' : request.user.username,
+        'form' : form,
+    }
     return render(request, 'eventos_event_create.html',context)
 
 def event_list(request):
@@ -76,7 +49,7 @@ def event_list(request):
     return render(request, 'eventos_event_list.html', context)
 
 
-def event_edit(request):
+def event_edit(request, evento_id):
     
     context = {
         'nombre_vista' : 'Autores',

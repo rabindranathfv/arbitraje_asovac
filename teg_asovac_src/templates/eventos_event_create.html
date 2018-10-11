@@ -21,30 +21,9 @@
                     </div>
 
 					{% include "errors_form.html" %}
-					{% crispy form %}
+					{% crispy form form.helper1 %}
 
-			</div>
-		</div>
-	</div>
-</div>
 
-<!-- Modal -->
-<div id="modal-success" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-lg top-margin-128">
-		<!-- Modal content-->
-		<div class="modal-content">
-			<div class="modal-header">
-				<div class="col-sm-offset-1">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h3 class="modal-title text-center"> Agregar Organizador </h3>
-				</div>
-			</div>
-			<div class="modal-body">
-				<h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
-				<p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
 			</div>
 		</div>
 	</div>

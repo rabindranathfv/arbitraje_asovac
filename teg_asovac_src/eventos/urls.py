@@ -19,7 +19,7 @@ from . import views
 urlpatterns = [
     #url(r'^$', views.eventos_pag, name= 'eventos'),
     url(r'^listar-eventos/$',views.event_list,name='event_list'),
-    url(r'^editar-evento/$',views.event_edit,name='event_edit'),
+    url(r'^editar-evento/(?P<evento_id>\d+)/$',views.event_edit,name='event_edit'),
     url(r'^crear-evento/$',views.event_create,name='event_create'),
     url(r'^detalles-evento/$',views.event_detail,name='event_detail'),
     url(r'^eliminar-evento/$',views.event_delete,name='event_delete'),

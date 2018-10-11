@@ -178,12 +178,6 @@ class CreateEventForm(forms.ModelForm):
     locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
         super(CreateEventForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = 'create-event-form'
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-3'
-        self.helper.field_class = 'col-sm-8'
         self.fields['nombre'].label = 'Nombre del Evento'
         self.fields['categoria'].label = 'Categoria del Evento'
         self.fields['descripcion'].label = 'Descripción'
@@ -198,9 +192,16 @@ class CreateEventForm(forms.ModelForm):
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
         self.fields['organizador_id'].label = 'Seleccione el Organizador'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
+        
+        self.helper1 = FormHelper()
+        self.helper1.form_id = 'create-event-form'
+        self.helper1.form_method = 'post'
+        self.helper1.form_class = 'form-horizontal'
+        self.helper1.label_class = 'col-sm-3'
+        self.helper1.field_class = 'col-sm-8'
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
-        self.helper.layout = Layout( # the order of the items in this layout is important
+        self.helper1.layout = Layout( # the order of the items in this layout is important
             'nombre',
             'categoria',
             'descripcion',
@@ -218,22 +219,12 @@ class CreateEventForm(forms.ModelForm):
             'locacion_evento',
             Div(
                 Div(
-                    HTML("<span></span>"),
-                css_class='col-sm-7'),
-
-                Div(
-                    HTML("<a href=\"{% url 'eventos:event_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-2'),
-
+                    HTML("<a href=\"{% url 'eventos:event_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-offset-7 col-sm-2'),
                 Div(
                     Submit('submit', 'Crear Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
-
-                # Div(
-                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
-                # css_class='col-sm-1'),
-
-            css_class='row')
+                css_class='row')
         )
 
     def clean_name(self):

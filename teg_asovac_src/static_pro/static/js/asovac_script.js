@@ -13,8 +13,7 @@ $(".submenu-toggle").click(function(e) {
 });
 
 
-<<<<<<< HEAD
-=======
+
 $(document).ready(function(){
     // To style only selects with the selectpicker class
     $('.selectpicker').selectpicker();
@@ -25,7 +24,7 @@ $(document).ready(function(){
         $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
     });
 });
->>>>>>> development
+
 
 
 $('#myModal').on('shown.bs.modal', function () {
