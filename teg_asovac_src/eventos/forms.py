@@ -307,10 +307,7 @@ class CreateLocacionForm(forms.ModelForm):
         self.fields['capacidad_de_asistentes'].label = "Capacidad de Asistentes"
         self.fields['observaciones'].label = "Observaciones"
         self.fields['equipo_requerido'].label = "Equipo Requerido"
-        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
-        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
-        self.helper.layout = Layout( # the order of the items in this layout is important
-            #Field('lugar',readonly=True),
+        self.helper.layout = Layout(
             'lugar',
             'descripcion',
             'capacidad_de_asistentes',
@@ -318,43 +315,11 @@ class CreateLocacionForm(forms.ModelForm):
             'equipo_requerido',
             Div(
                 Div(
-                    HTML("<span></span>"),
-                css_class='col-sm-6'),
-
-                Div(
                     HTML("<a href=\"{% url 'eventos:event_place_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-2'),
+                css_class='col-sm-offset-6 col-sm-2'),
 
                 Div(
                     Submit('submit', 'Crear Locacion de Eventos ', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-4'),
-
-                # Div(
-                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
-                # css_class='col-sm-1'),
-
-            css_class='col-sm-12')
+            css_class='row')
         )
-    def can_udpate_location(self, locacion_id):
-        
-        return True
-
-    def clean_place(self):
-        place_data = self.cleaned_data['lugar']
-        return place_data
-    
-    def clean_description(self):
-        description_data = self.cleaned_data['descripcion']
-        return description_data
-    
-    def clean_capacity(self):
-        capacity_data = self.cleaned_data['capacidad_de_asistentes']
-        return capacity_data
-
-    def clean_observations(self):
-        observations_data = self.cleaned_data['observaciones']
-        return observations_data
-
-    def clean_equipement(self):
-        equipement_data = self.cleaned_data['equipo_requerido']
-        return equipement_data
