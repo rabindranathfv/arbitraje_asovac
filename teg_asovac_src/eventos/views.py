@@ -2,13 +2,13 @@
 from __future__ import unicode_literals
 
 
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.urls import reverse
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 #Import forms
-from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm
+from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm
 
 #Import Models
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -20,7 +20,6 @@ def event_create(request):
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
         if form.is_valid():
-            print("Entró?")
             evento = form.save()
             locacion_preferida = form.cleaned_data['locacion_preferida']
             
@@ -59,12 +58,15 @@ def event_list(request):
 
 
 def event_edit(request, evento_id):
-    evento = Evento.objects.get(id = evento_id)
-
+    evento = get_object_or_404(Evento,id = evento_id)
     if request.method == 'POST':
-        pass
-    form = CreateEventForm()
-    form.fields['nombre'].initial = evento.nombre    
+        form = EditEventForm(request.POST, instance = evento)
+        if form.is_valid():
+            form.save()
+            print("entró?")
+            return redirect(reverse('eventos:event_list'))
+
+    form = EditEventForm(instance = evento)   
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,

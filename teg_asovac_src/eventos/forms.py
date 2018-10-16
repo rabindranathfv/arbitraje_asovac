@@ -167,6 +167,8 @@ class CreateOrganizerForm(forms.ModelForm):
         user_asovac_data = self.cleaned_data['usuario_asovac']
         return user_asovac_data
     
+
+    
 class CreateEventForm(forms.ModelForm):
     
     class Meta:
@@ -212,6 +214,65 @@ class CreateEventForm(forms.ModelForm):
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
             Field('locacion_preferida', placeholder="Ejemplo: Caracas"),
+            Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
+            'url_anuncio_evento',
+            'locacion_evento',
+            Div(
+                Div(
+                    HTML("<a href=\"{% url 'eventos:event_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-offset-7 col-sm-2'),
+                Div(
+                    Submit('submit', 'Crear Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                css_class='col-sm-3'),
+                css_class='row')
+        )
+
+
+
+
+class EditEventForm(forms.ModelForm):
+    
+    class Meta:
+        model = Evento
+        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
+        'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','locacion_evento']
+
+    def __init__(self, *args, **kwargs):
+        super(EditEventForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = 'Nombre del Evento'
+        self.fields['categoria'].label = 'Categoria del Evento'
+        self.fields['descripcion'].label = 'Descripción'
+        self.fields['tipo'].label = 'Tipo de Evento'
+        self.fields['fecha_inicio'].label = 'Fecha de Inicio'
+        self.fields['fecha_fin'].label = 'Fecha de Finalizacion'
+        self.fields['dia_asignado'].label = 'Dia Asignado'
+        self.fields['duracion'].label = 'Duracion del Evento'
+        self.fields['horario_preferido'].label = 'Horario Preferido'
+        self.fields['fecha_preferida'].label = 'Fecha Preferida'
+        self.fields['observaciones'].label = 'Observaciones'
+        self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
+        self.fields['locacion_evento'].label = 'Localizacion del Evento'
+        
+        #Helper para editar evento
+        self.helper = FormHelper()
+        self.helper.form_id = 'edit-event-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-8'
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            Field('nombre', placeholder="Ejemplo: Asovac 2018"),
+            Field('categoria', placeholder="Ejemplo: Fisica"),
+            Field('descripcion', placeholder="Introduzca su descripción aquí"),
+            Field('tipo', placeholder="Ejemplo: Recreacional"),
+            Field('fecha_inicio', placeholder="Formato: DD/MM/AAAA"),
+            Field('fecha_fin', placeholder="Formato: DD/MM/AAAA"),
+            Field('dia_asignado', placeholder="Formato: DD/MM/AAAA"),
+            Field('duracion', placeholder="Ejemplo: 1 mes"),
+            Field('horario_preferido', placeholder="Ejemplo: Diurno"),
+            Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
             Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
             'url_anuncio_evento',
             'locacion_evento',
