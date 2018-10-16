@@ -1,5 +1,5 @@
 {% extends "content_wrapper_with_sidebar.html" %}
-
+{% load crispy_forms_tags %}
 {% block inner_content %}
 <div class="container" id="content-wrapper">
 
@@ -11,108 +11,9 @@
 
 				<h2 class="text-left">Datos del Evento</h2>
 				{% include "errors_form.html" %}
+				{% crispy form form.helper2 %}
 
-				<form id="login-form" method="post">
-					{% csrf_token %}
-
-					<div class="row">
-						<div id="div_id_organizador" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="organizador" class="control-label  requiredField">
-								Organizador
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="organizador" id="organizador" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_first_name" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="first_name" class="control-label  requiredField">
-								Nombre
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="first_name" id="first_name" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_last_name" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="last_name" class="control-label  requiredField">
-								Categoría
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="last_name" id="last_name" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_email" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="email" class="control-label  requiredField">
-								Lugar
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="email" name="email" id="email" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Capacidad
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Fecha inicio
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div id="div_id_identifier" class="form-group col-sm-6 col-sm-offset-3">
-							<label for="identifier" class="control-label  requiredField">
-								Fecha fin
-								<span class="asteriskField">*</span>
-							</label>
-							<div class="controls ">
-								<input type="text" name="identifier" id="identifier" required="" class="textinput textInput form-control" maxlength="100">
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="form-group col-sm-6 col-sm-offset-3">
-							<div class="controls ">
-								<input type="submit" name="submit" value="Guardar" class="btn btn-primary btn-block" id="submit-id-submit">
-							</div>
-						</div>
-					</div>
-				</form>
-
-				<div class="row">
-					<div class="form-group col-sm-6 col-sm-offset-3">
-						<a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
-					</div>
-				</div>
+					
 			</div>
 		</div>
 	</div>

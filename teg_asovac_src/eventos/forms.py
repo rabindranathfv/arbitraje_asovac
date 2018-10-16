@@ -193,6 +193,7 @@ class CreateEventForm(forms.ModelForm):
         self.fields['organizador_id'].label = 'Seleccione el Organizador'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
         
+        #Helper 1 para crear evento
         self.helper1 = FormHelper()
         self.helper1.form_id = 'create-event-form'
         self.helper1.form_method = 'post'

@@ -50,11 +50,17 @@ def event_list(request):
 
 
 def event_edit(request, evento_id):
-    
+    evento = Evento.objects.get(id = evento_id)
+
+    if request.method == 'POST':
+        pass
+    form = CreateEventForm()
+    form.fields['nombre'].initial = evento.nombre    
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,
-    }
+        'form':form
+        }
     return render(request, 'eventos_event_edit.html', context)
 
 def event_delete(request):
