@@ -185,9 +185,21 @@ def event_place_list(request):
                 }
     return render(request, 'eventos_locacion_list.html', context)
 
-def event_place_edit(request):
-    
-    return render(request, 'eventos_locacion_edit.html', context={})
+def event_place_edit(request, locacion_id):
+    locacion = get_object_or_404(Locacion_evento,id = locacion_id)
+    if request.method == 'POST':
+        form = CreateLocacionForm(request.POST, instance = locacion)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('eventos:event_place_list'))
+
+    form = CreateLocacionForm(instance = locacion)   
+    context = {
+        'nombre_vista' : 'Autores',
+        'username': request.user.username,
+        'form':form
+        }
+    return render(request, 'eventos_locacion_edit.html', context)
 
 def event_place_delete(request):
     

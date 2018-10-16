@@ -40,7 +40,7 @@
                         <td class="text-center">{{ place_data.equipo_requerido }}</td>
                         <td class="text-center">{{ place_data.observaciones }}</td>
                         <td class="text-center">
-                            <a href="{% url 'eventos:event_place_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
+                            <a href="{% url 'eventos:event_place_edit' place_data.id %}" class="btn btn-info" role="button" title="Editar Organizador">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <a href="{% url 'eventos:event_place_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
