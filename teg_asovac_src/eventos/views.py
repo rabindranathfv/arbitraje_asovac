@@ -90,9 +90,15 @@ def event_delete(request, evento_id):
     return JsonResponse(data)
 
 
-def event_detail(request):
+def event_detail(request, evento_id):
+    evento = get_object_or_404(Evento, id = evento_id)
     
-    return render(request, 'eventos_event_detail.html',context={})  
+    context = {
+        'nombre_vista' : 'Autores',
+        'username': request.user.username,
+        'evento': evento,
+    }
+    return render(request, 'eventos_event_detail.html',context)  
 
 ##################### Organizer Views ###########################
 
