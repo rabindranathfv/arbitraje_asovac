@@ -1,101 +1,83 @@
-
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
 
-{% block content %}
-<!-- Fixed Sidebar & Content-->
-<div id="wrapper" class="toggled">
+{% block inner_content %}
+<div class="container col-sm-10" id="content-wrapper">
 
-        {% include 'sidebar.html'%}
-   
-        <!-- Page Content -->
-        <div class="container login-content" id="content-wrapper">
-            <!-- Title content--> 
-            <div class="row">
-                <div class="col-sm-12">
-                    <a href="#menu-toggle" class="btn btn-primary" id="menu-toggle">
-                        <i class="fas fa-angle-double-left" id="menu-toggle-icon"></i>
-                    </a>
-                    <h3 class="user-title">Locaciones de Eventos</h3>
-                </div>
-            </div>
-             <!-- EndTitle content-->
+    {% include "toggle_title.html" %}
 
-             <!-- First Row -->
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de Locaciones</h2>
-                    <div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                <div class="row">
+                    <h2 class="text-left col-sm-6">Lista de locaciones</h2>
+                    <div class="col-sm-6">
                         <form class="form-inline text-right">
                             <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
                             <button class="btn btn-primary" type="submit">Buscar</button>
                         </form>
                     </div>
-                    <br>
-                        <div class="table-responsive">
-                           <table class="table table-bordered">
-                            {% if event_place_data %}
-                               <thead>
-                                 <tr>
-                                   <th>#</th>
-                                   <th>Nombre</th>
-                                   <th>Capacidad de Asistentes</th>
-                                   <th>Equipo Requerido</th>
-                                   <th>Observaciones</th>
-                                   <th>Acciones</th>                                  
-                                 </tr>
-                               </thead>
-                               <tbody>
+                </div>
+                <br>
+                <div class="table-responsive">
+                   <table class="table table-bordered">
+                    {% if event_place_data %}
+                       <thead>
+                         <tr>
+                           <th>#</th>
+                           <th>Nombre</th>
+                           <th>Capacidad de Asistentes</th>
+                           <th>Equipo Requerido</th>
+                           <th>Observaciones</th>
+                           <th>Acciones</th>                                  
+                         </tr>
+                       </thead>
+                       <tbody>
+                        
+                            {% for place_data in event_place_data %}
+                            <tr>
+                            <td class="text-center">{{ place_data.id }}</td>
+                            <td class="text-center">{{ place_data.lugar }}</td>
+                            <td class="text-center">{{ place_data.capacidad_de_asistentes }}</td>
+                            <td class="text-center">{{ place_data.equipo_requerido }}</td>
+                            <td class="text-center">{{ place_data.observaciones }}</td>
+                            <td class="text-center">
+                                    <a href="{% url 'eventos:event_place_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'eventos:event_place_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
+                                        <i class="fas fa-times"></i>
+                                    </a>
                                 
-                                    {% for place_data in event_place_data %}
-                                    <tr>
-                                    <td class="text-center">{{ place_data.id }}</td>
-                                    <td class="text-center">{{ place_data.lugar }}</td>
-                                    <td class="text-center">{{ place_data.capacidad_de_asistentes }}</td>
-                                    <td class="text-center">{{ place_data.equipo_requerido }}</td>
-                                    <td class="text-center">{{ place_data.observaciones }}</td>
-                                    <td class="text-center">
-                                            <a href="{% url 'eventos:event_place_edit'%}" class="btn btn-info" role="button" title="Editar Organizador">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'eventos:event_place_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        
-                                            <a href="{% url 'eventos:event_place_detail' %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                                                                
-                                            <a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
-                                                <i class="fa fa-comment"></i>
-                                            </a>
-                                    </td>
-                                    </tr>
-                                    
-                                    {% endfor %}
-                                </tbody>
-                                    
-                            {% else %}
+                                    <a href="{% url 'eventos:event_place_detail' %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                                                        
+                                    <a href="" class="btn btn-info" role="button" title="Realizar Comentarios">
+                                        <i class="fa fa-comment"></i>
+                                    </a>
+                            </td>
+                            </tr>
                             
-                                    <div class="well well-lg">
-                                        <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                                            <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-                                    </div>                                                               
-                               
-                            {% endif %}
-                             </table>
-                           <!-- End table responsive  -->
-                        </div>
-                        <!--end jumbotrom-->
-                    </div>
-               </div>
-             </div>
-             <!-- EndFirst Row -->
-   
+                            {% endfor %}
+                        </tbody>
+                            
+                    {% else %}
+                    
+                            <div class="well well-lg">
+                                <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                    <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+                            </div>                                                               
+                       
+                    {% endif %}
+                     </table>
+                    <!-- End table  -->
+                </div>
+                <!--end jumbotrom -->    
+            </div>
         </div>
+    </div>
 </div>
+
 
 {% endblock %}
