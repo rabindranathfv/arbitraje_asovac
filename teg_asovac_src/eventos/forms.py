@@ -172,8 +172,7 @@ class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
-        'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento',
-        'organizador_id','locacion_evento']
+        'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','locacion_evento']
 
     locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
@@ -190,7 +189,6 @@ class CreateEventForm(forms.ModelForm):
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['observaciones'].label = 'Observaciones'
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
-        self.fields['organizador_id'].label = 'Seleccione el Organizador'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
         
         #Helper 1 para crear evento
@@ -206,6 +204,7 @@ class CreateEventForm(forms.ModelForm):
             Field('nombre', placeholder="Ejemplo: Asovac 2018"),
             Field('categoria', placeholder="Ejemplo: Fisica"),
             Field('descripcion', placeholder="Introduzca su descripción aquí"),
+            Field('tipo', placeholder="Ejemplo: Recreacional"),
             Field('fecha_inicio', placeholder="Formato: DD/MM/AAAA"),
             Field('fecha_fin', placeholder="Formato: DD/MM/AAAA"),
             Field('dia_asignado', placeholder="Formato: DD/MM/AAAA"),
@@ -215,7 +214,6 @@ class CreateEventForm(forms.ModelForm):
             Field('locacion_preferida', placeholder="Ejemplo: Caracas"),
             Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
             'url_anuncio_evento',
-            'organizador_id',
             'locacion_evento',
             Div(
                 Div(
@@ -227,61 +225,6 @@ class CreateEventForm(forms.ModelForm):
                 css_class='row')
         )
 
-    def clean_name(self):
-        name_data = self.cleaned_data['nombre']
-        return name_data
-    
-    def clean_category(self):
-        category_data = self.cleaned_data['categoria']
-        return category_data
-    
-    def clean_description(self):
-        desription_data = self.cleaned_data['descripcion']
-        return desription_data
-
-    def clean_type(self):
-        type_data = self.cleaned_data['tipo']
-        return type_data
-
-    def clean_start_date(self):
-        start_date_data = self.cleaned_data['fecha_inicio']
-        return start_date_data
-
-    def clean_end_date(self):
-        end_date_data = self.cleaned_data['fecha_fin']
-        return end_date_data
-
-    def clean_day(self):
-        day_data = self.cleaned_data['dia_asignado']
-        return day_data
-
-    def clean_duration(self):
-        duration_data = self.cleaned_data['duracion']
-        return duration_data
-
-    def clean_preffer_hour(self):
-        preffer_hour_data = self.cleaned_data['horario_preferido']
-        return preffer_hour_data
-
-    def clean_preffer_date(self):
-        preffer_date_data = self.cleaned_data['fecha_preferida']
-        return preffer_date_data
-
-    def clean_observations(self):
-        observations_data = self.cleaned_data['observaciones']       
-        return observations_data
-
-    def clean_url_event(self):
-        url_event_data = self.cleaned_data['url_anuncio_evento']
-        return url_event_data
-
-    def clean_organizer_id(self):
-        organizer_id_data = self.cleaned_data['organizador_id']
-        return organizer_id_data
-
-    def clean_locacion_evento(self):
-        locacion_event_data = self.cleaned_data['locacion_evento'] 
-        return locacion_event_data
 
 
 class CreateLocacionForm(forms.ModelForm):

@@ -17,20 +17,29 @@ from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Create your views here.
 def event_create(request):
-    form = CreateEventForm()
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
         if form.is_valid():
-            evento = form.save(commit=False)
-            evento.save()
+            print("Entró?")
+            evento = form.save()
             locacion_preferida = form.cleaned_data['locacion_preferida']
+            
+            user = request.user
+            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+            organizador = Organizador.objects.get(usuario_asovac = usuario_asovac)
+            organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
+            organizador_evento.save()
+            """
             organizador_email_list = form.cleaned_data['organizador_id']
             for organizador_email in organizador_email_list:
                 organizador = Organizador.objects.get(correo_electronico = organizador_email)
                 organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
                 organizador_evento.save()
+            """
             print("El form es valido y se guardo satisfactoriamente el EVENTO")
             return redirect(reverse('eventos:event_list')) 
+    else:
+        form = CreateEventForm()
     context = {
         'username' : request.user.username,
         'form' : form,
