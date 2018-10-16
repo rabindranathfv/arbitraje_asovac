@@ -65,7 +65,7 @@ Evento Model
 """""""""""""""""""""""""""
 class Evento(models.Model):
 
-	#organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento',related_name='Organizador_eventos')
+	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento',related_name='Organizador_eventos')
 	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
 
 	nombre = models.CharField(max_length=150)
