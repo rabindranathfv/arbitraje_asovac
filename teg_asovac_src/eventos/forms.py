@@ -168,7 +168,7 @@ class CreateOrganizerForm(forms.ModelForm):
         return user_asovac_data
     
 
-    
+
 class CreateEventForm(forms.ModelForm):
     
     class Meta:
@@ -215,7 +215,7 @@ class CreateEventForm(forms.ModelForm):
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
             Field('locacion_preferida', placeholder="Ejemplo: Caracas"),
             Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
-            'url_anuncio_evento',
+            Field('url_anuncio_evento',placeholder="Ejemplo:https://www.reddit.com/"),
             'locacion_evento',
             Div(
                 Div(
@@ -274,14 +274,14 @@ class EditEventForm(forms.ModelForm):
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
             Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
-            'url_anuncio_evento',
+            Field('url_anuncio_evento',placeholder="Ejemplo:https://www.reddit.com/"),
             'locacion_evento',
             Div(
                 Div(
                     HTML("<a href=\"{% url 'eventos:event_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
                 css_class='col-sm-offset-7 col-sm-2'),
                 Div(
-                    Submit('submit', 'Crear Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Editar Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
                 css_class='row')
         )

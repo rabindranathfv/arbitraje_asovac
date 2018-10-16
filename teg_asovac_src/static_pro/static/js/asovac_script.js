@@ -271,5 +271,8 @@ var ValidateAccess= function(){
     // validate ValidateAccess
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
+
+    // Delete Event
+    $('#event-list').on('click','.show-form-delete',ShowForm);
 });
 

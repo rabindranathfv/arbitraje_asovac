@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
+from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
@@ -45,6 +46,7 @@ def event_create(request):
     }
     return render(request, 'eventos_event_create.html',context)
 
+
 def event_list(request):
     event_data = Evento.objects.all().order_by('-id')
     #for data in event_data:
@@ -63,7 +65,6 @@ def event_edit(request, evento_id):
         form = EditEventForm(request.POST, instance = evento)
         if form.is_valid():
             form.save()
-            print("entró?")
             return redirect(reverse('eventos:event_list'))
 
     form = EditEventForm(instance = evento)   
@@ -74,9 +75,20 @@ def event_edit(request, evento_id):
         }
     return render(request, 'eventos_event_edit.html', context)
 
-def event_delete(request):
-    
-    return render(request, 'eventos_event_delete.html',context={})
+
+def event_delete(request, evento_id):
+    data = dict()
+    evento = get_object_or_404(Evento, id = evento_id)
+    if request.method == "POST":
+        evento.delete()
+        return redirect(reverse('eventos:event_list')) 
+    else:
+        context = {
+            'evento':evento,
+        }
+        data['html_form'] = render_to_string('ajax/event_delete.html',context,request=request)
+    return JsonResponse(data)
+
 
 def event_detail(request):
     

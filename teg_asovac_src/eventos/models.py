@@ -81,7 +81,7 @@ class Evento(models.Model):
 	fecha_preferida = models.DateField()
 	observaciones = models.TextField(max_length=400, blank = True)
     #Agregar blank=True
-	url_anuncio_evento = models.CharField(max_length=200, blank= True,validators=[URLValidator()])
+	url_anuncio_evento = models.CharField(max_length=200,validators=[URLValidator()])
 
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
