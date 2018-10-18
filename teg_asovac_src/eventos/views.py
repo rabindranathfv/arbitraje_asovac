@@ -201,9 +201,19 @@ def event_place_edit(request, locacion_id):
         }
     return render(request, 'eventos_locacion_edit.html', context)
 
-def event_place_delete(request):
-    
-    return render(request, 'eventos_locacion_delete.html', context={})
+def event_place_delete(request, locacion_id):
+    data = dict()
+    locacion = get_object_or_404(Locacion_evento, id = locacion_id)
+    if request.method == "POST":
+        locacion.delete()
+        return redirect(reverse('eventos:event_place_list')) 
+    else:
+        context = {
+            'locacion':locacion,
+        }
+        data['html_form'] = render_to_string('ajax/location_delete.html',context,request=request)
+    return JsonResponse(data)
+
 
 def event_place_detail(request):
     

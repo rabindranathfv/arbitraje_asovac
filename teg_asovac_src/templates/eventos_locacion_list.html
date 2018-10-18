@@ -20,7 +20,7 @@
                 </div>
                 <br>
                 <div class="table-responsive">
-                 <table class="table table-bordered">
+                 <table class="table table-bordered" id = "location-list">
                     {% if event_place_data %}
                     <thead>
                         <tr>
@@ -43,9 +43,10 @@
                             <a href="{% url 'eventos:event_place_edit' place_data.id %}" class="btn btn-info" role="button" title="Editar Organizador">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="{% url 'eventos:event_place_delete' %}" class="btn btn-info" role="button" title="Eliminar Organizador">
+                            
+                            <button class="btn btn-info show-form-delete" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
                                 <i class="fas fa-times"></i>
-                            </a>
+                            </button>
                             
                             <a href="{% url 'eventos:event_place_detail' %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
                                 <i class="fas fa-eye"></i>
