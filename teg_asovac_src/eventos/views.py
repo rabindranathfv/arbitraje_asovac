@@ -215,6 +215,12 @@ def event_place_delete(request, locacion_id):
     return JsonResponse(data)
 
 
-def event_place_detail(request):
+def event_place_detail(request, locacion_id):
+    locacion = get_object_or_404(Locacion_evento, id = locacion_id)
     
-    return render(request, 'eventos_locacion_detail.html', context={})
+    context = {
+        'nombre_vista' : 'Autores',
+        'username': request.user.username,
+        'locacion': locacion,
+    }
+    return render(request, 'eventos_locacion_details.html', context)

@@ -34,5 +34,5 @@ urlpatterns = [
     url(r'^listar-locaciones/$',views.event_place_list,name='event_place_list'),
     url(r'^editar-locacion/(?P<locacion_id>\d+)/$',views.event_place_edit,name='event_place_edit'),
     url(r'^eliminar-locacion/(?P<locacion_id>\d+)/$',views.event_place_delete,name='event_place_delete'),
-    url(r'^detalles-locacion/$',views.event_place_detail,name='event_place_detail'),
+    url(r'^detalles-locacion/(?P<locacion_id>\d+)/$',views.event_place_detail,name='event_place_detail'),
 ]

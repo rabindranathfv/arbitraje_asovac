@@ -275,7 +275,7 @@ var ValidateAccess= function(){
     // Delete Event
     $('#event-list').on('click','.show-form-delete',ShowForm);
 
-    // Delete Event
+    // Delete Location
     $('#location-list').on('click','.show-form-delete',ShowForm);
 });
 
