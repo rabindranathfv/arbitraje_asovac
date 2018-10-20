@@ -1139,7 +1139,7 @@ def process_areas_modal(request,form,template_name):
             mapdict=['nombre', 'descripcion'])
             context={
                 'title': "Cargar Areas",
-                'response': "Las areas se han cargado de forma exitosa",
+                'response': "Las areas se han cargado de forma exitosa.",
             }
             data['html_form']= render_to_string(template_name,context, request=request)
             return JsonResponse(data) 

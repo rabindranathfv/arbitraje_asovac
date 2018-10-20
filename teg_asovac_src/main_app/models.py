@@ -37,7 +37,7 @@ Area Model
 """""""""""""""""""""""""""
 class Area(models.Model):
 
-	nombre = models.CharField(max_length=80)
+	nombre = models.CharField(max_length=80,unique=True)
 	descripcion = models.TextField(max_length=150, blank = True)
 	
 	def __str__(self):
