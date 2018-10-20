@@ -164,3 +164,7 @@ class SubAreaRegistForm(forms.ModelForm):
         widget={
             'sub_area': forms.CheckboxSelectMultiple(),
         }
+
+class UploadFileForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    file = forms.FileField()

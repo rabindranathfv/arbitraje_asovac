@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404, render_to_resp
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm,UploadFileForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
@@ -1090,3 +1090,81 @@ def get_subareas(request,id):
     data['html_select']= render_to_string('ajax/show_subareas.html',context, request=request)
     
     return JsonResponse(data)
+
+
+def areas_subareas(request):
+    rol_id=get_roles(request.user.id)
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+
+    item_active = 1
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    # print items
+
+    context = {
+        'nombre_vista' : 'Áreas y Subáreas',
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+    return render(request, 'main_app_areas_subareas.html', context)
+
+# Para procear carga de areas y subareas
+def process_areas_modal(request,form,template_name):
+    data= dict()
+    if request.method == 'POST':
+        # if form.is_valid():
+        if request.FILES != {}:
+            data['form_is_valid']= True
+            
+
+            request.FILES['file'].save_to_database(
+            # name_columns_by_row=2,
+            model=Area,
+            mapdict=['nombre', 'descripcion'])
+            context={
+                'title': "Cargar Areas",
+                'response': "Las areas se han cargado de forma exitosa",
+            }
+            data['html_form']= render_to_string(template_name,context, request=request)
+            return JsonResponse(data) 
+
+        else:
+            data['form_is_valid']= False
+  
+    context={
+        'form': form
+    }
+    data['html_form']= render_to_string(template_name,context, request=request)
+    return JsonResponse(data) 
+
+def load_areas_modal(request):
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print request.FILES
+            return process_areas_modal(request,form,'ajax/modal_succes.html')
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            return process_areas_modal(request,form,'ajax/load_areas.html')
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+    return process_areas_modal(request,form,'ajax/load_areas.html')

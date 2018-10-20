@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from decouple import config
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -169,3 +170,13 @@ MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","media_root")
 LOGIN_URL = '/'
 LOGIN_REDIRECT_URL= reverse_lazy('main_app:apps_selection')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
+FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
+                        "django_excel.TemporaryExcelFileUploadHandler")
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

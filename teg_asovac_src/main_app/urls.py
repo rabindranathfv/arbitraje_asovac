@@ -48,6 +48,8 @@ urlpatterns = [
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
+    url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
@@ -57,7 +59,6 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
-    
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
 
 ]

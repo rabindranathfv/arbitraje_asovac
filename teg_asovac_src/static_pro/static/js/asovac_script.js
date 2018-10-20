@@ -108,6 +108,7 @@ $(document).ready(function(){
     };
 // Ocultar ventana modal y enviar formulario via ajax
     var SaveForm= function(){
+        // console.log("SE envia el formulario");
         var form= $(this);
         // alert('SaveForm');
         $.ajax({
@@ -119,11 +120,11 @@ $(document).ready(function(){
             success: function(data){
 
                 if(data.form_is_valid){
-                    // console.log('data is saved')
+                    console.log('data is saved')
                     $('#show_users tbody').html(data.user_list);
                     $('#modal-user').modal('hide');
                 }else{
-                    // console.log('data is invalid')
+                    console.log('data is invalid')
                     $('#modal-user .modal-content').html(data.html_form)
                 }
             }
@@ -131,6 +132,49 @@ $(document).ready(function(){
         return false;
     };
 
+//Para obtener la informacin del archivo enviado
+var loadAreas= function(){
+    console.log("Se envia el formulario");
+    var form= $(this);
+
+    var inputFile = document.getElementById("id_file");
+    var file = inputFile.files[0];
+    var formData = new FormData();
+    
+    formData.append('archivo', file);
+    console.log(file);
+    
+    var data = new FormData();
+    jQuery.each($('input[type=file]')[0].files, function(i, file) {
+        data.append('file-'+i, file);
+    });
+    var other_data = $('loadAreasForm').serializeArray();
+    $.each(other_data,function(key,input){
+        data.append(input.name,input.value);
+    });
+   
+    $.ajax({
+        url: form.attr('data-url'),
+        // data: form.serialize(),
+        data: data,
+        type: form.attr('method'),
+        dataType: false,
+        processData: false,
+
+        success: function(data){
+
+            if(data.form_is_valid){
+                console.log('data is saved')
+                $('#show_users tbody').html(data.user_list);
+                $('#modal-user').modal('hide');
+            }else{
+                console.log('data is invalid')
+                $('#modal-user .modal-content').html(data.html_form)
+            }
+        }
+    });
+    return false;
+};
 // Se valida el acceso al evento segun el rol y su clave 
 var ValidateAccess= function(){
     var form= $(this);
@@ -254,4 +298,10 @@ var ValidateAccess= function(){
     // validate ValidateAccess
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
+
+    // Para cargar areas
+    $('.showAreasForm').click(ShowForm);
+    // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
+    
+   
 });

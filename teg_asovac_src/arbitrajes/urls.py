@@ -25,5 +25,5 @@ urlpatterns = [
     url(r'^asignar-sesion/$',views.asignacion_de_sesion, name='asignacion_de_sesion'),
     url(r'^arbitro/listar-arbitros/$',views.referee_list,name='referee_list'),
     url(r'^arbitro/editar-arbitro/$',views.referee_edit,name='referee_edit'),
-    url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    # url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
 ]
