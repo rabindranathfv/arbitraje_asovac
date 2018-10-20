@@ -21,7 +21,7 @@
 </form>
 
 <script>
-     $('.btn-success').click(function(e){
+     $('#loadAreasForm').submit(function(e){
         e.preventDefault();
         var input = document.getElementById('id_file');
         console.log("File Seleccionado : ", input.files[0]);
@@ -38,10 +38,10 @@
             success: function (data) {
 
                 if(data.form_is_valid){
-                    console.log('data is saved')
+                    //console.log('data is saved')
                     $('#modal-user .modal-content').html(data.html_form);
                 }else{
-                    console.log('data is invalid')
+                    //console.log('data is invalid')
                     $('#modal-user .modal-content').html(data.html_form)
                 }
 
