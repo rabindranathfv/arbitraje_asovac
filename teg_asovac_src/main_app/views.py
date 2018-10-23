@@ -13,6 +13,9 @@ from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
+import json
+from django.db.models import Q
+from django.db.models import Count
 
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm,UploadFileForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
@@ -1168,3 +1171,41 @@ def load_areas_modal(request):
         form= UploadFileForm()
 
     return process_areas_modal(request,form,'ajax/load_areas.html')
+
+def list (request):
+    limit= request.POST['limit']
+    sort= request.POST['sort']
+    search= request.POST['search']
+    init= request.POST['offset']
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    # data=Area.objects.all().order_by('pk')[:request.POST['limit']].query
+    if search != "":
+        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+    else:
+        data=Area.objects.all().order_by(order)[init:limit]
+    # serializers.serialize('json', Area.objects.all().annotate(totales=Count('pk')) )
+    # test= Area.objects.all().annotate(totales=Count())
+    # print test[0].totales
+
+    data_serialized = serializers.serialize('json', data)
+    # print data_serialized
+    return JsonResponse(data_serialized, safe=False)
+  
+    

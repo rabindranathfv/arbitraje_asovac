@@ -50,6 +50,9 @@ urlpatterns = [
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
     url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
+
+    #Carga de contenido 
+    url(r'^list$',views.list,name='list'),
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),

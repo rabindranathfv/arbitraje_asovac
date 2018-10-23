@@ -24,13 +24,13 @@
      $('#loadAreasForm').submit(function(e){
         e.preventDefault();
         var input = document.getElementById('id_file');
-        console.log("File Seleccionado : ", input.files[0]);
+        //console.log("File Seleccionado : ", input.files[0]);
 
         var form = $(this);
         var formData = new FormData(form);
         formData.append('file',input.files[0]);
 
-        console.log(formData);
+        //console.log(formData);
         $.ajax({
             url: $('#loadAreasForm').attr("data-url"),
             type: 'POST',
