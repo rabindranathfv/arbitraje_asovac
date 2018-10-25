@@ -105,39 +105,25 @@ def event_detail(request, evento_id):
 def organizer_create(request):
     form = CreateOrganizerForm()
 
+    if request.method == 'POST':
+        form = CreateOrganizerForm(request.POST)
+        if form.is_valid():
+            organizador = form.save(commit=False)
+            user = request.user
+            usuario_asovac = get_object_or_404(Usuario_asovac,usuario = user)
+            organizador.usuario_asovac = usuario_asovac
+            print(organizador.usuario_asovac.usuario.first_name)
+            print("El form es valido y se guardo satisfactoriamente")
+            organizador.save()
+            return redirect(reverse('eventos:organizer_list')) 
+    
     context = {
         'username' : request.user.username,
         'form' : form,
     }
-    if request.method == 'POST':
-        form = CreateOrganizerForm(request.POST or None)
-        if form.is_valid():
-            form.save(commit=False)
-            #lIMPIANDO DATA
-            form.nombres = form.clean_names()
-            form.apellidos = form.clean_lastnames()
-            form.genero = form.clean_gender()
-
-            #print(form.genero)
-            form.cedula_o_pasaporte = form.clean_cedula_pass()
-            form.correo_electronico = form.clean_email()
-            form.institucion = form.clean_institution()
-            form.telefono_oficina = form.clean_phone_office()
-            form.telefono_habitacion_celular = form.clean_phone_personal()
-            form.direccion_correspondencia = form.clean_address()
-            form.es_miembro_asovac = form.clean_asovac_menber()
-            #print(form.es_miembro_asovac)
-            form.capitulo_asovac = form.clean_cap_asovac()
-            form.cargo_en_institucion = form.clean_position_institution()
-            form.url_organizador = form.clean_url_organizer()
-            form.observaciones = form.clean_observations()
-            form.usuario_asovac = form.clean_user_asovac()   
-            #print(form.usuario_asovac)
-
-            print("El form es valido y se guardo satisfactoriamente")
-            form.save()
-            return redirect(reverse('eventos:organizer_list')) 
+    
     return render(request, 'eventos_organizer_create.html',context)
+
 
 def organizer_list(request):
     organizer_data = Organizador.objects.all().order_by('-id')
@@ -147,13 +133,16 @@ def organizer_list(request):
                 }
     return render(request, 'eventos_organizer_list.html', context)
 
+
 def organizer_edit(request):
 
     return render(request, 'eventos_organizer_edit.html', context={})
 
+
 def organizer_delete(request):
 
     return render(request, 'eventos_organizer_delete.html',context={})
+
 
 def organizer_detail(request):
     

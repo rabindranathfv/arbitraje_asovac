@@ -69,6 +69,7 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['url_organizador'].label = "Enlace del Organizador"
         self.fields['observaciones'].label = "Observaciones"
         self.fields['usuario_asovac'].label = "Usuario"
+        self.fields['usuario_asovac'].required = False
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
@@ -86,86 +87,18 @@ class CreateOrganizerForm(forms.ModelForm):
             'cargo_en_institucion',
             'url_organizador',
             'observaciones',
-            #Field('usuario_asovac', type="hidden"),
-            'usuario_asovac',
+            Field('usuario_asovac', type="hidden"),
+            #'usuario_asovac',
             Div(
                 Div(
-                    HTML("<span></span>"),
-                css_class='col-sm-7'),
-
-                Div(
                     HTML("<a href=\"{% url 'eventos:organizer_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-2'),
+                css_class='col-sm-offset-7 col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block'),
                 css_class='col-sm-3'),
-
-                # Div(
-                #     HTML("<a href=\"#\" class=\"btn btn-info btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#modal-success\">Ver</a>"),
-                # css_class='col-sm-1'),
-
-            css_class='col-sm-12')
+            css_class='row')
         )
-    def clean_names(self):
-        names_data = self.cleaned_data['nombres']
-        return names_data
-    
-    def clean_lastnames(self):
-        lastnames_data = self.cleaned_data['apellidos']
-        return lastnames_data
-    
-    def clean_gender(self):
-        gender_data = self.cleaned_data['genero']
-        return gender_data
-
-    def clean_cedula_pass(self):
-        cedula_pass_data = self.cleaned_data['cedula_o_pasaporte']
-        return cedula_pass_data
-
-    def clean_email(self):
-        email_data = self.cleaned_data['correo_electronico']
-        return email_data
-
-    def clean_institution(self):
-        institution_data = self.cleaned_data['institucion']
-        return institution_data
-
-    def clean_phone_office(self):
-        phone_office_data = self.cleaned_data['telefono_oficina']
-        return phone_office_data
-
-    def clean_phone_personal(self):
-        phone_personal_data = self.cleaned_data['telefono_habitacion_celular']
-        return phone_personal_data
-
-    def clean_address(self):
-        address_data = self.cleaned_data['direccion_correspondencia']
-        return address_data
-
-    def clean_asovac_menber(self):
-        asovac_menber_data = self.cleaned_data['es_miembro_asovac']
-        return asovac_menber_data
-
-    def clean_cap_asovac(self):
-        capitulo_asovac_data = self.cleaned_data['capitulo_asovac']       
-        return capitulo_asovac_data
-
-    def clean_position_institution(self):
-        cargo_institucion_data = self.cleaned_data['cargo_en_institucion']
-        return cargo_institucion_data
-
-    def clean_url_organizer(self):
-        url_organizador_data = self.cleaned_data['url_organizador']
-        return url_organizador_data
-
-    def clean_observations(self):
-        observaciones_data = self.cleaned_data['observaciones'] 
-        return observaciones_data
-
-    def clean_user_asovac(self):
-        user_asovac_data = self.cleaned_data['usuario_asovac']
-        return user_asovac_data
     
 
 
