@@ -112,8 +112,6 @@ def organizer_create(request):
             user = request.user
             usuario_asovac = get_object_or_404(Usuario_asovac,usuario = user)
             organizador.usuario_asovac = usuario_asovac
-            print(organizador.usuario_asovac.usuario.first_name)
-            print("El form es valido y se guardo satisfactoriamente")
             organizador.save()
             return redirect(reverse('eventos:organizer_list')) 
     
@@ -139,9 +137,19 @@ def organizer_edit(request):
     return render(request, 'eventos_organizer_edit.html', context={})
 
 
-def organizer_delete(request):
+def organizer_delete(request, organizador_id):
+    data = dict()
+    organizador= get_object_or_404(Organizador, id = organizador_id)
+    if request.method == "POST":
+        organizador.delete()
+        return redirect(reverse('eventos:organizer_list')) 
+    else:
+        context = {
+            'organizador':organizador,
+        }
+        data['html_form'] = render_to_string('ajax/organizer_delete.html',context,request=request)
+    return JsonResponse(data)
 
-    return render(request, 'eventos_organizer_delete.html',context={})
 
 
 def organizer_detail(request):

@@ -8,7 +8,7 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				
+
 				<h2 class="text-left">Lista de Organizadores</h2>
 				<div>
 					<form class="form-inline text-right">
@@ -18,21 +18,21 @@
 				</div>
 				<br>
 				<div class="table-responsive">
-					<table class="table table-bordered">
+					<table class="table table-bordered" id = "organizer-list">
 						{% if organizer_data %}
 						<thead>
 							<tr>
 								<th>Nombres</th>
 								<th>Apellidos</th>
-								<th>Correo electronico</th>
+								<th>Correo electrónico</th>
 								<th>Institución</th>
-								<th>Capitulo Asovac</th>
-								<th>Mienbro Asovac</th> 
+								<th>Capítulo Asovac</th>
+								<th>Miembro Asovac</th> 
 								<th>Acciones</th>                                  
 							</tr>
 						</thead>
 						<tbody>
-							
+
 							{% for org_data in organizer_data %}
 							<tr>
 								<td class="text-center">{{ org_data.nombres }}</td>
@@ -49,25 +49,26 @@
 									<a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info btn-sm" role="button" title="Editar Organizador">
 										<i class="fas fa-edit"></i>
 									</a>
-									<a href="{% url 'eventos:organizer_delete' %}" class="btn btn-info btn-sm" role="button" title="Eliminar Organizador">
-										<i class="fas fa-times"></i>
-									</a>
 									
+									<button class="btn btn-info btn-sm show-form-delete" data-url="{% url 'eventos:organizer_delete' org_data.id %}" title="Eliminar Organizador">
+										<i class="fas fa-times"></i>
+									</button>
+
 									<a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles Organizador">
 										<i class="fas fa-eye"></i>
 									</a>
-									
+
 									<a href="" class="btn btn-info btn-sm" role="button" title="Realizar Comentarios">
 										<i class="fa fa-comment"></i>
 									</a>
 								</td>
 							</tr>
-							
+
 							{% endfor %}
 						</tbody>
-						
+
 						{% else %}
-						
+
 						<div class="well well-lg">
 							<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
 							<strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
