@@ -1173,10 +1173,10 @@ def load_areas_modal(request):
     return process_areas_modal(request,form,'ajax/load_areas.html')
 
 def list (request):
-    limit= request.POST['limit']
     sort= request.POST['sort']
     search= request.POST['search']
-    init= request.POST['offset']
+    init= int(request.POST['offset'])
+    limit= int(request.POST['limit'])+init
 
     if request.POST['order'] == 'asc':
         if sort == 'fields.nombre':
@@ -1195,15 +1195,18 @@ def list (request):
             else:
                 order='-'+sort
 
-    # data=Area.objects.all().order_by('pk')[:request.POST['limit']].query
     if search != "":
         data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
     else:
         data=Area.objects.all().order_by(order)[init:limit]
-    # serializers.serialize('json', Area.objects.all().annotate(totales=Count('pk')) )
-    # test= Area.objects.all().annotate(totales=Count())
-    # print test[0].totales
+        total= Area.objects.all().count()
+    # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # for item in test:
+    #     print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+    # print total.count()
 
+    request.session['area_total']= total
     data_serialized = serializers.serialize('json', data)
     # print data_serialized
     return JsonResponse(data_serialized, safe=False)
