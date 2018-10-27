@@ -1,0 +1,35 @@
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Detalles del organizador</h4>
+    </div>
+    <div class="modal-body">
+        <strong>Nombres:</strong> <p>{{ organizador.nombres }}</p>
+        <strong>Apellidos:</strong> <p>{{ organizador.apellidos }}</p>
+        <strong>Genero:</strong> 
+                                {% if organizador.genero == 0 %}
+                                    <p>Masculino</p>
+                                {% else %}
+                                    <p>Femenino</p>
+                                {% endif %}
+        <strong>Cedula/Pasaporte:</strong> <p>{{ organizador.cedula_o_pasaporte }}</p>
+        <strong>Correo electrónico:</strong> <p>{{ organizador.correo_electronico }}</p> 
+        <strong>Institución:</strong> <p> {{ organizador.institucion }} </p> 
+        <strong>Telefono de oficina:</strong> <p>{{ organizador.telefono_oficina}}</p>
+        <strong>Dirección de correspondencia:</strong> <p>{{ organizador.direccion_correspondencia }}</p>
+        <strong>¿Es miembro Asovac?:</strong> 
+                                {% if organizador.es_miembro_asovac %}
+                                    <p>Si</p>
+                                {% else %}
+                                    <p>No</p>
+                                {% endif %}
+        <strong>Capítulo Asovac:</strong> <p>{{ organizador.capitulo_asovac }}</p>
+        <strong>Cargo en institución:</strong> <p>{{ organizador.cargo_en_institucion }}</p>
+        <strong>URL de organizador:</strong> <p>{{ organizador.url_organizador }}</p>
+        <strong>Observaciones:</strong> <p>{{ organizador.url_observaciones }}</p>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+    </div>

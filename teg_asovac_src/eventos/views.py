@@ -152,10 +152,16 @@ def organizer_delete(request, organizador_id):
 
 
 
-def organizer_detail(request):
-    
-    return render(request, 'eventos_organizer_detail.html',context={})
+def organizer_detail(request, organizador_id):
+    data = dict()
+    organizador= get_object_or_404(Organizador, id = organizador_id)
+    context = {
+            'organizador':organizador,
+        }
+    data['html_form'] = render_to_string('ajax/organizer_details.html',context,request=request)
+    return JsonResponse(data)
 
+    
 ##################### Locacion Views ###########################
 
 def event_place_create(request):

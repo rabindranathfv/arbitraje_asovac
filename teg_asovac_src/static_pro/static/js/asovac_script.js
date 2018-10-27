@@ -278,7 +278,10 @@ var ValidateAccess= function(){
     // Delete Location
     $('#location-list').on('click','.show-form-delete',ShowForm);
 
-    // Delete Location
+    // Delete Organizer
     $('#organizer-list').on('click','.show-form-delete',ShowForm);
+
+    // Organizer's details
+    $('#organizer-list').on('click','.show-details',ShowForm);
 });
 

@@ -54,9 +54,11 @@
 										<i class="fas fa-times"></i>
 									</button>
 
-									<a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles Organizador">
+
+									<button class="btn btn-info btn-sm show-details" data-url="{% url 'eventos:organizer_detail' org_data.id %}" title="Detalles del organizador">
 										<i class="fas fa-eye"></i>
-									</a>
+									</button>
+
 
 									<a href="" class="btn btn-info btn-sm" role="button" title="Realizar Comentarios">
 										<i class="fa fa-comment"></i>
