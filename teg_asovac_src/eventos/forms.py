@@ -91,7 +91,7 @@ class CreateOrganizerForm(forms.ModelForm):
             #'usuario_asovac',
             Div(
                 Div(
-                    HTML("<a href=\"{% url 'eventos:organizer_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                    HTML("<a href=\"{% url 'eventos:organizer_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
                 css_class='col-sm-offset-7 col-sm-2'),
 
                 Div(

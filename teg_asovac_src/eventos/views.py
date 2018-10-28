@@ -132,9 +132,21 @@ def organizer_list(request):
     return render(request, 'eventos_organizer_list.html', context)
 
 
-def organizer_edit(request):
+def organizer_edit(request, organizador_id):
+    organizador = get_object_or_404(Organizador,id = organizador_id)
+    if request.method == 'POST':
+        form = CreateOrganizerForm(request.POST, instance = organizador)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('eventos:organizer_list'))
 
-    return render(request, 'eventos_organizer_edit.html', context={})
+    form = CreateOrganizerForm(instance = organizador)   
+    context = {
+        'nombre_vista' : 'Autores',
+        'username': request.user.username,
+        'form':form
+        }
+    return render(request, 'eventos_organizer_edit.html', context)
 
 
 def organizer_delete(request, organizador_id):
@@ -161,7 +173,7 @@ def organizer_detail(request, organizador_id):
     data['html_form'] = render_to_string('ajax/organizer_details.html',context,request=request)
     return JsonResponse(data)
 
-    
+
 ##################### Locacion Views ###########################
 
 def event_place_create(request):

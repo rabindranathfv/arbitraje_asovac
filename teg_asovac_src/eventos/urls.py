@@ -26,7 +26,7 @@ urlpatterns = [
 
     url(r'^crear-organizador/$',views.organizer_create,name='organizer_create'),
     url(r'^listar-organizadores/$',views.organizer_list,name='organizer_list'),
-    url(r'^editar-organizador/$',views.organizer_edit,name='organizer_edit'),
+    url(r'^editar-organizador/(?P<organizador_id>\d+)/$',views.organizer_edit,name='organizer_edit'),
     url(r'^eliminar-organizador/(?P<organizador_id>\d+)/$',views.organizer_delete,name='organizer_delete'),
     url(r'^detalles-organizador/(?P<organizador_id>\d+)/$',views.organizer_detail,name='organizer_detail'),
 
