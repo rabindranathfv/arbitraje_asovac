@@ -302,6 +302,6 @@ var ValidateAccess= function(){
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
-    
+    $('.showSubAreasForm').click(ShowForm);
    
 });

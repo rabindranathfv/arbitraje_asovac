@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
     url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
+    url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
 
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),

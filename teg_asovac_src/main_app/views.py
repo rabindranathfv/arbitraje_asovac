@@ -1127,7 +1127,7 @@ def areas_subareas(request):
     }
     return render(request, 'main_app_areas_subareas.html', context)
 
-# Para procear carga de areas y subareas
+# Para procear carga de areas
 def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1156,6 +1156,47 @@ def process_areas_modal(request,form,template_name):
     data['html_form']= render_to_string(template_name,context, request=request)
     return JsonResponse(data) 
 
+# Para procear carga de subareas
+def process_subareas_modal(request,form,template_name):
+    data= dict()
+    if request.method == 'POST':
+        # if form.is_valid():
+        status=0
+        if request.FILES != {}:
+            data['form_is_valid']= True
+            status=1
+            response="Las subareas se han cargado de forma exitosa."
+            try:
+                request.FILES['file'].save_to_database(
+                # name_columns_by_row=2,
+                model=Sub_area,
+                mapdict=['nombre', 'descripcion','area_id'])
+            except:
+                print("Hay un error en los valores de entrada")
+                data['form_is_valid']= False
+                status=0
+                response="Ha ocurrido un error, verifique que los id de area suministrados son validos."
+            
+            context={
+                'title': "Cargar Subareas",
+                'response': response,
+                'status': status,
+            }
+            data['html_form']= render_to_string(template_name,context, request=request)
+            return JsonResponse(data) 
+
+        else:
+            data['form_is_valid']= False
+  
+    context={
+        'form': form
+    }
+    data['html_form']= render_to_string(template_name,context, request=request)
+    return JsonResponse(data) 
+
+
+
+# Para cargar Areas
 def load_areas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1172,11 +1213,37 @@ def load_areas_modal(request):
 
     return process_areas_modal(request,form,'ajax/load_areas.html')
 
+# Para cargar Sub-areas
+def load_subareas_modal(request):
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print request.FILES
+            return process_subareas_modal(request,form,'ajax/modal_succes.html')
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            return process_subareas_modal(request,form,'ajax/load_subareas.html')
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+    return process_subareas_modal(request,form,'ajax/load_subareas.html')
+
 def list (request):
     sort= request.POST['sort']
     search= request.POST['search']
-    init= int(request.POST['offset'])
-    limit= int(request.POST['limit'])+init
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
 
     if request.POST['order'] == 'asc':
         if sort == 'fields.nombre':
@@ -1199,8 +1266,16 @@ def list (request):
         data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
-        data=Area.objects.all().order_by(order)[init:limit]
-        total= Area.objects.all().count()
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Area.objects.all().order_by(order).query
+            data=Area.objects.all().order_by(order)
+            total= Area.objects.all().count()
+        else:
+            print "consulta normal"
+            print Area.objects.all().order_by(order)[init:limit].query
+            data=Area.objects.all().order_by(order)[init:limit]
+            total= Area.objects.all().count()
     # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
     # for item in test:
     #     print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
