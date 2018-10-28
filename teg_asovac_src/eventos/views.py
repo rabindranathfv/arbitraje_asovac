@@ -125,9 +125,11 @@ def organizer_create(request):
 
 def organizer_list(request):
     organizer_data = Organizador.objects.all().order_by('-id')
+    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     context = {        
                 'username' : request.user.username,
                 'organizer_data': organizer_data,
+                'usuario_asovac':usuario_asovac,
                 }
     return render(request, 'eventos_organizer_list.html', context)
 
