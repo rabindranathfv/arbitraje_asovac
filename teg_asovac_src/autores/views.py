@@ -186,6 +186,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id):
 		if form.is_valid():
 			request.session['datos_pagador'] = form.cleaned_data
 			data['url'] = reverse('autores:postular_trabajo_factura_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
+			data['message'] = "Formulario de pagador llenado con éxito, llene el siguiente formulario"
 	else:
 		form = DatosPagadorForm()
 		context ={
@@ -211,7 +212,7 @@ def postular_trabajo_factura_modal(request, autor_trabajo_id):
 				'fecha_emision': str(form.cleaned_data['fecha_emision']), }
 			request.session['factura'] = factura
 			data['url'] = reverse('autores:postular_trabajo_pago_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-
+			data['message'] = "Formulario de factura llenado con éxito, llene el siguiente formulario"
 
 	else:
 		form =	FacturaForm()

@@ -436,7 +436,6 @@ def add_author_to_job(request, autor_trabajo_id):
         form = AddAuthorToJobForm(request.POST)
         if form.is_valid():
             form_data = form.cleaned_data
-            print(form_data['correo'])
             autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
             new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
             new_autor_trabajo.save()

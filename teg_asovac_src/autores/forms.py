@@ -16,7 +16,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 		model = Autores_trabajos
 		fields = ['es_ponente', 'es_coautor']
 
-	correo = forms.EmailField()
+	correo = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Introduzca el correo electrónico del coautor'}))
 	
 	def __init__(self, *args, **kwargs):
 		super(AddAuthorToJobForm,self).__init__(*args, **kwargs)
