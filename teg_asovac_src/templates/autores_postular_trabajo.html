@@ -63,7 +63,7 @@
 
 								{% for factura in factura_list %}
 								{% if factura.pagador == pagador %}
-								<td>{{ factura.pago.banco_origen }}</td>
+								<td>{{ factura.pago.get_banco_origen_display }}</td>
 								<td>
 									{% if factura.pago.numero_transferencia %}
 										{{ factura.pago.numero_transferencia }}

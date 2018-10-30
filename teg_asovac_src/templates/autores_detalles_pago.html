@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
 {% load crispy_forms_tags %}
 
@@ -47,7 +47,7 @@
                                     <h2 class="text-center"> Datos del pago</h2>
                                    <p><strong>Tipo de pago:</strong> {{ factura.pago.tipo_pago }} </p>
                                    <p><strong>Número de cuenta origen:</strong> {{ factura.pago.numero_cuenta_origen }} </p>
-                                   <p><strong>Banco origen:</strong> {{ factura.pago.banco_origen }} </p>
+                                   <p><strong>Banco origen:</strong> {{ factura.pago.get_banco_origen_display }} </p>
                                    <p><strong>Número de transferencia:</strong> {{ factura.pago.numero_transferencia }} </p>
                                    <p><strong>Número de cheque:</strong> {{ factura.pago.numero_cheque }} </p>
                                    <p><strong>Fecha de pago:</strong> {{ factura.pago.fecha_pago }} </p>
