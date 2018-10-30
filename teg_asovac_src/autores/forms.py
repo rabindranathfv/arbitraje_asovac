@@ -84,7 +84,7 @@ class PagoForm(forms.ModelForm):
 		widgets = {
             'tipo_pago': forms.TextInput(attrs={'placeholder': 'Transferencia o cheque'}),
             'numero_cuenta_origen': forms.TextInput(attrs={'placeholder': 'XXXXXXXXXXXXXXXXXXXX'}),
-            'banco_origen': forms.TextInput(attrs={'placeholder': 'Ejemplo: Banco de Venezuela'}),
+            #'banco_origen': forms.TextInput(attrs={'placeholder': 'Ejemplo: Banco de Venezuela'}),
             'numero_transferencia': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
             'numero_cheque': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
             'fecha_pago': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),

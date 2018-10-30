@@ -105,12 +105,35 @@ class Pagador(models.Model):
 """""""""""""""""""""""""""
 Pago Model
 """""""""""""""""""""""""""
+CHOICES_BANCO = ( 
+					(0,'Banco Caroní'),
+                    (1,'Corp Banca'),
+                    (2,'Banco del Caribe'),
+                    (3,'Bancoro'),
+                    (4,'Banco de Venezuela'),
+                    (5,'Banco Sofitasa'),
+                    (6,'Banpro'),
+                    (7,'Banco Provincial'),
+                    (8,'Banesco'),
+                    (9,'Banco Fondo Común'),
+                    (10,'Banfoandes'),
+                    (11,'Banco Occidental de Descuento'),
+                    (12,'Banco Venezolano de crédito'),
+                    (13,'Banco Exterior'),
+                    (14,'Banco Industrial de Venezuela'),
+                    (15,'Banco Mercantil'),
+                    (16,'Banco Plaza'),
+                    (17,'Citibank'),
+                    (18,'Banco Federal'),
+                  )
+
+
 class Pago(models.Model):
 
 
 	tipo_pago = models.CharField(max_length=50)
 	numero_cuenta_origen = models.CharField(max_length=50)
-	banco_origen = models.CharField(max_length=50)
+	banco_origen = models.SmallIntegerField(choices = CHOICES_BANCO)
 	numero_transferencia = models.CharField(max_length=50, blank = True)
 	numero_cheque = models.CharField(max_length=50, blank = True)
 	fecha_pago = models.DateField()
