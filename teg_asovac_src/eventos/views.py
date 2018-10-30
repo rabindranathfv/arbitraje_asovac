@@ -23,10 +23,9 @@ def event_create(request):
         if form.is_valid():
             evento = form.save()
             locacion_preferida = form.cleaned_data['locacion_preferida']
-            
-            user = request.user
-            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
-            organizador = Organizador.objects.get(usuario_asovac = usuario_asovac)
+            email_organizador = form.cleaned_data['email_organizador']
+
+            organizador = Organizador.objects.get(correo_electronico = email_organizador)
             organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
             organizador_evento.save()
             """
@@ -92,11 +91,13 @@ def event_delete(request, evento_id):
 
 def event_detail(request, evento_id):
     evento = get_object_or_404(Evento, id = evento_id)
-    
+    organizador_evento_list = Organizador_evento.objects.filter(evento = evento)
+    print(organizador_evento_list)
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,
         'evento': evento,
+        'organizador_evento_list': organizador_evento_list,
     }
     return render(request, 'eventos_event_detail.html',context)  
 

@@ -108,7 +108,7 @@ class CreateEventForm(forms.ModelForm):
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
         'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','locacion_evento']
-
+    email_organizador = forms.EmailField()
     locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
         super(CreateEventForm, self).__init__(*args, **kwargs)
@@ -146,6 +146,7 @@ class CreateEventForm(forms.ModelForm):
             Field('duracion', placeholder="Ejemplo: 1 mes"),
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
+            Field('email_organizador', placeholder="Ejemplo: juanito_perez123@gmail.com"),
             Field('locacion_preferida', placeholder="Ejemplo: Caracas"),
             Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
             Field('url_anuncio_evento',placeholder="Ejemplo:https://www.reddit.com/"),

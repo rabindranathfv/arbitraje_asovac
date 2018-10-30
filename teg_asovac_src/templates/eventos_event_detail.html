@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block inner_content %}
-<div class="container col-sm-10" id="content-wrapper">
+<div class="container col-sm-11" id="content-wrapper">
 
     {% include "toggle_title.html" %}
 
@@ -21,8 +21,8 @@
                 </div>
                 <br>
                 <div class="container-fluid top-margin-18">
-                    <div class="row middle-content">
-                        <div class="col-sm-6">
+                    <div class="row">
+                        <div class="col-sm-5">
                             <strong>Nombre:</strong> <p>{{ evento.nombre }}</p>
                             <strong>Categoria:</strong> <p>{{ evento.categoria }}</p>           
                             <strong>Tipo:</strong> <p>{{ evento.tipo }}</p>     
@@ -31,13 +31,18 @@
                             <strong>URL anuncio de evento:</strong> <p>{{ evento.url_anuncio_evento }}</p>
 
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <strong>Fecha de inicio:</strong> <p>{{ evento.fecha_inicio }}</p>
                             <strong>Fecha de fin:</strong> <p> {{ evento.fecha_fin }} </p>
                             <strong>Fecha preferida:</strong> <p>{{ evento.fecha_preferida }}</p>
                             <strong>Día Asignado:</strong> <p>{{ evento.dia_asignado }}</p>  
                             <strong>Descripcion:</strong> <p>{{ evento.descripcion }}</p>
                             <strong>Observaciones:</strong> <p>{{ evento.observaciones }}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <strong>Organizadores del evento:</strong> {% for organizador_evento in organizador_evento_list %} 
+                                                                            <p>{{ organizador_evento.organizador.nombres }} {{ organizador_evento.organizador.apellidos }}</p>
+                                                                        {% endfor %}
                         </div>
                     </div>
                 </div>
