@@ -28,13 +28,6 @@ def event_create(request):
             organizador = Organizador.objects.get(correo_electronico = email_organizador)
             organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
             organizador_evento.save()
-            """
-            organizador_email_list = form.cleaned_data['organizador_id']
-            for organizador_email in organizador_email_list:
-                organizador = Organizador.objects.get(correo_electronico = organizador_email)
-                organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
-                organizador_evento.save()
-            """
             print("El form es valido y se guardo satisfactoriamente el EVENTO")
             return redirect(reverse('eventos:event_list')) 
     else:
