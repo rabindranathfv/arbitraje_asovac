@@ -13,6 +13,7 @@ $(".submenu-toggle").click(function(e) {
 });
 
 
+
 $(document).ready(function(){
     // To style only selects with the selectpicker class
     $('.selectpicker').selectpicker();
@@ -23,6 +24,7 @@ $(document).ready(function(){
         $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
     });
 });
+
 
 
 $('#myModal').on('shown.bs.modal', function () {
@@ -90,6 +92,7 @@ function getCookie(name) {
 
 // Mostrar ventana modal con el contenido correspondiente
 $(document).ready(function(){
+
     var ShowForm= function(){
         var btn= $(this);
         // alert('ShowForm');
@@ -161,6 +164,62 @@ var ValidateAccess= function(){
     });
     return false;
 };
+
+// Para manejar los formularios sucesivos de añadir pago
+var ShowAñadirPagoForm= function(){
+        var btn= $(this);
+        // alert('ShowForm');
+        $.ajax({
+            url: btn.attr('data-url'),
+            type: 'get',
+            dataType: 'json',
+            beforeSend: function(){
+              $('#modal-user' ).modal('show');  
+            },
+            success: function (data){
+                // console.log(data.html_form);
+                $('#modal-user .modal-content').html(data.html_form);
+                
+            }
+        });
+    };
+
+// Para manejar las peticiones POST de añadir pago
+var SaveAñadirPagoForm= function(){
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                //$('#modal-user .modal-content').html(data.html_form)
+                //Continuar desde aquí, al momento de eliminar las siguientes dos lineas, puedo hacer que cargue directamente las otras 2 vistas o puedo colocar una alerta entre cada formulario que llene el usuario
+                //$('#modal-user').modal('hide');
+                //
+                //alert(data.message)
+                $.ajax({
+                    url: data.url,
+                    type: 'get',
+                    dataType: 'json',
+
+                    beforeSend: function(){
+                      $('#modal-user' ).modal('show');  
+                    },
+                    success: function (data){
+                        // console.log(data.html_form);
+                        $('#modal-user .modal-content').html(data.html_form);
+                        
+                    }
+                });
+                //
+            }
+        });
+        return false;
+    };
+
     // Para manejar la selección de rol y contraseña
     $('#rol').change(function(){
         alert("rol cambiado");
@@ -246,7 +305,25 @@ var ValidateAccess= function(){
     // update rol
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
-    
+
+
+    // Delete Job
+    $('#show-job').on('click','.show-form-delete',ShowForm);
+
+    // Añadir autores al trabajo
+    $('#show-job').on('click','.show-form-add-author',ShowForm);
+
+    //Mostrar observaciones de la versión final del trabajo
+    $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
+
+    //Añadir observaciones a la versión final del trabajo
+    $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
+
+    // Añadir pago a un trabajo
+    $('.añadir-pago-form').click(ShowAñadirPagoForm);
+    $('#modal-user').on('submit','.create-datos-pagador',SaveAñadirPagoForm);
+    $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
+
     //show areas 
     $('.show_areas').click(ShowForm);
     $('#modal-user').on('submit','.change_area',SaveForm);
@@ -255,3 +332,4 @@ var ValidateAccess= function(){
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
 });
+
