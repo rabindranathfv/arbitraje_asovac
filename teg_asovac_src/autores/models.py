@@ -84,6 +84,7 @@ class Datos_pagador(models.Model):
 	telefono_oficina = models.CharField(max_length=20, blank = True)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
+	categorias_pago = models.CharField(max_length=20, blank = True)
 	def __str__(self):
 		return self.cedula#.encode('utf-8', errors='replace')
 
@@ -95,7 +96,6 @@ class Pagador(models.Model):
 	autor_trabajo = models.ForeignKey(Autores_trabajos,blank=True, null=True)
 	datos_pagador = models.OneToOneField(Datos_pagador)
 
-	categorias_pago = models.CharField(max_length=20, blank = True)
 
 	def __str__(self):
 		return self.autor_trabajo.autor.nombres#.encode('utf-8', errors='replace')
@@ -105,11 +105,35 @@ class Pagador(models.Model):
 """""""""""""""""""""""""""
 Pago Model
 """""""""""""""""""""""""""
+CHOICES_BANCO = ( 
+					(0,'Banco Caroní'),
+                    (1,'Corp Banca'),
+                    (2,'Banco del Caribe'),
+                    (3,'Bancoro'),
+                    (4,'Banco de Venezuela'),
+                    (5,'Banco Sofitasa'),
+                    (6,'Banpro'),
+                    (7,'Banco Provincial'),
+                    (8,'Banesco'),
+                    (9,'Banco Fondo Común'),
+                    (10,'Banfoandes'),
+                    (11,'Banco Occidental de Descuento'),
+                    (12,'Banco Venezolano de crédito'),
+                    (13,'Banco Exterior'),
+                    (14,'Banco Industrial de Venezuela'),
+                    (15,'Banco Mercantil'),
+                    (16,'Banco Plaza'),
+                    (17,'Citibank'),
+                    (18,'Banco Federal'),
+                  )
+
+
 class Pago(models.Model):
+
 
 	tipo_pago = models.CharField(max_length=50)
 	numero_cuenta_origen = models.CharField(max_length=50)
-	banco_origen = models.CharField(max_length=50)
+	banco_origen = models.SmallIntegerField(choices = CHOICES_BANCO)
 	numero_transferencia = models.CharField(max_length=50, blank = True)
 	numero_cheque = models.CharField(max_length=50, blank = True)
 	fecha_pago = models.DateField()

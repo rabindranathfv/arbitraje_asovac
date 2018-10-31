@@ -48,9 +48,13 @@
 								{% endif %}                                  
 							</td>
 							<td class="text-center">
-								<button class="btn btn-info show-form-job-observations" data-url="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
-									<i class="fas fa-comment"></i>
-								</button>
+								{% for autor_trabajo in autor_trabajo_list%}
+									{% if autor_trabajo.trabajo == trabajo_version_final.trabajo and autor_trabajo.es_autor_principal %}	
+										<button class="btn btn-info show-form-job-observations" data-url="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Agregar Observaciones">
+											<i class="fas fa-comment"></i>
+										</button>
+									{% endif %}
+								{% endfor %}
 								<button class="btn btn-info show-job-observations" data-url="{% url 'trabajos:show_job_observations' trabajo_version_final.id %}" data-toggle="tooltip" data-placement="top" title="Ver observaciones">
 									<i class="fas fa-info"></i>
 								</button>
@@ -68,13 +72,4 @@
 
 </div>
 
-
-<!-- modal -->
-<div class="modal fade" id="modal-observations">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			
-		</div>
-	</div>
-</div>
 {% endblock %}

@@ -352,6 +352,16 @@ def dashboard(request, arbitraje_id):
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
     ######################################################################################
+    
+    user_id= request.user.id
+    user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
+    # para enviar area a la cual pertenece el usuari por sesion 
+    subareas= user.sub_area.all()
+    # area y subarea a enviar por sesion 
+    area_session=subareas.first().area.nombre
+    subarea_session=subareas.first().nombre
+    request.session['area']= area_session
+    request.session['subarea']=subarea_session
 
     request.session['arbitraje_id'] = arbitraje_id
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)

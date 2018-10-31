@@ -8,17 +8,24 @@
         </button>
         <h4 class="modal-title" >Eliminar trabajo</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body text-center">
         <p> Confirme si desea eliminar el siguiente trabajo:</p>
         <strong>Título:</strong> <p>{{ trabajo.titulo_espanol }} </p>
         <strong>Área:</strong> <p> {{ trabajo.area }} </p>
         <strong>Subarea1:</strong> <p> {{ trabajo.subarea1 }}</p>
-        <strong>Subarea2:</strong> <p> {{ trabajo.subarea2 }}</p>
-        <strong>Subarea3:</strong> <p> {{ trabajo.subarea3 }}</p>
+        {% if trabajo.subarea2 %}
+            <strong>Subarea2:</strong> <p> {{ trabajo.subarea2 }}</p>
+        {% endif %}
+        {% if trabajo.subarea3 %}
+            <strong>Subarea3:</strong> <p> {{ trabajo.subarea3 }}</p>
+        {% endif %}
         <strong>Resumen:</strong> <p>  {{trabajo.resumen}}</p>
-        <strong>URL del trabajo:</strong> <p> {{ trabajo.url_trabajo }} </p>
-        <strong>Versión:</strong> <p> {{ trabajo.version }}</p>
-
+        {% if trabajo.url_trabajo %}
+            <strong>URL del trabajo:</strong> <p> {{ trabajo.url_trabajo }} </p>
+        {% endif %}
+        {% if trabajo.version %}    
+            <strong>Versión:</strong> <p> {{ trabajo.version }}</p>
+        {% endif %}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>

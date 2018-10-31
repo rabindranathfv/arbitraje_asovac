@@ -3,15 +3,15 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Añadir observaciones al trabajo: {{ trabajo_version_final.trabajo.titulo_espanol }}</h4>
+        <h4 class="modal-title" >Datos del pagador del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h4>
 </div>
-<form method="POST" class="autor-observation-form" action="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}">
+<form method="POST" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}">
     <div class="modal-body">
         {% csrf_token %}
-        {{ form|crispy }}
+        {{ form | crispy }}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button id="test" type="submit" class="btn btn-success">Actualizar</button>
+        <button type="submit" class="btn btn-success">Añadir</button>
     </div>
 </form>

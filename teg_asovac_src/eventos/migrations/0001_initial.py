@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('horario_preferido', models.CharField(max_length=50)),
                 ('fecha_preferida', models.DateField()),
                 ('observaciones', models.TextField(blank=True, max_length=400)),
-                ('url_anuncio_evento', models.CharField(max_length=200, validators=[django.core.validators.URLValidator()])),
+                ('url_anuncio_evento', models.CharField(blank=True, max_length=200, validators=[django.core.validators.URLValidator()])),
             ],
         ),
         migrations.CreateModel(

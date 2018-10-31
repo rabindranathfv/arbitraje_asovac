@@ -12,6 +12,7 @@ from django.contrib import messages
 from .models import Trabajo, Detalle_version_final
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 from autores.models import Autor, Autores_trabajos
+from autores.forms import AddAuthorToJobForm
 
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
@@ -32,30 +33,29 @@ def trabajos(request):
     # print (rol_id)
     
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, event_id)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
    
-    route_conf= get_route_configuracion(estado,rol_id, event_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, event_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
 
     usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     autor = Autor.objects.get(usuario = usuario_asovac)
-    sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+    sistema_asovac = Sistema_asovac.objects.get(id = arbitraje_id)
 
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            new_trabajo = form.save()
 
             #Código para crear una instancia de Autores_trabajos
-            new_trabajo = Trabajo.objects.latest('id')
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
             autor_trabajo.save()
 
@@ -79,6 +79,7 @@ def trabajos(request):
 
 
     form = TrabajoForm()
+    autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
 
     context = {
         "nombre_vista": 'Autores',
@@ -86,7 +87,7 @@ def trabajos(request):
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,
@@ -95,6 +96,7 @@ def trabajos(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajos': trabajos,
+        'autores_trabajos_list': autores_trabajos_list,
     }
     return render(request,"trabajos.html",context)
 
@@ -333,21 +335,21 @@ def trabajos_resultados_autor(request):
     rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
-    event_id = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
 
     item_active = 2
-    items=validate_rol_status(estado,rol_id,item_active, event_id)
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id, event_id)
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
     route_seg= get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, event_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
     usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     autor = Autor.objects.get(usuario = usuario_asovac)
-    autor_trabajo_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = event_id)
+    autor_trabajo_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = arbitraje_id)
 
     trabajo_version_final_list = Detalle_version_final.objects.all()
 
@@ -367,7 +369,7 @@ def trabajos_resultados_autor(request):
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
-        'event_id' : event_id,
+        'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
         'route_conf':route_conf,
@@ -376,6 +378,7 @@ def trabajos_resultados_autor(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo_list': trabajo_list,
+        'autor_trabajo_list': autor_trabajo_list,
     }
     return render(request,"trabajos_resultados_autor.html",context)
 
@@ -420,6 +423,31 @@ def autor_add_observations_to_job(request, trabajo_version_final_id):
             'form':form,
         }
         data['html_form'] = render_to_string('ajax/autor_add_job_observations.html', context, request=request)
+    return JsonResponse(data)
+
+
+#Vista de ajax para añadir autores a un trabajo
+def add_author_to_job(request, autor_trabajo_id):
+    data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+    sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)  
+    if request.method == "POST":
+        form = AddAuthorToJobForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
+            new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
+            new_autor_trabajo.save()
+            messages.success(request,"El autor fue añadido al trabajo con éxito.")
+            return redirect('trabajos:trabajos')           
+    else:
+        form = AddAuthorToJobForm()
+        context = {
+            'autor_trabajo': autor_trabajo,
+            'form':form,
+        }
+        data['html_form'] = render_to_string('ajax/add_author_to_job.html', context, request=request)
     return JsonResponse(data)
 
 

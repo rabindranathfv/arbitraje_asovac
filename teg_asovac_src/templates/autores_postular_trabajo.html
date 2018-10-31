@@ -4,8 +4,6 @@
 {% block inner_content %}
 <div class="container min-height-content col-sm-11" id="content-wrapper">
 
-	{% include 'sidebar.html'%}
-
 	<!-- Title content--> 
 	{% if messages %}
 	<ul class="messages">
@@ -33,15 +31,11 @@
 						<div class="col-sm-10">
 							<h3>Datos de pagadores del trabajo: '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
 						</div>
-						{% if  autor_trabajo.monto_total > 0 %}
-						<div class="col-sm-3 text-center">
-							<form method="POST" action=".">
-								{% csrf_token %}
-								<input class="" name="autor_trabajo_id" type='hidden' value="{{ autor_trabajo.id }}">
-								<button type="submit" class="btn btn-primary btn-lg btn-block" role="button" >Añadir Pago</button>
-							</form>
-						</div>
-						{% else %}
+						{% if  autor_trabajo.monto_total > 0 and autor_trabajo.es_autor_principal%}
+							<div class="col-sm-3 text-center">
+								<button  class="btn btn-primary btn-lg btn-block añadir-pago-form" data-url ="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}" >Añadir Pago</button>
+							</div>
+						{% elif autor_trabajo.monto_total == 0 %}
 						<div class="col-sm-2 text-center">
 							<a href="#" class="btn btn-lg btn-success btn-block" >Pagado</a>
 						</div>
@@ -55,8 +49,8 @@
 								<th class="col-sm-3">Nombre</th>
 								<th class="col-sm-2">Cédula</th>                 
 								<th class="col-sm-2">Banco Origen</th>
-								<th class="col-sm-2">N° de Transferencia</th>
-								<th class="col-sm-2">Total</th>
+								<th class="col-sm-2">N° de Transferencia/Cheque</th>
+								<th class="col-sm-2">Monto pagado</th>
 								<th class="col-sm-1">Acciones</th>
 							</tr>
 						</thead>
@@ -69,15 +63,18 @@
 
 								{% for factura in factura_list %}
 								{% if factura.pagador == pagador %}
-								<td>{{ factura.pago.banco_origen }}</td>
-								<td>{{ factura.pago.numero_transferencia }}</td>
+								<td>{{ factura.pago.get_banco_origen_display }}</td>
+								<td>
+									{% if factura.pago.numero_transferencia %}
+										{{ factura.pago.numero_transferencia }}
+									{% else %}
+										{{ factura.pago.numero_cheque }}
+									{% endif %}
+								</td>
 								<td>{{ factura.monto_total}}</td>
 								{% endif %}
 								{% endfor %}
 								<td>
-									<button class="btn btn-info show-edit-pay" data-url="{% url 'autores:postular_editar' pagador.id %}" data-toggle="tooltip" data-placement="top" title="Editar">
-										<i class="fas fa-edit"></i>
-									</button>
 									<a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 										<i class="fas fa-door-open"></i>
 									</a>
