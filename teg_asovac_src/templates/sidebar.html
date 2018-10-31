@@ -1,9 +1,11 @@
 <nav id="sidebar-wrapper">
 	<ul class="sidebar-nav">
 		<li class="sidebar-brand">
-			<strong><a href="{% url 'main_app:dashboard' arbitraje_id %}">
-				<i class="fas fa-list-alt"></i> Panel Principal
-			</a></strong>
+			{% if arbitraje_id %}
+				<strong><a href="{% url 'main_app:dashboard' arbitraje_id %}">
+					<i class="fas fa-list-alt"></i> Panel Principal
+				</a></strong>
+			{% endif %}
 		</li>
 		{% if "general_config" in items.sidebar_options %}
 		<li>

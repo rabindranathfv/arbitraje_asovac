@@ -331,5 +331,17 @@ var SaveAñadirPagoForm= function(){
     // validate ValidateAccess
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
+
+    // Delete Event
+    $('#event-list').on('click','.show-form-delete',ShowForm);
+
+    // Delete Location
+    $('#location-list').on('click','.show-form-delete',ShowForm);
+
+    // Delete Organizer
+    $('#organizer-list').on('click','.show-form-delete',ShowForm);
+
+    // Organizer's details
+    $('#organizer-list').on('click','.show-details',ShowForm);
 });
 
