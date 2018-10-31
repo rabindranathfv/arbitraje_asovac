@@ -8,7 +8,7 @@
 <form method="POST" class="autor-observation-form" action="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}">
     <div class="modal-body">
         {% csrf_token %}
-        {{ form }}
+        {{ form|crispy }}
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>

@@ -199,7 +199,7 @@ var SaveAñadirPagoForm= function(){
                 //Continuar desde aquí, al momento de eliminar las siguientes dos lineas, puedo hacer que cargue directamente las otras 2 vistas o puedo colocar una alerta entre cada formulario que llene el usuario
                 //$('#modal-user').modal('hide');
                 //
-                alert(data.message)
+                //alert(data.message)
                 $.ajax({
                     url: data.url,
                     type: 'get',
