@@ -29,13 +29,13 @@
                 </div>
                 <br>
                 <div class="table-responsive">
-                 <table class="table table-bordered" id = "location-list">
+                 <table class="table table-bordered" id = "location-list" data-toggle="table">
                     {% if event_place_data %}
                     <thead>
                         <tr>
-                         <th class = "col-sm-2">Nombre</th>
-                         <th class = "col-sm-2">Capacidad de Asistentes</th>
-                         <th class = "col-sm-2">Equipo Requerido</th>
+                         <th class = "col-sm-2" data-sortable="true">Nombre</th>
+                         <th class = "col-sm-2" data-sortable="true">Capacidad de Asistentes</th>
+                         <th class = "col-sm-2" data-sortable="true">Equipo Requerido</th>
                          <th class = "col-sm-3">Observaciones</th>
                          <th class = "col-sm-3">Acciones</th>                                  
                      </tr>
