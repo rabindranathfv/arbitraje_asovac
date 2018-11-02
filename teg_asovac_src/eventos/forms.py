@@ -261,8 +261,8 @@ class CreateLocacionForm(forms.ModelForm):
 
 
 class AddOrganizerToEventForm(forms.Form):
-    correo_electronico = forms.EmailField()
-    locacion_preferida = forms.CharField(max_length = 50)
+    correo_electronico = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Introduzca el correo electrónico del organizador'}))
+    locacion_preferida = forms.CharField(max_length = 50, widget=forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}))
 
     def __init__(self, *args, **kwargs):
         super(AddOrganizerToEventForm, self).__init__(*args, **kwargs)
