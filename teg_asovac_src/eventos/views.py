@@ -13,7 +13,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 #Import forms
-from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm
+from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
 
 #Import Models
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -262,4 +262,70 @@ def add_organizer_to_event(request, evento_id):
             'form':form
             }
         data['html_form'] = render_to_string('ajax/add_organizer_to_event.html',context,request=request)
+    return JsonResponse(data)
+
+
+def add_observations_to_event(request, evento_id):
+    data = dict()
+    evento = get_object_or_404(Evento, id = evento_id)
+    if request.method == 'POST':
+        form = AddObservationsForm(request.POST)
+        if form.is_valid():
+            evento.observaciones = form.cleaned_data['observaciones']
+            evento.save()
+            messages.success(request, 'Las observaciones fueron añadidas con éxito.')
+            return redirect(reverse('eventos:event_list'))
+    else:
+        form = AddObservationsForm(initial={'observaciones': evento.observaciones}) 
+        context = {
+            'nombre_vista' : 'Autores',
+            'username': request.user.username,
+            'evento':evento,
+            'form':form
+            }
+        data['html_form'] = render_to_string('ajax/add_observations_to_event.html',context,request=request)
+    return JsonResponse(data)
+
+
+def add_observations_to_event_place(request, locacion_id):
+    data = dict()
+    locacion = get_object_or_404(Locacion_evento, id = locacion_id)
+    if request.method == 'POST':
+        form = AddObservationsForm(request.POST)
+        if form.is_valid():
+            locacion.observaciones = form.cleaned_data['observaciones']
+            locacion.save()
+            messages.success(request, 'Las observaciones fueron añadidas con éxito.')
+            return redirect(reverse('eventos:event_place_list'))
+    else:
+        form = AddObservationsForm(initial={'observaciones': locacion.observaciones}) 
+        context = {
+            'nombre_vista' : 'Autores',
+            'username': request.user.username,
+            'locacion':locacion,
+            'form':form
+            }
+        data['html_form'] = render_to_string('ajax/add_observations_to_event_place.html',context,request=request)
+    return JsonResponse(data)
+
+
+def add_observations_to_organizer(request, organizador_id):
+    data = dict()
+    organizador = get_object_or_404(Organizador, id = organizador_id)
+    if request.method == 'POST':
+        form = AddObservationsForm(request.POST)
+        if form.is_valid():
+            organizador.observaciones = form.cleaned_data['observaciones']
+            organizador.save()
+            messages.success(request, 'Las observaciones fueron añadidas con éxito.')
+            return redirect(reverse('eventos:organizer_list'))
+    else:
+        form = AddObservationsForm(initial={'observaciones': organizador.observaciones}) 
+        context = {
+            'nombre_vista' : 'Autores',
+            'username': request.user.username,
+            'organizador':organizador,
+            'form':form
+            }
+        data['html_form'] = render_to_string('ajax/add_observations_to_organizer.html',context,request=request)
     return JsonResponse(data)

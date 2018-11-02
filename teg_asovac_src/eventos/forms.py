@@ -249,7 +249,7 @@ class CreateLocacionForm(forms.ModelForm):
             'equipo_requerido',
             Div(
                 Div(
-                    HTML("<a href=\"{% url 'eventos:event_place_create' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                    HTML("<a href=\"{% url 'eventos:event_place_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
                 css_class='col-sm-offset-6 col-sm-2'),
 
                 Div(
@@ -274,3 +274,15 @@ class AddOrganizerToEventForm(forms.Form):
         self.helper.field_class = 'col-sm-7'
         self.fields['correo_electronico'].label = "Correo electrónico del organizador"
         self.fields['locacion_preferida'].label = "Lugar preferido"
+
+
+class AddObservationsForm(forms.Form):
+    observaciones = forms.CharField(max_length = 400, widget=forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí.'}))
+    def __init__(self, *args, **kwargs):
+        super(AddObservationsForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'add-observation-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-7'

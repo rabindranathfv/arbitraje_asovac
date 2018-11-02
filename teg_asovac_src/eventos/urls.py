@@ -37,4 +37,7 @@ urlpatterns = [
     url(r'^detalles-locacion/(?P<locacion_id>\d+)/$',views.event_place_detail,name='event_place_detail'),
 
     url(r'^agregar-organizador/(?P<evento_id>\d+)/$',views.add_organizer_to_event, name='add_organizer_to_event'),
+    url(r'^agregar-observaciones/(?P<evento_id>\d+)/$',views.add_observations_to_event, name='add_observations_to_event'),
+    url(r'^locacion/agregar-observaciones/(?P<locacion_id>\d+)/$',views.add_observations_to_event_place, name='add_observations_to_event_place'),
+    url(r'^organizador/agregar-observaciones/(?P<organizador_id>\d+)/$',views.add_observations_to_organizer, name='add_observations_to_organizer'),
 ]
