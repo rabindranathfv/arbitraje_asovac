@@ -1,0 +1,66 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
+
+{% block inner_content %}
+<div class="container min-height-content" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="jumbotron RLcard">
+                                         
+                    <div class="row">
+                        <h2 class="text-center">Eventos</h2>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Total Eventos:</h4> 
+                        <p>{{ total_events }}</p>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Últimos Eventos Creados:</h4>
+                    </div>
+                    {% for event in last_events %}
+                        <p class="text-center">{{ event.nombre }}</p>
+                    {% endfor %}
+			    </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="jumbotron RLcard">
+                                         
+                    <div class="row">
+                        <h2 class="text-center">Organizadores</h2>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Total Organizadores:</h4> 
+                        <p>{{ total_organizers }}</p>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Últimos Organizadores Creados:</h4>
+                    </div>
+                    {% for organizer in last_organizers %}
+                        <p class="text-center">{{ organizer.nombres }} {{ organizer.apellidos }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="jumbotron RLcard">
+                                         
+                    <div class="row">
+                        <h2 class="text-center">Locaciones</h2>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Total Locaciones:</h4> 
+                        <p>{{ total_locations }}</p>
+                    </div>
+                    <div class="row text-center">
+                        <h4>Últimas Locaciones Creadas:</h4>
+                    </div>
+                    {% for location in last_locations %}
+                        <p class="text-center">{{ location.lugar }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+</div>
+{% endblock %}

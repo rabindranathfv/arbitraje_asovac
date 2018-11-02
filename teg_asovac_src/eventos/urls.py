@@ -17,7 +17,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    #url(r'^$', views.eventos_pag, name= 'eventos'),
+    url(r'^$', views.home, name= 'home'),
     url(r'^listar-eventos/$',views.event_list,name='event_list'),
     url(r'^editar-evento/(?P<evento_id>\d+)/$',views.event_edit,name='event_edit'),
     url(r'^crear-evento/$',views.event_create,name='event_create'),

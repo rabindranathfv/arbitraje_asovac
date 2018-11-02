@@ -20,6 +20,31 @@ from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
 from .models import Organizador,Organizador_evento,Evento,Locacion_evento
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
+# Event's home
+def home(request):
+    last_events = Evento.objects.all().order_by('-id')[:5]
+    total_events = Evento.objects.all().count()
+
+    last_organizers = Organizador.objects.all().order_by('-id')[:5]
+    total_organizers = Organizador.objects.all().count()
+
+    last_locations = Locacion_evento.objects.all().order_by('-id')[:5]
+    total_locations = Locacion_evento.objects.all().count()
+
+    context = {
+        'last_events':last_events,
+        'total_events':total_events,
+        'last_organizers':last_organizers,
+        'total_organizers':total_organizers,
+        'last_locations':last_locations,
+        'total_locations':total_locations,
+        'events_app': True,
+    }
+    return render(request, 'events_home.html', context)
+
+
+
+
 # Create your views here.
 def event_create(request):
     if request.method == 'POST':
