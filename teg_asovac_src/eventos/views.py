@@ -39,6 +39,7 @@ def event_create(request):
     context = {
         'username' : request.user.username,
         'form' : form,
+        'events_app': True,
     }
     return render(request, 'eventos_event_create.html',context)
 
@@ -51,6 +52,7 @@ def event_list(request):
         'nombre_vista' : 'Eventos',
         'username': request.user.username,
         'event_data': event_data,
+        'events_app': True,
     }
     return render(request, 'eventos_event_list.html', context)
 
@@ -67,7 +69,8 @@ def event_edit(request, evento_id):
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,
-        'form':form
+        'form':form,
+        'events_app': True,
         }
     return render(request, 'eventos_event_edit.html', context)
 
@@ -95,6 +98,7 @@ def event_detail(request, evento_id):
         'username': request.user.username,
         'evento': evento,
         'organizador_evento_list': organizador_evento_list,
+        'events_app': True,
     }
     return render(request, 'eventos_event_detail.html',context)  
 
@@ -116,6 +120,7 @@ def organizer_create(request):
     context = {
         'username' : request.user.username,
         'form' : form,
+        'events_app': True,
     }
     
     return render(request, 'eventos_organizer_create.html',context)
@@ -128,6 +133,7 @@ def organizer_list(request):
                 'username' : request.user.username,
                 'organizer_data': organizer_data,
                 'usuario_asovac':usuario_asovac,
+                'events_app': True,
                 }
     return render(request, 'eventos_organizer_list.html', context)
 
@@ -144,7 +150,8 @@ def organizer_edit(request, organizador_id):
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,
-        'form':form
+        'form':form,
+        'events_app': True,
         }
     return render(request, 'eventos_organizer_edit.html', context)
 
@@ -189,6 +196,7 @@ def event_place_create(request):
         'nombre_vista' : 'Crear locación de evento',
         'username': request.user.username,
         'form': form,
+        'events_app': True,
     }
     return render(request, 'eventos_locacion_create.html', context)
 
@@ -197,6 +205,7 @@ def event_place_list(request):
     context = {        
                 'username' : request.user.username,
                 'event_place_data': event_place_data,
+                'events_app': True,
                 }
     return render(request, 'eventos_locacion_list.html', context)
 
@@ -212,7 +221,8 @@ def event_place_edit(request, locacion_id):
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,
-        'form':form
+        'form':form,
+        'events_app': True,
         }
     return render(request, 'eventos_locacion_edit.html', context)
 
@@ -237,6 +247,7 @@ def event_place_detail(request, locacion_id):
         'nombre_vista' : 'Autores',
         'username': request.user.username,
         'locacion': locacion,
+        'events_app': True,
     }
     return render(request, 'eventos_locacion_details.html', context)
 
