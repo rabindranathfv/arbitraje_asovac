@@ -257,3 +257,20 @@ class CreateLocacionForm(forms.ModelForm):
                 css_class='col-sm-4'),
             css_class='row')
         )
+
+
+
+class AddOrganizerToEventForm(forms.Form):
+    correo_electronico = forms.EmailField()
+    locacion_preferida = forms.CharField(max_length = 50)
+
+    def __init__(self, *args, **kwargs):
+        super(AddOrganizerToEventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'add-organizer-to-event-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-7'
+        self.fields['correo_electronico'].label = "Correo electrónico del organizador"
+        self.fields['locacion_preferida'].label = "Lugar preferido"

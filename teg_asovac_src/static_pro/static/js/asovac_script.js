@@ -343,5 +343,8 @@ var SaveAñadirPagoForm= function(){
 
     // Organizer's details
     $('#organizer-list').on('click','.show-details',ShowForm);
+
+    // Add organizer to event
+    $('#event-list').on('click','.show-form-add-organizer-to-event',ShowForm);
 });
 

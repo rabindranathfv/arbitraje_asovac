@@ -2,8 +2,17 @@
 {% load static %}
 
 {% block inner_content %}
-<div class="container col-sm-10" id="content-wrapper">
-
+<div class="container col-sm-11" id="content-wrapper">
+	{% if messages %}
+		<ul class="messages">
+			{% for message in messages %}
+				<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+				{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+				{{ message }}
+				</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
 	{% include "toggle_title.html" %}
 
 	<div class="row">
@@ -46,6 +55,10 @@
 										<td class="text-center vertical-middle-align">{{ evt_data.duracion }}</td>
 										<td class="text-center vertical-middle-align">{{ evt_data.url_anuncio_evento }}</td>
 										<td class="text-center vertical-middle-align">
+											<button class="btn btn-info btn-sm show-form-add-organizer-to-event" data-url="{% url 'eventos:add_organizer_to_event' evt_data.id %}" title="Añadir Organizador al Evento">
+												<i class="fas fa-user"></i>
+											</button>
+
 											<a href="{% url 'eventos:event_edit' evt_data.id %}" class="btn btn-info btn-sm" role="button" title="Editar Evento">
 												<i class="fas fa-edit"></i>
 											</a>

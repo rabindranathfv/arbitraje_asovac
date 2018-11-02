@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'^editar-locacion/(?P<locacion_id>\d+)/$',views.event_place_edit,name='event_place_edit'),
     url(r'^eliminar-locacion/(?P<locacion_id>\d+)/$',views.event_place_delete,name='event_place_delete'),
     url(r'^detalles-locacion/(?P<locacion_id>\d+)/$',views.event_place_detail,name='event_place_detail'),
+
+    url(r'^agregar-organizador/(?P<evento_id>\d+)/$',views.add_organizer_to_event, name='add_organizer_to_event'),
 ]

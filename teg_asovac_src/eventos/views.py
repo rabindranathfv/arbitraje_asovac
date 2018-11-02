@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
+
+
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 #Import forms
-from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm
+from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm
 
 #Import Models
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -235,3 +239,27 @@ def event_place_detail(request, locacion_id):
         'locacion': locacion,
     }
     return render(request, 'eventos_locacion_details.html', context)
+
+
+def add_organizer_to_event(request, evento_id):
+    data = dict()
+    evento = get_object_or_404(Evento, id = evento_id)
+    if request.method == 'POST':
+        form = AddOrganizerToEventForm(request.POST)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            organizador = get_object_or_404(Organizador, correo_electronico = form_data['correo_electronico'])
+            organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = form_data['locacion_preferida'])
+            organizador_evento.save()
+            messages.success(request, 'El organizador fue añadido con éxito al evento.')
+            return redirect(reverse('eventos:event_list'))
+    else:
+        form = AddOrganizerToEventForm() 
+        context = {
+            'nombre_vista' : 'Autores',
+            'username': request.user.username,
+            'evento':evento,
+            'form':form
+            }
+        data['html_form'] = render_to_string('ajax/add_organizer_to_event.html',context,request=request)
+    return JsonResponse(data)
