@@ -43,8 +43,7 @@ class CreateOrganizerForm(forms.ModelForm):
         model = Organizador
         fields = ['nombres','apellidos', 'genero','cedula_o_pasaporte', 'correo_electronico','institucion',
                 'telefono_oficina','telefono_habitacion_celular','direccion_correspondencia',
-                'es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador',
-                'observaciones','usuario_asovac']
+                'es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador','usuario_asovac']
 
     def __init__(self, *args, **kwargs):
         super(CreateOrganizerForm, self).__init__(*args, **kwargs)
@@ -67,7 +66,6 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['capitulo_asovac'].label = "Capitulo AsoVAC"
         self.fields['cargo_en_institucion'].label = "Cargo en la Institución"
         self.fields['url_organizador'].label = "Enlace del Organizador"
-        self.fields['observaciones'].label = "Observaciones"
         self.fields['usuario_asovac'].label = "Usuario"
         self.fields['usuario_asovac'].required = False
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
@@ -86,7 +84,6 @@ class CreateOrganizerForm(forms.ModelForm):
             'capitulo_asovac',
             'cargo_en_institucion',
             'url_organizador',
-            'observaciones',
             Field('usuario_asovac', type="hidden"),
             #'usuario_asovac',
             Div(
@@ -107,7 +104,7 @@ class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
-        'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','locacion_evento']
+        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento']
     email_organizador = forms.EmailField()
     locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
@@ -122,7 +119,6 @@ class CreateEventForm(forms.ModelForm):
         self.fields['duracion'].label = 'Duracion del Evento'
         self.fields['horario_preferido'].label = 'Horario Preferido'
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
-        self.fields['observaciones'].label = 'Observaciones'
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
         
@@ -148,7 +144,6 @@ class CreateEventForm(forms.ModelForm):
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
             Field('email_organizador', placeholder="Ejemplo: juanito_perez123@gmail.com"),
             Field('locacion_preferida', placeholder="Ejemplo: Caracas"),
-            Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
             Field('url_anuncio_evento',placeholder="Ejemplo:https://www.reddit.com/"),
             'locacion_evento',
             Div(
@@ -169,7 +164,7 @@ class EditEventForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
-        'duracion','horario_preferido','fecha_preferida','observaciones','url_anuncio_evento','locacion_evento']
+        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento']
 
     def __init__(self, *args, **kwargs):
         super(EditEventForm, self).__init__(*args, **kwargs)
@@ -183,7 +178,6 @@ class EditEventForm(forms.ModelForm):
         self.fields['duracion'].label = 'Duracion del Evento'
         self.fields['horario_preferido'].label = 'Horario Preferido'
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
-        self.fields['observaciones'].label = 'Observaciones'
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
         
@@ -207,7 +201,6 @@ class EditEventForm(forms.ModelForm):
             Field('duracion', placeholder="Ejemplo: 1 mes"),
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
             Field('fecha_preferida', placeholder="Formato: DD/MM/AAAA"),
-            Field('observaciones', placeholder="Introduzca sus observaciones aquí"),
             Field('url_anuncio_evento',placeholder="Ejemplo:https://www.reddit.com/"),
             'locacion_evento',
             Div(
@@ -226,7 +219,7 @@ class CreateLocacionForm(forms.ModelForm):
 
     class Meta:
         model = Locacion_evento
-        fields = ['lugar','descripcion','capacidad_de_asistentes','observaciones','equipo_requerido']
+        fields = ['lugar','descripcion','capacidad_de_asistentes','equipo_requerido']
 
     def __init__(self, *args, **kwargs):
         super(CreateLocacionForm, self).__init__(*args, **kwargs)
@@ -239,13 +232,11 @@ class CreateLocacionForm(forms.ModelForm):
         self.fields['lugar'].label = "Lugar"
         self.fields['descripcion'].label = "Descripción"
         self.fields['capacidad_de_asistentes'].label = "Capacidad de Asistentes"
-        self.fields['observaciones'].label = "Observaciones"
         self.fields['equipo_requerido'].label = "Equipo Requerido"
         self.helper.layout = Layout(
             'lugar',
             'descripcion',
             'capacidad_de_asistentes',
-            'observaciones',
             'equipo_requerido',
             Div(
                 Div(
