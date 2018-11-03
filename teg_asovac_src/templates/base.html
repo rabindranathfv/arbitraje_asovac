@@ -9,9 +9,15 @@
 		<div class="container-fluid">
 			<!-- Logo de la Navbar -->
 			<div class="navbar-header">
-				<a class="navbar-brand" href="{% url 'main_app:home' %}">
-					<strong>ASOVAC</strong>
-				</a>
+				{% if events_app %}	
+					<a class="navbar-brand" href="{% url 'eventos:home' %}">
+						<strong>ASOVAC</strong>
+					</a>
+				{% else %}
+					<a class="navbar-brand" href="{% url 'main_app:home' %}">
+						<strong>ASOVAC</strong>
+					</a>
+				{% endif %}
 			</div>
 
 			<!-- Opciones de Top navbar pasados por contexto desde el view -->
