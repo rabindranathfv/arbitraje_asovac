@@ -92,7 +92,22 @@ function getCookie(name) {
 
 // Mostrar ventana modal con el contenido correspondiente
 $(document).ready(function(){
+    (function ($) {
 
+        $('#filter').keyup(function () {
+
+            var rex = new RegExp($(this).val(), 'i');
+            $('.searchable tr').hide();
+            $('.searchable tr').filter(function () {
+                return rex.test($(this).text());
+            }).show();
+
+        })
+
+    }(jQuery));
+
+
+    
     var ShowForm= function(){
         var btn= $(this);
         // alert('ShowForm');
