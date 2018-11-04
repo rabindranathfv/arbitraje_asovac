@@ -1322,10 +1322,12 @@ def editArea(request,id):
     data= dict()
 
     if request.method == 'POST':
-        print "save form"
-        form= AreaCreateForm(request.POST)
-        print form.is_valid()
+        
+        area=Area.objects.get(id=id)
+        print "edit post"
+        form= AreaCreateForm(request.POST,instance=area)
         if form.is_valid():
+            print "Se guarda el valor del formulario"
             form.save()
             data['status']= 200
         else:
