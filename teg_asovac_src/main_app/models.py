@@ -30,7 +30,7 @@ class Rol(models.Model):
 	descripcion = models.TextField(max_length=255)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Area Model
@@ -75,7 +75,7 @@ class Sistema_asovac(models.Model):
 	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Usuario_asovac Model
@@ -101,7 +101,7 @@ class Usuario_asovac(models.Model):
 		return biggest_role
 
 	def __str__(self):
-		return "{} {}".format(self.usuario.first_name,self.usuario.last_name)#.encode('utf-8', errors='replace')
+		return "{} {}".format(self.usuario.first_name,self.usuario.last_name).encode('utf-8', errors='replace')
 
 
 

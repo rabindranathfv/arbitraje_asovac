@@ -151,6 +151,11 @@ class AreaForm(forms.ModelForm):
         model= Area
         fields=['nombre']
 
+class AreaCreateForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre','descripcion']
+
 class SubareaForm(forms.ModelForm):
     class Meta:
         model= Sub_area

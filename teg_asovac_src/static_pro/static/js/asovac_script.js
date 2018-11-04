@@ -1,3 +1,4 @@
+
 //Sidebar Toggle Script 
 $("#menu-toggle").click(function(e) {
     e.preventDefault();
@@ -275,6 +276,32 @@ var ValidateAccess= function(){
         }
     });
 
+    //bootstrap-tables edit 
+    var bootstrapTableForm= function(){
+        console.log("Se envia el formulario");
+        console.log(form.attr('data-url'));
+        var form= $(this);
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                console.log(data);
+                if(data.status == 200 ){
+                    console.log('actualizacion exitosa')
+                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    // $('#modal-user').modal('hide');
+                }else{
+                    console.log('error en la actualizacion')
+                    $('#bootstrapTableModal .modal-body').html(data.body)
+                }
+            }
+        });
+        return false;
+    };
+
     // create
     $('.show-form').click(ShowForm);
     $('#modal-user').on('submit', '.create-form',SaveForm);
@@ -303,5 +330,10 @@ var ValidateAccess= function(){
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
     $('.showSubAreasForm').click(ShowForm);
-   
+
+    // CRUD Areas
+    $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.eliminarArea',bootstrapTableForm);
+
+
 });

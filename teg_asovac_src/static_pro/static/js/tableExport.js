@@ -21,7 +21,7 @@
       displayTableName:    false,
       escape:              false,
       exportHiddenCells:   false,       // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
-      fileName:            'tableExport',
+      fileName:            'Tabla',
       htmlContent:         false,
       ignoreColumn:        [],
       ignoreRow:           [],

@@ -17,7 +17,7 @@ import json
 from django.db.models import Q
 from django.db.models import Count
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm,UploadFileForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
@@ -1132,17 +1132,26 @@ def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
         # if form.is_valid():
+        status=0
         if request.FILES != {}:
             data['form_is_valid']= True
-            
+            status=1
+            response="Las areas se han cargado de forma exitosa."
+            try:
+                request.FILES['file'].save_to_database(
+                # name_columns_by_row=2,
+                model=Area,
+                mapdict=['nombre', 'descripcion'])
+            except:
+                print("Hay un error en los valores de entrada")
+                data['form_is_valid']= False
+                status=0
+                response="Ha ocurrido un error, verifique que los valores suministrados son validos."
 
-            request.FILES['file'].save_to_database(
-            # name_columns_by_row=2,
-            model=Area,
-            mapdict=['nombre', 'descripcion'])
             context={
                 'title': "Cargar Areas",
-                'response': "Las areas se han cargado de forma exitosa.",
+                'response': response,
+                'status': status,
             }
             data['html_form']= render_to_string(template_name,context, request=request)
             return JsonResponse(data) 
@@ -1175,7 +1184,7 @@ def process_subareas_modal(request,form,template_name):
                 print("Hay un error en los valores de entrada")
                 data['form_is_valid']= False
                 status=0
-                response="Ha ocurrido un error, verifique que los id de area suministrados son validos."
+                response="Ha ocurrido un error, verifique que las areas asignadas existen."
             
             context={
                 'title': "Cargar Subareas",
@@ -1230,7 +1239,11 @@ def load_subareas_modal(request):
 
     return process_subareas_modal(request,form,'ajax/load_subareas.html')
 
+# Para cargar el contenido de la tabla de forma dinamica
 def list (request):
+    response = {}
+    response['query'] = []
+
     sort= request.POST['sort']
     search= request.POST['search']
     # Se verifica la existencia del parametro
@@ -1273,17 +1286,82 @@ def list (request):
             total= Area.objects.all().count()
         else:
             print "consulta normal"
-            print Area.objects.all().order_by(order)[init:limit].query
+            # print Area.objects.all().order_by(order)[init:limit].query
+            test= Sub_area.objects.all().order_by(order)[init:limit]
             data=Area.objects.all().order_by(order)[init:limit]
             total= Area.objects.all().count()
-    # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # for item in test:
-    #     print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-    # print total.count()
+            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
 
-    request.session['area_total']= total
-    data_serialized = serializers.serialize('json', data)
-    # print data_serialized
-    return JsonResponse(data_serialized, safe=False)
-  
-    
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+
+
+###############################     Crud Areas     ###############################
+def viewArea(request,id):
+    data= dict()
+    area=Area.objects.get(id=id)
+    data['status']= 200
+    context={
+        'area':area,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+def editArea(request,id):
+    data= dict()
+
+    if request.method == 'POST':
+        print "save form"
+
+        form= AreaCreateForm(request.POST)
+        print form.is_valid()
+        if form.is_valid():
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+        area=Area.objects.get(id=id)
+        data['status']= 200
+        data['title']=area.nombre
+        form=AreaCreateForm(instance=area)
+        context={
+            'area':area,
+            'tipo':"edit",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+def removeArea(request,id):
+    data= dict()
+
+    if request.method == 'POST':
+        print "save form"
+        area=Area.objects.get(id=id)
+        # area.delete()
+        data['status']= 200
+
+    else:
+        area=Area.objects.get(id=id)
+        data['status']= 200
+        data['title']=area.nombre
+        form=AreaCreateForm(instance=area)
+        context={
+            'area':area,
+            'tipo':"delete",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)

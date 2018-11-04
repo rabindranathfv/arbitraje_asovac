@@ -25,7 +25,7 @@
         showExport: false,
         exportDataType: 'basic', // basic, all, selected
         // 'json', 'xml', 'png', 'csv', 'txt', 'sql', 'doc', 'excel', 'powerpoint', 'pdf'
-        exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel'],
+        exportTypes: ['csv', 'excel'],
         exportOptions: {}
     });
 
@@ -35,7 +35,7 @@
 
     $.extend($.fn.bootstrapTable.locales, {
         formatExport: function () {
-            return 'Export data';
+            return 'Descargar';
         }
     });
     $.extend($.fn.bootstrapTable.defaults, $.fn.bootstrapTable.locales);
