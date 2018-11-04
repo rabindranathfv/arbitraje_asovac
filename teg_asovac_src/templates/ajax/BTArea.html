@@ -50,7 +50,7 @@
         </form>
     {% else %}
         {% if tipo == "delete" %}
-        <form method="post" class="eliminarArea" data-url="{% url 'main_app:eliminarArea' area.id %}">
+        <form method="post" id="eliminarArea" action="" class="eliminarArea" data-url="{% url 'main_app:eliminarArea' area.id %}">
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -58,7 +58,12 @@
             </div>
         
             <div class="modal-body">
-            <p>¿Desea eliminar el area {{area.nombre }}?</p>
+                {% if message == "eliminar"%}
+                    <p>¿Desea eliminar el area {{area.nombre }}?</p>
+                {%else%}
+                    <p>El area {{area.nombre }} se elimino de manera exitosa.</p>
+                {% endif %}
+
             </div>
         
             <div class="modal-footer">
@@ -69,3 +74,8 @@
         {% endif %}
     {% endif %}
 {% endif %}
+
+<!-- Carga de script para manejo de formularios -->
+{% load static %}
+
+<script src="{% static 'js/asovac_script.js' %}"></script>

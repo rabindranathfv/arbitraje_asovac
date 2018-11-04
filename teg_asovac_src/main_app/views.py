@@ -1323,7 +1323,6 @@ def editArea(request,id):
 
     if request.method == 'POST':
         print "save form"
-
         form= AreaCreateForm(request.POST)
         print form.is_valid()
         if form.is_valid():
@@ -1348,20 +1347,30 @@ def removeArea(request,id):
     data= dict()
 
     if request.method == 'POST':
-        print "save form"
+        # print "post delete form"
         area=Area.objects.get(id=id)
-        # area.delete()
+        area.delete()
         data['status']= 200
+        message="eliminado"
+        context={
+            'area':area,
+            'tipo':"delete",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
 
     else:
+        # print "get delete form"
         area=Area.objects.get(id=id)
         data['status']= 200
         data['title']=area.nombre
         form=AreaCreateForm(instance=area)
+        message="eliminar"
         context={
             'area':area,
             'tipo':"delete",
             'form':form,
+            'message':message,
         }
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)

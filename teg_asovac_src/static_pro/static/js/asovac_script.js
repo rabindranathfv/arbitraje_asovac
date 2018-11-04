@@ -278,8 +278,6 @@ var ValidateAccess= function(){
 
     //bootstrap-tables edit 
     var bootstrapTableForm= function(){
-        console.log("Se envia el formulario");
-        console.log(form.attr('data-url'));
         var form= $(this);
         $.ajax({
             url: form.attr('data-url'),
@@ -288,18 +286,18 @@ var ValidateAccess= function(){
             dataType: 'json',
 
             success: function(data){
-                console.log(data);
+                // console.log(data);
                 if(data.status == 200 ){
-                    console.log('actualizacion exitosa')
-                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    // console.log('actualizacion exitosa')
+                    // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
                     // $('#modal-user').modal('hide');
                 }else{
-                    console.log('error en la actualizacion')
-                    $('#bootstrapTableModal .modal-body').html(data.body)
+                    // console.log('error en la actualizacion')
+                    // $('#bootstrapTableModal .modal-body').html(data.body)
                 }
             }
         });
-        return false;
+    
     };
 
     // create
@@ -334,6 +332,5 @@ var ValidateAccess= function(){
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArea',bootstrapTableForm);
-
 
 });
