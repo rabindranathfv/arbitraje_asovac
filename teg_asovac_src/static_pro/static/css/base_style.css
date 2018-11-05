@@ -393,3 +393,23 @@ textarea{
 .img-responsive {
     margin: 0 auto !important;
 }
+
+/** Panel collapsible**/
+
+.panel-collapse{
+    background: #CECECE;
+    color: black;
+    text-decoration: none;
+}
+
+.panel-collapse:hover{
+    background-color: #555;
+    color: #fff;
+    text-decoration: none;
+}
+
+.panel-collapse:focus{
+    background: #CECECE;
+    color: black;
+    text-decoration: none;
+}
