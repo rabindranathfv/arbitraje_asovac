@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
 
 from django.contrib import messages
 from django.http import JsonResponse
@@ -22,22 +23,60 @@ from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Event's home
 def home(request):
+    #Métricas de eventos
     last_events = Evento.objects.all().order_by('-id')[:5]
     total_events = Evento.objects.all().count()
+    events_list = Evento.objects.all()
+    current_date = datetime.datetime.now().date()
+    total_events_ended = 0
+    total_presential_events = 0
+    total_virtual_events = 0
+    for event in events_list:
+        if (event.fecha_fin < current_date):
+            total_events_ended += 1
+        if (event.categoria == 'P'):
+            total_presential_events += 1
+        else:
+            total_virtual_events += 1
 
+    #Métricas de organizadores
     last_organizers = Organizador.objects.all().order_by('-id')[:5]
     total_organizers = Organizador.objects.all().count()
+    organizer_list = Organizador.objects.all()
+    total_organizers_members = 0
+    for organizer in organizer_list:
+        if(organizer.es_miembro_asovac):
+            total_organizers_members += 1
 
+    #Métricas de locaciones
     last_locations = Locacion_evento.objects.all().order_by('-id')[:5]
     total_locations = Locacion_evento.objects.all().count()
+    location_list = Locacion_evento.objects.all()
+    average_capacity = 0
+    max_capacity_location = 0
+    for location in location_list:
+        if(max_capacity_location < location.capacidad_de_asistentes):
+            max_capacity_location = location.capacidad_de_asistentes
+        average_capacity += location.capacidad_de_asistentes
+    if(location_list):
+        average_capacity /= total_locations
 
     context = {
         'last_events':last_events,
         'total_events':total_events,
+        'total_events_ended':total_events_ended,
+        'total_presential_events': total_presential_events,
+        'total_virtual_events': total_virtual_events,
+
         'last_organizers':last_organizers,
         'total_organizers':total_organizers,
+        'total_organizers_members':total_organizers_members,
+
         'last_locations':last_locations,
         'total_locations':total_locations,
+        'max_capacity_location': max_capacity_location,
+        'average_capacity': average_capacity,
+
         'events_app': True,
     }
     return render(request, 'events_home.html', context)
