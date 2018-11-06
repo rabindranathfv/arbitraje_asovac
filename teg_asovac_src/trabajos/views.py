@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render,get_object_or_404
 #import settings
+from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
 from .forms import TrabajoForm
@@ -70,9 +71,14 @@ def jobs_list(request):
     rol_id=get_roles(request.user.id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
-    # Esta asignación debe realizarse a la hora de elegir el evento 
-    # area=request.session['area']
-    # subarea=request.session['subarea']
+
+    # Seción para obtener área y subarea enviada por sesión y filtrar consulta
+    area=request.session['area']
+    subarea=request.session['subarea']
+    # print "Area y Subarea enviadas por sesion"
+    # print area
+    # print subarea
+    trabajos=Trabajo.objects.all().filter( Q(subarea1=subarea) | Q(subarea2=subarea) | Q(subarea3=subarea) )
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -96,6 +102,7 @@ def jobs_list(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'trabajos': trabajos,
     }
     return render(request, 'trabajos_jobs_list.html', context)
 
@@ -237,46 +244,47 @@ def query_filter(sidebar_item):
     return list_elem
 
 
-# Se realiza el cambio de area y se pasan los parametros necesarios para filtrar contenido
+# Se realiza el cambio de subarea y se pasan los parametros necesarios para filtrar contenido
 def show_areas_modal(request,id):
+    # print "ID recibido",id 
     data= dict()
     user= get_object_or_404(User,id=id)
-    
+    auth_user=user    
     user= Usuario_asovac.objects.get(usuario_id=id)
     user_role = user.biggest_role()
     if(user_role.id == 1 or user_role.id == 2):
-        areas= Area.objects.all()
         subareas= Sub_area.objects.all()
+        area= Area.objects.all()
+      
     else:
-        areas= user.area.all()
         subareas= user.sub_area.all()
-    
-    # print (areas)
+        area= []
+        area.append(subareas.first().area)
+
+    # print (area)
     # print (subareas)
 
     if request.method == 'POST':
-        # print "Se seleccionaron las siguientes áreas"
+        # print "El metodo es post"
         area=request.POST['area_select']
         subarea=request.POST['subarea_select']
 
         # print area
         # print subarea
-        # print request.session['sidebar_item']
-        # print (user_role.id)
 
         request.session['area']=request.POST['area_select']
         request.session['subarea']=request.POST['subarea_select']
 
-        trabajos=Trabajo.objects.all().filter(area=area)
+        trabajos=Trabajo.objects.all().filter( Q(subarea1=subarea) | Q(subarea2=subarea) | Q(subarea3=subarea) )
 
         data['form_is_valid']= True
         data['user_list']= render_to_string('ajax/dinamic_jobs_list.html',{'trabajos':trabajos},request=request)
     else:
         # print "el metodo es get"
         context= {
-            'areas':areas,
+            'areas': area,
             'subareas':subareas,
-            'user': user,
+            'user': auth_user,
         }
         data['html_form']=render_to_string('ajax/show_areas.html',context,request=request)
 

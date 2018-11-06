@@ -48,6 +48,24 @@ urlpatterns = [
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
+    url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
+    url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
+
+    #Carga de contenido 
+    url(r'^list$',views.list,name='list'),
+    url(r'^listSubareas$',views.list_subareas,name='list_subareas'),
+    
+    # CRUD Areas
+    url(r'^areas-subareas/viewArea/(?P<id>\d+)$',views.viewArea,name='verArea'),
+    url(r'^areas-subareas/editArea/(?P<id>\d+)$',views.editArea,name='editarArea'),
+    url(r'^areas-subareas/removeArea/(?P<id>\d+)$',views.removeArea,name='eliminarArea'),
+    
+    # CRUD Subareas
+    url(r'^areas-subareas/viewSubarea/(?P<id>\d+)$',views.viewSubarea,name='verSubarea'),
+    url(r'^areas-subareas/editSubarea/(?P<id>\d+)$',views.editSubarea,name='editarSubarea'),
+    url(r'^areas-subareas/removeSubarea/(?P<id>\d+)$',views.removeSubarea,name='eliminarSubarea'),
+
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
@@ -57,7 +75,6 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
-    
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
 
 ]

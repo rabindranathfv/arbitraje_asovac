@@ -13,8 +13,11 @@ from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
+import json
+from django.db.models import Q
+from django.db.models import Count
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm
+from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,RolForm, ArbitrajeAssignCoordGenForm, AssingRolForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
 
 # Lista de Estados de un arbitraje.
@@ -173,10 +176,19 @@ def get_roles(user_id):
 # Obtener nombre de los roles del usuario
 def get_names_roles(user_id):
     rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
-    rol_name=[]
+    big_rol=None
+
     for item in rol:
-        rol_name.append(item)
-    return rol_name
+        if big_rol:
+            if item.id < big_rol.id:
+                big_rol = item
+        else:
+            big_rol = item
+    # get roles
+    # rol_name=[]
+    # for item in rol:
+    #     rol_name.append(item)
+    return big_rol
 
 #Update state of arbitration
 def update_state_arbitration(arbitraje_id,estado):
@@ -188,14 +200,12 @@ def update_state_arbitration(arbitraje_id,estado):
     return estado
 
 #Verifica si el usuario tiene rol de admin
-def is_admin(rols,total_rols):
-    
-    if total_rols == 1:
-        for name in rols:
-            if name.id == 1:
-                return 1
+def is_admin(rol):
+    if rol.id == 1:
+        return 1
     else:
         return 0
+
 #Validar accesos segun rol clave y arbitraje seleccionado
 def validate_access(rol,data_arbitraje,clave):
     if rol == '2':
@@ -216,11 +226,13 @@ def validate_access(rol,data_arbitraje,clave):
     return 0
 
 # Parametros para validacion de arbitraje
-def create_params_validations(request):
+def create_params_validations(request,status):
     params_validations = dict()
     params_validations['rol_name']=get_names_roles(request.user.id)
-    params_validations['cant']=len(params_validations['rol_name'])
-    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
+    # params_validations['cant']=len(params_validations['rol_name'])
+    params_validations['cant']=params_validations['rol_name']
+    params_validations['is_admin']=is_admin( params_validations['rol_name'])
+    params_validations['status']=status
     return params_validations
 
 def compute_progress_bar(state):
@@ -296,9 +308,9 @@ def home(request):
     rol_name=get_names_roles(request.user.id)
 
     params_validations['rol_name']=get_names_roles(request.user.id)
-    params_validations['cant']=len(params_validations['rol_name'])
-    params_validations['is_admin']=is_admin( params_validations['rol_name'], params_validations['cant'])
-   
+    params_validations['cant']=params_validations['rol_name']
+    params_validations['is_admin']=is_admin( params_validations['rol_name'])
+
     # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
     allow_entry_list = []
     # Lista de strings de estados de los arbitrajes
@@ -343,6 +355,16 @@ def dashboard(request, arbitraje_id):
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
     ######################################################################################
+    
+    user_id= request.user.id
+    user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
+    # para enviar area a la cual pertenece el usuari por sesion 
+    subareas= user.sub_area.all()
+    # area y subarea a enviar por sesion 
+    area_session=subareas.first().area.nombre
+    subarea_session=subareas.first().nombre
+    request.session['area']= area_session
+    request.session['subarea']=subarea_session
 
     request.session['arbitraje_id'] = arbitraje_id
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -982,16 +1004,28 @@ def validate_access_modal(request,id):
       
         # print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
         if validate_access(rol,data_arbitraje,clave) == 1:
-            params_validations= create_params_validations(request)
+            params_validations= create_params_validations(request,1)
             data['form_is_valid']= True
             data['method']= 'post'
+            # para enviar area a la cual pertenece el usuari por sesion 
+            subareas= user.sub_area.all()
+            # area y subarea a enviar por sesion 
+            area_session=subareas.first().area.nombre
+            subarea_session=subareas.first().nombre
+            # print "Area y Subarea enviadas por sesion"
+            # print area_session
+            # print subarea_session
+          
+            request.session['area']= area_session
+            request.session['subarea']=subarea_session
+
             context = {
                 'params_validations' : params_validations,
                 'arbitraje_id' : arbitraje_id,
             }
             data['html_form']= render_to_string('ajax/validate_rol_success.html',context,request=request)
         else:
-            params_validations= create_params_validations(request)
+            params_validations= create_params_validations(request,0)
             data['form_is_valid']= False
             data['method']= 'post'
             context = {
@@ -1003,7 +1037,7 @@ def validate_access_modal(request,id):
     else:
         # print "El metodo es get"
     
-        params_validations= create_params_validations(request)
+        params_validations= create_params_validations(request,2)
         data['form_is_valid']= True
         data['method']= 'get'
         context = {
@@ -1012,45 +1046,11 @@ def validate_access_modal(request,id):
         }
         data['html_form']= render_to_string('ajax/validate_rol.html',context,request=request)
 
-    # user= Usuario_asovac.objects.get(usuario_id=user_id)
-    
-
-    
-    
-    # if(rol== 1 or rol== 2):
-    #     areas= Area.objects.all()
-    #     subareas= Sub_area.objects.all()
-    # else:
-    #     print "Rol distinto a 1 y 2"
-    #     subareas= user.sub_area.all()
-    #     areas=[]
-    #     for subarea in subareas:
-    #         areas.append(subarea.area)
-    #         print "Area",subarea.area
-            
-    # if request.method == 'POST':
-    #     if form.is_valid():
-    #         form.save()
-    #         data['form_is_valid']= True
-    #         # users= User.objects.all()
-    #         users= Usuario_asovac.objects.all()
-    #         data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
-    #     else:
-    
-  
-    
     return JsonResponse(data)
 
-    
-
-    # print user_role.id
-    # print areas
-    # print subareas
-    # request.session['areas']
-    # request.session['subareas']
-
-
-# Para obtener la lista de subareas asociadas a un area
+###################################################################################
+#############     Obtener lista de subareas asociadas a un area     ###############
+###################################################################################
 def get_subareas(request,id):
     data= dict()
 
@@ -1058,4 +1058,445 @@ def get_subareas(request,id):
     context={'subareas': subareas,}
     data['html_select']= render_to_string('ajax/show_subareas.html',context, request=request)
     
+    return JsonResponse(data)
+
+###################################################################################
+##########################     Vista areas subareas     ###########################
+###################################################################################
+def areas_subareas(request):
+    rol_id=get_roles(request.user.id)
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+
+    item_active = 1
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    # print items
+
+    context = {
+        'nombre_vista' : 'Áreas y Subáreas',
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+    return render(request, 'main_app_areas_subareas.html', context)
+
+###################################################################################
+########################     Procesar carga de areas     ##########################
+###################################################################################
+def process_areas_modal(request,form,template_name):
+    data= dict()
+    if request.method == 'POST':
+        # if form.is_valid():
+        status=0
+        if request.FILES != {}:
+            data['form_is_valid']= True
+            status=1
+            response="Las areas se han cargado de forma exitosa."
+            try:
+                request.FILES['file'].save_to_database(
+                # name_columns_by_row=2,
+                model=Area,
+                mapdict=['nombre', 'descripcion'])
+            except:
+                print("Hay un error en los valores de entrada")
+                data['form_is_valid']= False
+                status=0
+                response="Ha ocurrido un error, verifique que los valores suministrados son validos."
+
+            context={
+                'title': "Cargar Areas",
+                'response': response,
+                'status': status,
+            }
+            data['html_form']= render_to_string(template_name,context, request=request)
+            return JsonResponse(data) 
+
+        else:
+            data['form_is_valid']= False
+  
+    context={
+        'form': form
+    }
+    data['html_form']= render_to_string(template_name,context, request=request)
+    return JsonResponse(data) 
+
+
+###################################################################################
+######################     Procesar carga de subareas     #########################
+###################################################################################
+def process_subareas_modal(request,form,template_name):
+    data= dict()
+    if request.method == 'POST':
+        # if form.is_valid():
+        status=0
+        if request.FILES != {}:
+            data['form_is_valid']= True
+            status=1
+            response="Las subareas se han cargado de forma exitosa."
+            try:
+                request.FILES['file'].save_to_database(
+                # name_columns_by_row=2,
+                model=Sub_area,
+                mapdict=['nombre', 'descripcion','area_id'])
+            except:
+                print("Hay un error en los valores de entrada")
+                data['form_is_valid']= False
+                status=0
+                response="Ha ocurrido un error, verifique que las areas asignadas existen."
+            
+            context={
+                'title': "Cargar Subareas",
+                'response': response,
+                'status': status,
+            }
+            data['html_form']= render_to_string(template_name,context, request=request)
+            return JsonResponse(data) 
+
+        else:
+            data['form_is_valid']= False
+  
+    context={
+        'form': form
+    }
+    data['html_form']= render_to_string(template_name,context, request=request)
+    return JsonResponse(data) 
+
+
+
+###################################################################################
+########################     Carga de reas via files     ##########################
+###################################################################################
+
+def load_areas_modal(request):
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print request.FILES
+            return process_areas_modal(request,form,'ajax/modal_succes.html')
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            return process_areas_modal(request,form,'ajax/load_areas.html')
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+    return process_areas_modal(request,form,'ajax/load_areas.html')
+
+
+###################################################################################
+######################     Carga de subareas via files     ########################
+###################################################################################
+
+def load_subareas_modal(request):
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            print request.FILES
+            return process_subareas_modal(request,form,'ajax/modal_succes.html')
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            return process_subareas_modal(request,form,'ajax/load_subareas.html')
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+    return process_subareas_modal(request,form,'ajax/load_subareas.html')
+
+
+###################################################################################
+###############     Carga el contenido de la tabla de areas     ###################
+###################################################################################
+
+def list (request):
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Area.objects.all().order_by(order).query
+            data=Area.objects.all().order_by(order)
+            total= Area.objects.all().count()
+        else:
+            print "consulta normal"
+            # print Area.objects.all().order_by(order)[init:limit].query
+            test= Sub_area.objects.all().order_by(order)[init:limit]
+            data=Area.objects.all().order_by(order)[init:limit]
+            total= Area.objects.all().count()
+            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+
+###################################################################################
+###############################     Crud Areas     ################################
+###################################################################################
+def viewArea(request,id):
+    data= dict()
+    area=Area.objects.get(id=id)
+    data['status']= 200
+    context={
+        'area':area,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+def editArea(request,id):
+    data= dict()
+
+    if request.method == 'POST':
+        
+        area=Area.objects.get(id=id)
+        print "edit post"
+        form= AreaCreateForm(request.POST,instance=area)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+        area=Area.objects.get(id=id)
+        data['status']= 200
+        data['title']=area.nombre
+        form=AreaCreateForm(instance=area)
+        context={
+            'area':area,
+            'tipo':"edit",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+def removeArea(request,id):
+    
+    data= dict()
+
+    if request.method == 'POST':
+        # print "post delete form"
+        area=Area.objects.get(id=id)
+        area.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'area':area,
+            'tipo':"delete",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+
+    else:
+        # print "get delete form"
+        area=Area.objects.get(id=id)
+        data['status']= 200
+        data['title']=area.nombre
+        form=AreaCreateForm(instance=area)
+        message="eliminar"
+        context={
+            'area':area,
+            'tipo':"delete",
+            'form':form,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+###################################################################################
+##############     Carga el contenido de la tabla de Subareas     #################
+###################################################################################
+
+def list_subareas(request):
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Sub_area.objects.all().order_by(order).query
+            data=Sub_area.objects.all().order_by(order)
+            total= Sub_area.objects.all().count()
+        else:
+            print "consulta normal"
+            # print Sub_area.objects.all().order_by(order)[init:limit].query
+            # test= Sub_area.objects.all().order_by(order)[init:limit]
+            data=Sub_area.objects.all().order_by(order)[init:limit]
+            total= Sub_area.objects.all().count()
+            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+###################################################################################
+#############################     Crud Subareas     ###############################
+###################################################################################
+def viewSubarea(request,id):
+    data= dict()
+    subarea=Sub_area.objects.get(id=id)
+    data['status']= 200
+    context={
+        'subarea':subarea,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+def editSubarea(request,id):
+    data= dict()
+
+    if request.method == 'POST':
+        
+        subarea=Sub_area.objects.get(id=id)
+        print "edit post"
+        form= AreaCreateForm(request.POST,instance=subarea)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+        subarea=Sub_area.objects.get(id=id)
+        data['status']= 200
+        data['title']=subarea.nombre
+        form=AreaCreateForm(instance=subarea)
+        context={
+            'subarea':subarea,
+            'tipo':"edit",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+def removeSubarea(request,id):
+    
+    data= dict()
+
+    if request.method == 'POST':
+        print "post delete form"
+        subarea=Sub_area.objects.get(id=id)
+        subarea.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'subarea':subarea,
+            'tipo':"delete",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+
+    else:
+        print "get delete form"
+        subarea=Sub_area.objects.get(id=id)
+        data['status']= 200
+        data['title']=subarea.nombre
+        form=AreaCreateForm(instance=subarea)
+        message="eliminar"
+        context={
+            'subarea':subarea,
+            'tipo':"delete",
+            'form':form,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)

@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 
 from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area
-
+from .validators import valid_extension
 
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
@@ -151,6 +151,11 @@ class AreaForm(forms.ModelForm):
         model= Area
         fields=['nombre']
 
+class AreaCreateForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre','descripcion']
+
 class SubareaForm(forms.ModelForm):
     class Meta:
         model= Sub_area
@@ -164,3 +169,7 @@ class SubAreaRegistForm(forms.ModelForm):
         widget={
             'sub_area': forms.CheckboxSelectMultiple(),
         }
+
+class UploadFileForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    file = forms.FileField(widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))

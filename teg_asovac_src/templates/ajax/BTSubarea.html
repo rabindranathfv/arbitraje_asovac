@@ -1,0 +1,77 @@
+
+{% load crispy_forms_tags %}
+
+{% if tipo == "show" %}
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >{{subarea.nombre}}</h4>
+    </div>
+
+    <div class="modal-body">
+		
+        <table class="table table-bordered">
+            <thead>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+            </thead>
+            <tbody>
+                <td>{{subarea.nombre}}</td>
+                <td>{{subarea.descripcion}}</td>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="tableButtonSave">Guardar</button>
+    </div>
+
+{% else %}
+    {% if tipo == "edit" %}
+    {% load crispy_forms_tags %}
+    {% include "errors_form.html" %}
+        <form method="post" class="editarSubarea" data-url="{% url 'main_app:editarSubarea' subarea.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >{{subarea.nombre}}</h4>
+            </div>
+            
+            <div class="modal-body">
+                    {{  form | crispy }}
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" >Guardar</button>
+            </div>
+        </form>
+    {% else %}
+        {% if tipo == "delete" %}
+        <form method="post" id="eliminarSubarea" action="" class="eliminarSubarea" data-url="{% url 'main_app:eliminarSubarea' subarea.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Eliminar subarea</h4>
+            </div>
+        
+            <div class="modal-body">
+                {% if message == "eliminar"%}
+                    <p>¿Desea eliminar el subarea {{subarea.nombre }}?</p>
+                {%else%}
+                    <p>El subarea {{subarea.nombre }} se elimino de manera exitosa.</p>
+                {% endif %}
+
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger" >Eliminar</button>
+            </div>
+        </form>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
