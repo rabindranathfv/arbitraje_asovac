@@ -117,7 +117,6 @@ def event_delete(request, evento_id):
 def event_detail(request, evento_id):
     evento = get_object_or_404(Evento, id = evento_id)
     organizador_evento_list = Organizador_evento.objects.filter(evento = evento)
-    print(organizador_evento_list)
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,

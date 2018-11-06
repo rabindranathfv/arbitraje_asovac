@@ -15,6 +15,9 @@ CHOICES_MIEMBRO_ASOVAC = (   (False,'No es miembro de AsoVAC'),
                         (True,'Es miembro de AsoVAC'),
                         )
 
+CHOICES_CATEGORIA_EVENTO = (	('P', 'Presencial'),
+								('V', 'Virtual'),
+	)
 """""""""""""""""""""""""""
 Organizador Model
 """""""""""""""""""""""""""
@@ -69,7 +72,7 @@ class Evento(models.Model):
 	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
 
 	nombre = models.CharField(max_length=150)
-	categoria = models.CharField(max_length=50)
+	categoria = models.CharField(max_length=50, choices = CHOICES_CATEGORIA_EVENTO)
 	descripcion = models.TextField(max_length=150)
 	tipo = models.CharField(max_length=50)
 	fecha_inicio = models.DateField()
