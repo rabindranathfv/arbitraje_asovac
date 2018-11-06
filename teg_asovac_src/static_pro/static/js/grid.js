@@ -22,8 +22,10 @@ $(document).ready(function () {
     }
     
 });
-
-    function operateFormatter(value, row, index) {
+/*******************************************************************************************/
+/**************     Para dar formato a los botones de las tablas     ***************/
+/*******************************************************************************************/
+    function operateAreas(value, row, index) {
         return [
             '<a class="viewArea" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',
@@ -36,6 +38,24 @@ $(document).ready(function () {
             '</a>'
         ].join('');
     }
+
+    function operateSubareas(value, row, index) {
+        return [
+            '<a class="viewSubarea" href="javascript:void(0)" title="Ver">',
+            '<i class="far fa-eye"></i>',
+            '</a>  ',
+            '<a class="editSubarea" href="javascript:void(0)" title="Editar" >',
+            '<i class="far fa-edit"></i>',
+            '</a>  ',
+            '<a class="removeSubarea" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fa fa-trash"></i>',
+            '</a>'
+        ].join('');
+    }
+
+/*******************************************************************************************/
+/**************     Para capturar el evento de los botones de las tablas     ***************/
+/*******************************************************************************************/
 
     window.operateEvents = {
         'click .viewArea': function (e, value, row, index) {
@@ -93,7 +113,64 @@ $(document).ready(function () {
                     // });
                 }
             });
-        }
+        },
+        'click .viewSubarea': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+
+
+        },
+        'click .editSubarea': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .removeSubarea': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                    // $table.bootstrapTable('remove', {
+                    //     field: 'id',
+                    //     values: [row.id]
+                    // });
+                }
+            });
+        },
     };
 
 

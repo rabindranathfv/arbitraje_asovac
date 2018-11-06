@@ -332,5 +332,8 @@ var ValidateAccess= function(){
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArea',bootstrapTableForm);
+    // CRUD Subareas
+    $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
 
 });

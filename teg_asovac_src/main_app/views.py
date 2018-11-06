@@ -1046,45 +1046,11 @@ def validate_access_modal(request,id):
         }
         data['html_form']= render_to_string('ajax/validate_rol.html',context,request=request)
 
-    # user= Usuario_asovac.objects.get(usuario_id=user_id)
-    
-
-    
-    
-    # if(rol== 1 or rol== 2):
-    #     areas= Area.objects.all()
-    #     subareas= Sub_area.objects.all()
-    # else:
-    #     print "Rol distinto a 1 y 2"
-    #     subareas= user.sub_area.all()
-    #     areas=[]
-    #     for subarea in subareas:
-    #         areas.append(subarea.area)
-    #         print "Area",subarea.area
-            
-    # if request.method == 'POST':
-    #     if form.is_valid():
-    #         form.save()
-    #         data['form_is_valid']= True
-    #         # users= User.objects.all()
-    #         users= Usuario_asovac.objects.all()
-    #         data['user_list']= render_to_string('ajax/dinamic_list.html',{'users':users})
-    #     else:
-    
-  
-    
     return JsonResponse(data)
 
-    
-
-    # print user_role.id
-    # print areas
-    # print subareas
-    # request.session['areas']
-    # request.session['subareas']
-
-
-# Para obtener la lista de subareas asociadas a un area
+###################################################################################
+#############     Obtener lista de subareas asociadas a un area     ###############
+###################################################################################
 def get_subareas(request,id):
     data= dict()
 
@@ -1094,7 +1060,9 @@ def get_subareas(request,id):
     
     return JsonResponse(data)
 
-
+###################################################################################
+##########################     Vista areas subareas     ###########################
+###################################################################################
 def areas_subareas(request):
     rol_id=get_roles(request.user.id)
 
@@ -1127,7 +1095,9 @@ def areas_subareas(request):
     }
     return render(request, 'main_app_areas_subareas.html', context)
 
-# Para procear carga de areas
+###################################################################################
+########################     Procesar carga de areas     ##########################
+###################################################################################
 def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1165,7 +1135,10 @@ def process_areas_modal(request,form,template_name):
     data['html_form']= render_to_string(template_name,context, request=request)
     return JsonResponse(data) 
 
-# Para procear carga de subareas
+
+###################################################################################
+######################     Procesar carga de subareas     #########################
+###################################################################################
 def process_subareas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1205,7 +1178,10 @@ def process_subareas_modal(request,form,template_name):
 
 
 
-# Para cargar Areas
+###################################################################################
+########################     Carga de reas via files     ##########################
+###################################################################################
+
 def load_areas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1222,7 +1198,11 @@ def load_areas_modal(request):
 
     return process_areas_modal(request,form,'ajax/load_areas.html')
 
-# Para cargar Sub-areas
+
+###################################################################################
+######################     Carga de subareas via files     ########################
+###################################################################################
+
 def load_subareas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1239,7 +1219,11 @@ def load_subareas_modal(request):
 
     return process_subareas_modal(request,form,'ajax/load_subareas.html')
 
-# Para cargar el contenido de la tabla de forma dinamica
+
+###################################################################################
+###############     Carga el contenido de la tabla de areas     ###################
+###################################################################################
+
 def list (request):
     response = {}
     response['query'] = []
@@ -1305,8 +1289,9 @@ def list (request):
     return JsonResponse(response)
 
 
-
-###############################     Crud Areas     ###############################
+###################################################################################
+###############################     Crud Areas     ################################
+###################################################################################
 def viewArea(request,id):
     data= dict()
     area=Area.objects.get(id=id)
@@ -1346,6 +1331,7 @@ def editArea(request,id):
     return JsonResponse(data)
 
 def removeArea(request,id):
+    
     data= dict()
 
     if request.method == 'POST':
@@ -1375,4 +1361,142 @@ def removeArea(request,id):
             'message':message,
         }
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+    return JsonResponse(data)
+
+###################################################################################
+##############     Carga el contenido de la tabla de Subareas     #################
+###################################################################################
+
+def list_subareas(request):
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Sub_area.objects.all().order_by(order).query
+            data=Sub_area.objects.all().order_by(order)
+            total= Sub_area.objects.all().count()
+        else:
+            print "consulta normal"
+            # print Sub_area.objects.all().order_by(order)[init:limit].query
+            # test= Sub_area.objects.all().order_by(order)[init:limit]
+            data=Sub_area.objects.all().order_by(order)[init:limit]
+            total= Sub_area.objects.all().count()
+            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+###################################################################################
+#############################     Crud Subareas     ###############################
+###################################################################################
+def viewSubarea(request,id):
+    data= dict()
+    subarea=Sub_area.objects.get(id=id)
+    data['status']= 200
+    context={
+        'subarea':subarea,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+def editSubarea(request,id):
+    data= dict()
+
+    if request.method == 'POST':
+        
+        subarea=Sub_area.objects.get(id=id)
+        print "edit post"
+        form= AreaCreateForm(request.POST,instance=subarea)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+        subarea=Sub_area.objects.get(id=id)
+        data['status']= 200
+        data['title']=subarea.nombre
+        form=AreaCreateForm(instance=subarea)
+        context={
+            'subarea':subarea,
+            'tipo':"edit",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+def removeSubarea(request,id):
+    
+    data= dict()
+
+    if request.method == 'POST':
+        print "post delete form"
+        subarea=Sub_area.objects.get(id=id)
+        subarea.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'subarea':subarea,
+            'tipo':"delete",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+
+    else:
+        print "get delete form"
+        subarea=Sub_area.objects.get(id=id)
+        data['status']= 200
+        data['title']=subarea.nombre
+        form=AreaCreateForm(instance=subarea)
+        message="eliminar"
+        context={
+            'subarea':subarea,
+            'tipo':"delete",
+            'form':form,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)

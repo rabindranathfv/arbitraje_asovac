@@ -41,13 +41,13 @@
 					
 					<div class="col-md-12">
 						<!-- data table -->
-						<input type="hidden" id="list" name="list" data-url="{% url 'main_app:list' %}">
+						<input type="hidden" id="listAreas" name="list" data-url="{% url 'main_app:list' %}">
 						
 						<div id="toolbar">
 						</div>
 						<table id="table"
 								data-toggle="table"
-								data-ajax="ajaxRequest"
+								data-ajax="ajaxAreas"
 								data-side-pagination="server"
 								data-show-export="true"
 								data-toolbar="#toolbar"
@@ -65,7 +65,7 @@
 										<th data-field="id" data-sortable="true">ID</th>
 									<th data-field="nombre" data-sortable="true">Area</th>
 									<th data-field="descripcion" data-sortable="true">Descripcion</th>
-									<th data-field="operate" data-events="operateEvents" data-formatter="operateFormatter" data-align="center">Acciones</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateAreas" data-align="center">Acciones</th>
 								</tr>
 							</thead>
 						</table>
@@ -87,13 +87,13 @@
 					
 						<div class="col-md-12">
 							<!-- data table -->
-							<input type="hidden" id="list" name="list" data-url="{% url 'main_app:list' %}">
+							<input type="hidden" id="listSubareas" name="list" data-url="{% url 'main_app:list_subareas' %}">
 							
 							<div id="toolbar">
 							</div>
 							<table id="table"
 									data-toggle="table"
-									data-ajax="ajaxRequest"
+									data-ajax="ajaxSubareas"
 									data-side-pagination="server"
 									data-show-export="true"
 									data-toolbar="#toolbar"
@@ -109,9 +109,9 @@
 									<thead>
 										<tr>
 											<th data-field="id" data-sortable="true">ID</th>
-										<th data-field="nombre" data-sortable="true">Area</th>
+										<th data-field="nombre" data-sortable="true">Subarea</th>
 										<th data-field="descripcion" data-sortable="true">Descripcion</th>
-										<th data-field="operate" data-events="operateEvents" data-formatter="operateFormatter" data-align="center">Acciones</th>
+										<th data-field="operate" data-events="operateEvents" data-formatter="operateSubareas" data-align="center">Acciones</th>
 									</tr>
 								</thead>
 							</table>
@@ -137,8 +137,32 @@
 		// your custom ajax request here
 		
 
-		function ajaxRequest(params) {
-			var route= $("#list").attr("data-url");
+		function ajaxAreas(params) {
+			var route= $("#listAreas").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+
+		function ajaxSubareas(params) {
+			var route= $("#listSubareas").attr("data-url");
 			// console.log (route);
 			//  console.log("llamada a ajax request");
 			console.log(params.data);
