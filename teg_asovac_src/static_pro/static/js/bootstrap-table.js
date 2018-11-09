@@ -376,7 +376,7 @@
         showFullscreen: false,
         smartDisplay: true,
         escape: false,
-        minimumCountColumns: 1,
+        minimumCountColumns: 3,
         idField: undefined,
         uniqueId: undefined,
         cardView: false,
@@ -512,40 +512,40 @@
 
     BootstrapTable.LOCALES['en-US'] = BootstrapTable.LOCALES.en = {
         formatLoadingMessage: function () {
-            return 'Loading, please wait...';
+            return 'Cargando, por favor espere...';
         },
         formatRecordsPerPage: function (pageNumber) {
-            return sprintf('%s rows per page', pageNumber);
+            return sprintf('%s filas por páginas', pageNumber);
         },
         formatShowingRows: function (pageFrom, pageTo, totalRows) {
-            return sprintf('Showing %s to %s of %s rows', pageFrom, pageTo, totalRows);
+            return sprintf('Mostrando %s a %s de %s rows', pageFrom, pageTo, totalRows);
         },
         formatDetailPagination: function (totalRows) {
-            return sprintf('Showing %s rows', totalRows);
+            return sprintf('Mostrando %s filas', totalRows);
         },
         formatSearch: function () {
-            return 'Search';
+            return 'Buscar';
         },
         formatNoMatches: function () {
-            return 'No matching records found';
+            return 'No se han conseguido filas que concuerden con la búsqueda';
         },
         formatPaginationSwitch: function () {
-            return 'Hide/Show pagination';
+            return 'Mostrar/Esconder pagination';
         },
         formatRefresh: function () {
-            return 'Refresh';
+            return 'Actualizar';
         },
         formatToggle: function () {
             return 'Toggle';
         },
         formatFullscreen: function () {
-            return 'Fullscreen';
+            return 'Pantalla Completa';
         },
         formatColumns: function () {
-            return 'Columns';
+            return 'Columnas';
         },
         formatAllRows: function () {
-            return 'All';
+            return 'Todo';
         }
     };
 

@@ -18,7 +18,6 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
-                <h2 class="text-left">Lista de Locaciones</h2>
                 <div>
                     <form class="form-inline text-right">
                         <div class="btn-group text-right">
@@ -32,16 +31,25 @@
                                 </li>
                             </ul>
                         </div>
-                        <input id="filter" class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
                     </form>
                 </div>
                 <br>
                 <div class="table-responsive">
-                 <table class="table table-bordered" id = "location-list" data-toggle="table">
+                 <h2 class="text-left col-sm-6">Lista de Locaciones</h2>
+                 <table class="table table-bordered" id = "location-list" 
+                 data-toggle="table"
+                 data-search = "true"
+                 data-sort-name="lugar"
+                 data-show-export="true"
+                 data-pagination="true"
+                 data-page-size="10"
+                 data-page-list="[5,10,25,50,100, 200]"
+                 data-show-toggle="true"
+                 data-show-columns="true">
                     {% if event_place_data %}
                     <thead>
                         <tr>
-                         <th class = "col-sm-2" data-sortable="true">Nombre</th>
+                         <th data-field="lugar" class = "col-sm-2" data-sortable="true">Nombre</th>
                          <th class = "col-sm-2" data-sortable="true">Capacidad de Asistentes</th>
                          <th class = "col-sm-2" data-sortable="true">Equipo Requerido</th>
                          <th class = "col-sm-3">Observaciones</th>
