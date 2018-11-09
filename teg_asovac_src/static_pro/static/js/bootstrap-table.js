@@ -527,7 +527,7 @@
             return 'Buscar';
         },
         formatNoMatches: function () {
-            return 'No se han conseguido filas que concuerden con la búsqueda';
+            return 'No se ha conseguido información que concuerde con la búsqueda';
         },
         formatPaginationSwitch: function () {
             return 'Mostrar/Esconder pagination';
