@@ -17,27 +17,28 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				
-                <div>
-                    <form class="form-inline text-right">
-                    	<div class="btn-group text-right">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel"></i> Exportar tabla</a>
-								</li>
-								<li>
-									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Importar datos</a>
-								</li>
-							</ul>
-						</div>
+				<h2 class="text-left">Lista de Eventos</h2>
+                <div id="toolbar">
+                    <form>
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel"></i> Exportar tabla</a>
+                                </li>
+                                <li>
+                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Importar datos</a>
+                                </li>
+                            </ul>
+                        </div>
                     </form>
                 </div>
-                <br>
 				<div class="table-responsive">
-					<h2 class="text-left col-sm-6">Lista de Eventos</h2>
+					
 					<table class="table table-bordered" id="event-list" 
 					data-toggle="table"
+					data-toolbar="#toolbar"
+                 data-toolbar-align="right"
                  data-search = "true"
                  data-sort-name="nombre"
                  data-show-export="true"

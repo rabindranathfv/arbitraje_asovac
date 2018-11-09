@@ -515,10 +515,10 @@
             return 'Cargando, por favor espere...';
         },
         formatRecordsPerPage: function (pageNumber) {
-            return sprintf('%s filas por páginas', pageNumber);
+            return sprintf('%s Filas por páginas', pageNumber);
         },
         formatShowingRows: function (pageFrom, pageTo, totalRows) {
-            return sprintf('Mostrando %s a %s de %s rows', pageFrom, pageTo, totalRows);
+            return sprintf('Mostrando %s a %s de %s filas de datos.', pageFrom, pageTo, totalRows);
         },
         formatDetailPagination: function (totalRows) {
             return sprintf('Mostrando %s filas', totalRows);
