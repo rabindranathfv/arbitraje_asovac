@@ -25,8 +25,13 @@ urlpatterns = [
     url(r'^editar-autores/$',views.author_edit,name='author_edit'),
 
     url(r'^generar-certificado/$', views.generar_certificado, name = 'generar_certificado'),
+    
     url(r'^postular-trabajo/$', views.postular_trabajo, name= 'postular_trabajo'),
-    url(r'^postular-trabajo/pagador/$', views.postular_trabajo_pagador, name= 'postular_trabajo_pagador'),
-    url(r'^postular-trabajo/pago/$', views.postular_trabajo_pago, name= 'postular_trabajo_pago'),
-    url(r'^postular-trabajo/factura/$', views.postular_trabajo_factura, name= 'postular_trabajo_factura'),
+
+    url(r'^postular-trabajo/pagador/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pagador_modal, name= 'postular_trabajo_pagador_modal'),
+    url(r'^postular-trabajo/factura/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_factura_modal, name= 'postular_trabajo_factura_modal'),
+    url(r'^postular-trabajo/pago/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pago_modal, name= 'postular_trabajo_pago_modal'),
+
+    url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
+
 ]

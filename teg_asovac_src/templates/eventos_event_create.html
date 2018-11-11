@@ -11,50 +11,19 @@
             <div class="col-sm-12">
                 <div class="jumbotron RLcard">
                                          
-                    <div class="col-sm-12">
+                    <div class="row">
                             <div class="col-sm-10">
                                     <h2 class="text-left">Crear Evento</h2>
                             </div>
                             <div class="col-sm-2">
-                                <a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
+                                <a class="btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
                             </div>
                     </div>
-                  
-				<div class="col-sm-12">
-					<div class="col-sm-10">
-						<h2 class="text-left">Crear Evento</h2>
-					</div>
-					<div class="col-sm-2">
-						<a class="col-sm-2 offset-sm-5 btn btn-warning btn-block btn-lg ">Atras</a> 
-					</div>
-				</div>
 
-				{% include "errors_form.html" %}
+					{% include "errors_form.html" %}
+					{% crispy form form.helper1 %}
 
-				{% crispy form %}
 
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- Modal -->
-<div id="modal-success" class="modal fade" role="dialog">
-	<div class="modal-dialog modal-lg top-margin-128">
-		<!-- Modal content-->
-		<div class="modal-content">
-			<div class="modal-header">
-				<div class="col-sm-offset-1">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h3 class="modal-title text-center"> Agregar Organizador </h3>
-				</div>
-			</div>
-			<div class="modal-body">
-				<h4 class="text-center">¡El organizador se ha creado exitosamente!</h4>
-				<p class="top-margin-18 text-center">Pulse "Continuar" para volver al inicio</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Continuar</button>
 			</div>
 		</div>
 	</div>

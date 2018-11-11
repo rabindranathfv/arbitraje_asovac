@@ -376,7 +376,7 @@
         showFullscreen: false,
         smartDisplay: true,
         escape: false,
-        minimumCountColumns: 1,
+        minimumCountColumns: 3,
         idField: undefined,
         uniqueId: undefined,
         cardView: false,

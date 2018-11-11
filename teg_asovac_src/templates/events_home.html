@@ -1,0 +1,61 @@
+{% extends "content_wrapper.html" %}
+{% load static %}
+
+{% block inner_content %}
+<div class="container min-height-content" id="content-wrapper">
+
+            <div class="row">
+                <div class="jumbotron RLcard container">
+                    <h2 class="text-center"><strong>Eventos</strong></h2>
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Información general:</strong></h3>                
+                        <p>Total eventos creados: {{ total_events }}</p>
+                        <p>Total eventos finalizados: {{ total_events_ended }}</p>
+                        <p>Total eventos presenciales: {{ total_presential_events }}</p>
+                        <p>Total eventos virtuales: {{ total_virtual_events }}</p>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Últimos Eventos Creados:</strong></h3>
+                        {% for event in last_events %}
+                            <p>{{ event.nombre }}</p>
+                        {% endfor %}
+                    </div>
+			    </div>
+            </div>
+            
+            <div class="row">
+                <div class="jumbotron RLcard container">               
+                    <h2 class="text-center"><strong>Organizadores</strong></h2>         
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Información general:</strong></h3> 
+                        <p>Total Organizadores: {{ total_organizers }}</p>
+                        <p>Total Organizadores miembros ASOVAC: {{ total_organizers_members }}</p>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Últimos Organizadores Creados:</strong></h3>
+                        {% for organizer in last_organizers %}
+                            <p>{{ organizer.nombres }} {{ organizer.apellidos }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="jumbotron RLcard container">                                     
+                    <h2 class="text-center"><strong>Locaciones</strong></h2>                
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Información general:</strong></h3> 
+                        <p>Total Locaciones: {{ total_locations }}</p>
+                        <p>Mayor capacidad de asistentes: {{ max_capacity_location }}</p>
+                        <p>Capacidad promedio: {{ average_capacity }}</p>
+                    </div>
+                    <div class="col-sm-6 text-center">
+                        <h3><strong>Últimas Locaciones Creadas:</strong></h3>
+                        {% for location in last_locations %}
+                            <p class="text-center">{{ location.lugar }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>         
+</div>
+{% endblock %}

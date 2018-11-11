@@ -9,9 +9,15 @@
 		<div class="container-fluid">
 			<!-- Logo de la Navbar -->
 			<div class="navbar-header">
-				<a class="navbar-brand" href="{% url 'main_app:home' %}">
-					<strong>ASOVAC</strong>
-				</a>
+				{% if events_app %}	
+					<a class="navbar-brand" href="{% url 'eventos:home' %}">
+						<strong>ASOVAC</strong>
+					</a>
+				{% else %}
+					<a class="navbar-brand" href="{% url 'main_app:home' %}">
+						<strong>ASOVAC</strong>
+					</a>
+				{% endif %}
 			</div>
 
 			<!-- Opciones de Top navbar pasados por contexto desde el view -->
@@ -70,7 +76,51 @@
 					</li>
 					{% endif %}
 				{% endif %}
+				<!-- Opciones de aplicación de eventos -->
+				{% if events_app %}
+					<li>
+						<a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+							<i class="fas fa-user"></i> Organizador
+						</a>
+						<ul class="dropdown-menu" style ="z-index:2">
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:organizer_create' %}">Crear Organizador</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:organizer_list' %}">Lista de organizadores</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+							<i class="fas fa-map"></i> Locacion
+						</a>
+						<ul class="dropdown-menu" style ="z-index:2">
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:event_place_create' %}">Crear Locación</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:event_place_list' %}">Lista de locaciones</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a role = "button" id="dropdownMenuButton" data-toggle="dropdown">
+							<i class="fas fa-calendar"></i> Evento
+						</a>
+						<ul class="dropdown-menu" style ="z-index:2">
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:event_create' %}">Crear Evento</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'eventos:event_list' %}">Lista de eventos</a>
+							</li>
+						</ul>
+					</li>
+				{% endif %}
 			</ul>
+
+
 
 			{% if user.username %}
 			<!-- Desplegar aqui el nombre del usuario si está autenticado -->

@@ -11,10 +11,13 @@ CHOICES_GENERO = (   (0,'Masculino'),
                         (1,'Femenino'),
                         )
 
-CHOICES_MIENBRO_ASOVAC = (   (False,'No es mienbro de AsoVAC'),
-                        (True,'Es mienbro de AsoVAC'),
+CHOICES_MIEMBRO_ASOVAC = (   (False,'No es miembro de AsoVAC'),
+                        (True,'Es miembro de AsoVAC'),
                         )
 
+CHOICES_CATEGORIA_EVENTO = (	('P', 'Presencial'),
+								('V', 'Virtual'),
+	)
 """""""""""""""""""""""""""
 Organizador Model
 """""""""""""""""""""""""""
@@ -33,14 +36,15 @@ class Organizador(models.Model):
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_correspondencia = models.TextField(max_length=100)
-	es_miembro_asovac = models.BooleanField(default=False,choices=CHOICES_MIENBRO_ASOVAC)
+	es_miembro_asovac = models.BooleanField(default=False,choices=CHOICES_MIEMBRO_ASOVAC)
 	capitulo_asovac = models.CharField(max_length=50)
 	cargo_en_institucion = models.CharField(max_length=50)
 	url_organizador = models.CharField(max_length=200)
 	observaciones = models.TextField(max_length=400, blank=True)
 
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return "{}".format(self.correo_electronico)#.encode('utf-8', errors='replace')
+
 
 
 """""""""""""""""""""""""""
@@ -68,7 +72,7 @@ class Evento(models.Model):
 	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
 
 	nombre = models.CharField(max_length=150)
-	categoria = models.CharField(max_length=50)
+	categoria = models.CharField(max_length=50, choices = CHOICES_CATEGORIA_EVENTO)
 	descripcion = models.TextField(max_length=150)
 	tipo = models.CharField(max_length=50)
 	fecha_inicio = models.DateField()
@@ -76,10 +80,11 @@ class Evento(models.Model):
 	dia_asignado = models.DateField()
 	duracion = models.CharField(max_length=50)
 	horario_preferido = models.CharField(max_length=50)
-	fecha_preferida = models.TimeField()
+	# OJO antes era TimeField
+	fecha_preferida = models.DateField()
 	observaciones = models.TextField(max_length=400, blank = True)
     #Agregar blank=True
-	url_anuncio_evento = models.CharField(max_length=200, blank= True,validators=[URLValidator()])
+	url_anuncio_evento = models.CharField(max_length=200,validators=[URLValidator()])
 
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')

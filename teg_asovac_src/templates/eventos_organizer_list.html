@@ -3,109 +3,113 @@
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
+	{% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                {{ message }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 	{% include "toggle_title.html" %}
 
-             <div class="row">
-               <div class="col-sm-12">
-                   <div class="jumbotron RLcard">
-                   
-                    <h2 class="text-left">Lista de Organizadores</h2>
-                    <div>
-                        <form class="form-inline text-right">
-                            <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-                            <button class="btn btn-primary" type="submit">Buscar</button>
-                        </form>
-                    </div>
-                    <br>
-                        <div class="table-responsive">
-                           <table class="table table-bordered">
-                            {% if organizer_data %}
-                               <thead>
-                                 <tr>
-                                   <th>Nombres</th>
-                                   <th>Apellidos</th>
-                                   <th>Correo electronico</th>
-                                   <th>Institución</th>
-                                   <th>Capitulo Asovac</th>
-                                   <th>Mienbro Asovac</th> 
-                                   <th>Acciones</th>                                  
-                                 </tr>
-                               </thead>
-                               <tbody>
-                                
-                                    {% for org_data in organizer_data %}
-                                    <tr>
-                                    <td class="text-center">{{ org_data.nombres }}</td>
-                                    <td class="text-center">{{ org_data.apellidos }}</td>
-                                    <td class="text-center">{{ org_data.correo_electronico }}</td>
-                                    <td class="text-center">{{ org_data.institucion }}</td>
-                                    <td class="text-center">{{ org_data.capitulo_asovac }}</td>
-                                    {% if org_data.es_miembro_asovac %}
-                                      <td class="text-center">Si</td>
-                                    {% else %}
-                                        <td class="text-center">No</td>
-                                    {% endif %}
-                                    <td class="text-center">
-                                            <a href="{% url 'eventos:organizer_edit'%}" class="btn btn-info btn-sm" role="button" title="Editar Organizador">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <a href="{% url 'eventos:organizer_delete' %}" class="btn btn-info btn-sm" role="button" title="Eliminar Organizador">
-                                                <i class="fas fa-times"></i>
-                                            </a>
-                                        
-                                            <a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles Organizador">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                                                                
-                                            <a href="" class="btn btn-info btn-sm" role="button" title="Realizar Comentarios">
-                                                <i class="fa fa-comment"></i>
-                                            </a>
-                                    </td>
-                                    </tr>
-                                    
-                                    {% endfor %}
-                                </tbody>
-                                    
-                            {% else %}
-                            
-                                    <div class="well well-lg">
-                                        <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                                            <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-                                    </div>                                                               
-                               
-                            {% endif %}
-                             </table>
-                           <!-- End table responsive  -->
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<h2 class="text-left">Lista de Organizadores</h2>
+				<div id="toolbar">
+                    <form>
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel"></i> Exportar tabla</a>
+                                </li>
+                                <li>
+                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Importar datos</a>
+                                </li>
+                            </ul>
                         </div>
-                        <!--end jumbotrom-->
-                    </div>
-               </div>
-             </div>
-             
-   
-        </div>
-</div>
+                    </form>
+                </div>
+				<div class="table-responsive">
+					<table class="table table-bordered" id = "organizer-list" 
+					data-toggle="table"
+					data-toolbar="#toolbar"
+                 data-toolbar-align="right"
+                 data-search = "true"
+                 data-sort-name="nombres"
+                 data-show-export="true"
+                 data-pagination="true"
+                 data-page-size="10"
+                 data-page-list="[5,10,25,50,100, 200]"
+                 data-show-toggle="true"
+                 data-show-columns="true">
+						{% if organizer_data %}
+						<thead>
+							<tr>
+								<th data-field = "nombres" data-sortable="true" data-switchable="false">Nombres</th>
+								<th data-sortable="true">Apellidos</th>
+								<th data-sortable="true">Correo electrónico</th>
+								<th data-sortable="true">Institución</th>
+								<th data-sortable="true">Capítulo Asovac</th>
+								<th data-sortable="true" >Miembro Asovac</th> 
+								<th data-switchable="false">Acciones</th>                                  
+							</tr>
+						</thead>
+						<tbody class="searchable">
 
-
-										<a href="{% url 'eventos:organizer_detail' %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles Organizador">
-											<i class="fas fa-eye"></i>
+							{% for org_data in organizer_data %}
+							<tr>
+								<td class="text-center">{{ org_data.nombres }}</td>
+								<td class="text-center">{{ org_data.apellidos }}</td>
+								<td class="text-center">{{ org_data.correo_electronico }}</td>
+								<td class="text-center">{{ org_data.institucion }}</td>
+								<td class="text-center">{{ org_data.capitulo_asovac }}</td>
+								{% if org_data.es_miembro_asovac %}
+								<td class="text-center">Si</td>
+								{% else %}
+								<td class="text-center">No</td>
+								{% endif %}
+								<td class="text-center">
+									{% if usuario_asovac == org_data.usuario_asovac %}
+										<a href="{% url 'eventos:organizer_edit' org_data.id %}" class="btn btn-info btn-sm" role="button" title="Editar Organizador">
+											<i class="fas fa-edit"></i>
 										</a>
+										
+										<button class="btn btn-info btn-sm show-form-delete" data-url="{% url 'eventos:organizer_delete' org_data.id %}" title="Eliminar Organizador">
+											<i class="fas fa-times"></i>
+										</button>
 
-										<a href="" class="btn btn-info btn-sm" role="button" title="Realizar Comentarios">
-											<i class="fa fa-comment"></i>
-										</a>
-									</td>
-								</tr>
+
+										<button class="btn btn-info btn-sm show-form-observations" data-url="{% url 'eventos:add_observations_to_organizer' org_data.id %}" title="Añadir observaciones">
+											<i class="fas fa-comment"></i>
+										</button>
+									{% endif %}
+									
+									<button class="btn btn-info btn-sm show-details" data-url="{% url 'eventos:organizer_detail' org_data.id %}" title="Detalles del organizador">
+										<i class="fas fa-eye"></i>
+									</button>
+								</td>
+							</tr>
+
 							{% endfor %}
-							</tbody>
+						</tbody>
+
 						{% else %}
-							<div class="well well-lg">
-								<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-								<strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-							</div>
+
+						<div class="well well-lg">
+							<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+							<strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+						</div>                                                               
+
 						{% endif %}
 					</table>
+					<!-- End table responsive  -->
 				</div>
+				<!--end jumbotrom-->
 			</div>
 		</div>
 	</div>

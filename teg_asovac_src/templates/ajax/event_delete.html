@@ -1,0 +1,31 @@
+{% load crispy_forms_tags %}
+<form method="post" class="delete-event-form" action="{% url 'eventos:event_delete' evento.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Eliminar evento</h4>
+    </div>
+    <div class="modal-body">
+        <p class ="text-center"> Confirme si desea eliminar el siguiente evento:</p>
+        <strong>Nombre:</strong> <p>{{ evento.nombre }}</p>
+        <strong>Categoria:</strong> <p>{{ evento.categoria }}</p>
+        <strong>Descripcion:</strong> <p>{{ evento.descripcion }}</p>
+        <strong>Tipo:</strong> <p>{{ evento.tipo }}</p>
+        <strong>Fecha de inicio:</strong> <p>{{ evento.fecha_inicio }}</p> 
+        <strong>Fecha de fin:</strong> <p> {{ evento.fecha_fin }} </p> 
+        <strong>Día Asignado:</strong> <p>{{ evento.dia_asignado }}</p>
+        <strong>Duración:</strong> <p>{{ evento.duracion }}</p>
+        <strong>Horario Preferido:</strong> <p> {{ evento.horario_preferido }}</p>
+        <strong>Fecha preferida:</strong> <p>{{ evento.fecha_preferida }}</p>
+        <strong>Observaciones:</strong> <p>{{ evento.observaciones }}</p>
+        <strong>URL anuncio de evento:</strong> <p>{{ evento.url_anuncio_evento }}</p>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Eliminar</button>
+    </div>
+</form>

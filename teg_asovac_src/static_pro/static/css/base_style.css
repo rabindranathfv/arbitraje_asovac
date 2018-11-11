@@ -225,6 +225,8 @@ body {
     line-height: 30px
 }
 
+
+
 /*============================ Content styling ============================*/
 
 /*================= Dashboard content spacing =================*/
@@ -413,3 +415,9 @@ textarea{
     color: black;
     text-decoration: none;
 }
+
+/**=== Alineación Vertical ===*/
+.vertical-middle-align {
+    vertical-align: middle !important;
+}
+
