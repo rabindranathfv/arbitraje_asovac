@@ -21,6 +21,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.autores_pag, name= 'autores'),
 
+
+    url(r'^administrador/crear-autor/$',views.admin_create_author,name='admin_create_author'),
     url(r'^listar-autores/$',views.authors_list,name='authors_list'),
     url(r'^editar-autores/$',views.author_edit,name='author_edit'),
 

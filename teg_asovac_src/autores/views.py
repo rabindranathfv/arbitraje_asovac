@@ -6,12 +6,12 @@ from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import DatosPagadorForm, PagoForm, FacturaForm
+from .forms import DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
 
 from django.contrib import messages
 
@@ -19,6 +19,58 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 # Create your views here.
+def admin_create_author(request):
+	if request.method == "POST":
+		form = AdminCreateAutorForm(request.POST)
+		if form.is_valid():
+			new_autor = form.save(commit = False)
+			usuario = User.objects.get(email = new_autor.correo_electronico)
+			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+			new_autor.usuario = usuario_asovac
+			new_autor.save()
+			return redirect('autores:authors_list')
+	else:
+		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+		rol_id=get_roles(request.user.id)
+
+		# print (rol_id)
+		estado = request.session['estado']
+		event_id = request.session['arbitraje_id']
+		
+		item_active = 0
+		items = validate_rol_status(estado,rol_id,item_active,event_id)
+
+		route_conf = get_route_configuracion(estado,rol_id,event_id)
+		route_seg = get_route_seguimiento(estado,rol_id)
+		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+		route_resultados = get_route_resultados(estado,rol_id, event_id)
+
+		# print items
+		form = AdminCreateAutorForm()
+		context = {
+			"nombre_vista": 'Administración - Crear Autor',
+			'main_navbar_options' : main_navbar_options,
+			'estado' : estado,
+			'rol_id' : rol_id,
+			'event_id' : event_id,
+			'arbitraje_id' : event_id,
+			'item_active' : item_active,
+			'items':items,
+			'route_conf':route_conf,
+	        'route_seg':route_seg,
+	        'route_trabajos_sidebar':route_trabajos_sidebar,
+	        'route_trabajos_navbar': route_trabajos_navbar,
+	        'route_resultados': route_resultados,
+	        'form': form,
+	    }
+	return render(request,"autores_admin_create_author.html",context)
+
+
 def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
