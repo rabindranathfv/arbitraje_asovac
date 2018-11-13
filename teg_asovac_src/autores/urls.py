@@ -36,4 +36,6 @@ urlpatterns = [
 
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
 
+    #Carga de contenido 
+    url(r'^load-authors-data$',views.list_authors,name='list_authors'),
 ]
