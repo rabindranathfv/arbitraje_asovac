@@ -188,7 +188,7 @@ def list_authors (request):
 
 
 
-def author_edit(request):
+def author_edit(request, autor_id):
 	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},

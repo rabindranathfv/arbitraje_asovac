@@ -79,11 +79,23 @@
 {% block js_extra %}
 {% load static %}
 	<!-- js extra -->
-	<script src="{% static 'js/grid.js' %}"></script>
+	<script src="{% static 'js/grid.js' %}">
+	</script>
 	<script>
 		var $table = $('#table');
 		// your custom ajax request here
-		
+	function operateAuthors(value, row, index) {
+        var route_details="/autores/editar-autor/"+row.id;
+        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
+        return [
+            '<a class="editAuthors" href="',
+            route_edit,
+            ' "',
+            'title="Editar" >',
+            '<i class="far fa-edit"></i>',
+            '</a>  '
+        ].join('');
+    }
 
 		function ajaxAuthors(params) {
 			var route= $("#listAuthors").attr("data-url");
@@ -108,6 +120,7 @@
 				 }
 			 });
 		}
+
 
 	</script> 
 

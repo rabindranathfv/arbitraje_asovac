@@ -52,13 +52,6 @@ $.ajaxSetup({
 /*******************************************************************************************/
 /******************     Para dar formato a los botones de las tablas     *******************/
 /*******************************************************************************************/
-    function operateAuthors(value, row, index) {
-        return [
-            '<a class="editAuthors" href="javascript:void(0)" title="Editar" >',
-            '<i class="far fa-edit"></i>',
-            '</a>  '
-        ].join('');
-    }
 
     function operateAreas(value, row, index) {
         return [
@@ -75,6 +68,7 @@ $.ajaxSetup({
     }
 
     function operateSubareas(value, row, index) {
+        
         return [
             '<a class="viewSubarea" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',

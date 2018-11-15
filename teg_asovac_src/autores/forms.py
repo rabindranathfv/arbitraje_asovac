@@ -189,3 +189,54 @@ class AdminCreateAutorForm(forms.ModelForm):
 	       		 )
 			)
 			
+
+
+#Form para que el admin o coordinador general cree un autor
+class EditAutorForm(forms.ModelForm):
+
+	class Meta:
+		model = Autor
+		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+
+	def __init__(self, *args, **kwargs):
+		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
+		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
+		self.fields['genero'].label = "Género"
+		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
+		self.fields['correo_electronico'].label = "Correo Electrónico"
+		self.fields['telefono_oficina'].label = "Teléfono de oficina"
+		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/celular"
+		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
+		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
+		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.helper.layout = Layout(
+			Div(
+				'universidad',
+				Field('nombres',placeholder="Ejemplo: Juanito José"),
+				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
+				Field('genero',placeholder="Masculino o Femenino"),
+				Field('cedula_pasaporte',placeholder="Formato: xxxxxxxx"),
+				Field('correo_electronico',placeholder="Ejemplo: Juanito@servidor.com"),
+				Field('telefono_oficina',placeholder="Ejemplo: 04249999999"),
+				Field('telefono_habitacion_celular',placeholder="Ejemplo: 02129999999"),
+				Field('constancia_estudio',placeholder=""),
+				Field('direccion_envio_correspondencia',placeholder="Ejemplo: Sabana grande, CC El Recreo"),
+				'es_miembro_asovac',
+				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
+				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
+				Field('observaciones',placeholder="Introduzca sus observaciones aquí"),
+				Div(
+	                Div(
+	                    HTML("<a href=\"{% url 'autores:authors_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+	                css_class='col-sm-offset-7 col-sm-2'),
+	                Div(
+	                    Submit('submit', 'Crear autor', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+	                css_class='col-sm-2'),
+	                css_class='row')
+	       		 )
+			)
