@@ -11,7 +11,7 @@ from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
 
 from django.contrib import messages
 
@@ -189,28 +189,36 @@ def list_authors (request):
 
 
 def author_edit(request, autor_id):
-	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+	autor = get_object_or_404(Autor, id = autor_id)
+	if request.method == 'POST':
+		form = EditAutorForm(request.POST,instance = autor)
+		if form.is_valid():
+			form.save()
+	        return redirect('autores:authors_list')
+    
+	else:
+		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
+		rol_id=get_roles(request.user.id)
 
-	# print (rol_id)
-	estado = request.session['estado']
-	arbitraje_id = request.session['arbitraje_id']
-	
-	item_active = 2
-	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+		# print (rol_id)
+		estado = request.session['estado']
+		arbitraje_id = request.session['arbitraje_id']
+		
+		item_active = 2
+		items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-	route_seg= get_route_seguimiento(estado,rol_id)
-	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+		route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+		route_seg= get_route_seguimiento(estado,rol_id)
+		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+		route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-	# print items
-
+		# print items
+		form = EditAutorForm(instance = autor)
 	context = {
 		'nombre_vista' : 'Editar autores',
 		'main_navbar_options' : main_navbar_options,
@@ -224,8 +232,9 @@ def author_edit(request, autor_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'form':form,
     }
-	return render(request, 'main_app_author_edit.html', context)
+	return render(request, 'autores_author_edit.html', context)
 
 
 #Vista para generar certificado

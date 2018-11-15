@@ -199,7 +199,7 @@ class EditAutorForm(forms.ModelForm):
 		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
 
 	def __init__(self, *args, **kwargs):
-		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
+		super(EditAutorForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.form_class =  'form-horizontal'
@@ -235,7 +235,7 @@ class EditAutorForm(forms.ModelForm):
 	                    HTML("<a href=\"{% url 'autores:authors_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
 	                css_class='col-sm-offset-7 col-sm-2'),
 	                Div(
-	                    Submit('submit', 'Crear autor', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+	                    Submit('submit', 'Editar autor', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
 	                css_class='col-sm-2'),
 	                css_class='row')
 	       		 )
