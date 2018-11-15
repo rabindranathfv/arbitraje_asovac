@@ -8,21 +8,12 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard container">
-				<div class="row middle-content">
-					<div class="col-sm-6">
-						<h2 class="text-left">Lista de Autores</h2>
-					</div>
-					<div class="col-sm-4">
-						<form class="form-inline text-right">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-								</span>
-							</div>
-						</form>
-					</div>
-					<div class="col-sm-2 btn-lg">
+				<h2 class="text-left">Lista de Autores</h2>
+				<div class = "col-sm-12">
+					<!-- data table -->
+					<input type="hidden" id="listAuthors" name="list" data-url="{% url 'autores:list_authors' %}">
+					
+					<div id ="toolbar">
 						<div class="btn-group">
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 							<ul class="dropdown-menu">
@@ -32,14 +23,6 @@
 							</ul>
 						</div>
 					</div>
-				</div>
-				<br>
-				<div class = "col-sm-12">
-					<!-- data table -->
-					<input type="hidden" id="listAuthors" name="list" data-url="{% url 'autores:list_authors' %}">
-					
-					<div id ="toolbar">
-					</div>
 
 					<table id="table"
 					data-toggle="table"
@@ -47,6 +30,7 @@
 					data-side-pagination="server"
 					data-show-export="true"
 					data-toolbar="#toolbar"
+					data-toolbar-align="right"
 					data-pagination="true"
 					data-page-size="5"
 					data-page-list="[0,5,10,25,50,100, 200]"
@@ -62,7 +46,7 @@
 								<th data-field="nombres" data-sortable="true">Nombres</th>
 								<th data-field="apellidos" data-sortable="true">Apellidos</th>
 								<th data-field="correo_electronico" data-sortable="true">Correo electrónico</th>
-								<th data-field="cedula_pasaporte" data-sortable="true">Cedula</th>
+								<th data-field="cedula_pasaporte" data-sortable="true">Cédula/Pasaporte</th>
 								<th data-field="universidad" data-sortable="true">Universidad</th>
 								<th data-field="operate" data-events="operateEvents" data-formatter="operateAuthors" data-align="center">Acciones</th>
 							</tr>
@@ -83,20 +67,26 @@
 	</script>
 	<script>
 		var $table = $('#table');
-		// your custom ajax request here
-	function operateAuthors(value, row, index) {
-        var route_details="/autores/editar-autor/"+row.id;
-        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
-        return [
-            '<a class="editAuthors" href="',
-            route_edit,
-            ' "',
-            'title="Editar" >',
-            '<i class="far fa-edit"></i>',
-            '</a>  '
-        ].join('');
-    }
+		function operateAuthors(value, row, index) {
+	        var route_details="{% url 'autores:author_details' 1 %}".replace(1, row.id);
+	        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
+	        return [
+	            '<a class="editAuthors" href="',
+	            route_edit,
+	            ' "',
+	            'title="Editar" >',
+	            '<i class="far fa-edit"></i>',
+	            '</a>  ',
+	            '<a class="authorsDetails" href="',
+	            route_details,
+	            ' "',
+	            'title="Detalles del autor" >',
+	            '<i class="fa fa-user"></i>',
+	            '</a>  ',
+	        ].join('');
+	    }
 
+	    // your custom ajax request here
 		function ajaxAuthors(params) {
 			var route= $("#listAuthors").attr("data-url");
 			// console.log (route);

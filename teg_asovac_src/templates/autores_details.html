@@ -1,0 +1,38 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard container">
+				<div class="row middle-content text-center">
+
+                    <div class="col-sm-6">
+                        <strong>Nombres:</strong> <p>{{ autor.nombres }}</p>
+                        <strong>Apellidos:</strong> <p>{{ autor.apellidos }}</p>
+                        <strong>Género:</strong> <p>{{ autor.genero }}</p>
+                        <strong>Universidad:</strong> <p>{{ autor.universidad.nombre }}</p>     
+                        <strong>Cédula/Pasaporte:</strong> <p>{{ autor.cedula_pasaporte }}</p>
+                        <strong>Corre Eletrónico:</strong> <p> {{ autor.correo_electronico }}</p>
+                        <strong>Capítulo perteneciente:</strong> <p>{{ autor.capitulo_perteneciente }}</p>
+                    </div>
+
+                    <div class="col-sm-6">
+                    	<strong>Nivel de instrucción:</strong> <p>{{ autor.nivel_instruccion }}</p>
+                        <strong>Teléfono de oficina:</strong> <p>{{ autor.telefono_oficina }}</p>
+                        <strong>Telefóno de habitación/Celula:</strong> <p>{{ autor.telefono_habitacion_celular }}</p>
+                        <strong>Constancia de estudio:</strong> <p>{{ autor.constancia_estudio }}</p>
+                        <strong>Dirección de envío de correspondencia:</strong> <p>{{ autor.direccion_envio_correspondencia }}</p>
+                        <strong>Es miembro Asovac:</strong> <p>{{ autor.es_miembro_asovac }}</p>
+                        <strong>Observaciones:</strong> <p>{{ autor.observaciones }}</p>
+                    </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
