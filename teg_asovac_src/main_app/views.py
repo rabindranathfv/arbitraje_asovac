@@ -318,7 +318,7 @@ def home(request):
     arbitraje_data = Sistema_asovac.objects.all()
 
     params_validations = dict()
-    #rol_id=get_roles(request.user.id)
+    #rol_id=get_roles(request.user.id , arbitraje_id)
     #rol_name=get_names_roles(request.user.id)
 
     #params_validations['rol_name']=get_names_roles(request.user.id)
@@ -490,7 +490,7 @@ def data_basic(request, arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
     # print (rol_id)
     
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
@@ -616,7 +616,7 @@ def data_basic(request, arbitraje_id):
 
 def state_arbitration(request, arbitraje_id):
 
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -670,7 +670,7 @@ def state_arbitration(request, arbitraje_id):
     return render(request, 'main_app_status_arbitration.html', context)
 
 def users_list(request, arbitraje_id):
-    rol_id = get_roles(request.user.id)
+    rol_id = get_roles(request.user.id , arbitraje_id)
     users = User.objects.all()
     
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
@@ -717,7 +717,7 @@ def users_list(request, arbitraje_id):
 
 
 def user_edit(request, arbitraje_id):
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -752,7 +752,7 @@ def user_edit(request, arbitraje_id):
 
 def user_roles(request, arbitraje_id):
 
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -787,7 +787,7 @@ def user_roles(request, arbitraje_id):
 
 
 def coord_general(request, arbitraje_id):
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -831,7 +831,7 @@ def coord_general(request, arbitraje_id):
 
 
 def coord_area(request, arbitraje_id):
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -864,7 +864,7 @@ def coord_area(request, arbitraje_id):
     return render(request, 'main_app_coord_area.html', context)
 
 def total(request, arbitraje_id):
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     # print (rol_id)
     estado = request.session['estado']
@@ -1082,10 +1082,10 @@ def get_subareas(request,id):
 ##########################     Vista areas subareas     ###########################
 ###################################################################################
 def areas_subareas(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
