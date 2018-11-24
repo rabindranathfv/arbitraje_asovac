@@ -179,10 +179,10 @@ def get_roles(user_id, arbitraje_id):
     user = get_object_or_404(User, id = user_id)
     usuario_asovac = get_object_or_404(Usuario_asovac, usuario = user)
     arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
-    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
-    if usuario_rol_in_sistema:
+    try:
+        usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
         rol_id = usuario_rol_in_sistema.rol.id
-    else:
+    except:
         rol_id = 6
 
     return rol_id
