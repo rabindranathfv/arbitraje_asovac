@@ -89,6 +89,22 @@ class Usuario_asovac(models.Model):
 
 	def __str__(self):
 		return "{} {}".format(self.usuario.first_name,self.usuario.last_name).encode('utf-8', errors='replace')
+
+
+"""""""""""""""""""""""""""
+Usuario_rol_in_sistema Model
+"""""""""""""""""""""""""""
+class Usuario_rol_in_sistema(models.Model):
+	
+	rol = models.ForeignKey(Rol)
+	sistema_asovac = models.ForeignKey(Sistema_asovac)
+	usuario_asovac = models.ForeignKey(Usuario_asovac)
+
+	status = models.BooleanField(default = True)
+
+	def __str__(self):
+		return "{} {}".format(self.usuario_asovac.usuario.first_name,self.usuario_asovac.usuario.last_name).encode('utf-8', errors='replace')
+
 """
 	def biggest_role(self):
 		my_roles = self.rol.all()
@@ -104,16 +120,6 @@ class Usuario_asovac(models.Model):
 	
 
 
-"""""""""""""""""""""""""""
-Usuario_rol_in_sistema Model
-"""""""""""""""""""""""""""
-class Usuario_rol_in_sistema(models.Model):
-	
-	rol = models.ForeignKey(Rol)
-	sistema_asovac = models.ForeignKey(Sistema_asovac, blank = True)
-	usuario_asovac = models.ForeignKey(Usuario_asovac)
-
-	status = models.BooleanField(default = True)
 
 
 

@@ -41,66 +41,67 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
 
     ### Opciones del Menu Principal ###
     # verify_configuration
-    if not ( (estado == 0 and 2 in rol_id) or ((estado != 1 and estado != 8) and 3 in rol_id) or ((estado != 8) and 4 in rol_id) or 5 in rol_id):
+    if not ( (estado == 0 and 2 == rol_id) or ((estado != 1 and estado != 8) and 3 == rol_id) or ((estado != 8) and 4 == rol_id) or 5 == rol_id):
         top_nav_options.append('configuration')
+
     # verify arbitration
-    if not ( ((estado == 0 or estado == 8) and 2 in rol_id) or ((estado == 0 or estado == 8) and 3 in rol_id) or 4 in rol_id or 5 in rol_id):
+    if not ( ((estado == 0 or estado == 8) and 2 == rol_id) or ((estado == 0 or estado == 8) and 3 == rol_id) or 4 == rol_id or 5 == rol_id):
         top_nav_options.append('arbitration')
         top_nav_options.append('area/subarea')
     # verify result
-    if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 in rol_id) or ((estado != 6 and estado != 8) and 3 in rol_id) or ((estado != 8 and estado != 6) and 4 in rol_id) or (estado != 6 and 5 in rol_id)):
+    if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 == rol_id) or ((estado != 6 and estado != 8) and 3 == rol_id) or ((estado != 8 and estado != 6) and 4 == rol_id) or (estado != 6 and 5 == rol_id)):
         top_nav_options.append('result')
     # verify job
-    if ((estado == 3 and 5 in rol_id) or (estado == 5 and 4 in rol_id)):
+    if ((estado == 3 and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
         top_nav_options.append('jobs')
     # verify trabajo_options
-    if(estado == 3 and 5 in rol_id):
+    if(estado == 3 and 5 >= rol_id):
         top_nav_options.append('job_options')
 
     items['top_nav_options'] = top_nav_options
 
     ### Opciones del Menu de la Barra Lateral o Sidebar ###
     # verify_configuracion_general_option
-    if (1 in rol_id and item_active == 1) or (estado != 0 and 2 in rol_id and item_active == 1):
+    if (1 >= rol_id and item_active == 1) or (estado != 0 and 2 >= rol_id and item_active == 1):
         sidebar_options.append("general_config")
     # verify_datos_basicos_option
-    if not (estado == 2 and (1 not in rol_id and 2 not in rol_id) and item_active == 1) or (estado == 4 and (1 not in rol_id and 2 not in rol_id) and item_active ==1):
+    if not (estado == 2 and (1 != rol_id and 2 != rol_id) and item_active == 1) or (estado == 4 and (1 != rol_id and 2 != rol_id) and item_active ==1):
         sidebar_options.append("basic_data")
     # verify_estado_arbitrajes_option (This one is always true...)
     sidebar_options.append("arbitration_state")
     # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
-    if (1 in rol_id and item_active == 1):
+    if (1 >= rol_id and item_active == 1):
         sidebar_options.append("users")
         sidebar_options.append("assing_general_coordinator")
     # verify_asignacion_coordinador_area_option
-    if(estado ==2 and 2 in rol_id and item_active == 1) or (1 in rol_id and item_active == 1):
+    if(estado ==2 and 2 >= rol_id and item_active == 1) or (1 >= rol_id and item_active == 1):
         sidebar_options.append("assing_area_coordinator")
     # verify_recursos_option
-    if (1 in rol_id and item_active == 1) or (estado ==8 and (2 in rol_id or 3 in rol_id  or 4 in rol_id) and item_active==1):
+    if (1 >= rol_id and item_active == 1) or (estado ==8 and (2 >= rol_id or 3 >= rol_id  or 4 >= rol_id) and item_active==1):
         sidebar_options.append("resources")
     # verify_areas_subareas_option
-    if (1 in rol_id and item_active == 1) or (estado == 1 and (2 in rol_id or 3 in rol_id) and item_active == 1) or (estado == 2 and 2 in rol_id and item_active ==1):
+    if (1 >= rol_id and item_active == 1) or (estado == 1 and (2 >= rol_id or 3 >= rol_id) and item_active == 1) or (estado == 2 and 2 >= rol_id and item_active ==1):
         sidebar_options.append("areas_subareas")
     # verify_autores_option
-    if ((estado == 0 or estado ==5 or estado ==6 or estado ==7 or estado ==8) and 1 in rol_id and item_active == 2) or ((estado == 1 or estado ==2 or estado == 3 or estado == 4) and (1 in rol_id or 2 in rol_id) and item_active == 2):
+    if ((estado == 0 or estado ==5 or estado ==6 or estado ==7 or estado ==8) and 1 >= rol_id and item_active == 2) or ((estado == 1 or estado ==2 or estado == 3 or estado == 4) and (1 >= rol_id or 2 >= rol_id) and item_active == 2):
         sidebar_options.append("authors")
     # verify_arbitros_option
-    if (1 in rol_id and item_active == 2) or (estado == 1 and 2 in rol_id and item_active == 2) or ((estado ==2 or estado == 3 or estado == 4) and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado ==1 and 3 in rol_id and item_active==2):
+    if (1 >= rol_id and item_active == 2) or (estado == 1 and 2 >= rol_id and item_active == 2) or ((estado ==2 or estado == 3 or estado == 4) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (estado ==1 and 3 >= rol_id and item_active==2):
         sidebar_options.append("arbiters")
     # verify_asignar_sesion
-    if(1 in rol_id and item_active == 2) or (estado == 4 and (2 in rol_id or 3 in rol_id) and item_active == 2) or (estado ==7 and 2 in rol_id and item_active == 2):
+    if(1 >= rol_id and item_active == 2) or (estado == 4 and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (estado ==7 and 2 >= rol_id and item_active == 2):
         sidebar_options.append("assing_session")
     # verify_trabajo_option
-    if((estado ==3 or estado ==4 or estado ==5) and (2 in rol_id or 3 in rol_id) and item_active == 2) or (1 in rol_id and item_active ==2) or(estado ==6 and 3 in rol_id and item_active ==2):
+    if((estado ==3 or estado ==4 or estado ==5) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (1 >= rol_id and item_active ==2) or(estado ==6 and 3 >= rol_id and item_active ==2):
         sidebar_options.append("jobs")
     # verify_sesions_arbitraje_option
-    if (1 in rol_id and item_active == 2) or ((estado == 4 or estado ==7) and (2 in rol_id or 3 in rol_id) and item_active == 2):
+    if (1 >= rol_id and item_active == 2) or ((estado == 4 or estado ==7) and (2 >= rol_id or 3 >= rol_id) and item_active == 2):
         sidebar_options.append("session_arbitration")
     # verify_arbitraje_option
-    if (1 in rol_id and item_active == 2) or (estado ==6 and (2 in rol_id) and item_active == 2):
+    if (1 >= rol_id and item_active == 2) or (estado ==6 and (2 >= rol_id) and item_active == 2):
         sidebar_options.append("arbitrations")
     # verify_eventos_sidebar_full & verify_espacio_option (same condition)
-    if (1 in rol_id and item_active == 4):
+    if (1 >= rol_id and item_active == 4):
         sidebar_options.append("events")
         sidebar_options.append("event_space")
 
@@ -109,15 +110,15 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     return items
 
 def get_route_configuracion(estado,rol_id, arbitraje_id):
-    if(1 in rol_id or 2 in rol_id):
+    if(1 == rol_id or 2 == rol_id):
         #Caso que sea admin o coordinador general
         return reverse('main_app:data_basic', kwargs={'arbitraje_id': arbitraje_id})
-    elif 3 in rol_id:
+    elif 3 == rol_id:
         if(estado == 8):
             return reverse('recursos:resources_author')
         if(estado == 1):
             return reverse('arbitrajes:arbitrations_areas_subareas')
-    elif 4 in rol_id:
+    elif 4 == rol_id:
         if(estado == 8):
             return reverse('recursos:resources_author')
     return None
@@ -125,9 +126,9 @@ def get_route_configuracion(estado,rol_id, arbitraje_id):
 
 
 def get_route_seguimiento(estado,rol_id):
-    if 1 in rol_id:
+    if 1 == rol_id:
         return reverse('autores:authors_list')
-    elif 2 in rol_id:
+    elif 2 == rol_id:
         if(estado in [1,2,3,4]):
             return reverse('autores:authors_list')
         elif(estado == 5):
@@ -136,7 +137,7 @@ def get_route_seguimiento(estado,rol_id):
             return reverse('arbitrajes:listado')
         elif(estado == 7):
             return reverse('arbitrajes:asignacion_de_sesion')
-    elif 3 in rol_id:
+    elif 3 == rol_id:
         if(estado in [1,2,3,4]):
             return reverse('arbitrajes:referee_list')
         elif(estado in  [5,6]):
@@ -146,21 +147,21 @@ def get_route_seguimiento(estado,rol_id):
 
 
 def get_route_trabajos_sidebar(estado,rol_id,item_active):
-    if (estado == 4 and 2 in rol_id and item_active == 2):
+    if (estado == 4 and 2 == rol_id and item_active == 2):
         return reverse('trabajos:trabajos_evaluados')
     else:
         return reverse('trabajos:jobs_list')
 
 
 def get_route_trabajos_navbar(estado,rol_id):
-    if(estado == 3 and 5 in rol_id):
+    if(estado == 3 and 5 == rol_id):
         return reverse('trabajos:trabajos')
-    if(estado == 5 and 4 in rol_id):
+    if(estado == 5 and 4 == rol_id):
         return reverse('trabajos:trabajos_evaluados')
     return None 
 
 def get_route_resultados(estado,rol_id, arbitraje_id):
-    if(estado== 6 and 5 in rol_id):
+    if(estado== 6 and 5 == rol_id):
         return reverse('trabajos:trabajos_resultados_autor')
     else:
         return reverse('main_app:total', kwargs={'arbitraje_id': arbitraje_id})
@@ -178,8 +179,7 @@ def get_roles(user_id, arbitraje_id):
     user = get_object_or_404(User, id = user_id)
     usuario_asovac = get_object_or_404(Usuario_asovac, usuario = user)
     arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
-    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
-        
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
     if usuario_rol_in_sistema:
         rol_id = usuario_rol_in_sistema.rol.id
     else:
@@ -361,10 +361,8 @@ def home(request):
     context = {
         'nombre_vista' : 'Inicio',
         'arb_data' : arb_data,
-        'rol_id' : rol_id,
         'params_validations' : params_validations,
     }
-    print rol_id
     
     return render(request, 'main_app_home.html', context)
 
@@ -392,7 +390,6 @@ def dashboard(request, arbitraje_id):
     request.session['estado'] = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id, arbitraje.id)
-
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
@@ -407,7 +404,7 @@ def dashboard(request, arbitraje_id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-    print arbitraje.estado_arbitraje, progress_pct
+
 
     # for item,val in items.items():
         # print item, ":", val[0]
