@@ -83,12 +83,13 @@ Usuario_asovac Model
 class Usuario_asovac(models.Model):
 
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
-	rol = models.ManyToManyField(Rol,blank=True)
-	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
 	sub_area = models.ManyToManyField(Sub_area, blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
 
+	def __str__(self):
+		return "{} {}".format(self.usuario.first_name,self.usuario.last_name).encode('utf-8', errors='replace')
+"""
 	def biggest_role(self):
 		my_roles = self.rol.all()
 		biggest_role = None
@@ -99,9 +100,20 @@ class Usuario_asovac(models.Model):
 			else:
 				biggest_role = role
 		return biggest_role
+"""
+	
 
-	def __str__(self):
-		return "{} {}".format(self.usuario.first_name,self.usuario.last_name).encode('utf-8', errors='replace')
+
+"""""""""""""""""""""""""""
+Usuario_rol_in_sistema Model
+"""""""""""""""""""""""""""
+class Usuario_rol_in_sistema(models.Model):
+	
+	rol = models.ForeignKey(Rol)
+	sistema_asovac = models.ForeignKey(Sistema_asovac, blank = True)
+	usuario_asovac = models.ForeignKey(Usuario_asovac)
+
+	status = models.BooleanField(default = True)
 
 
 
@@ -134,9 +146,6 @@ def crear_usuario_asovac(sender, **kwargs):
 			rol = Rol(nombre="Autor",descripcion="Autor")
 			rol.save()
 
-
-		usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
-		usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
 

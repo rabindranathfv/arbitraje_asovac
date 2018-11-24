@@ -97,17 +97,17 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-class AssingRolForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        self.max_role = kwargs.pop('max_role')
-        super(AssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
-        self.fields['rol'].required = True
+#class AssingRolForm(forms.ModelForm):
+ #   def __init__(self, *args, **kwargs):
+  #      self.max_role = kwargs.pop('max_role')
+   #     super(AssingRolForm, self).__init__(*args, **kwargs)
+    #    self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
+     #   self.fields['rol'].required = True
 
-    class Meta:
-        model = Usuario_asovac
-        fields = ['rol']
-        widgets = {'rol': CheckboxSelectMultiple()}
+#    class Meta:
+#       model = Usuario_asovac
+#        fields = ['rol']
+#        widgets = {'rol': CheckboxSelectMultiple()}
 
 class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -140,12 +140,12 @@ class ArbitrajeStateChangeForm(forms.ModelForm):
             raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
         return data
 
-
+"""
 class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
-
+"""
 class AreaForm(forms.ModelForm):
     class Meta:
         model= Area
