@@ -18,7 +18,7 @@ from django.db.models import Q
 from django.db.models import Count
 
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
-from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area
+from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -166,11 +166,25 @@ def get_route_resultados(estado,rol_id, arbitraje_id):
         return reverse('main_app:total', kwargs={'arbitraje_id': arbitraje_id})
 
 #Obtener roles del usuario
+"""
 def get_roles(user_id):
     rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
     rol_id=[]
     for item in rol:
         rol_id.append(item.id)
+    return rol_id
+"""
+def get_roles(user_id, arbitraje_id):
+    user = get_object_or_404(User, id = user_id)
+    usuario_asovac = get_object_or_404(Usuario_asovac, usuario = user)
+    arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+        
+    if usuario_rol_in_sistema:
+        rol_id = usuario_rol_in_sistema.rol.id
+    else:
+        rol_id = 6
+
     return rol_id
 
 # Obtener nombre de los roles del usuario
@@ -304,37 +318,44 @@ def home(request):
     arbitraje_data = Sistema_asovac.objects.all()
 
     params_validations = dict()
-    rol_id=get_roles(request.user.id)
-    rol_name=get_names_roles(request.user.id)
+    #rol_id=get_roles(request.user.id)
+    #rol_name=get_names_roles(request.user.id)
 
-    params_validations['rol_name']=get_names_roles(request.user.id)
-    params_validations['cant']=params_validations['rol_name']
-    params_validations['is_admin']=is_admin( params_validations['rol_name'])
+    #params_validations['rol_name']=get_names_roles(request.user.id)
+    #params_validations['cant']=params_validations['rol_name']
+    #params_validations['is_admin']=is_admin( params_validations['rol_name'])
+
+    params_validations['is_admin']= request.user.is_staff
 
     # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
     allow_entry_list = []
     # Lista de strings de estados de los arbitrajes
     state_strings = []
 
+    #Lista de roles que tiene el usuario en el sistema, si no tiene un rol asignado en el sistema se retorna 6 para que no entre en ningún estado
+    rol_list = []
+
     # En este ciclo for determinamos el string de estado de un arbitraje y si el usuario
     # puede o no acceder a el
     for arb in arbitraje_data:
+        rol_id = get_roles(request.user.id , arb.id)
+        rol_list.append(rol_id)
         state_strings.append(estados_arbitraje[arb.estado_arbitraje])
-        if 1 in rol_id:
+        if 1 == rol_id:
             allow_entry_list.append(True)
-        elif 2 in rol_id and arb.estado_arbitraje != 0:
+        elif 2 <= rol_id and arb.estado_arbitraje != 0:
             allow_entry_list.append(True)
-        elif 3 in rol_id and arb.estado_arbitraje != 0:
+        elif 3 <= rol_id and arb.estado_arbitraje != 0:
             allow_entry_list.append(True)
-        elif 4 in rol_id and arb.estado_arbitraje in [5,6,8]:
+        elif 4 <= rol_id and arb.estado_arbitraje in [5,6,8]:
             allow_entry_list.append(True)
-        elif 5 in rol_id and arb.estado_arbitraje in [3,6]:
+        elif 5 <= rol_id and arb.estado_arbitraje in [3,6]:
             allow_entry_list.append(True)
         else:
             allow_entry_list.append(False)
 
     # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
-    arb_data = zip(arbitraje_data, state_strings, allow_entry_list)
+    arb_data = zip(arbitraje_data, state_strings, allow_entry_list,rol_list)
 
     print(arbitraje_data, state_strings, allow_entry_list)
     context = {
@@ -370,7 +391,7 @@ def dashboard(request, arbitraje_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     request.session['estado'] = arbitraje.estado_arbitraje
 
-    rol_id=get_roles(request.user.id)
+    rol_id=get_roles(request.user.id, arbitraje.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
@@ -885,10 +906,10 @@ def apps_selection(request):
     user= get_object_or_404(User,id=user_id)
     
     user= Usuario_asovac.objects.get(usuario_id=user_id)
-    user_role = user.biggest_role()
+    #user_role = user.biggest_role()
 
     context = {
-        'user_role': user_role,
+        #'user_role': user_role,
         'nombre_vista' : 'Selección de Aplicación',
     }
 
