@@ -80,6 +80,23 @@ $.ajaxSetup({
         ].join('');
     }
 
+    function operateUsuarios(value, row, index) {
+        return [
+            '<a class="viewUsuario" href="javascript:void(0)" title="Ver">',
+            '<i class="far fa-eye"></i>',
+            '</a>  ',
+            '<a class="editUsuario" href="javascript:void(0)" title="Editar" >',
+            '<i class="far fa-edit"></i>',
+            '</a>  ',
+            '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fa fa-trash"></i>',
+            '</a>' ,
+            '<a class="" href="javascript:void(0)" title="Roles" >', 
+                '<i class="fas fa-users"></i>', 
+            '</a>' 
+        ].join('');
+    }
+
 /*******************************************************************************************/
 /**************     Para capturar el evento de los botones de las tablas     ***************/
 /*******************************************************************************************/
@@ -197,6 +214,25 @@ $.ajaxSetup({
                     // });
                 }
             });
+        },
+        'click .viewUsuario': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+
+
         },
     };
 

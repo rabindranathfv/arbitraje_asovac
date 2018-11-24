@@ -658,7 +658,7 @@ def users_list(request, arbitraje_id):
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
     user_asovac = Usuario_asovac.objects.all()
     users = Usuario_asovac.objects.all()
-
+    print users
     for user in user_asovac:
         query = user.usuario.username
         user.rol.all()
@@ -1179,7 +1179,7 @@ def process_subareas_modal(request,form,template_name):
 
 
 ###################################################################################
-########################     Carga de reas via files     ##########################
+########################     Carga de areas via files     ##########################
 ###################################################################################
 
 def load_areas_modal(request):
@@ -1499,4 +1499,89 @@ def removeSubarea(request,id):
             'message':message,
         }
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+
+###################################################################################
+##############     Carga el contenido de la tabla de usuarios     #################
+###################################################################################
+
+
+def list_usuarios(request):
+    
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Sub_area.objects.all().order_by(order).query
+            data=Sub_area.objects.all().order_by(order)
+            total= Sub_area.objects.all().count()
+        else:
+            print "consulta normal"
+            arbitraje_id = request.session['arbitraje_id']
+            users = User.objects.all()
+            users = Usuario_asovac.objects.all()
+
+            # print Sub_area.objects.all().order_by(order)[init:limit].query
+            # test= Sub_area.objects.all().order_by(order)[init:limit]
+            data=User.objects.all().order_by(order)[init:limit]
+            total= User.objects.all().count()
+            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
+        response['query'].append({'id':item.id,'nombre': item.first_name,'apellido':item.last_name,'nombre_user': item.username,'correo':item.email})
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+###################################################################################
+#############################     Crud Usuarios     ###############################
+###################################################################################
+def viewUsuario(request,id,arbitraje_id):
+    data= dict()
+    subarea=Sub_area.objects.get(id=id)
+    data['status']= 200
+    context={
+        'subarea':subarea,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)

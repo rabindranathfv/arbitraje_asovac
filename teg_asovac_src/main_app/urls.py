@@ -55,6 +55,7 @@ urlpatterns = [
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),
     url(r'^listSubareas$',views.list_subareas,name='list_subareas'),
+    url(r'^listUsuarios$',views.list_usuarios,name='list_usuarios'),
     
     # CRUD Areas
     url(r'^areas-subareas/viewArea/(?P<id>\d+)$',views.viewArea,name='verArea'),
@@ -66,6 +67,10 @@ urlpatterns = [
     url(r'^areas-subareas/editSubarea/(?P<id>\d+)$',views.editSubarea,name='editarSubarea'),
     url(r'^areas-subareas/removeSubarea/(?P<id>\d+)$',views.removeSubarea,name='eliminarSubarea'),
 
+    # CRUD Usuarios
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/viewUsuario/(?P<id>\d+)$',views.viewUsuario,name='verUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/editUsuario/(?P<id>\d+)$',views.editSubarea,name='editarUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/removeUsuario/(?P<id>\d+)$',views.removeSubarea,name='eliminarUsuario'),
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
