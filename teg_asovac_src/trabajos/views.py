@@ -109,9 +109,9 @@ def jobs_list(request):
     # request.session para almacenar el item seleccionado del sidebar
     request.session['sidebar_item'] = "Trabajos"
 
-    rol_id=get_roles(request.user.id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
     area=request.session['area']
