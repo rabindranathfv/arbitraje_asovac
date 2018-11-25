@@ -35,12 +35,12 @@ def admin_create_author(request):
 	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
 	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-		rol_id=get_roles(request.user.id)
 
 		# print (rol_id)
 		estado = request.session['estado']
 		event_id = request.session['arbitraje_id']
-		
+		rol_id=get_roles(request.user.id , event_id)
+
 		item_active = 0
 		items = validate_rol_status(estado,rol_id,item_active,event_id)
 
@@ -87,12 +87,12 @@ def authors_list(request):
 	# request.session para almacenar el item seleccionado del sidebar
 	request.session['sidebar_item'] = "Autores"
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 
 	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , arbitraje_id)
 
 	item_active = 2
 	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -202,12 +202,12 @@ def author_edit(request, autor_id):
 	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
 	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-		rol_id=get_roles(request.user.id)
 
 		# print (rol_id)
 		estado = request.session['estado']
 		arbitraje_id = request.session['arbitraje_id']
-		
+		rol_id=get_roles(request.user.id , arbitraje_id)
+
 		item_active = 2
 		items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -243,7 +243,6 @@ def author_details(request, autor_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 	estado = request.session['estado']
@@ -251,6 +250,7 @@ def author_details(request, autor_id):
 	
 	item_active = 2
 	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+	rol_id=get_roles(request.user.id , arbitraje_id)
 
 	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
 	route_seg= get_route_seguimiento(estado,rol_id)
@@ -293,11 +293,11 @@ def postular_trabajo(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , event_id)
 	
 	item_active = 0
 	items = validate_rol_status(estado,rol_id,item_active,event_id)
@@ -439,11 +439,11 @@ def detalles_pago(request, pagador_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , event_id)
 	
 	item_active = 0
 	items=validate_rol_status(estado,rol_id,item_active, event_id)
