@@ -166,15 +166,23 @@ def get_route_resultados(estado,rol_id, arbitraje_id):
     else:
         return reverse('main_app:total', kwargs={'arbitraje_id': arbitraje_id})
 
+# Para obtener el rol de mayor permisos asociado a un arbitraje
 def get_roles(user_id, arbitraje_id):
     # Variables para validaciones
     user = get_object_or_404(User, id = user_id)
     usuario_asovac = get_object_or_404(Usuario_asovac, usuario = user)
-    arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    # is_admin se envia para saber si el usuario es administrador
+    if arbitraje_id != "is_admin":
+        arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
 
     # Se verifica que tenga un rol y pertenezca a un arbitraje
     has_rol= Usuario_rol_in_sistema.objects.filter(usuario_asovac = usuario_asovac).exists()
-    has_arbitraje = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac).exists()
+    # is_admin se envia para saber si el usuario es administrador
+    if arbitraje_id != "is_admin":
+        has_arbitraje = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac).exists()
+    else:
+        has_arbitraje = False
+
     rol_id= 6
 
     # Se verifica que exista el rol y un arbitraje asociado
@@ -192,7 +200,7 @@ def get_roles(user_id, arbitraje_id):
             if (rol.rol_id == 1 or rol.rol_id == 2 ) and rol.status == True:
                 rol_id=rol.rol_id
                 # print "Tiene rol y arbitraje. El mayor rol es: ",rol.rol_id, " y el estatus es: ", rol.status
-    
+
     return rol_id
 
 # Obtener el rol de mayor privilegio
@@ -232,7 +240,7 @@ def update_state_arbitration(arbitraje_id,estado):
 
 #Verifica si el usuario tiene rol de admin
 def is_admin(rol):
-    if rol.id == 1:
+    if rol == 1:
         return 1
     else:
         return 0
@@ -341,8 +349,9 @@ def home(request):
     #params_validations['rol_name']=get_names_roles(request.user.id)
     #params_validations['cant']=params_validations['rol_name']
     #params_validations['is_admin']=is_admin( params_validations['rol_name'])
-
-    params_validations['is_admin']= request.user.is_staff
+    admin=rol_id = get_roles(request.user.id ,"is_admin")
+    
+    params_validations['is_admin']= is_admin(admin)
 
     # Lista de booleanos que indica si un arbitraje despliega o no el boton de "Entrar"
     allow_entry_list = []
@@ -356,7 +365,6 @@ def home(request):
     # puede o no acceder a el
     for arb in arbitraje_data:
         rol_id = get_roles(request.user.id , arb.id)
-        print "El rol es: ",rol_id
         rol_list.append(rol_id)
         state_strings.append(estados_arbitraje[arb.estado_arbitraje])
         if 1 == rol_id:
