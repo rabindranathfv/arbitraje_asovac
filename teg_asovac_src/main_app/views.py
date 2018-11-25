@@ -166,26 +166,43 @@ def get_route_resultados(estado,rol_id, arbitraje_id):
     else:
         return reverse('main_app:total', kwargs={'arbitraje_id': arbitraje_id})
 
-#Obtener roles del usuario
-"""
-def get_roles(user_id):
-    rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
-    rol_id=[]
-    for item in rol:
-        rol_id.append(item.id)
-    return rol_id
-"""
 def get_roles(user_id, arbitraje_id):
+    # Variables para validaciones
     user = get_object_or_404(User, id = user_id)
     usuario_asovac = get_object_or_404(Usuario_asovac, usuario = user)
     arbitraje = get_object_or_404(Sistema_asovac, id = arbitraje_id)
-    try:
-        usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
-        rol_id = usuario_rol_in_sistema.rol.id
-    except:
-        rol_id = 6
 
+    # Se verifica que tenga un rol y pertenezca a un arbitraje
+    has_rol= Usuario_rol_in_sistema.objects.filter(usuario_asovac = usuario_asovac).exists()
+    has_arbitraje = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac).exists()
+    rol_id= 6
+
+    # Se verifica que exista el rol y un arbitraje asociado
+    if has_rol == True and has_arbitraje:
+        rols=Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+        rol= getMaxRol(rol_id, rols)
+        if rol.status == True:
+            rol_id=rol.rol_id
+            # print "Tiene rol y arbitraje. El mayor rol es: ",rol.rol_id, " y el estatus es: ", rol.status
+    else:
+        if has_rol:
+            # Para verificar que el rol del usuario es de administrador o coordinador general y este activo
+            rols=Usuario_rol_in_sistema.objects.filter(usuario_asovac = usuario_asovac)
+            rol= getMaxRol(rol_id, rols)
+            if (rol.rol_id == 1 or rol.rol_id == 2 ) and rol.status == True:
+                rol_id=rol.rol_id
+                # print "Tiene rol y arbitraje. El mayor rol es: ",rol.rol_id, " y el estatus es: ", rol.status
+    
     return rol_id
+
+# Obtener el rol de mayor privilegio
+def getMaxRol(rol, roles):
+    
+    for item in roles:
+        if rol > item.rol_id:
+            rol=item
+    
+    return rol 
 
 # Obtener nombre de los roles del usuario
 def get_names_roles(user_id):
@@ -339,6 +356,7 @@ def home(request):
     # puede o no acceder a el
     for arb in arbitraje_data:
         rol_id = get_roles(request.user.id , arb.id)
+        print "El rol es: ",rol_id
         rol_list.append(rol_id)
         state_strings.append(estados_arbitraje[arb.estado_arbitraje])
         if 1 == rol_id:

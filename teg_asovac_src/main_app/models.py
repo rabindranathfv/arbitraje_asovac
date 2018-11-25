@@ -97,7 +97,7 @@ Usuario_rol_in_sistema Model
 class Usuario_rol_in_sistema(models.Model):
 	
 	rol = models.ForeignKey(Rol)
-	sistema_asovac = models.ForeignKey(Sistema_asovac)
+	sistema_asovac = models.ForeignKey(Sistema_asovac,blank=True,null=True)
 	usuario_asovac = models.ForeignKey(Usuario_asovac)
 
 	status = models.BooleanField(default = True)
@@ -152,6 +152,12 @@ def crear_usuario_asovac(sender, **kwargs):
 			rol = Rol(nombre="Autor",descripcion="Autor")
 			rol.save()
 
+			Rol_admin=Usuario_rol_in_sistema(status="1",rol_id="1",usuario_asovac_id=usuario_asovac.id)
+			Rol_admin.save()
+		else:
+			if first_usuario_asovac == 1:
+				Rol_admin=Usuario_rol_in_sistema(status="1",rol_id="1",usuario_asovac_id=usuario_asovac.id)
+				Rol_admin.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
 
