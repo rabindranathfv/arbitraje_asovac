@@ -213,20 +213,25 @@ def getMaxRol(rol, roles):
     return rol 
 
 # Obtener nombre de los roles del usuario
-def get_names_roles(user_id):
-    rol = Usuario_asovac.objects.get(usuario_id=user_id).rol.all()
+def get_names_roles(user_id,name=True):
+    usuario_asovac = Usuario_asovac.objects.get(usuario_id=user_id)
     big_rol=None
 
-    for item in rol:
-        if big_rol:
-            if item.id < big_rol.id:
-                big_rol = item
-        else:
-            big_rol = item
-    # get roles
-    # rol_name=[]
-    # for item in rol:
-    #     rol_name.append(item)
+    # Manejo de roles
+    rol_id=6
+    rols=Usuario_rol_in_sistema.objects.filter(usuario_asovac_id = usuario_asovac.id)
+    big_rol= getMaxRol(rol_id, rols)
+    # big_rol.rol.nombre
+    # print "El mayor rol es: ",big_rol.rol_id, " y el estatus es: ", big_rol.status, " y el nombre del rol es ",big_rol.rol.nombre
+    if name == True:
+        # Para retornar el nombre del rol
+        rol_name=big_rol.rol.nombre
+        big_rol=rol_name
+    else:
+        # para retornar el id del rol
+        rol_id=big_rol.rol.id
+        big_rol=rol_id
+
     return big_rol
 
 #Update state of arbitration
@@ -247,6 +252,7 @@ def is_admin(rol):
 
 #Validar accesos segun rol clave y arbitraje seleccionado
 def validate_access(rol,data_arbitraje,clave):
+    
     if rol == '2':
         if clave == data_arbitraje.clave_maestra_coordinador_general:
             return 1
@@ -269,9 +275,10 @@ def create_params_validations(request,status):
     params_validations = dict()
     params_validations['rol_name']=get_names_roles(request.user.id)
     # params_validations['cant']=len(params_validations['rol_name'])
-    params_validations['cant']=params_validations['rol_name']
+    params_validations['rol_id']=get_names_roles(request.user.id,False)
     params_validations['is_admin']=is_admin( params_validations['rol_name'])
     params_validations['status']=status
+    # print params_validations
     return params_validations
 
 def compute_progress_bar(state):
@@ -1041,11 +1048,11 @@ def validate_access_modal(request,id):
     # print "Arbitraje:",arbitraje_id
 
     if request.method == 'POST':
-        # print "El metodo es post"
+        print "El metodo es post"
         clave=request.POST['password']
         rol=request.POST['rol']
         data_arbitraje=Sistema_asovac.objects.get(pk=arbitraje_id) 
-      
+        # print "El rol es: ", request.POST['rol'], " El arbitraje es: ",data_arbitraje
         # print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
         if validate_access(rol,data_arbitraje,clave) == 1:
             params_validations= create_params_validations(request,1)
