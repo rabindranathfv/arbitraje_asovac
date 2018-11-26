@@ -117,7 +117,7 @@ def get_route_configuracion(estado,rol_id, arbitraje_id):
         if(estado == 8):
             return reverse('recursos:resources_author')
         if(estado == 1):
-            return reverse('arbitrajes:arbitrations_areas_subareas')
+            return reverse('main_app:arbitrations_areas_subareas')
     elif 4 == rol_id:
         if(estado == 8):
             return reverse('recursos:resources_author')
