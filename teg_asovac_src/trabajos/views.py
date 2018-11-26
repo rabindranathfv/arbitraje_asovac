@@ -471,8 +471,9 @@ def show_areas_modal(request,id):
     user= get_object_or_404(User,id=id)
     auth_user=user    
     user= Usuario_asovac.objects.get(usuario_id=id)
-    user_role = user.biggest_role()
-    if(user_role.id == 1 or user_role.id == 2):
+    user_role= get_roles(user.id, "is_admin")
+    # print "El rol del usuario es: ",user_role
+    if(user_role == 1 or user_role == 2):
         subareas= Sub_area.objects.all()
         area= Area.objects.all()
       
