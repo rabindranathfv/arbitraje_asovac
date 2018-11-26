@@ -711,7 +711,7 @@ def users_list(request, arbitraje_id):
 
     for user in user_asovac:
         query = user.usuario.username
-        user.rol.all()
+        # user.rol.all()
         # for rol in user.rol.all():
         #user.area_id.all()
         #print (query)
