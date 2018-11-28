@@ -113,7 +113,7 @@ class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
                                                         # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.filter(rol__id = 2)
+        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
         self.fields['coordinador_general'].required = True
 
     class Meta:
