@@ -538,7 +538,8 @@ def data_basic(request, arbitraje_id):
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador general ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 2) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=2 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
+
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=2).nombre
             context = {
@@ -549,13 +550,13 @@ def data_basic(request, arbitraje_id):
             msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
             msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
             
-            for item in usuarios:
+            for item in usuario_rol_in_sistema:
                 
                 send_mail(
                         'Asignación de contraseña',         #titulo
                         msg_plain,                          #mensaje txt
                         config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario.email],               #destinatario
+                        [item.usuario_asovac.usuario.email],               #destinatario
                         html_message=msg_html,              #mensaje en html
                         )
 
@@ -566,7 +567,8 @@ def data_basic(request, arbitraje_id):
             arbitraje.save()
             messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 3) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id= 3) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
+
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=3).nombre
             context = {
@@ -577,13 +579,13 @@ def data_basic(request, arbitraje_id):
             msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
             msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
             
-            for item in usuarios:
+            for item in usuario_rol_in_sistema:
                 
                 send_mail(
                         'Asignación de contraseña',         #titulo
                         msg_plain,                          #mensaje txt
                         config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario.email],               #destinatario
+                        [item.usuario_asovac.usuario.email],               #destinatario
                         html_message=msg_html,              #mensaje en html
                         )
         
@@ -594,7 +596,8 @@ def data_basic(request, arbitraje_id):
             arbitraje.save()
             messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
 
-            usuarios = Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 4) | Usuario_asovac.objects.filter(Sistema_asovac_id = arbitraje.id, rol = 1) 
+            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=4 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
+
             nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
             nombre_rol = Rol.objects.get(id=4).nombre
             context = {
@@ -605,13 +608,13 @@ def data_basic(request, arbitraje_id):
             msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
             msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
             
-            for item in usuarios:
+            for item in usuario_rol_in_sistema:
                 
                 send_mail(
                         'Asignación de contraseña',         #titulo
                         msg_plain,                          #mensaje txt
                         config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario.email],               #destinatario
+                        [item.usuario_asovac.usuario.email],               #destinatario
                         html_message=msg_html,              #mensaje en html
                         )
         
