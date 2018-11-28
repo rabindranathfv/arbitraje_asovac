@@ -27,13 +27,13 @@ def trabajos(request):
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-    rol_id=get_roles(request.user.id)
-    
+   
     # print (rol_id)
     
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -109,9 +109,9 @@ def jobs_list(request):
     # request.session para almacenar el item seleccionado del sidebar
     request.session['sidebar_item'] = "Trabajos"
 
-    rol_id=get_roles(request.user.id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
     area=request.session['area']
@@ -153,10 +153,11 @@ def jobs_edit(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
+
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -193,10 +194,10 @@ def edit_trabajo(request, trabajo_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -247,10 +248,10 @@ def trabajos_evaluados(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, event_id)
@@ -285,10 +286,10 @@ def detalles_trabajo(request, trabajo_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -332,10 +333,10 @@ def trabajos_resultados_autor(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -471,8 +472,9 @@ def show_areas_modal(request,id):
     user= get_object_or_404(User,id=id)
     auth_user=user    
     user= Usuario_asovac.objects.get(usuario_id=id)
-    user_role = user.biggest_role()
-    if(user_role.id == 1 or user_role.id == 2):
+    user_role= get_roles(user.id, "is_admin")
+    # print "El rol del usuario es: ",user_role
+    if(user_role == 1 or user_role == 2):
         subareas= Sub_area.objects.all()
         area= Area.objects.all()
       
