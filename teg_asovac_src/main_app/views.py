@@ -376,13 +376,13 @@ def home(request):
         state_strings.append(estados_arbitraje[arb.estado_arbitraje])
         if 1 == rol_id:
             allow_entry_list.append(True)
-        elif 2 <= rol_id and arb.estado_arbitraje != 0:
+        elif 2 >= rol_id and arb.estado_arbitraje != 0:
             allow_entry_list.append(True)
-        elif 3 <= rol_id and arb.estado_arbitraje != 0:
+        elif 3 >= rol_id and arb.estado_arbitraje != 0:
             allow_entry_list.append(True)
-        elif 4 <= rol_id and arb.estado_arbitraje in [5,6,8]:
+        elif 4 >= rol_id and arb.estado_arbitraje in [5,6,8]:
             allow_entry_list.append(True)
-        elif 5 <= rol_id and arb.estado_arbitraje in [3,6]:
+        elif 5 >= rol_id and arb.estado_arbitraje in [3,6]:
             allow_entry_list.append(True)
         else:
             allow_entry_list.append(False)
