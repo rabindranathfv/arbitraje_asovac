@@ -1,0 +1,22 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+
+				<h2 class="text-left">Datos del autor</h2>
+				{% include "errors_form.html" %}
+				{% crispy form %}
+
+					
+			</div>
+		</div>
+	</div>
+
+</div>
+{% endblock %}

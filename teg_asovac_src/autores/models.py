@@ -41,7 +41,7 @@ class Autor(models.Model):
 	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
 	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
-	nivel_intruccion = models.CharField(max_length=50)
+	nivel_instruccion = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):

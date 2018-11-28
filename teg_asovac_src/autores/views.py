@@ -6,19 +6,71 @@ from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import DatosPagadorForm, PagoForm, FacturaForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
 
 from django.contrib import messages
 
-
+from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 # Create your views here.
+def admin_create_author(request):
+	if request.method == "POST":
+		form = AdminCreateAutorForm(request.POST)
+		if form.is_valid():
+			new_autor = form.save(commit = False)
+			usuario = User.objects.get(email = new_autor.correo_electronico)
+			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+			new_autor.usuario = usuario_asovac
+			new_autor.save()
+			return redirect('autores:authors_list')
+	else:
+		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+
+		# print (rol_id)
+		estado = request.session['estado']
+		event_id = request.session['arbitraje_id']
+		rol_id=get_roles(request.user.id , event_id)
+
+		item_active = 0
+		items = validate_rol_status(estado,rol_id,item_active,event_id)
+
+		route_conf = get_route_configuracion(estado,rol_id,event_id)
+		route_seg = get_route_seguimiento(estado,rol_id)
+		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+		route_resultados = get_route_resultados(estado,rol_id, event_id)
+
+		# print items
+		form = AdminCreateAutorForm()
+		context = {
+			"nombre_vista": 'Administración - Crear Autor',
+			'main_navbar_options' : main_navbar_options,
+			'estado' : estado,
+			'rol_id' : rol_id,
+			'event_id' : event_id,
+			'arbitraje_id' : event_id,
+			'item_active' : item_active,
+			'items':items,
+			'route_conf':route_conf,
+	        'route_seg':route_seg,
+	        'route_trabajos_sidebar':route_trabajos_sidebar,
+	        'route_trabajos_navbar': route_trabajos_navbar,
+	        'route_resultados': route_resultados,
+	        'form': form,
+	    }
+	return render(request,"autores_admin_create_author.html",context)
+
+
 def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
@@ -35,12 +87,12 @@ def authors_list(request):
 	# request.session para almacenar el item seleccionado del sidebar
 	request.session['sidebar_item'] = "Autores"
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 
 	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , arbitraje_id)
 
 	item_active = 2
 	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -67,31 +119,106 @@ def authors_list(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
     }
-	return render(request, 'main_app_authors_list.html', context)
+	return render(request, 'autores_authors_list.html', context)
 
-def author_edit(request):
-	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
+def list_authors (request):
+    response = {}
+    response['query'] = []
 
-	# print (rol_id)
-	estado = request.session['estado']
-	arbitraje_id = request.session['arbitraje_id']
-	
-	item_active = 2
-	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
 
-	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-	route_seg= get_route_seguimiento(estado,rol_id)
-	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombres':
+            order='nombres'
+        else:
+            if sort == 'fields.apellidos':
+                order='apellidos'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombres':
+            order='-nombres'
+        else:
+            if sort == 'fields.apellidos':
+                order='-apellidos'
+            else:
+                order='-'+sort
 
-	# print items
+    if search != "":
+        data=Autor.objects.all().filter( Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula_pasaporte__icontains=search) | Q(correo_electronico__icontains=search) | Q(universidad__nombre__icontains=search)).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Autor.objects.all().order_by(order).query
+            data=Autor.objects.all().order_by(order)
+            total= Autor.objects.all().count()
+        else:
+            print "consulta normal"
+            # print Area.objects.all().order_by(order)[init:limit].query
+            test= Autor.objects.all().order_by(order)[init:limit]
+            data=Autor.objects.all().order_by(order)[init:limit]
+            total= Autor.objects.all().count()
+            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
+        response['query'].append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
 
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+
+
+def author_edit(request, autor_id):
+	autor = get_object_or_404(Autor, id = autor_id)
+	if request.method == 'POST':
+		form = EditAutorForm(request.POST,instance = autor)
+		if form.is_valid():
+			form.save()
+	        return redirect('autores:authors_list')
+    
+	else:
+		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+
+		# print (rol_id)
+		estado = request.session['estado']
+		arbitraje_id = request.session['arbitraje_id']
+		rol_id=get_roles(request.user.id , arbitraje_id)
+
+		item_active = 2
+		items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+		route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+		route_seg= get_route_seguimiento(estado,rol_id)
+		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+		route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+		# print items
+		form = EditAutorForm(instance = autor)
 	context = {
 		'nombre_vista' : 'Editar autores',
 		'main_navbar_options' : main_navbar_options,
@@ -105,8 +232,51 @@ def author_edit(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'form':form,
     }
-	return render(request, 'main_app_author_edit.html', context)
+	return render(request, 'autores_author_edit.html', context)
+
+
+def author_details(request, autor_id):
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+
+	# print (rol_id)
+	estado = request.session['estado']
+	arbitraje_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id,arbitraje_id)
+	
+	item_active = 2
+	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+	rol_id=get_roles(request.user.id , arbitraje_id)
+
+	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+	# print items
+	autor = get_object_or_404(Autor, id = autor_id)
+	context = {
+		'nombre_vista' : 'Detalles del autor',
+		'main_navbar_options' : main_navbar_options,
+		'estado' : estado,
+		'rol_id' : rol_id,
+		'arbitraje_id' : arbitraje_id,
+		'item_active' : item_active,
+		'items':items,
+		'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'autor':autor,
+    }
+	return render(request, 'autores_details.html', context)
 
 
 #Vista para generar certificado
@@ -124,11 +294,11 @@ def postular_trabajo(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , event_id)
 	
 	item_active = 0
 	items = validate_rol_status(estado,rol_id,item_active,event_id)
@@ -270,11 +440,11 @@ def detalles_pago(request, pagador_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-	rol_id=get_roles(request.user.id)
 
 	# print (rol_id)
 	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , event_id)
 	
 	item_active = 0
 	items=validate_rol_status(estado,rol_id,item_active, event_id)

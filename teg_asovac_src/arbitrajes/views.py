@@ -19,10 +19,10 @@ def arbitrajes_pag(request):
 
 
 def listado_trabajos(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, event_id)
@@ -58,10 +58,10 @@ def detalles_resumen(request):
     return render(request, 'arbitrajes_detalle_resumen.html', context)
 
 def referee_list(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -88,10 +88,10 @@ def referee_list(request):
     return render(request, 'main_app_referee_list.html', context)
 
 def referee_edit(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -120,10 +120,10 @@ def referee_edit(request):
     return render(request, 'main_app_referee_edit.html', context)
 
 def areas_subareas(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -153,10 +153,10 @@ def areas_subareas(request):
 
 
 def asignacion_de_sesion(request):
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, event_id)
