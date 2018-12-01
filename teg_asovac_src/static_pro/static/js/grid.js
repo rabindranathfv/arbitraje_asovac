@@ -52,6 +52,7 @@ $.ajaxSetup({
 /*******************************************************************************************/
 /******************     Para dar formato a los botones de las tablas     *******************/
 /*******************************************************************************************/
+
     function operateAreas(value, row, index) {
         return [
             '<a class="viewArea" href="javascript:void(0)" title="Ver">',
@@ -67,6 +68,7 @@ $.ajaxSetup({
     }
 
     function operateSubareas(value, row, index) {
+        
         return [
             '<a class="viewSubarea" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',

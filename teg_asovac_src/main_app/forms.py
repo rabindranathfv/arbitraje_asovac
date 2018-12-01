@@ -97,23 +97,23 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-class AssingRolForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        self.max_role = kwargs.pop('max_role')
-        super(AssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
-        self.fields['rol'].required = True
+#class AssingRolForm(forms.ModelForm):
+ #   def __init__(self, *args, **kwargs):
+  #      self.max_role = kwargs.pop('max_role')
+   #     super(AssingRolForm, self).__init__(*args, **kwargs)
+    #    self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
+     #   self.fields['rol'].required = True
 
-    class Meta:
-        model = Usuario_asovac
-        fields = ['rol']
-        widgets = {'rol': CheckboxSelectMultiple()}
+#    class Meta:
+#       model = Usuario_asovac
+#        fields = ['rol']
+#        widgets = {'rol': CheckboxSelectMultiple()}
 
 class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
                                                         # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.filter(rol__id = 2)
+        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
         self.fields['coordinador_general'].required = True
 
     class Meta:
@@ -140,12 +140,12 @@ class ArbitrajeStateChangeForm(forms.ModelForm):
             raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
         return data
 
-
+"""
 class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
-
+"""
 class AreaForm(forms.ModelForm):
     class Meta:
         model= Area

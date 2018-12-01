@@ -41,11 +41,11 @@ def resources_author(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     # print (rol_id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -79,12 +79,11 @@ def resources_referee(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
-    print (rol_id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -119,10 +118,10 @@ def resources_event(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
         
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -157,10 +156,10 @@ def resources_sesion(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -195,10 +194,10 @@ def resources_asovac(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -233,10 +232,10 @@ def resources_arbitration(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
