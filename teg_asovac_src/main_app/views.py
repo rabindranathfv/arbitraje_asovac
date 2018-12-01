@@ -20,6 +20,8 @@ from django.db.models import Count
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 
+from autores.models import Autor
+from autores.forms import AuthorCreateAutorForm
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
@@ -939,14 +941,44 @@ def apps_selection(request):
     user= Usuario_asovac.objects.get(usuario_id=user_id)
     #user_role = user.biggest_role()
 
+    try: 
+        autor = Autor.objects.get(usuario = user)
+        is_autor = True
+    except:
+        is_autor = False
     context = {
         #'user_role': user_role,
         'nombre_vista' : 'Selección de Aplicación',
+        'user': user,
+        'is_autor': is_autor
     }
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
 
 # Ajax/para el uso de ventanas modales
+def create_autor_instance_modal(request, user_id):
+    data = dict()
+    if request.method == 'POST':
+        form = AuthorCreateAutorForm(request.POST)
+        if form.is_valid():
+            autor = form.save(commit = False)
+            user = User.objects.get(id = user_id)
+            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+            autor.usuario = usuario_asovac
+            autor.nombres = user.first_name
+            autor.apellidos = user.last_name
+            autor.correo_electronico = user.email
+            autor.save()
+            return redirect('main_app:home')
+    else:
+        form = AuthorCreateAutorForm()
+        context = {
+            'form':form,
+        }
+        data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
+    return JsonResponse(data)
+
+
 def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':

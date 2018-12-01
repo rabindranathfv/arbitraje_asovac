@@ -27,7 +27,7 @@ class Autor(models.Model):
 
 	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
 	universidad = models.ForeignKey(Universidad)
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
+	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac', blank = True)
 
 	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)

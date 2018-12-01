@@ -10,6 +10,48 @@ from main_app.models import Sistema_asovac
 from trabajos.models import Trabajo
 from .models import Autor, Datos_pagador, Pago, Factura, Autores_trabajos, Universidad
 
+
+
+#Form para que el autor cree su instancia de autor
+class AuthorCreateAutorForm(forms.ModelForm):
+
+	class Meta:
+		model = Autor
+		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
+				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
+		widgets = {
+			'genero': forms.TextInput(attrs={'placeholder': 'Ejemplo:F o M'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
+            'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
+            														'rows':4 }),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
+        }
+        
+	def __init__(self, *args, **kwargs):
+		super(AuthorCreateAutorForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
+		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
+		self.fields['genero'].label = "Género"
+		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
+		self.fields['telefono_oficina'].label = "Teléfono de oficina"
+		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/celular"
+		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
+		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
+		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+
+
+
+
+
+
+
 # Form para añadir autores a un trabajo
 class AddAuthorToJobForm(forms.ModelForm):
 

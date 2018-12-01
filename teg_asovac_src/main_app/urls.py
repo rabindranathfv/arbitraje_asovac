@@ -65,7 +65,7 @@ urlpatterns = [
     url(r'^areas-subareas/viewSubarea/(?P<id>\d+)$',views.viewSubarea,name='verSubarea'),
     url(r'^areas-subareas/editSubarea/(?P<id>\d+)$',views.editSubarea,name='editarSubarea'),
     url(r'^areas-subareas/removeSubarea/(?P<id>\d+)$',views.removeSubarea,name='eliminarSubarea'),
-
+    
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
@@ -73,6 +73,7 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/eliminar$',views.delete_user_modal,name='eliminar_usuario'),
     url(r'^usuario/(?P<id>\d+)/rol/actualizar$',views.update_rol_modal,name='actualizar_rol'),
     url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
+    url(r'^usuario/(?P<user_id>\d+)/crear-autor/$',views.create_autor_instance_modal,name='create_autor_instance_modal'),
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
