@@ -392,7 +392,7 @@ def home(request):
     # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
     arb_data = zip(arbitraje_data, state_strings, allow_entry_list,rol_list)
 
-    print(arbitraje_data, state_strings, allow_entry_list)
+    print(arbitraje_data, state_strings, allow_entry_list,rol_list)
     context = {
         'nombre_vista' : 'Inicio',
         'arb_data' : arb_data,
@@ -1583,4 +1583,29 @@ def removeSubarea(request,id):
             'message':message,
         }
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    return JsonResponse(data)
+
+
+def register_user_in_sistema(request, arbitraje_id):
+    data = dict()
+    if request.method == 'POST':
+        usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+        arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+        rol = Rol.objects.get(id = 5)
+
+        new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+        new_usuario_rol_in_sistema.save()
+
+        rol_id = get_roles(request.user.id , arbitraje.id)
+        if (1 == rol_id) or (2 >= rol_id and arbitraje.estado_arbitraje != 0) or (3 >= rol_id and arbitraje.estado_arbitraje != 0) or (4 >= rol_id and arbitraje.estado_arbitraje in [5,6,8]) or (5 >= rol_id and arbitraje.estado_arbitraje in [3,6]):
+            return redirect(reverse('main_app:dashboard', kwargs={'arbitraje_id':arbitraje.id}))
+        else:
+            messages.success(request, 'Se ha registrado en el sistema éxitosamente, espere a un estado del proceso en cual con su rol de autor participe.')
+            return redirect('main_app:home')
+    else:
+        arbitraje = Sistema_asovac.objects.get(id =arbitraje_id)
+        context = {
+            'arbitraje': arbitraje,
+        }
+        data['html_form'] = render_to_string('ajax/register_user_in_sistema.html', context, request = request)
     return JsonResponse(data)

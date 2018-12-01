@@ -4,6 +4,16 @@
 {% block inner_content %}
 <div class="container-fluid">
 	<div class="row">
+		{% if messages %}
+		<ul class="messages">
+			{% for message in messages %}
+				<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+				{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+				{{ message }}
+				</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
 		<div class="col-sm-10 col-sm-offset-1">
 			<div class="jumbotron RLcard">
 				<div class="container-fluid">
@@ -34,38 +44,41 @@
 							<span class="">Estado:</span>
 							<p class="text-primary">{{ state }}</p>
 						</div>
-						{% if allow %}
 						<div class="col-sm-2 text-center">
-                            {%if params_validations.is_admin == 1 %}
-                                <a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                            {% else %}
-                                {%if rol_id != 5  %}
-                                    <a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                                {% else %}
-                                    <a class="btn btn-primary btn-lg btn-block"  href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                                {% endif %}
-                            {% endif %}
-
-                        </div>
-                        {% else %}
-                        <div class="col-sm-3 text-center">
-                            <a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalAccessDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                    {% else %}
-                    <div class="row middle-content">
-                      <div class="col-sm-6 col-sm-offset-3">
-                         <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                         <h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
-                     </div>
-                 </div>
-                 {% endif %}
-             </div>
-         </div>
-     </div>
- </div>
+						{% if allow %}
+							{%if params_validations.is_admin == 1 %}
+							<a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+							{% else %}
+							{%if rol_id != 5  %}
+							<a href="#" class="btn btn-primary btn-lg btn-block show-form-access" data-url="{% url 'main_app:validar_rol' arb.id %}" data-toggle="modal" data-target="#rol_validate" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+							{% else %}
+							<a class="btn btn-primary btn-lg btn-block"  href="{% url 'main_app:dashboard' arb.id %}" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+							{% endif %}
+							{% endif %}
+						{% elif rol_id > 5 %}
+							{% if arb.estado_arbitraje <= 3 %}
+							<button class="btn btn-primary btn-lg btn-block show-register-user-in-sistema-modal" data-url ="{% url 'main_app:register_user_in_sistema' arb.id %}" >Entrar</button>
+							{% else %}
+								<a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalRegisterDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+							{% endif %}
+						{% else %}
+							<a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalAccessDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
+						{% endif %}
+						</div>
+					</div>
+					{% endfor %}
+					{% else %}
+					<div class="row middle-content">
+						<div class="col-sm-6 col-sm-offset-3">
+							<img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+							<h3 class="text-center">No existen arbitrajes disponibles en este momento.</h3>
+						</div>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 
@@ -74,31 +87,51 @@
 
 <!-- Modal Acceso Denegado-->
 <div class="modal fade" id="ModalAccessDenied" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="ModalLongTitle">Acceso Denegado</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-          </button>
-      </div>
-      <div class="modal-body text-center content-modal">
-        En este estado del proceso, usted no participa.  
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-    </div>
-</div>
-</div>
-</div>
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="ModalLongTitle">Acceso Denegado</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body text-center content-modal">
+					En este estado del proceso, usted no participa.  
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-  <!-- Modal -->
-  <div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-       
-      </div>
-    </div>
-  </div>
+<!-- Modal Registro Denegado-->
+<div class="modal fade" id="ModalRegisterDenied" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title" id="ModalLongTitle">Acceso Denegado</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body text-center content-modal">
+					El arbitraje está en una etapa que no se aceptan nuevos autores.  
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-{% endblock %}
+	<!-- Modal -->
+	<div class="modal fade" id="rol_validate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+
+			</div>
+		</div>
+	</div>
+
+	{% endblock %}

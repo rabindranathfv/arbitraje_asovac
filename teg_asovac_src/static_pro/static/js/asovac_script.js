@@ -442,6 +442,8 @@ var SaveAñadirPagoForm= function(){
     $('.showSubAreasForm').click(ShowForm);
     // Modal para que los usuarios creen su instancia de autor
     $('#user-create-author').click(ShowForm);
+    // Modal para que los usuarios creen su instancia de autor en sistema
+    $('.show-register-user-in-sistema-modal').click(ShowForm);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
