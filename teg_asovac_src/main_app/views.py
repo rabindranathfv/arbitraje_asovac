@@ -1629,11 +1629,42 @@ def list_usuarios(request):
 ###################################################################################
 def viewUsuario(request,id,arbitraje_id):
     data= dict()
-    subarea=Sub_area.objects.get(id=id)
+    user=User.objects.get(id=id)
     data['status']= 200
     context={
-        'subarea':subarea,
+        'user':user,
         'tipo':"show"
     }
-    data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
+    data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
+
+def editUsuario(request,id,arbitraje_id):
+    data= dict()
+    user=  get_object_or_404(User,id=id)
+
+    if request.method == 'POST':
+        
+        print "edit post"
+        form= PerfilForm(request.POST,instance=user)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+       
+        data['status']= 200
+        data['title']=user.username
+        form= PerfilForm(instance=user)
+        context={
+            'user':user,
+            'arbitraje_id':arbitraje_id,
+            'tipo':"edit",
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
+
+    
+ 

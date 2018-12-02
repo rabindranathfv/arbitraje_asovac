@@ -360,8 +360,8 @@ var SaveAñadirPagoForm= function(){
                 // console.log(data);
                 if(data.status == 200 ){
                     // console.log('actualizacion exitosa')
-                    // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
-                    // $('#modal-user').modal('hide');
+                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    $('#modal-user').modal('hide');
                 }else{
                     // console.log('error en la actualizacion')
                     // $('#bootstrapTableModal .modal-body').html(data.body)
@@ -447,5 +447,8 @@ var SaveAñadirPagoForm= function(){
     // CRUD Subareas
     $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
+    // CRUD Usuarios
+    $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
+    
 
 });
