@@ -93,7 +93,7 @@ $.ajaxSetup({
             '</a>  ',
             '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
             '<i class="fa fa-trash"></i>',
-            '</a>' ,
+            '</a>  ' ,
             '<a class="" href="javascript:void(0)" title="Roles" >', 
                 '<i class="fas fa-users"></i>', 
             '</a>' 
@@ -255,6 +255,27 @@ $.ajaxSetup({
             });
 
 
+        },
+        'click .removeUsuario': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                    // $table.bootstrapTable('remove', {
+                    //     field: 'id',
+                    //     values: [row.id]
+                    // });
+                }
+            });
         },
     };
 

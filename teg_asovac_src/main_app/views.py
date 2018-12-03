@@ -1394,7 +1394,7 @@ def removeArea(request,id):
         message="eliminado"
         context={
             'area':area,
-            'tipo':"delete",
+            'tipo':"deleted",
             'message':message,
         }
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
@@ -1532,7 +1532,7 @@ def removeSubarea(request,id):
         message="eliminado"
         context={
             'subarea':subarea,
-            'tipo':"delete",
+            'tipo':"deleted",
             'message':message,
         }
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
@@ -1666,5 +1666,36 @@ def editUsuario(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+def removeUsuario(request,id,arbitraje_id):
     
- 
+    data= dict()
+
+    if request.method == 'POST':
+        print "post delete form"
+        user=get_object_or_404(User,id=id)
+        user.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'user':user,
+            'tipo':"deleted",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+
+    else:
+        print "get delete form"
+        user=get_object_or_404(User,id=id)
+        data['status']= 200
+        data['title']=user.username
+        form= PerfilForm(instance=user)
+        message="eliminar"
+        context={
+            'user':user,
+            'tipo':"delete",
+            'arbitraje_id':arbitraje_id,
+            'form':form,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
