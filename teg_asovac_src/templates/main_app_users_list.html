@@ -64,26 +64,26 @@
                 -->
 
                 <!-- bootstrap table for List Users -->
-                <div id ="toolbar">
+                <div id="toolbar">
                     <div class="dropdown text-right">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             Acciones
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="#" data-url="{% url 'main_app:crear_usuario' %}"> <i class="fas fa-plus-circle"></i>Cargar autores</a></li>
-                            <li><a href="#">Cargar autores</a></li>
-                            <li><a href="#">Cargar arbitros</a></li>
-                            <li><a href="#">Cargar coordinador de área</a></li>
-                            <li><a href="#">Cargar coordinador general</a></li>
+                            <li>
+                                <a href="#" data-url="{% url 'main_app:crear_usuario' %}"> <i class="fas fa-plus-circle"></i> Cargar autores</a>
+                            </li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar autores</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar arbitros</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar coordinador de área</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar coordinador general</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="users-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="users" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
-                        data-show-toggle="true" data-show-columns="true"
-                    data-toolbar="#toolbar"
-                    data-toolbar-align="right">
+                        data-show-toggle="true" data-show-columns="true" data-toolbar="#toolbar" data-toolbar-align="right">
 
                         <thead>
                             <tr>
@@ -104,19 +104,16 @@
                                 <td class="text-center">{{ user.usuario.username }}</td>
                                 <td class="text-center">{{ user.usuario.email }}</td>
                                 <td>
-                                    <a href="#" class="btn btn-info show-form-update" data-url="{% url 'main_app:actualizar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                                    <a href="#" class="btn btn-info show-form-update" data-url="{% url 'main_app:actualizar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel" title="Actualizar Uusario">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="#" class="btn btn-info show-form-delete" data-url="{% url 'main_app:eliminar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                                    <a href="#" class="btn btn-info show-form-delete" data-url="{% url 'main_app:eliminar_usuario' user.usuario.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel" title="Eliminar Usuario">
                                         <i class="fas fa-times"></i>
                                     </a>
-                                    <a href="#" class="btn btn-info">
-                                        <i class="fas fa-envelope"></i>
-                                    </a>
-                                    <a href="" class="btn btn-info" role="button">
+                                    <a href="" class="btn btn-info" role="button" title="Ver informacion del Usuario">
                                         <i class="fas fa-door-open"></i>
                                     </a>
-                                    <a href="" class="btn btn-info show-form-rol" data-url="{% url 'main_app:actualizar_rol' user.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel">
+                                    <a href="" class="btn btn-info show-form-rol" data-url="{% url 'main_app:actualizar_rol' user.id %}" role="button" data-toggle="modal" data-target="#gridSystemModalLabel" title="Actualizar Rol de usuario">
                                         <i class="fas fa-users"></i>
                                     </a>
                                 </td>
@@ -128,11 +125,11 @@
                         {% endif %}
                     </table>
                     <!-- End table  -->
-            </div> 
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 
