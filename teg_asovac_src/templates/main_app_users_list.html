@@ -15,12 +15,12 @@
                     </div>
                     <div class="col-md-4">
                         <form class="form-inline text-right">
-                            <!-- <div class="input-group">
+                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
                                 <span class="input-group-btn">
 									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
 								</span>
-                            </div> -->
+                            </div> 
                         </form>
                     </div>
                     <div class="col-md-2">
@@ -39,7 +39,7 @@
                     </div>
 
                 </div>
-
+                <!--
                 <table class="table table-bordered gray-header top-margin-18" id="show_users">
                     <thead>
                         <tr>
@@ -59,12 +59,28 @@
 
                     </tbody>
                 </table>
+                -->
 
                 <!-- bootstrap table for List Users -->
-
-                <!-- <div class="table-responsive">
+                <div id ="toolbar">
+                    <div class="dropdown text-right">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Acciones
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li><a href="#">Cargar autores</a></li>
+                            <li><a href="#">Cargar arbitros</a></li>
+                            <li><a href="#">Cargar coordinador de área</a></li>
+                            <li><a href="#">Cargar coordinador general</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="table-responsive">
                     <table class="table table-bordered" id="users-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="users" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
-                        data-show-toggle="true" data-show-columns="true">
+                        data-show-toggle="true" data-show-columns="true"
+                    data-toolbar="#toolbar"
+                    data-toolbar-align="right">
 
                         <thead>
                             <tr>
@@ -109,7 +125,7 @@
                         {% endif %}
                     </table>
                     <!-- End table  -->
-            </div> -->
+            </div> 
 
         </div>
     </div>
