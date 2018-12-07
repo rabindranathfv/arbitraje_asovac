@@ -18,7 +18,10 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+
+
 # Create your views here.
+
 def admin_create_author(request):
 	if request.method == "POST":
 		form = AdminCreateAutorForm(request.POST)
@@ -27,6 +30,8 @@ def admin_create_author(request):
 			usuario = User.objects.get(email = new_autor.correo_electronico)
 			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
 			new_autor.usuario = usuario_asovac
+			new_autor.nombres = usuario.first_name
+			new_autor.apellidos = usuario.last_name
 			new_autor.save()
 			return redirect('autores:authors_list')
 	else:
@@ -193,7 +198,12 @@ def author_edit(request, autor_id):
 	if request.method == 'POST':
 		form = EditAutorForm(request.POST,instance = autor)
 		if form.is_valid():
-			form.save()
+			autor = form.save()
+			user_id = autor.usuario.usuario.id
+			user = User.objects.get(id = user_id)
+			user.first_name = autor.nombres
+			user.last_name = autor.apellidos
+			user.save()
 	        return redirect('autores:authors_list')
     
 	else:

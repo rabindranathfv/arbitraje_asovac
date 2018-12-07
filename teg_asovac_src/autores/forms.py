@@ -20,7 +20,6 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
 				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
 		widgets = {
-			'genero': forms.TextInput(attrs={'placeholder': 'Ejemplo:F o M'}),
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':4 }),
@@ -183,7 +182,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad', 'Sistema_asovac_id', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
 
 	def __init__(self, *args, **kwargs):
 		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
@@ -193,8 +192,6 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
 		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
-		self.fields['Sistema_asovac_id'].queryset = Sistema_asovac.objects.order_by('nombre')
-		self.fields['Sistema_asovac_id'].label = "Sistemas donde será autor"
 		self.fields['genero'].label = "Género"
 		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
 		self.fields['correo_electronico'].label = "Correo Electrónico"
@@ -206,7 +203,6 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
-				'Sistema_asovac_id',
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
