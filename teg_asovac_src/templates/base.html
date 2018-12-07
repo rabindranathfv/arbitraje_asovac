@@ -130,7 +130,11 @@
 						<a href="#" class="navbar-link"><i class="fas fa-user"></i> {{ user.username }}</a>
 					</p>
 				</li>
-
+				<li>
+					<p class="navbar-text">
+						<a href="#" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' class="navbar-link"><i class="fas fa-edit"></i>Editar Perfil</a>
+					</p>
+				</li>
 				<li>
 					<p class="navbar-text">
 						<a href="{% url 'logout' %}" class="navbar-link">

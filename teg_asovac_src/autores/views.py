@@ -289,6 +289,30 @@ def author_details(request, autor_id):
 	return render(request, 'autores_details.html', context)
 
 
+#Modal para crear datos de la factura
+def author_edit_modal(request, user_id):
+	data = dict()
+	user =  User.objects.get(id = user_id)
+	autor = Autor.objects.get(usuario__usuario = user)
+	form =	EditAutorForm(instance = autor)
+	if request.method == "POST":
+		# Este formulario tiene todas las opciones populadas de acuerdo al formulario enviado por POST.
+		form = EditAutorForm(request.POST, instance = autor)
+        if form.is_valid():
+            autor = form.save()
+            user.first_name = autor.nombres
+            user.last_name = autor.apellidos
+            user.email = autor.correo_electronico
+            user.save() 
+            data['form_is_valid']= True
+
+	else:
+		context ={
+			'form': form,
+		}
+		data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
+	return JsonResponse(data)
+
 #Vista para generar certificado
 def generar_certificado(request):
 	context={
