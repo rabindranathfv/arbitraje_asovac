@@ -1600,7 +1600,7 @@ def register_user_in_sistema(request, arbitraje_id):
         if (1 == rol_id) or (2 >= rol_id and arbitraje.estado_arbitraje != 0) or (3 >= rol_id and arbitraje.estado_arbitraje != 0) or (4 >= rol_id and arbitraje.estado_arbitraje in [5,6,8]) or (5 >= rol_id and arbitraje.estado_arbitraje in [3,6]):
             return redirect(reverse('main_app:dashboard', kwargs={'arbitraje_id':arbitraje.id}))
         else:
-            messages.success(request, 'Se ha registrado en el sistema éxitosamente, debe esperar al estado del arbitraje "En carga de trabajos" para poder ingresar como autor.')
+            messages.success(request, 'Se ha registrado en el sistema éxitosamente, debe esperar al estado del arbitraje "En carga de trabajos" para poder ingresar en la plataforma.')
             return redirect('main_app:home')
     else:
         arbitraje = Sistema_asovac.objects.get(id =arbitraje_id)
