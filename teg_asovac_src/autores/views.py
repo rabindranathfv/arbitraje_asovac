@@ -51,7 +51,12 @@ def admin_create_author(request):
 	        sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
 	        usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
 	        usuario_rol_in_sistema.save()
-	        return redirect('autores:authors_list')
+	        
+	        subarea= request.POST.getlist("subarea_select")
+	        for item in subarea:
+	        	usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+			usuario_asovac.save()
+			return redirect('autores:authors_list')
 			
 	else:
 		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
