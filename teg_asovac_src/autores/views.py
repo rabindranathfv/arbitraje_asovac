@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
@@ -76,6 +76,8 @@ def admin_create_author(request):
 
 		# print items
 		form = AdminCreateAutorForm()
+		areas= Area.objects.all()
+		subareas= Sub_area.objects.all()
 		context = {
 			"nombre_vista": 'Administración - Crear Autor',
 			'main_navbar_options' : main_navbar_options,
@@ -91,6 +93,8 @@ def admin_create_author(request):
 	        'route_trabajos_navbar': route_trabajos_navbar,
 	        'route_resultados': route_resultados,
 	        'form': form,
+	        'areas':areas,
+	        'subareas':subareas
 	    }
 	return render(request,"autores_admin_create_author.html",context)
 
