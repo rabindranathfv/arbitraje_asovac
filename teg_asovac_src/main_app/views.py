@@ -5,6 +5,7 @@ import random, string
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
@@ -17,7 +18,7 @@ import json
 from django.db.models import Q
 from django.db.models import Count
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
+from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 
 from autores.models import Autor
@@ -1608,4 +1609,42 @@ def register_user_in_sistema(request, arbitraje_id):
             'arbitraje': arbitraje,
         }
         data['html_form'] = render_to_string('ajax/register_user_in_sistema.html', context, request = request)
+    return JsonResponse(data)
+
+
+
+def changepassword_modal(request):
+    data = dict()
+    if request.method == 'POST':
+        form = ChangePassForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+
+            #Envio de email con las nuevas credenciales al correo electrónico del usuario
+            
+            user = User.objects.get(pk=request.user.id)
+            context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
+
+            msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
+            msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
+
+            send_mail(
+                    'Cambio de Contraseña - Asovac',      #titulo
+                    msg_plain,                                  #mensaje txt
+                    config('EMAIL_HOST_USER'),                        #email de envio
+                    [user.email],                               #destinatario
+                    html_message=msg_html,                      #mensaje en html
+                    )
+
+            # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
+            messages.success(request, 'Se ha cambiado su contraseña con éxito')
+            data['form_is_valid']= True
+
+    else:
+        form = ChangePassForm(request.user)
+        context = {
+            'form': form,
+        }
+        data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
     return JsonResponse(data)
