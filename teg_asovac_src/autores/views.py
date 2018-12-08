@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
@@ -27,13 +27,32 @@ def admin_create_author(request):
 		form = AdminCreateAutorForm(request.POST)
 		if form.is_valid():
 			new_autor = form.save(commit = False)
-			usuario = User.objects.get(email = new_autor.correo_electronico)
-			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
-			new_autor.usuario = usuario_asovac
-			new_autor.nombres = usuario.first_name
-			new_autor.apellidos = usuario.last_name
-			new_autor.save()
-			return redirect('autores:authors_list')
+			usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
+			
+			username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
+	        counter = 1
+	        username = username_base
+	        while User.objects.filter(username=username):
+	            username = username_base + str(counter)
+	            counter += 1
+	        
+	        usuario.username = username
+	        password = User.objects.make_random_password().lower()
+	        usuario.set_password(password)
+	        usuario.save()
+	        
+	        print(usuario.username)
+	        print(password)
+	        usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+	        new_autor.usuario = usuario_asovac
+	        new_autor.save()
+
+	        rol = Rol.objects.get(id=5)
+	        sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+	        usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
+	        usuario_rol_in_sistema.save()
+	        return redirect('autores:authors_list')
+			
 	else:
 		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
 	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},

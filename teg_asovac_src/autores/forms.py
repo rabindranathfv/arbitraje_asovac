@@ -182,7 +182,8 @@ class AdminCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+
 
 	def __init__(self, *args, **kwargs):
 		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
@@ -211,11 +212,11 @@ class AdminCreateAutorForm(forms.ModelForm):
 				Field('telefono_oficina',placeholder="Ejemplo: 04249999999"),
 				Field('telefono_habitacion_celular',placeholder="Ejemplo: 02129999999"),
 				Field('constancia_estudio',placeholder=""),
-				Field('direccion_envio_correspondencia',placeholder="Ejemplo: Sabana grande, CC El Recreo"),
+				Field('direccion_envio_correspondencia',rows='2', placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
-				Field('observaciones',placeholder="Introduzca sus observaciones aquí"),
+				Field('observaciones',rows='2', placeholder="Introduzca sus observaciones aquí"),
 				Div(
 	                Div(
 	                    HTML("<a href=\"{% url 'autores:authors_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
