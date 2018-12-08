@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decouple import config
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
@@ -56,6 +57,21 @@ def admin_create_author(request):
 	        for item in subarea:
 	        	usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
 			usuario_asovac.save()
+
+			context = {
+			'username': username,
+			'sistema_asovac': sistema_asovac.nombre,
+			'password': password,
+			}
+			msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
+			msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
+			send_mail(
+                    'Creación de usuario',         #titulo
+                    msg_plain,                          #mensaje txt
+                    config('EMAIL_HOST_USER'),          #email de envio
+                    [usuario.email],               #destinatario
+                    html_message=msg_html,              #mensaje en html
+                    )
 			return redirect('autores:authors_list')
 			
 	else:
