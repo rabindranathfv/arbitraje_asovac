@@ -1608,19 +1608,22 @@ def list_usuarios(request):
                 order='-'+sort
 
     if search != "":
-        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
-            # print "consulta para exportar"
+            print "consulta para exportar"
             print Sub_area.objects.all().order_by(order).query
             data=Sub_area.objects.all().order_by(order)
             total= Sub_area.objects.all().count()
         else:
-            # print "consulta normal"
+            print "consulta normal"
             arbitraje_id = request.session['arbitraje_id']
-            users = User.objects.all()
-            users = Usuario_asovac.objects.all()
+            # users = User.objects.all()
+            # users = Usuario_asovac.objects.all().query
+            # print users
+            # for item in users:
+            #     print "Resultado de la consulta: ",item
 
             # print Sub_area.objects.all().order_by(order)[init:limit].query
             # test= Sub_area.objects.all().order_by(order)[init:limit]
@@ -1746,6 +1749,7 @@ def changeRol(request,id,arbitraje_id):
             # print "Se guarda el valor del formulario"
             # Borrar registros anteriores para evitar repeticion de registros
             delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
+            print delete
            
             for item in params_rol:
                 itemRole= Rol.objects.get(id=item)
