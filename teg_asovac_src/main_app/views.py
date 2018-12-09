@@ -217,7 +217,7 @@ def get_role_list(user,arbitraje):
     rols=[]
     for item in rol_active:
         rols.append(item.rol_id)
-    print "Los roles activos son: ",rols
+    # print "Los roles activos son: ",rols
     return rols
 
 # Obtener el rol de mayor privilegio
@@ -1661,6 +1661,20 @@ def editUsuario(request,id,arbitraje_id):
     data= dict()
     user=  get_object_or_404(User,id=id)
 
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,id=id)
+    user_role= get_roles(user_asovac.id,"is_admin")
+    rols= get_role_list(user_asovac.id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if(request_user_role > user_role):
+        permiso="rol-no-permitido"
+    else:
+        permiso="rol-permitido"
+
     if request.method == 'POST':
         
         # print "edit post"
@@ -1681,6 +1695,7 @@ def editUsuario(request,id,arbitraje_id):
             'arbitraje_id':arbitraje_id,
             'tipo':"edit",
             'form':form,
+            'permiso':permiso,
         }
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
@@ -1688,6 +1703,20 @@ def editUsuario(request,id,arbitraje_id):
 def removeUsuario(request,id,arbitraje_id):
 
     data= dict()
+
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,id=id)
+    user_role= get_roles(user_asovac.id,"is_admin")
+    rols= get_role_list(user_asovac.id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if(request_user_role > user_role):
+        permiso="rol-no-permitido"
+    else:
+        permiso="rol-permitido"
 
     if request.method == 'POST':
         print "post delete form"
@@ -1714,6 +1743,7 @@ def removeUsuario(request,id,arbitraje_id):
             'tipo':"delete",
             'arbitraje_id':arbitraje_id,
             'form':form,
+            'permiso':permiso,
             'message':message,
         }
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
@@ -1749,7 +1779,7 @@ def changeRol(request,id,arbitraje_id):
             # print "Se guarda el valor del formulario"
             # Borrar registros anteriores para evitar repeticion de registros
             delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
-            print delete
+            # print delete
            
             for item in params_rol:
                 itemRole= Rol.objects.get(id=item)
@@ -1767,6 +1797,11 @@ def changeRol(request,id,arbitraje_id):
             data['status']= 404
     else:
     
+        if(request_user_role > user_role):
+            permiso="rol-no-permitido"
+        else:
+            permiso="rol-permitido"
+
         data['status']= 200
         data['title']=user.username
         form= AssingRolForm()
@@ -1776,8 +1811,10 @@ def changeRol(request,id,arbitraje_id):
             'arbitraje_id':arbitraje_id,
             'tipo':"rol",
             'form':form,
+            'permiso':permiso,
             'rol_active':rols,
         }
+
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     
     return JsonResponse(data)
