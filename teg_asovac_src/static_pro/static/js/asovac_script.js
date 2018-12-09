@@ -450,6 +450,7 @@ var SaveAñadirPagoForm= function(){
     // CRUD Usuarios
     $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
     
 
 });

@@ -82,21 +82,75 @@
         </form>
         {% else %}
             {% if tipo == "deleted" %}
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Eliminar Usuario</h4>
+            </div>
+            
+            <div class="modal-body">
+                <p>El usuario {{user.username }} se elimino de manera exitosa.</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger" >Eliminar</button>
+            </div>
+            {% else %}
     
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" >Eliminar Usuario</h4>
-                </div>
+                {% if tipo == "rol" %}
+                    {% load crispy_forms_tags %}
+                    {% include "errors_form.html" %}
+                    <form method="post" class="cambiarRol" data-url="{% url 'main_app:cambiarRol' arbitraje_id user.id %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" > Roles para el usuario: {{user.first_name}} {{user.last_name}}</h4>
+                        </div>
+                        
+                        <div class="modal-body">
+                                <!-- {{  form | crispy }} -->
+                            <div id="div_id_rol" class="row"> 
+                                <div class="controls col-md-12 col-md-offset-3">
+                                        {% for rol in rol_list %}
+                                        
+                                        <div class="checkbox">
+                                            <label class="" for="id_rol_{{ rol.id }}">
+                                                <input type="checkbox" class="rol_{{ user.id }}" name="rol" id="id_rol_{{ rol.id }}" value="{{ rol.id }}">{{ rol.nombre }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                </div>
+                            </div>
+                            <input type="hidden" name="sistema_asovac" value="{{arbitraje_id}}">
+                            <input type="hidden" name="usuario_asovac" value="{{user.id}}">
+
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" id="Buttonsave">Guardar</button>
+                        </div>
+                    </form>
+
+                    <script>
+                        var rol_active="{{rol_active}}";
+                        // transforma el string a array 
+                        var rol_active=JSON.parse(rol_active);
+
+                        // console.log("El rol activo es: "+rol_active);
+                        for (var i = 0; i < rol_active.length; i++) {
+                            // console.log(rol_active[i]);
+                            var selector="#id_rol_"+rol_active[i];
+                            // console.log(selector);
+                            $(selector).prop("checked",true);
+                        }
+                       
+                    </script>
+                {% endif %}
             
-                <div class="modal-body">
-                        <p>El usuario {{user.username }} se elimino de manera exitosa.</p>
-                </div>
-            
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-danger" >Eliminar</button>
-                </div>
             {% endif %}
+
         {% endif %}
     {% endif %}
 {% endif %}

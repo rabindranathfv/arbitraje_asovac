@@ -71,6 +71,7 @@ urlpatterns = [
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/viewUsuario/(?P<id>\d+)$',views.viewUsuario,name='verUsuario'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/editUsuario/(?P<id>\d+)$',views.editUsuario,name='editarUsuario'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/removeUsuario/(?P<id>\d+)$',views.removeUsuario,name='eliminarUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/changeRol/(?P<id>\d+)$',views.changeRol,name='cambiarRol'),
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
