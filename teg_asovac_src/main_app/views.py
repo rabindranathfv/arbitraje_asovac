@@ -1753,6 +1753,12 @@ def changeRol(request,id,arbitraje_id):
     
     # Lista de roles
     rol_list=Rol.objects.all()
+    array_rols=[]
+
+    for item in rol_list:
+        array_rols.append(item.id)
+    
+    # print "Array de roles: ",array_rols
 
     #datos del usuario y arbitraje 
     data=dict()
@@ -1813,6 +1819,8 @@ def changeRol(request,id,arbitraje_id):
             'form':form,
             'permiso':permiso,
             'rol_active':rols,
+            'rol_auth':request_user_role,
+            'array_rols':array_rols,
         }
 
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
