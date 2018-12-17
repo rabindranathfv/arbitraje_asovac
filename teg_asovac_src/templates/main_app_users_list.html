@@ -12,33 +12,6 @@
 					<div class="col-sm-4">
 						<h2 class="text-left">Listado de Usuarios</h2>
 					</div>
-					<div class="col-sm-2">
-						<button class="btn btn-primary btn-block show-form" data-url="{% url 'main_app:crear_usuario' %}"><i class="fas fa-plus-circle"></i> Crear Usuario</button>
-					</div>
-					<div class="col-md-4">
-						<form class="form-inline text-right">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-								</span>
-							</div>
-						</form>
-					</div>
-					<div class="col-md-2">
-						<div class="dropdown text-right">
-							<button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-								Carga de usuarios
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								<li><a href="#">Cargar autores</a></li>
-								<li><a href="#">Cargar arbitros</a></li>
-								<li><a href="#">Cargar coordinador de área</a></li>
-								<li><a href="#">Cargar coordinador general</a></li>
-							</ul>
-						</div>
-					</div>
 				</div>
 
 				<!-- bootstrap-table -->
@@ -51,10 +24,13 @@
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 								<ul class="dropdown-menu">
 									<li>
-										<a class="showAreasForm" href="#" data-url="{% url 'main_app:load_areas' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Áreas</a>
+										<a  href="#" class="show-form" data-url="{% url 'main_app:crear_usuario' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fas fa-plus-circle"></i> Crear usuario</a>
 									</li>
 									<li>
-										<a class="showSubAreasForm" href="#" data-url="{% url 'main_app:load_subareas' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Subáreas</a>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Usuarios</a>
+									</li>
+									<li>
+										<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Roles</a>
 									</li>
 								</ul>
 							</div>
@@ -106,6 +82,7 @@
 	<!-- js extra -->
 	<script src="{% static 'js/grid.js' %}"></script>
 	<script>
+
 		var $table = $('#table');
 		// your custom ajax request here
 		

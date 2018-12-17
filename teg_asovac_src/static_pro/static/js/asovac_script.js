@@ -139,6 +139,7 @@ $(document).ready(function(){
                     console.log('data is saved')
                     $('#show_users tbody').html(data.user_list);
                     $('#modal-user').modal('hide');
+                    $('#table').bootstrapTable('refresh');
                 }else{
                     console.log('data is invalid')
                     $('#modal-user .modal-content').html(data.html_form)
@@ -440,6 +441,7 @@ var SaveAñadirPagoForm= function(){
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
     $('.showSubAreasForm').click(ShowForm);
+    $('.showUsersForm').click(ShowForm);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);

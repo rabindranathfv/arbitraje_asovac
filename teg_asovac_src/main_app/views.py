@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string
+import random, string,xlrd,os
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
@@ -296,6 +296,27 @@ def create_params_validations(request,status):
     params_validations['status']=status
     # print params_validations
     return params_validations
+
+# Para guardar el archivo recibido del formulario  
+def save_file(request,type_load):
+
+    name= str(request.FILES.get('file'))  
+    file_name=''
+
+    if type_load == "usuarios":           	
+        extension = name.split('.')
+        file_name= "cargaUsuarios."+extension[1]
+        # Permite guardar el archivo y asignarle un nombre
+        handle_uploaded_file(request.FILES['file'], file_name)
+        route= "upload/"+file_name
+    # print "Ruta del archivo: ",route
+    return route
+
+# Para obtener la extension del archivo
+def get_extension_file(filename):
+
+    extension = filename.split('.')
+    return extension[1] 
 
 def compute_progress_bar(state):
     if state == 0:
@@ -1287,6 +1308,135 @@ def load_subareas_modal(request):
 
     return process_subareas_modal(request,form,'ajax/load_subareas.html')
 
+###################################################################################
+########################     Carga de usuarios via files     ######################
+###################################################################################
+
+def load_users_modal(request):
+    data=dict()
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            # Para guardar el archivo de forma local
+            file_name= save_file(request,"usuarios")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo 
+            response= validate_load_users(file_name, extension)
+            print response
+
+            context={
+                'title': "Cargar Usuarios",
+                'response': response['message'],
+                'status': response['status'],
+            }
+
+            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
+            return JsonResponse(data) 
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            context={
+            'form': form
+            }
+            data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
+            return JsonResponse(data) 
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+        context={
+            'form': form
+        }
+        data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
+        return JsonResponse(data) 
+
+###################################################################################
+############     Valida el contenido del excel para cargar usuarios     ###########
+###################################################################################
+
+def validate_load_users(filename,extension):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
+
+    if extension == "xlsx" or extension == "xls":
+        print "Formato xls/xlsx"
+        book = xlrd.open_workbook(filename)   
+
+        if book.nsheets > 0:
+         
+            print "El numero de hojas es mayor a 0 "
+            sh = book.sheet_by_index(0)
+
+            if sh.ncols == 8:
+                print "El archivo tiene 8 columnas"
+                data['status']=200
+                data['message']="Se cargaron los usuarios de manera exitosa"
+
+                for fila in range(sh.nrows):
+                    # Para no buscar los titulos 
+                    if fila > 0: 
+                        # Se verifica si el correo electronico ya se encuentra registrado
+                        email_exist=exist_email(sh.cell_value(rowx=fila, colx=3))
+                        if email_exist == True:
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            break
+
+                        # Se verifica si el username ya se encuentra registrado
+                        username_exist=exist_username(sh.cell_value(rowx=fila, colx=2))
+                        if username_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            break
+
+                        # Se verifica si el username ya se encuentra registrado
+                        area_exist=exist_area(sh.cell_value(rowx=fila, colx=4))
+                        if area_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área {1} no se encuentra registrada".format(fila,sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                if data['status'] == 200:
+                    print "Los datos del archivo son válidos"
+                    
+
+
+    return data 
+
+###################################################################################
+##########    Verifica si existe el correo o el nombre de usuario    ##############
+###################################################################################
+
+def exist_email(email):
+    exist= User.objects.filter(email=email).exists()
+    return exist
+
+def exist_username(user):
+    exist= User.objects.filter(username=user).exists()
+    return exist
+
+def exist_area(area):
+    exist= Area.objects.filter(nombre=area).exists()
+    return exist
+
+###################################################################################
+############     Guarda el archivo en la carpeta del proyecto     #################
+###################################################################################
+
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('upload/'):
+        os.mkdir('upload/')
+
+    # print "Nombre del archivo a guardar: ",filename
+    with open('upload/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
 
 ###################################################################################
 ###############     Carga el contenido de la tabla de areas     ###################
