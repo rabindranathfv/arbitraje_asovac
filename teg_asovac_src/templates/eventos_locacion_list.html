@@ -1,19 +1,14 @@
-{% extends "content_wrapper_with_sidebar.html" %}
-{% load static %}
-
-{% block inner_content %}
+{% extends "content_wrapper_with_sidebar.html" %} {% load static %} {% block inner_content %}
 <div class="container col-sm-10" id="content-wrapper">
     {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-                {{ message }}
-                </li>
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %} {{ message }}
+            </li>
             {% endfor %}
-        </ul>
-    {% endif %}
-    {% include "toggle_title.html" %}
+    </ul>
+    {% endif %} {% include "toggle_title.html" %}
 
     <div class="row">
         <div class="col-sm-12">
@@ -36,74 +31,64 @@
                     </form>
                 </div>
                 <div class="table-responsive">
-                 <table class="table table-bordered" id = "location-list" 
-                 data-toggle="table"
-                 data-toolbar="#toolbar"
-                 data-toolbar-align="right"
-                 data-search = "true"
-                 data-sort-name="lugar"
-                 data-show-export="true"
-                 data-pagination="true"
-                 data-page-size="10"
-                 data-page-list="[5,10,25,50,100, 200]"
-                 data-show-toggle="true"
-                 data-show-columns="true">
-                    {% if event_place_data %}
-                    <thead>
-                        <tr>
-                         <th data-field="lugar" class = "col-sm-2" data-sortable="true" data-switchable="false">Nombre</th>
-                         <th class = "col-sm-2" data-sortable="true">Capacidad de Asistentes</th>
-                         <th class = "col-sm-2" data-sortable="true">Equipo Requerido</th>
-                         <th class = "col-sm-3">Observaciones</th>
-                         <th class = "col-sm-3" data-switchable="false">Acciones</th>                                  
-                     </tr>
-                 </thead>
-                 <tbody class="searchable">
-                    
-                    {% for place_data in event_place_data %}
-                    <tr>
-                        <td class="text-center">{{ place_data.lugar }}</td>
-                        <td class="text-center">{{ place_data.capacidad_de_asistentes }}</td>
-                        <td class="text-center">{{ place_data.equipo_requerido }}</td>
-                        <td class="text-center">{{ place_data.observaciones }}</td>
-                        <td class="text-center">
-                            <a href="{% url 'eventos:event_place_edit' place_data.id %}" class="btn btn-info" role="button" title="Editar Organizador">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            
-                            <button class="btn btn-info show-form-delete" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
+                    <table class="table table-bordered" id="location-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="lugar" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
+                        data-show-toggle="true" data-show-columns="true">
+                        {% if event_place_data %}
+                        <thead>
+                            <tr>
+                                <th data-field="lugar" class="col-sm-2" data-sortable="true" data-switchable="false">Nombre</th>
+                                <th class="col-sm-2" data-sortable="true">Capacidad de Asistentes</th>
+                                <th class="col-sm-2" data-sortable="true">Equipo Requerido</th>
+                                <th class="col-sm-3">Observaciones</th>
+                                <th class="col-sm-3" data-switchable="false">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="searchable">
+
+                            {% for place_data in event_place_data %}
+                            <tr>
+                                <td class="text-center">{{ place_data.lugar }}</td>
+                                <td class="text-center">{{ place_data.capacidad_de_asistentes }}</td>
+                                <td class="text-center">{{ place_data.equipo_requerido }}</td>
+                                <td class="text-center">{{ place_data.observaciones }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'eventos:event_place_edit' place_data.id %}" class="btn btn-info" role="button" title="Editar Organizador">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button class="btn btn-info show-form-delete" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
                                 <i class="fas fa-times"></i>
                             </button>
-                            
-                            <a href="{% url 'eventos:event_place_detail' place_data.id %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            
-                            <button class="btn btn-info show-form-observations" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
+
+                                    <a href="{% url 'eventos:event_place_detail' place_data.id %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <button class="btn btn-info show-form-observations" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
                                 <i class="fas fa-comment"></i>
                             </button>
 
-                        </td>
-                    </tr>
-                    
-                    {% endfor %}
-                </tbody>
-                
-                {% else %}
-                
-                <div class="well well-lg">
-                    <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
-                    <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
-                </div>                                                               
-                
-                {% endif %}
-            </table>
-            <!-- End table  -->
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+
+                        {% else %}
+
+                        <!-- <div class="well well-lg">
+                                <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+                            </div>                                                                
+                        -->
+                        {% endif %}
+                    </table>
+                    <!-- End table  -->
+                </div>
+                <!--end jumbotrom -->
+            </div>
         </div>
-        <!--end jumbotrom -->    
     </div>
-</div>
-</div>
 </div>
 
 

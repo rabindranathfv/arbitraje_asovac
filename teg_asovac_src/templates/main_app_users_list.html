@@ -1,45 +1,89 @@
-{% extends "content_wrapper_with_sidebar.html" %}
-
-{% block inner_content %}
+{% extends "content_wrapper_with_sidebar.html" %} {% block inner_content %}
 <div class="container" id="content-wrapper">
 
-	{% include "toggle_title.html" %}
+    {% include "toggle_title.html" %}
 
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
-				<div class="row middle-content">
-					<div class="col-sm-4">
-						<h2 class="text-left">Listado de Usuarios</h2>
-					</div>
-					<div class="col-sm-2">
-						<button class="btn btn-primary btn-block show-form" data-url="{% url 'main_app:crear_usuario' %}"><i class="fas fa-plus-circle"></i> Crear Usuario</button>
-					</div>
-					<div class="col-md-4">
-						<form class="form-inline text-right">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
-								<span class="input-group-btn">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                <div class="row middle-content">
+                    <div class="col-sm-4">
+                        <h2 class="text-left">Listado de Usuarios</h2>
+                    </div>
+                    <!--
+                    <div class="col-sm-2">
+                        <button class="btn btn-primary btn-block show-form" data-url="{% url 'main_app:crear_usuario' %}"><i class="fas fa-plus-circle"></i> Crear Usuario</button>
+                    </div>-->
+                    <!--
+                    <div class="col-md-4">
+                        <form class="form-inline text-right">
+                             <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
+                                <span class="input-group-btn">
 									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
 								</span>
-							</div>
-						</form>
-					</div>
-					<div class="col-md-2">
-						<div class="dropdown text-right">
-							<button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            </div> 
+                        </form>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="dropdown text-right">
+                            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 								Carga de usuarios
 								<span class="caret"></span>
 							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								<li><a href="#">Cargar autores</a></li>
-								<li><a href="#">Cargar arbitros</a></li>
-								<li><a href="#">Cargar coordinador de área</a></li>
-								<li><a href="#">Cargar coordinador general</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li><a href="#">Cargar autores</a></li>
+                                <li><a href="#">Cargar arbitros</a></li>
+                                <li><a href="#">Cargar coordinador de área</a></li>
+                                <li><a href="#">Cargar coordinador general</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    -->
+                </div>
+                <!--
+                <table class="table table-bordered gray-header top-margin-18" id="show_users">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="custom-control-input" id="customCheck1">
+                            </th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
+                            <th>Nombre de usuario</th>
+                            <th>Correo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% include 'ajax/dinamic_list.html' %}
+
+                    </tbody>
+                </table>
+                -->
+
+                <!-- bootstrap table for List Users -->
+                <div id="toolbar">
+                    <div class="dropdown text-right">
+                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Acciones
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a href="#" data-url="{% url 'main_app:crear_usuario' %}"> <i class="fas fa-plus-circle"></i> Cargar autores</a>
+                            </li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar autores</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar arbitros</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar coordinador de área</a></li>
+                            <li><a href="#"><i class="fas fa-upload"></i> Cargar coordinador general</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="users-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="users" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
+                        data-show-toggle="true" data-show-columns="true" data-toolbar="#toolbar" data-toolbar-align="right">
 
 				<!-- bootstrap-table -->
 				<div class="row"> 
@@ -137,5 +181,3 @@
 	</script> 
 
 {% endblock %}
-
-
