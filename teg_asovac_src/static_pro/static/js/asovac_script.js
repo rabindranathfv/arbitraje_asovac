@@ -459,5 +459,10 @@ var SaveAñadirPagoForm= function(){
     // CRUD Subareas
     $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
+    // CRUD Usuarios
+    $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
+    
 
 });

@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 
-from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
 
 estados_arbitraje = (   (0,'Desactivado'),
@@ -122,17 +122,22 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-#class AssingRolForm(forms.ModelForm):
- #   def __init__(self, *args, **kwargs):
-  #      self.max_role = kwargs.pop('max_role')
-   #     super(AssingRolForm, self).__init__(*args, **kwargs)
-    #    self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
-     #   self.fields['rol'].required = True
+class AssingRolForm(forms.ModelForm):
 
-#    class Meta:
-#       model = Usuario_asovac
-#        fields = ['rol']
-#        widgets = {'rol': CheckboxSelectMultiple()}
+    # def __init__(self, *args, **kwargs):
+    #     self.max_role = kwargs.pop('max_role')
+    #     self.user_asovac = kwargs.pop('user_asovac')
+    #     super(AssingRolForm, self).__init__(*args, **kwargs)
+       
+        # print "test: ", Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac).query
+        # # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].required = True
+    class Meta:
+        model = Usuario_rol_in_sistema
+        fields = ['rol','usuario_asovac','sistema_asovac']
+        # widgets = {'rol': CheckboxSelectMultiple()}
+
 
 class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
