@@ -4,6 +4,11 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
+CHOICES_GENERO = ((0,'Masculino'),
+                 (1,'Femenino'),
+                 )
+
+
 
 """""""""""""""""""""""""""
 Universidad Model
@@ -27,12 +32,11 @@ class Autor(models.Model):
 
 	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE)
 	universidad = models.ForeignKey(Universidad)
-	Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac')
 
 	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
-	genero = models.CharField(max_length=1)
+	genero = models.SmallIntegerField(choices=CHOICES_GENERO)
 	cedula_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	telefono_oficina = models.CharField(max_length=20)

@@ -17,7 +17,11 @@
 							<br/>
 							<div class="row middle-content">
 								<div class="col-sm-6 center-block well">
-									<a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:home' %}">Arbitraje AsoVAC</a>
+									{% if is_autor %}	
+										<a class="btn btn-primary btn-lg btn-block" href="{% url 'main_app:home' %}">Arbitraje AsoVAC</a>
+									{% else %}
+										<button class="btn btn-primary btn-lg btn-block" id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >Arbitraje AsoVAC</button>
+									{% endif %}
 									<br/>
 									<a class="btn btn-default btn-lg btn-block" href="{% url 'eventos:home' %}">Eventos AsoVAC</a>
 								</div>

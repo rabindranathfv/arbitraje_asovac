@@ -10,6 +10,47 @@ from main_app.models import Sistema_asovac
 from trabajos.models import Trabajo
 from .models import Autor, Datos_pagador, Pago, Factura, Autores_trabajos, Universidad
 
+
+
+#Form para que el autor cree su instancia de autor
+class AuthorCreateAutorForm(forms.ModelForm):
+
+	class Meta:
+		model = Autor
+		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
+				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
+		widgets = {
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
+            'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
+            														'rows':4 }),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
+        }
+        
+	def __init__(self, *args, **kwargs):
+		super(AuthorCreateAutorForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
+		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
+		self.fields['genero'].label = "Género"
+		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
+		self.fields['telefono_oficina'].label = "Teléfono de oficina"
+		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/celular"
+		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
+		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
+		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+
+
+
+
+
+
+
 # Form para añadir autores a un trabajo
 class AddAuthorToJobForm(forms.ModelForm):
 
@@ -141,7 +182,20 @@ class AdminCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad', 'Sistema_asovac_id', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		widgets = {
+			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
+			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
+            'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
+            														'rows':2 }),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
+            'observaciones': forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí',
+            														'rows':2 })
+        }
 
 	def __init__(self, *args, **kwargs):
 		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
@@ -151,8 +205,6 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
 		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
-		self.fields['Sistema_asovac_id'].queryset = Sistema_asovac.objects.order_by('nombre')
-		self.fields['Sistema_asovac_id'].label = "Sistemas donde será autor"
 		self.fields['genero'].label = "Género"
 		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
 		self.fields['correo_electronico'].label = "Correo Electrónico"
@@ -164,7 +216,6 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
-				'Sistema_asovac_id',
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
@@ -173,11 +224,11 @@ class AdminCreateAutorForm(forms.ModelForm):
 				Field('telefono_oficina',placeholder="Ejemplo: 04249999999"),
 				Field('telefono_habitacion_celular',placeholder="Ejemplo: 02129999999"),
 				Field('constancia_estudio',placeholder=""),
-				Field('direccion_envio_correspondencia',placeholder="Ejemplo: Sabana grande, CC El Recreo"),
+				Field('direccion_envio_correspondencia',rows='2', placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
-				Field('observaciones',placeholder="Introduzca sus observaciones aquí"),
+				Field('observaciones',rows='2', placeholder="Introduzca sus observaciones aquí"),
 				Div(
 	                Div(
 	                    HTML("<a href=\"{% url 'autores:authors_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
