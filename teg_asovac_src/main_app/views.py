@@ -5,6 +5,7 @@ import random, string
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
@@ -17,9 +18,12 @@ import json
 from django.db.models import Q
 from django.db.models import Count
 
-from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm
+from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
+
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 
+from autores.models import Autor
+from autores.forms import AuthorCreateAutorForm
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
@@ -182,7 +186,7 @@ def get_roles(user_id, arbitraje_id):
         has_arbitraje = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, usuario_asovac = usuario_asovac).exists()
     else:
         has_arbitraje = False
-
+        
     rol_id= 6
 
     # Se verifica que exista el rol y un arbitraje asociado
@@ -203,14 +207,30 @@ def get_roles(user_id, arbitraje_id):
 
     return rol_id
 
+# Para obtener la lista de roles 
+def get_role_list(user,arbitraje):
+
+    admin= get_roles(user,"is_admin")
+    if(admin == 1):
+        # Lista de roles
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user,status=True)
+    else:
+        # Lista de roles
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user, sistema_asovac=arbitraje,status=True)
+    
+    rols=[]
+    for item in rol_active:
+        rols.append(item.rol_id)
+    # print "Los roles activos son: ",rols
+    return rols
+
 # Obtener el rol de mayor privilegio
 def getMaxRol(rol, roles):
-    
+    Rol= roles[0]
     for item in roles:
-        if rol > item.rol_id:
+        if Rol.rol_id > item.rol_id:
             rol=item
-    
-    return rol 
+    return Rol 
 
 # Obtener nombre de los roles del usuario
 def get_names_roles(user_id,name=True):
@@ -390,7 +410,7 @@ def home(request):
     # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
     arb_data = zip(arbitraje_data, state_strings, allow_entry_list,rol_list)
 
-    print(arbitraje_data, state_strings, allow_entry_list)
+    print(arbitraje_data, state_strings, allow_entry_list,rol_list)
     context = {
         'nombre_vista' : 'Inicio',
         'arb_data' : arb_data,
@@ -711,7 +731,7 @@ def users_list(request, arbitraje_id):
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
     user_asovac = Usuario_asovac.objects.all()
     users = Usuario_asovac.objects.all()
-
+    print users
     for user in user_asovac:
         query = user.usuario.username
         # user.rol.all()
@@ -939,14 +959,44 @@ def apps_selection(request):
     user= Usuario_asovac.objects.get(usuario_id=user_id)
     #user_role = user.biggest_role()
 
+    try: 
+        autor = Autor.objects.get(usuario = user)
+        is_autor = True
+    except:
+        is_autor = False
     context = {
         #'user_role': user_role,
         'nombre_vista' : 'Selección de Aplicación',
+        'user': user,
+        'is_autor': is_autor
     }
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
 
 # Ajax/para el uso de ventanas modales
+def create_autor_instance_modal(request, user_id):
+    data = dict()
+    if request.method == 'POST':
+        form = AuthorCreateAutorForm(request.POST)
+        if form.is_valid():
+            autor = form.save(commit = False)
+            user = User.objects.get(id = user_id)
+            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+            autor.usuario = usuario_asovac
+            autor.nombres = user.first_name
+            autor.apellidos = user.last_name
+            autor.correo_electronico = user.email
+            autor.save()
+            return redirect('main_app:home')
+    else:
+        form = AuthorCreateAutorForm()
+        context = {
+            'form':form,
+        }
+        data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
+    return JsonResponse(data)
+
+
 def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1231,7 +1281,7 @@ def process_subareas_modal(request,form,template_name):
 
 
 ###################################################################################
-########################     Carga de reas via files     ##########################
+########################     Carga de areas via files     ##########################
 ###################################################################################
 
 def load_areas_modal(request):
@@ -1394,7 +1444,7 @@ def removeArea(request,id):
         message="eliminado"
         context={
             'area':area,
-            'tipo':"delete",
+            'tipo':"deleted",
             'message':message,
         }
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
@@ -1532,7 +1582,7 @@ def removeSubarea(request,id):
         message="eliminado"
         context={
             'subarea':subarea,
-            'tipo':"delete",
+            'tipo':"deleted",
             'message':message,
         }
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
@@ -1552,3 +1602,324 @@ def removeSubarea(request,id):
         }
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)
+
+
+def register_user_in_sistema(request, arbitraje_id):
+    data = dict()
+    if request.method == 'POST':
+        usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+        arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+        rol = Rol.objects.get(id = 5)
+
+        new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+        new_usuario_rol_in_sistema.save()
+
+        rol_id = get_roles(request.user.id , arbitraje.id)
+        if (1 == rol_id) or (2 >= rol_id and arbitraje.estado_arbitraje != 0) or (3 >= rol_id and arbitraje.estado_arbitraje != 0) or (4 >= rol_id and arbitraje.estado_arbitraje in [5,6,8]) or (5 >= rol_id and arbitraje.estado_arbitraje in [3,6]):
+            return redirect(reverse('main_app:dashboard', kwargs={'arbitraje_id':arbitraje.id}))
+        else:
+            messages.success(request, 'Se ha registrado en el sistema éxitosamente, debe esperar al estado del arbitraje "En carga de trabajos" para poder ingresar en la plataforma.')
+            return redirect('main_app:home')
+    else:
+        arbitraje = Sistema_asovac.objects.get(id =arbitraje_id)
+        context = {
+            'arbitraje': arbitraje,
+        }
+        data['html_form'] = render_to_string('ajax/register_user_in_sistema.html', context, request = request)
+    return JsonResponse(data)
+
+
+
+def changepassword_modal(request):
+    data = dict()
+    if request.method == 'POST':
+        form = ChangePassForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+
+            #Envio de email con las nuevas credenciales al correo electrónico del usuario
+            
+            user = User.objects.get(pk=request.user.id)
+            context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
+
+            msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
+            msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
+
+            send_mail(
+                    'Cambio de Contraseña - Asovac',      #titulo
+                    msg_plain,                                  #mensaje txt
+                    config('EMAIL_HOST_USER'),                        #email de envio
+                    [user.email],                               #destinatario
+                    html_message=msg_html,                      #mensaje en html
+                    )
+
+            # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
+            messages.success(request, 'Se ha cambiado su contraseña con éxito')
+            data['form_is_valid']= True
+
+    else:
+        form = ChangePassForm(request.user)
+        context = {
+            'form': form,
+        }
+        data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
+    return JsonResponse(data)
+
+###################################################################################
+##############     Carga el contenido de la tabla de usuarios     #################
+###################################################################################
+
+
+def list_usuarios(request):
+    
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='descripcion'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.descripcion':
+                order='-descripcion'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
+        total= len(data)
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            print Sub_area.objects.all().order_by(order).query
+            data=Sub_area.objects.all().order_by(order)
+            total= Sub_area.objects.all().count()
+        else:
+            print "consulta normal"
+            arbitraje_id = request.session['arbitraje_id']
+            # users = User.objects.all()
+            # users = Usuario_asovac.objects.all().query
+            # print users
+            # for item in users:
+            #     print "Resultado de la consulta: ",item
+
+            # print Sub_area.objects.all().order_by(order)[init:limit].query
+            # test= Sub_area.objects.all().order_by(order)[init:limit]
+            data=User.objects.all().order_by(order)[init:limit]
+            total= User.objects.all().count()
+            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
+    # response['total']=total
+    # print response
+    for item in data:
+        # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
+        response['query'].append({'id':item.id,'nombre': item.first_name,'apellido':item.last_name,'nombre_user': item.username,'correo':item.email})
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+###################################################################################
+#############################     Crud Usuarios     ###############################
+###################################################################################
+def viewUsuario(request,id,arbitraje_id):
+    data= dict()
+    user=User.objects.get(id=id)
+    data['status']= 200
+    context={
+        'user':user,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
+
+def editUsuario(request,id,arbitraje_id):
+    data= dict()
+    user=  get_object_or_404(User,id=id)
+
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,id=id)
+    user_role= get_roles(user_asovac.id,"is_admin")
+    rols= get_role_list(user_asovac.id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if(request_user_role > user_role):
+        permiso="rol-no-permitido"
+    else:
+        permiso="rol-permitido"
+
+    if request.method == 'POST':
+        
+        # print "edit post"
+        form= PerfilForm(request.POST,instance=user)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            data['status']= 404
+    else:
+       
+        data['status']= 200
+        data['title']=user.username
+        form= PerfilForm(instance=user)
+        context={
+            'user':user,
+            'arbitraje_id':arbitraje_id,
+            'tipo':"edit",
+            'form':form,
+            'permiso':permiso,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
+
+def removeUsuario(request,id,arbitraje_id):
+
+    data= dict()
+
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,id=id)
+    user_role= get_roles(user_asovac.id,"is_admin")
+    rols= get_role_list(user_asovac.id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if(request_user_role > user_role):
+        permiso="rol-no-permitido"
+    else:
+        permiso="rol-permitido"
+
+    if request.method == 'POST':
+        print "post delete form"
+        user=get_object_or_404(User,id=id)
+        user.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'user':user,
+            'tipo':"deleted",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+
+    else:
+        # print "get delete form"
+        user=get_object_or_404(User,id=id)
+        data['status']= 200
+        data['title']=user.username
+        form= PerfilForm(instance=user)
+        message="eliminar"
+        context={
+            'user':user,
+            'tipo':"delete",
+            'arbitraje_id':arbitraje_id,
+            'form':form,
+            'permiso':permiso,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
+
+def changeRol(request,id,arbitraje_id):
+    
+    # Lista de roles
+    rol_list=Rol.objects.all()
+    array_rols=[]
+
+    for item in rol_list:
+        array_rols.append(item.id)
+    
+    # print "Array de roles: ",array_rols
+
+    #datos del usuario y arbitraje 
+    data=dict()
+    user=User.objects.get(id=id)
+    arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,id=id)
+    user_role= get_roles(user_asovac.id,"is_admin")
+    rols= get_role_list(user_asovac.id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if request.method == 'POST':
+        
+        # print "update rol"
+        form= AssingRolForm(request.POST) 
+        params_rol=request.POST.getlist("rol")
+        params_user=request.POST.getlist("usuario_asovac")
+        params_arbitraje=request.POST.getlist("sistema_asovac")
+        # print "Rol recibido: ",params_rol," Usuario: ",params_user," Arbitraje: ",params_arbitraje
+        if form.is_valid():
+            # print "Se guarda el valor del formulario"
+            # Borrar registros anteriores para evitar repeticion de registros
+            delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
+            # print delete
+           
+            for item in params_rol:
+                itemRole= Rol.objects.get(id=item)
+                # Se construye el objeto para crear los roles
+                addRol=Usuario_rol_in_sistema()
+                addRol.usuario_asovac=user_asovac
+                addRol.rol=itemRole
+                addRol.sistema_asovac=arbitraje
+                print addRol
+                addRol.save()
+                # form.save()
+            data['status']= 200
+        else:
+            # print form.errors
+            data['status']= 404
+    else:
+    
+        if(request_user_role > user_role):
+            permiso="rol-no-permitido"
+        else:
+            permiso="rol-permitido"
+
+        data['status']= 200
+        data['title']=user.username
+        form= AssingRolForm()
+        context={
+            'user':user,
+            'rol_list': rol_list,
+            'arbitraje_id':arbitraje_id,
+            'tipo':"rol",
+            'form':form,
+            'permiso':permiso,
+            'rol_active':rols,
+            'rol_auth':request_user_role,
+            'array_rols':array_rols,
+        }
+
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    
+    return JsonResponse(data)
+

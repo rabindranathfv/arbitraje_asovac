@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decouple import config
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
@@ -18,17 +19,61 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+
+
 # Create your views here.
+
 def admin_create_author(request):
 	if request.method == "POST":
 		form = AdminCreateAutorForm(request.POST)
 		if form.is_valid():
 			new_autor = form.save(commit = False)
-			usuario = User.objects.get(email = new_autor.correo_electronico)
-			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
-			new_autor.usuario = usuario_asovac
-			new_autor.save()
+			usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
+			
+			username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
+	        counter = 1
+	        username = username_base
+	        while User.objects.filter(username=username):
+	            username = username_base + str(counter)
+	            counter += 1
+	        
+	        usuario.username = username
+	        password = User.objects.make_random_password().lower()
+	        usuario.set_password(password)
+	        usuario.save()
+	        
+	        print(usuario.username)
+	        print(password)
+	        usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+	        new_autor.usuario = usuario_asovac
+	        new_autor.save()
+
+	        rol = Rol.objects.get(id=5)
+	        sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+	        usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
+	        usuario_rol_in_sistema.save()
+	        
+	        subarea= request.POST.getlist("subarea_select")
+	        for item in subarea:
+	        	usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+			usuario_asovac.save()
+
+			context = {
+			'username': username,
+			'sistema_asovac': sistema_asovac.nombre,
+			'password': password,
+			}
+			msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
+			msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
+			send_mail(
+                    'Creación de usuario',         #titulo
+                    msg_plain,                          #mensaje txt
+                    config('EMAIL_HOST_USER'),          #email de envio
+                    [usuario.email],               #destinatario
+                    html_message=msg_html,              #mensaje en html
+                    )
 			return redirect('autores:authors_list')
+			
 	else:
 		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
 	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -52,6 +97,8 @@ def admin_create_author(request):
 
 		# print items
 		form = AdminCreateAutorForm()
+		areas= Area.objects.all()
+		subareas= Sub_area.objects.all()
 		context = {
 			"nombre_vista": 'Administración - Crear Autor',
 			'main_navbar_options' : main_navbar_options,
@@ -67,6 +114,8 @@ def admin_create_author(request):
 	        'route_trabajos_navbar': route_trabajos_navbar,
 	        'route_resultados': route_resultados,
 	        'form': form,
+	        'areas':areas,
+	        'subareas':subareas
 	    }
 	return render(request,"autores_admin_create_author.html",context)
 
@@ -193,7 +242,12 @@ def author_edit(request, autor_id):
 	if request.method == 'POST':
 		form = EditAutorForm(request.POST,instance = autor)
 		if form.is_valid():
-			form.save()
+			autor = form.save()
+			user_id = autor.usuario.usuario.id
+			user = User.objects.get(id = user_id)
+			user.first_name = autor.nombres
+			user.last_name = autor.apellidos
+			user.save()
 	        return redirect('autores:authors_list')
     
 	else:
@@ -278,6 +332,30 @@ def author_details(request, autor_id):
     }
 	return render(request, 'autores_details.html', context)
 
+
+#Modal para crear datos de la factura
+def author_edit_modal(request, user_id):
+	data = dict()
+	user =  User.objects.get(id = user_id)
+	autor = Autor.objects.get(usuario__usuario = user)
+	form =	EditAutorForm(instance = autor)
+	if request.method == "POST":
+		# Este formulario tiene todas las opciones populadas de acuerdo al formulario enviado por POST.
+		form = EditAutorForm(request.POST, instance = autor)
+        if form.is_valid():
+            autor = form.save()
+            user.first_name = autor.nombres
+            user.last_name = autor.apellidos
+            user.email = autor.correo_electronico
+            user.save() 
+            data['form_is_valid']= True
+
+	else:
+		context ={
+			'form': form,
+		}
+		data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
+	return JsonResponse(data)
 
 #Vista para generar certificado
 def generar_certificado(request):

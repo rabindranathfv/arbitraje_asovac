@@ -440,6 +440,18 @@ var SaveAñadirPagoForm= function(){
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
     $('.showSubAreasForm').click(ShowForm);
+    // Modal para que los usuarios creen su instancia de autor
+    $('#user-create-author').click(ShowForm);
+    // Modal para que los usuarios creen su instancia de autor
+    $('#edit-author-profile').click(ShowForm);
+    $('#modal-user').on('submit', '.edit-author-form',SaveForm);
+
+    // Modal para que los usuarios creen su instancia de autor en sistema
+    $('.show-register-user-in-sistema-modal').click(ShowForm);
+
+    // Modal para que los usuarios creen su instancia de autor
+    $('#changepassword-user').click(ShowForm);
+    $('#modal-user').on('submit', '.changepassword-modal-form',SaveForm);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
@@ -447,5 +459,10 @@ var SaveAñadirPagoForm= function(){
     // CRUD Subareas
     $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
+    // CRUD Usuarios
+    $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
+    
 
 });

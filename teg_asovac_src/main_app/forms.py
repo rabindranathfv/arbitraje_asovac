@@ -5,12 +5,12 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 
-from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
 
 estados_arbitraje = (   (0,'Desactivado'),
@@ -25,6 +25,31 @@ estados_arbitraje = (   (0,'Desactivado'),
 
 my_date_formats = ['%d/%m/%Y']
 my_date_format = '%d/%m/%Y'
+
+#Formulario para cambiar la contraseña.
+class ChangePassForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(ChangePassForm, self).__init__(*args, **kwargs)
+        self.fields['old_password'].label = "Contraseña actual"
+        self.fields['new_password1'].label = "Nueva contraseña"
+        self.fields['new_password2'].label = "Confirmar contraseña"
+
+    #Este codigo no lanza el mensaje
+    def clean_old_password(self):
+        password = self.cleaned_data['old_password']
+        if not self.user.check_password(password):
+            print ("La Contraseña es invalida: Old Password")
+            raise forms.ValidationError(_("La contraseña es incorrecta."),code='invalid_password')
+        return password
+
+    #Este codigo no lanza el mensaje.
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 != password2:
+            raise forms.ValidationError(_("Las nuevas contraseñas no coinciden."), code = "new_password")
+        return password2
+
 
 class RegisterForm(UserCreationForm):
 
@@ -97,17 +122,22 @@ class PerfilForm(forms.ModelForm):
         model= User
         fields=['username','first_name','last_name','email',]
 
-#class AssingRolForm(forms.ModelForm):
- #   def __init__(self, *args, **kwargs):
-  #      self.max_role = kwargs.pop('max_role')
-   #     super(AssingRolForm, self).__init__(*args, **kwargs)
-    #    self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
-     #   self.fields['rol'].required = True
+class AssingRolForm(forms.ModelForm):
 
-#    class Meta:
-#       model = Usuario_asovac
-#        fields = ['rol']
-#        widgets = {'rol': CheckboxSelectMultiple()}
+    # def __init__(self, *args, **kwargs):
+    #     self.max_role = kwargs.pop('max_role')
+    #     self.user_asovac = kwargs.pop('user_asovac')
+    #     super(AssingRolForm, self).__init__(*args, **kwargs)
+       
+        # print "test: ", Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac).query
+        # # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].required = True
+    class Meta:
+        model = Usuario_rol_in_sistema
+        fields = ['rol','usuario_asovac','sistema_asovac']
+        # widgets = {'rol': CheckboxSelectMultiple()}
+
 
 class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
