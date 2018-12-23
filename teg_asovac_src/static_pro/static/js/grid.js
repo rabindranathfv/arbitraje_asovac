@@ -240,6 +240,7 @@ $.ajaxSetup({
         'click .editUsuario': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
+            console.log(row.id);
             $.ajax({
                 url: route,
                 type: 'get',
@@ -251,8 +252,15 @@ $.ajaxSetup({
                 success: function (data){
                     // console.log(data);
                     $('#bootstrapTableModal .modal-content').html(data.content);
+                },
+                error: function () {
+                    $('#bootstrapTableModal .modal-content').html("No se puede procesar su solicitud el id "+row.id+" no existe");
                 }
             });
+
+
+
+
 
 
         },

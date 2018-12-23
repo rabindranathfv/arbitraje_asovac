@@ -123,7 +123,8 @@
                                 </div>
                             </div>
                             <input type="hidden" name="sistema_asovac" value="{{arbitraje_id}}">
-                            <input type="hidden" name="usuario_asovac" value="{{user.id}}">
+                            <!-- <input type="hidden" name="usuario_asovac" value="{{user.id}}"> -->
+                            <input type="hidden" name="usuario_asovac" value="{{usuario_asovac.id}}">
 
                         </div>
                         
@@ -138,7 +139,7 @@
                         var rol_auth="{{rol_auth}}";
                         var array_rols="{{array_rols}}";
                        
-
+console.log(rol_active);
                         // transforma el string a array 
                         var rol_active=JSON.parse(rol_active);
                         var rol_auth=JSON.parse(rol_auth);

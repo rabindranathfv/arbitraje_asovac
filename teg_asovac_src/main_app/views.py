@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string,xlrd,os
+import random, string,xlrd,os,sys
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
@@ -205,14 +205,15 @@ def get_roles(user_id, arbitraje_id):
 
 # Para obtener la lista de roles 
 def get_role_list(user,arbitraje):
-
     admin= get_roles(user,"is_admin")
+    user_asovac= get_object_or_404(Usuario_asovac, usuario = user)
+    # print "usuario asovac: ",user_asovac.id
     if(admin == 1):
         # Lista de roles
-        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user,status=True)
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user_asovac,status=True)
     else:
         # Lista de roles
-        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user, sistema_asovac=arbitraje,status=True)
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user_asovac, sistema_asovac=arbitraje,status=True)
     
     rols=[]
     for item in rol_active:
@@ -1375,11 +1376,50 @@ def validate_load_users(filename,extension):
                 data['status']=200
                 data['message']="Se cargaron los usuarios de manera exitosa"
 
+                # se validan los campos del documento
                 for fila in range(sh.nrows):
                     # Para no buscar los titulos 
                     if fila > 0: 
                         # Se verifica si el correo electronico ya se encuentra registrado
-                        email_exist=exist_email(sh.cell_value(rowx=fila, colx=3))
+                        email_exist=exist_email(sh.cell_value(rowx=fila, colx=3).strip())
+                        email_count=count_email(sh,sh.cell_value(rowx=fila, colx=3).strip())
+                        
+                        if sh.cell_value(rowx=fila, colx=0) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre es un campo obligatorio".format(fila)
+                            break
+
+                        if sh.cell_value(rowx=fila, colx=1) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el apellido es un campo obligatorio".format(fila)
+                            break
+
+                        if sh.cell_value(rowx=fila, colx=2) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre de usuario es un campo obligatorio".format(fila)
+                            break
+
+                        if sh.cell_value(rowx=fila, colx=3) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo es un campo obligatorio".format(fila)
+                            break
+                        
+                        if sh.cell_value(rowx=fila, colx=4) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área es un campo obligatorio".format(fila)
+                            break
+                        
+                        if email_count > 1:
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo {1} debe ser asignado a un solo usuario".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            break
+
                         if email_exist == True:
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
@@ -1387,25 +1427,70 @@ def validate_load_users(filename,extension):
                             break
 
                         # Se verifica si el username ya se encuentra registrado
-                        username_exist=exist_username(sh.cell_value(rowx=fila, colx=2))
+                        username_exist=exist_username(sh.cell_value(rowx=fila, colx=2).strip())
+                        username_count=count_username(sh,sh.cell_value(rowx=fila, colx=2).strip())
+
+                        if username_count > 1:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre de usuario {1} debe ser asignado a un solo usuario".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            break
+
                         if username_exist == True:
                             # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
                             data['status']=400
                             data['message']="Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
                             break
 
-                        # Se verifica si el username ya se encuentra registrado
-                        area_exist=exist_area(sh.cell_value(rowx=fila, colx=4))
+                        # Se verifica si el area ya se encuentra registrada
+                        area_exist=exist_area(sh.cell_value(rowx=fila, colx=4).strip())
                         if area_exist == False:
                             # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
                             data['status']=400
                             data['message']="Error en la fila {0} el área {1} no se encuentra registrada".format(fila,sh.cell_value(rowx=fila, colx=4))
                             break
 
-                if data['status'] == 200:
-                    print "Los datos del archivo son válidos"
-                    
+                         # Se verifica si el area ya se encuentra registrada
+                        subarea1_exist=""
+                        subarea2_exist=""
+                        subarea3_exist=""
 
+                        if sh.cell_value(rowx=fila, colx=5) != "": 
+                            subarea1_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=5).strip())
+
+                        if sh.cell_value(rowx=fila, colx=6) != "":
+                            subarea2_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=6).strip())
+
+                        if sh.cell_value(rowx=fila, colx=7) != "":
+                            subarea3_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=7).strip())
+
+                        if subarea1_exist == "" and subarea2_exist == "" and subarea3_exist == "":
+                            data['status']=400
+                            data['message']="Error en la fila {0}  debe registrar almenos 1 subárea. ".format(fila)
+                            break
+
+                        if subarea1_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea1 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=5),sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                        if subarea2_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea2 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=6),sh.cell_value(rowx=fila, colx=4))
+                            break
+                        
+                        if subarea3_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea3 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=7),sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                # Inserta los registros una vez realizada la validación correspondiente
+                if data['status'] == 200:
+                    create_users(sh)
+                    print "Los datos del archivo son válidos"
 
     return data 
 
@@ -1424,6 +1509,73 @@ def exist_username(user):
 def exist_area(area):
     exist= Area.objects.filter(nombre=area).exists()
     return exist
+
+def exist_subarea(area, subarea):
+    # print subarea
+    query= Area.objects.get(nombre=area)
+    exist= Sub_area.objects.filter(nombre=subarea,area_id=query.id).exists()
+    
+    return exist
+
+def count_email(sh,email):
+    cont=0
+    for fila in range(sh.nrows):
+        if email== sh.cell_value(rowx=fila, colx=3):
+            cont=cont+1
+    return cont
+
+def count_username(sh,username):
+    cont=0
+    for fila in range(sh.nrows):
+        if username== sh.cell_value(rowx=fila, colx=2):
+            cont=cont+1
+        # print "El contador vale: ",cont
+    return cont
+
+def create_users(sh):
+    
+    for fila in range(sh.nrows):
+        if fila > 0: 
+            # Guarda el usuario 
+            user= User()
+            user.first_name=sh.cell_value(rowx=fila, colx=0).strip()
+            user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
+            user.username=sh.cell_value(rowx=fila, colx=2).strip()
+            user.email=sh.cell_value(rowx=fila, colx=3).strip()
+            user.save()
+            # print "Se crea el usuario: ", user.first_name
+            # Guarda la subarea
+            usuario_asovac= Usuario_asovac.objects.get(usuario=user)
+
+            if sh.cell_value(rowx=fila, colx=5) != "":
+                # calcular el id de cada subarea para mandarlo por parametro
+                # print "subarea 1"
+                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=5).strip())
+                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                usuario_asovac.save()
+            
+            if sh.cell_value(rowx=fila, colx=6) != "":
+                # calcular el id de cada subarea para mandarlo por parametro
+                # print "subarea 2"
+                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=6).strip())
+                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                usuario_asovac.save()
+            
+            if sh.cell_value(rowx=fila, colx=7) != "":
+                # calcular el id de cada subarea para mandarlo por parametro
+                # print "subarea 3"
+                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=7).strip())
+                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                usuario_asovac.save()
+
+###################################################################################
+############      Para obtener el id de la subarea importada      #################
+###################################################################################
+
+def get_subarea(name):
+    # print "Area a crear: ",name
+    subarea=Sub_area.objects.get(nombre=name)
+    return subarea.id
 
 ###################################################################################
 ############     Guarda el archivo en la carpeta del proyecto     #################
@@ -1778,6 +1930,7 @@ def list_usuarios(request):
             # print Sub_area.objects.all().order_by(order)[init:limit].query
             # test= Sub_area.objects.all().order_by(order)[init:limit]
             data=User.objects.all().order_by(order)[init:limit]
+            # print User.objects.all().order_by(order)[init:limit].query
             total= User.objects.all().count()
             # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
     # response['total']=total
@@ -1812,12 +1965,16 @@ def editUsuario(request,id,arbitraje_id):
     user=  get_object_or_404(User,id=id)
 
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
-    
+    # user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_asovac= Usuario_asovac.objects.get(usuario=id)
+    user_role= get_roles(user.id,"is_admin")
+    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
+    rols= get_role_list(id,arbitraje_id)
+
     # Obtenemos el mayor rol del usuario que hizo la petición
-    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    # request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user= Usuario_asovac.objects.get(usuario=request.user.id)
+    # print "Usuario autenticado User: ", request_user.id," Arbitraje ",arbitraje_id
     request_user_role= get_roles(request_user.id,"is_admin")
 
     if(request_user_role > user_role):
@@ -1855,9 +2012,10 @@ def removeUsuario(request,id,arbitraje_id):
     data= dict()
 
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
+    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_role= get_roles(id,"is_admin")
+    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
+    rols= get_role_list(id,arbitraje_id)
     
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
@@ -1915,9 +2073,10 @@ def changeRol(request,id,arbitraje_id):
     user=User.objects.get(id=id)
     arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
+    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_role= get_roles(id,"is_admin")
+    # rols= get_role_list(user_asovac.id,arbitraje_id)
+    rols= get_role_list(id,arbitraje_id)
     
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
@@ -1944,12 +2103,12 @@ def changeRol(request,id,arbitraje_id):
                 addRol.usuario_asovac=user_asovac
                 addRol.rol=itemRole
                 addRol.sistema_asovac=arbitraje
-                print addRol
+                # print addRol
                 addRol.save()
                 # form.save()
             data['status']= 200
         else:
-            # print form.errors
+            print form.errors
             data['status']= 404
     else:
     
@@ -1971,6 +2130,7 @@ def changeRol(request,id,arbitraje_id):
             'rol_active':rols,
             'rol_auth':request_user_role,
             'array_rols':array_rols,
+            'usuario_asovac':user_asovac,
         }
 
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
