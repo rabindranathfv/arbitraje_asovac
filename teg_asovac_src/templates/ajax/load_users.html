@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' %}">
+<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id %}">
     {% csrf_token %}
     
     <div class="modal-header">
@@ -31,15 +31,17 @@
         var formData = new FormData(form);
         formData.append('file',input.files[0]);
 
+        
         //console.log(formData);
         $.ajax({
             url: $('#loadUsersForm').attr("data-url"),
             type: 'POST',
             data: formData,
             success: function (data) {
-
+                
+                $('#table').bootstrapTable('refresh')
                 if(data.form_is_valid){
-                    //console.log('data is saved')
+                    // console.log('data is saved')
                     $('#modal-user .modal-content').html(data.html_form);
                 }else{
                     //console.log('data is invalid')

@@ -52,7 +52,7 @@ urlpatterns = [
     # Carga de tablas via archivos
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
     url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
-    url(r'^load/usuarios$',views.load_users_modal,name='load_users'),
+    url(r'^(?P<arbitraje_id>\d+)/load/usuarios$',views.load_users_modal,name='load_users'),
 
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import random, string,xlrd,os,sys
+from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
@@ -1313,7 +1314,7 @@ def load_subareas_modal(request):
 ########################     Carga de usuarios via files     ######################
 ###################################################################################
 
-def load_users_modal(request):
+def load_users_modal(request,arbitraje_id):
     data=dict()
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1339,7 +1340,8 @@ def load_users_modal(request):
         else:
             form= UploadFileForm(request.POST, request.FILES)
             context={
-            'form': form
+            'form': form,
+            'arbitraje_id': arbitraje_id
             }
             data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
             return JsonResponse(data) 
@@ -1348,7 +1350,8 @@ def load_users_modal(request):
         form= UploadFileForm()
 
         context={
-            'form': form
+            'form': form,
+            'arbitraje_id': arbitraje_id
         }
         data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
         return JsonResponse(data) 
@@ -1542,6 +1545,7 @@ def create_users(sh):
             user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
             user.username=sh.cell_value(rowx=fila, colx=2).strip()
             user.email=sh.cell_value(rowx=fila, colx=3).strip()
+            user.password=make_password(user.username+"12345")
             user.save()
             # print "Se crea el usuario: ", user.first_name
             # Guarda la subarea
