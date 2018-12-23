@@ -1,0 +1,17 @@
+{% load crispy_forms_tags %}
+<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Datos del pagador del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h4>
+</div>
+<form method="POST" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}">
+    <div class="modal-body">
+        {% csrf_token %}
+        {{ form | crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Añadir</button>
+    </div>
+</form>

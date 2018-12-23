@@ -1,0 +1,45 @@
+<form method="post" data-url="{% url 'main_app:validar_rol' arbitraje_id %}" class="validate_access">
+    {% csrf_token %}
+    <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">Arbitraje AsoVAC</h4>
+    </div>
+    <div class="modal-body">
+        <!-- <div class="form-group">
+                <label for="rol"> Seleccione el rol a usar</label>
+                <select name="rol" class="form-control" id="rol" required>
+                    <option value="">Seleccione</option> 
+                    {% for name in params_validations.rol_name %}  -->
+                    <!-- <option value="{{area.id}}">{{ area.nombre }}</option> -->
+                    <!-- <option value="{{name.id}}">{{ name.nombre }}</option>
+                    {% endfor %}
+                </select>
+        </div> -->
+        <div class="form-group">
+            <label for=""> 
+                Su rol es: "{{params_validations.rol_name}}"
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Introduzca su clave:</label>
+            <input type="password" name="password" class="form-control" id="password" placeholder="Introduzca la clave solicitada" required>
+        </div>
+        
+        <input type="hidden" name="rol" id="rol" value="{{params_validations.rol_id}}" >
+
+        {% if params_validations.status == 0 %}
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span>Los datos suministrados no son correctos, intente nuevamente.</span>
+            </div>
+        {% endif %}
+
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Seleccionar</button>
+    </div>
+</form>

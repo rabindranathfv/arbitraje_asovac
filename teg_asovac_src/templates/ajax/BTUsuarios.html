@@ -1,0 +1,188 @@
+
+{% load crispy_forms_tags %}
+
+{% if tipo == "show" %}
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >Usuario {{user.username}}</h4>
+    </div>
+
+    <div class="modal-body">
+		
+        <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Nombres</th>
+                    <td>{{user.first_name}}</td>
+                </tr>
+                <tr>
+                    <th>Apellidos</th>
+                    <td>{{user.last_name}}</td>
+                </tr>
+                <tr>
+                    <th>Nombre de Usuario</th>
+                    <td>{{user.username}}</td>
+                </tr>
+                <tr>
+                    <th>Correo Electronico</th>
+                    <td>{{user.email}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+    </div>
+
+{% else %}
+    {% if tipo == "edit" and permiso == "rol-permitido" %}
+    {% load crispy_forms_tags %}
+    {% include "errors_form.html" %}
+        <form method="post" class="editarUsuario" data-url="{% url 'main_app:editarUsuario' arbitraje_id user.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >{{user.username}}</h4>
+            </div>
+            
+            <div class="modal-body">
+                    {{  form | crispy }}
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" id="tableButtonSave">Guardar</button>
+            </div>
+        </form>
+    {% else %}
+        {% if tipo == "delete" and permiso == "rol-permitido" %}
+        <form method="post" id="eliminarSubarea" class="eliminarSubarea" data-url="{% url 'main_app:eliminarUsuario' arbitraje_id user.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Eliminar Usuario</h4>
+            </div>
+        
+            <div class="modal-body">
+                {% if message == "eliminar"%}
+                    <p>¿Desea eliminar el usuario {{user.username }}?</p>
+                {% endif %}
+
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger" >Eliminar</button>
+            </div>
+        </form>
+        {% else %}
+            {% if tipo == "deleted" %}
+            
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Eliminar Usuario</h4>
+            </div>
+            
+            <div class="modal-body">
+                <p>El usuario {{user.username }} se elimino de manera exitosa.</p>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger" >Eliminar</button>
+            </div>
+            {% else %}
+    
+                {% if tipo == "rol" and permiso == "rol-permitido" %}
+                    {% load crispy_forms_tags %}
+                    {% include "errors_form.html" %}
+                    <form method="post" class="cambiarRol" data-url="{% url 'main_app:cambiarRol' arbitraje_id user.id %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" > Roles para el usuario: {{user.first_name}} {{user.last_name}}</h4>
+                        </div>
+                        
+                        <div class="modal-body">
+                                <!-- {{  form | crispy }} -->
+                            <div id="div_id_rol" class="row"> 
+                                <div class="controls col-md-12 col-md-offset-3">
+                                        {% for rol in rol_list %}
+                                        
+                                        <div class="checkbox_{{ rol.id }}">
+                                            <label class="" for="id_rol_{{ rol.id }}">
+                                                <input type="checkbox" class="rol_{{ user.id }}" name="rol" id="id_rol_{{ rol.id }}" value="{{ rol.id }}">{{ rol.nombre }}
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                </div>
+                            </div>
+                            <input type="hidden" name="sistema_asovac" value="{{arbitraje_id}}">
+                            <input type="hidden" name="usuario_asovac" value="{{user.id}}">
+
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" id="Buttonsave">Guardar</button>
+                        </div>
+                    </form>
+
+                    <script>
+                        var rol_active="{{rol_active}}";
+                        var rol_auth="{{rol_auth}}";
+                        var array_rols="{{array_rols}}";
+                       
+
+                        // transforma el string a array 
+                        var rol_active=JSON.parse(rol_active);
+                        var rol_auth=JSON.parse(rol_auth);
+                        var array_rols=JSON.parse(array_rols);
+                        
+                        for (var i = 0; i < rol_active.length; i++) {
+                            // console.log(rol_active[i]);
+                            var selector="#id_rol_"+rol_active[i];
+                            // console.log(selector);
+                            $(selector).prop("checked",true);
+                        }
+                        
+                        for (var j = 0; j < array_rols.length; j++) { 
+                            // console.log("array: "+array_rols+" rol_auth: "+rol_auth);
+                            if(array_rols[j] <= rol_auth ){
+                                var check=".checkbox_"+array_rols[j];
+                                // console.log(check);
+                                $(check).css("display","none");
+                            }
+                        }
+
+                       
+                    </script>
+
+                {% else %}
+                    {% if permiso == "rol-no-permitido" %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Usuario {{user.username}}</h4>
+                    </div>
+                    
+                    <div class="modal-body">
+                        No tienes permiso para modificar la información de este usuario.
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            
+            {% endif %}
+
+        {% endif %}
+    {% endif %}
+{% endif %}
+

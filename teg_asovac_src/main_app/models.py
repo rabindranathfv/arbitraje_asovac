@@ -26,21 +26,44 @@ Rol Model
 """""""""""""""""""""""""""
 class Rol(models.Model):
 
-	
-	nombre = models.CharField(max_length=20)
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
+"""""""""""""""""""""""""""
+Area Model
+"""""""""""""""""""""""""""
+class Area(models.Model):
+
+	nombre = models.CharField(max_length=100)
+	descripcion = models.TextField(max_length=150, blank = True)
+	
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
+
+
+"""""""""""""""""""""""""""
+Sub_area Model
+"""""""""""""""""""""""""""
+class Sub_area(models.Model):
+
+	area = models.ForeignKey(Area, on_delete = models.CASCADE)
+
+	nombre = models.CharField(max_length=80)
+	descripcion = models.TextField(max_length=150, blank = True)
+
+	def __str__(self):
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
 Sistema_asovac Model
 """""""""""""""""""""""""""
 class Sistema_asovac(models.Model):
-	
-	nombre = models.CharField(max_length=20)
+
+	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
 	fecha_inicio_arbitraje = models.DateField()
 	fecha_fin_arbitraje = models.DateField()
@@ -52,7 +75,7 @@ class Sistema_asovac(models.Model):
 	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 """""""""""""""""""""""""""
 Usuario_asovac Model
@@ -60,12 +83,29 @@ Usuario_asovac Model
 class Usuario_asovac(models.Model):
 
 	usuario = models.OneToOneField(User, on_delete = models.CASCADE)
-	rol = models.ManyToManyField(Rol,blank=True)
-	Sistema_asovac_id = models.ManyToManyField(Sistema_asovac, blank=True)
-	area_id = models.ManyToManyField('arbitrajes.Area',blank=True)
+	sub_area = models.ManyToManyField(Sub_area, blank=True)
 
 	usuario_activo = models.BooleanField(default=True)
 
+	def __str__(self):
+		return "{} {}".format(self.usuario.first_name,self.usuario.last_name).encode('utf-8', errors='replace')
+
+
+"""""""""""""""""""""""""""
+Usuario_rol_in_sistema Model
+"""""""""""""""""""""""""""
+class Usuario_rol_in_sistema(models.Model):
+	
+	rol = models.ForeignKey(Rol)
+	sistema_asovac = models.ForeignKey(Sistema_asovac,blank=True,null=True)
+	usuario_asovac = models.ForeignKey(Usuario_asovac)
+
+	status = models.BooleanField(default = True)
+
+	def __str__(self):
+		return "{} {} {}".format(self.usuario_asovac.usuario.first_name,self.usuario_asovac.usuario.last_name,self.rol.descripcion).encode('utf-8', errors='replace')
+
+"""
 	def biggest_role(self):
 		my_roles = self.rol.all()
 		biggest_role = None
@@ -76,9 +116,10 @@ class Usuario_asovac(models.Model):
 			else:
 				biggest_role = role
 		return biggest_role
+"""
+	
 
-	def __str__(self):
-		return "{} {}".format(self.usuario.first_name,self.usuario.last_name)#.encode('utf-8', errors='replace')
+
 
 
 
@@ -86,7 +127,7 @@ class Usuario_asovac(models.Model):
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac
 #Por cada objeto User creado en el sistema automaticamente.
 def crear_usuario_asovac(sender, **kwargs):
-    	
+
 	user = kwargs["instance"]
 	if kwargs["created"]:
 		usuario_asovac = Usuario_asovac(usuario=user)
@@ -111,9 +152,12 @@ def crear_usuario_asovac(sender, **kwargs):
 			rol = Rol(nombre="Autor",descripcion="Autor")
 			rol.save()
 
-
-		usuario_asovac.rol.add(Rol.objects.get(id=5)) #Los roles se crean en base a la tabla de roles, autor es id=5
-		usuario_asovac.save()
+			Rol_admin=Usuario_rol_in_sistema(status="1",rol_id="1",usuario_asovac_id=usuario_asovac.id)
+			Rol_admin.save()
+		else:
+			if first_usuario_asovac == 1:
+				Rol_admin=Usuario_rol_in_sistema(status="1",rol_id="1",usuario_asovac_id=usuario_asovac.id)
+				Rol_admin.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
 

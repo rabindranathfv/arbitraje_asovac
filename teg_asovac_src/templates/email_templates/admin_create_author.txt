@@ -1,0 +1,7 @@
+Sistema ASOVAC: Creación de usuario
+
+Se le notifica que se le ha creado un usuario en nuestra página Asovac, en la parte de abajo podrá encontrar los datos de la cuenta. Podrá usar esta cuenta para registrarse a cualquiera de nuestros arbitrajes.
+
+Su username es: {{ username }}
+Su nueva clave asignada es: {{ password }}
+Se le ha asociado al arbitraje: {{ sistema_asovac }}

@@ -1,0 +1,92 @@
+
+{% load crispy_forms_tags %}
+
+{% if tipo == "show" %}
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" >{{area.nombre}}</h4>
+    </div>
+
+    <div class="modal-body">
+		
+        <table class="table table-bordered">
+            <thead>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+            </thead>
+            <tbody>
+                <td>{{area.nombre}}</td>
+                <td>{{area.descripcion}}</td>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="tableButtonSave">Guardar</button>
+    </div>
+
+{% else %}
+    {% if tipo == "edit" %}
+    {% load crispy_forms_tags %}
+    {% include "errors_form.html" %}
+        <form method="post" class="editarArea" data-url="{% url 'main_app:editarArea' area.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >{{area.nombre}}</h4>
+            </div>
+            
+            <div class="modal-body">
+                    {{  form | crispy }}
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" >Guardar</button>
+            </div>
+        </form>
+    {% else %}
+        {% if tipo == "delete" %}
+        <form method="post" id="eliminarArea" action="" class="eliminarArea" data-url="{% url 'main_app:eliminarArea' area.id %}">
+            {% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >Eliminar area</h4>
+            </div>
+        
+            <div class="modal-body">
+                {% if message == "eliminar"%}
+                    <p>¿Desea eliminar el area {{area.nombre }}?</p>
+                {% endif %}
+
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger" >Eliminar</button>
+            </div>
+        </form>
+        {% else %}
+            {% if tipo == "deleted" %}
+    
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" >Eliminar Usuario</h4>
+                </div>
+            
+                <div class="modal-body">
+                    <p>El area {{area.nombre }} se elimino de manera exitosa.</p>
+                </div>
+            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-danger" >Eliminar</button>
+                </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+

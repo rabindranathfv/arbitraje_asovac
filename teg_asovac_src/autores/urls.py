@@ -21,12 +21,24 @@ from . import views
 urlpatterns = [
     url(r'^$', views.autores_pag, name= 'autores'),
 
+
+    url(r'^administrador/crear-autor/$',views.admin_create_author,name='admin_create_author'),
     url(r'^listar-autores/$',views.authors_list,name='authors_list'),
-    url(r'^editar-autores/$',views.author_edit,name='author_edit'),
+    url(r'^editar-autor/(?P<autor_id>\d+)/$',views.author_edit,name='author_edit'),
+    url(r'^detalles/(?P<autor_id>\d+)/$',views.author_details,name='author_details'),
 
     url(r'^generar-certificado/$', views.generar_certificado, name = 'generar_certificado'),
+    
     url(r'^postular-trabajo/$', views.postular_trabajo, name= 'postular_trabajo'),
-    url(r'^postular-trabajo/pagador/$', views.postular_trabajo_pagador, name= 'postular_trabajo_pagador'),
-    url(r'^postular-trabajo/pago/$', views.postular_trabajo_pago, name= 'postular_trabajo_pago'),
-    url(r'^postular-trabajo/factura/$', views.postular_trabajo_factura, name= 'postular_trabajo_factura'),
+
+    url(r'^postular-trabajo/pagador/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pagador_modal, name= 'postular_trabajo_pagador_modal'),
+    url(r'^postular-trabajo/factura/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_factura_modal, name= 'postular_trabajo_factura_modal'),
+    url(r'^postular-trabajo/pago/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pago_modal, name= 'postular_trabajo_pago_modal'),
+    url(r'^editar-perfil/(?P<user_id>\d+)/$',views.author_edit_modal,name='author_edit_modal'),
+
+
+    url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
+
+    #Carga de contenido 
+    url(r'^load-authors-data$',views.list_authors,name='list_authors'),
 ]

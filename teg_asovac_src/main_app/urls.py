@@ -48,11 +48,42 @@ urlpatterns = [
     url(r'^email-test/$',views.email_test, name='email_test'),
     #url(r'^', include('eventos.urls')),
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
+    url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
+    url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
+
+    #Carga de contenido 
+    url(r'^list$',views.list,name='list'),
+    url(r'^listSubareas$',views.list_subareas,name='list_subareas'),
+    url(r'^listUsuarios$',views.list_usuarios,name='list_usuarios'),
+    
+    # CRUD Areas
+    url(r'^areas-subareas/viewArea/(?P<id>\d+)$',views.viewArea,name='verArea'),
+    url(r'^areas-subareas/editArea/(?P<id>\d+)$',views.editArea,name='editarArea'),
+    url(r'^areas-subareas/removeArea/(?P<id>\d+)$',views.removeArea,name='eliminarArea'),
+    
+    # CRUD Subareas
+    url(r'^areas-subareas/viewSubarea/(?P<id>\d+)$',views.viewSubarea,name='verSubarea'),
+    url(r'^areas-subareas/editSubarea/(?P<id>\d+)$',views.editSubarea,name='editarSubarea'),
+    url(r'^areas-subareas/removeSubarea/(?P<id>\d+)$',views.removeSubarea,name='eliminarSubarea'),
+
+    # CRUD Usuarios
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/viewUsuario/(?P<id>\d+)$',views.viewUsuario,name='verUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/editUsuario/(?P<id>\d+)$',views.editUsuario,name='editarUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/removeUsuario/(?P<id>\d+)$',views.removeUsuario,name='eliminarUsuario'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/changeRol/(?P<id>\d+)$',views.changeRol,name='cambiarRol'),
     
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
+    url(r'^usuario/cambiar-clave/$',views.changepassword_modal,name='changepassword_modal'),
     url(r'^usuario/(?P<id>\d+)/actualizar$',views.update_user_modal,name='actualizar_usuario'),
     url(r'^usuario/(?P<id>\d+)/eliminar$',views.delete_user_modal,name='eliminar_usuario'),
     url(r'^usuario/(?P<id>\d+)/rol/actualizar$',views.update_rol_modal,name='actualizar_rol'),
+    url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
+    url(r'^usuario/(?P<user_id>\d+)/crear-autor/$',views.create_autor_instance_modal,name='create_autor_instance_modal'),
+    url(r'^usuario/(?P<arbitraje_id>\d+)/registrar-en-sistema/$',views.register_user_in_sistema,name='register_user_in_sistema'),
+
+    url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
+    url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
 
 ]

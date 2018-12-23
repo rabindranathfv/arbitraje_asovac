@@ -3,125 +3,150 @@ body {
     background-color: #EEEEEE;
 }
 
+
 /*============================ Main Navbar structure ============================*/
-.navbar{
-    margin :0;
+
+.navbar {
+    margin: 0;
     font-family: 'Raleway';
     font-size: 16px;
     font-weight: 600;
 }
 
-.navbar-nav > li > a, .navbar-brand {
-    padding-top:10px !important;
-    padding-bottom:10px !important;
+.navbar-nav>li>a,
+.navbar-brand {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
     height: 40px;
 }
 
-.navbar-nav > li > p {
-    padding-top:10px !important;
-    padding-right:15px !important;
-    padding-bottom:10px !important;
-    margin:0;
+.navbar-nav>li>p {
+    padding-top: 10px !important;
+    padding-right: 15px !important;
+    padding-bottom: 10px !important;
+    margin: 0;
     height: 32px;
 }
 
 .navbar {
-    min-height:30px !important
+    min-height: 30px !important
 }
 
+
 /*============================ Main Navbar colors ============================*/
+
 .navbar-default {
     background-color: #2869BC;
     border-color: #BBBBBB;
 }
 
+
 /* Title */
+
 .navbar-default .navbar-brand {
     color: #fff;
 }
+
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
     color: #fff;
 }
+
+
 /* Link */
-.navbar-default .navbar-nav > li > a{
+
+.navbar-default .navbar-nav>li>a {
     color: #b3e3ff;
 }
 
-.navbar-default .navbar-nav > li > p,
-.navbar-default .navbar-nav > li > p > a {
+.navbar-default .navbar-nav>li>p,
+.navbar-default .navbar-nav>li>p>a {
     color: #fff;
 }
 
-.navbar-default .navbar-nav > li > p > a:hover {
+.navbar-default .navbar-nav>li>p>a:hover {
     color: #b3e3ff;
     text-decoration: none;
 }
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+
+.navbar-default .navbar-nav>li>a:hover,
+.navbar-default .navbar-nav>li>a:focus {
     color: #fff;
 }
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
+
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:hover,
+.navbar-default .navbar-nav>.active>a:focus {
     color: #fff;
     background-color: #205496;
 }
+
+
 /* Caret */
-.navbar-default .navbar-nav > .dropdown > a .caret {
+
+.navbar-default .navbar-nav>.dropdown>a .caret {
     border-top-color: #777;
     border-bottom-color: #777;
 }
-.navbar-default .navbar-nav > .dropdown > a:hover .caret,
-.navbar-default .navbar-nav > .dropdown > a:focus .caret {
+
+.navbar-default .navbar-nav>.dropdown>a:hover .caret,
+.navbar-default .navbar-nav>.dropdown>a:focus .caret {
     border-top-color: #333;
     border-bottom-color: #333;
 }
-.navbar-default .navbar-nav > .open > a .caret,
-.navbar-default .navbar-nav > .open > a:hover .caret,
-.navbar-default .navbar-nav > .open > a:focus .caret {
+
+.navbar-default .navbar-nav>.open>a .caret,
+.navbar-default .navbar-nav>.open>a:hover .caret,
+.navbar-default .navbar-nav>.open>a:focus .caret {
     border-top-color: #555;
     border-bottom-color: #555;
 }
 
+
 /*============================ Secondary Navbar structure ============================*/
-.secondary-navbar{
+
+.secondary-navbar {
     margin-top: 41px;
     font-size: 16px;
     font-weight: 600;
     min-height: 30px !important;
 }
 
-.secondary-navbar ul > li {
+.secondary-navbar ul>li {
     margin: 0 5px;
 }
 
-.secondary-navbar > li > a, .navbar-brand {
-    padding-top:10px !important;
-    padding-bottom:10px !important;
+.secondary-navbar>li>a,
+.navbar-brand {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
     height: 40px;
 }
 
-.secondary-navbar ul > li > p {
-    padding-top:10px !important;
-    padding-right:15px !important;
-    padding-bottom:10px !important;
-    margin:0;
+.secondary-navbar ul>li>p {
+    padding-top: 10px !important;
+    padding-right: 15px !important;
+    padding-bottom: 10px !important;
+    margin: 0;
     height: 30px;
 }
 
+
 /*============================ Secondary Navbar colors ============================*/
-.secondary-navbar{
-    background-color: #FF7E46 ; /*#F2672A; */
+
+.secondary-navbar {
+    background-color: #FF7E46;
+    /*#F2672A; */
     border-color: #E7E7E7;
 }
 
-.secondary-navbar .navbar-nav > li > p {
-    color: #EEE
-    ;
+.secondary-navbar .navbar-nav>li>p {
+    color: #EEE;
 }
 
+
 /*============================ Fixed Sidebar & Content ============================*/
+
 #wrapper {
     display: flex;
     width: 100%;
@@ -204,35 +229,38 @@ body {
     text-decoration: none;
 }
 
-.sidebar-nav > .sidebar-brand {
+.sidebar-nav>.sidebar-brand {
     height: 65px;
     font-size: 18px;
     line-height: 60px;
 }
 
-.sidebar-nav > .sidebar-brand a {
+.sidebar-nav>.sidebar-brand a {
     color: #222;
 }
 
-.sidebar-nav > .sidebar-brand a:hover {
+.sidebar-nav>.sidebar-brand a:hover {
     color: #222;
     background: none;
 }
 
-.sidebar-submenu li{
+.sidebar-submenu li {
     font-size: 14px;
     padding-left: 15px;
     line-height: 30px
 }
 
+
 /*============================ Content styling ============================*/
 
+
 /*================= Dashboard content spacing =================*/
+
 #content-wrapper {
     margin-top: 15px;
 }
 
-#menu-toggle-icon{
+#menu-toggle-icon {
     font-size: 18px;
     color: #E7E7E7;
 }
@@ -253,16 +281,17 @@ body {
     outline: none;
 }
 
-.user-title{
+.user-title {
     display: inline;
     margin-left: 10px;
 }
+
 
 /*================= Card Styles =================*/
 
 .RLcard {
     /* Add shadows to create the "card" effect */
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
     border: solid #999 1px;
     background-color: #FFFFFF;
@@ -272,9 +301,11 @@ body {
     padding: 24px 30px !important;
 }
 
+
 /* On mouse-over, add a deeper shadow */
+
 .RLcard:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 
 .RLcard.half-padding {
@@ -285,9 +316,13 @@ body {
     margin-bottom: 10px;
 }
 
+
 /*================= Min height content box =================*/
+
+
 /* Esta regla se usa para mantener al footer pegado a la parte inferior de la página
 incluso cuando el contenido de la página es muy corto */
+
 .min-height-content {
     min-height: calc(100vh - 120px);
 }
@@ -295,12 +330,15 @@ incluso cuando el contenido de la página es muy corto */
 .top-padding-40 {
     padding-top: 40px;
 }
+
+
 /*================= Bootstrap button colors override =================*/
-.btn-primary{
+
+.btn-primary {
     background-color: #2869BC;
 }
 
-.btn-success{
+.btn-success {
     background-color: #5CB85C;
 }
 
@@ -309,74 +347,85 @@ incluso cuando el contenido de la página es muy corto */
     border-color: #FF7040;
 }
 
-.btn-warning:hover{
+.btn-warning:hover {
     background-color: #FF7040;
 }
 
+
 /*================= Bootrstrap align center rows =================*/
-.row.middle-content{
-   display: flex;
-   align-items: center;
+
+.row.middle-content {
+    display: flex;
+    align-items: center;
 }
 
+
 /*================= Typography styling =================*/
+
 .lb-md {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 .p-md {
-  font-size: 16px !important;
+    font-size: 16px !important;
 }
 
+
 /*================= Table Styles =================*/
-.gray-header th{
+
+.gray-header th {
     background-color: #DDD;
 }
 
+
 /*================= Defined margin classes =================*/
-.top-margin-18{
+
+.top-margin-18 {
     margin-top: 18px;
 }
 
-.top-margin-36{
+.top-margin-36 {
     margin-top: 36px;
 }
 
-.top-margin-6{
+.top-margin-6 {
     margin-top: 6px;
 }
 
-.top-margin-128{
+.top-margin-128 {
     margin-top: 128px;
 }
 
+
 /*================= Filler spaces =================*/
-.preview-resumen{
+
+.preview-resumen {
     height: 400px;
     width: 300px;
     border: 1px solid #DDDDDD;
     line-height: 440px;
 }
 
-.observations-space{
+.observations-space {
     min-height: 250px;
     overflow: auto;
 }
 
-textarea{
+textarea {
     resize: none;
 }
 
+
 /*============================ Footer ============================*/
 
-#footer{
+#footer {
     width: 100%;
     min-height: 50px;
     background-color: #222;
     z-index: 1000;
 }
 
-#footer p{
+#footer p {
     color: #EEE;
     padding-top: 15px;
     font-family: 'Raleway';
@@ -385,11 +434,42 @@ textarea{
 
 
 /*==== Modales ====*/
-.content-modal{
+
+.content-modal {
     font-size: 22px;
 }
 
+
 /**=== Imagenes centradas ===*/
+
 .img-responsive {
     margin: 0 auto !important;
+}
+
+
+/** Panel collapsible**/
+
+.panel-collapse {
+    background: #CECECE;
+    color: black;
+    text-decoration: none;
+}
+
+.panel-collapse:hover {
+    background-color: #555;
+    color: #fff;
+    text-decoration: none;
+}
+
+.panel-collapse:focus {
+    background: #CECECE;
+    color: black;
+    text-decoration: none;
+}
+
+
+/**=== Alineación Vertical ===*/
+
+.vertical-middle-align {
+    vertical-align: middle !important;
 }

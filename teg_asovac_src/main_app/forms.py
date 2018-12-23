@@ -5,13 +5,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 
-from .models import Sistema_asovac, Usuario_asovac, Rol
-
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
+from .validators import valid_extension
 
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
@@ -22,6 +22,34 @@ estados_arbitraje = (   (0,'Desactivado'),
                         (6,'En Cierre de Arbitraje'),
                         (7,'En Asignación de Secciones'),
                         (8,'En Resumen'))
+
+my_date_formats = ['%d/%m/%Y']
+my_date_format = '%d/%m/%Y'
+
+#Formulario para cambiar la contraseña.
+class ChangePassForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super(ChangePassForm, self).__init__(*args, **kwargs)
+        self.fields['old_password'].label = "Contraseña actual"
+        self.fields['new_password1'].label = "Nueva contraseña"
+        self.fields['new_password2'].label = "Confirmar contraseña"
+
+    #Este codigo no lanza el mensaje
+    def clean_old_password(self):
+        password = self.cleaned_data['old_password']
+        if not self.user.check_password(password):
+            print ("La Contraseña es invalida: Old Password")
+            raise forms.ValidationError(_("La contraseña es incorrecta."),code='invalid_password')
+        return password
+
+    #Este codigo no lanza el mensaje.
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 != password2:
+            raise forms.ValidationError(_("Las nuevas contraseñas no coinciden."), code = "new_password")
+        return password2
+
 
 class RegisterForm(UserCreationForm):
 
@@ -45,21 +73,17 @@ class MyLoginForm(forms.Form):
 class DataBasicForm(forms.Form):
     name_arbitration = forms.CharField(label="Nombre arbitraje", max_length=20)
     description = forms.CharField(label="Descripción", max_length=255)
-    start_date = forms.DateField(label="Fecha de inicio")
-    end_date = forms.DateField(label="Fecha de fin")
-        
-        # super(MyLoginForm, self).__init__(*args, **kwargs)
-        # self.helper = FormHelper()
-        # self.helper.form_id = 'login-form'
-        # self.helper.form_method = 'post'
-        # #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
-        # self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))
+    start_date = forms.DateField(label="Fecha de inicio", input_formats=my_date_formats)
+    end_date = forms.DateField(label="Fecha de fin", input_formats=my_date_formats)
 
 class CreateArbitrajeForm(forms.ModelForm):
 
     class Meta:
         model = Sistema_asovac
         fields = ['nombre','descripcion', 'fecha_inicio_arbitraje', 'fecha_fin_arbitraje']
+        widgets = {'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
+                   'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)}
+        labels = {'descripcion': 'Descripción', 'fecha_fin_arbitraje': 'Fecha de Culminación', 'fecha_inicio_arbitraje': 'Fecha de Inicio'}
 
     def __init__(self, *args, **kwargs):
         super(CreateArbitrajeForm, self).__init__(*args, **kwargs)
@@ -99,22 +123,27 @@ class PerfilForm(forms.ModelForm):
         fields=['username','first_name','last_name','email',]
 
 class AssingRolForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        self.max_role = kwargs.pop('max_role')
-        super(AssingRolForm, self).__init__(*args, **kwargs)
-        self.fields['rol'].queryset = Rol.objects.filter(id__gt=self.max_role)
-        self.fields['rol'].required = True
 
+    # def __init__(self, *args, **kwargs):
+    #     self.max_role = kwargs.pop('max_role')
+    #     self.user_asovac = kwargs.pop('user_asovac')
+    #     super(AssingRolForm, self).__init__(*args, **kwargs)
+       
+        # print "test: ", Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac).query
+        # # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].queryset = Usuario_rol_in_sistema.objects.filter(rol_id__gt=self.max_role, usuario_asovac_id=self.user_asovac)
+        # self.fields['rol'].required = True
     class Meta:
-        model = Usuario_asovac
-        fields = ['rol']
-        widgets = {'rol': CheckboxSelectMultiple()}
+        model = Usuario_rol_in_sistema
+        fields = ['rol','usuario_asovac','sistema_asovac']
+        # widgets = {'rol': CheckboxSelectMultiple()}
+
 
 class ArbitrajeAssignCoordGenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
                                                         # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.filter(rol__id = 2)
+        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
         self.fields['coordinador_general'].required = True
 
     class Meta:
@@ -141,8 +170,36 @@ class ArbitrajeStateChangeForm(forms.ModelForm):
             raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
         return data
 
-
+"""
 class RolForm(forms.ModelForm):
     class Meta:
         model= Usuario_asovac
         fields=['rol']
+"""
+class AreaForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre']
+
+class AreaCreateForm(forms.ModelForm):
+    class Meta:
+        model= Area
+        fields=['nombre','descripcion']
+
+class SubareaForm(forms.ModelForm):
+    class Meta:
+        model= Sub_area
+        fields=['nombre']
+
+class SubAreaRegistForm(forms.ModelForm):
+    class Meta:
+        model= Usuario_asovac
+        fields=['sub_area',]
+        labels={'sub_area':'Subrea',}
+        widget={
+            'sub_area': forms.CheckboxSelectMultiple(),
+        }
+
+class UploadFileForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    file = forms.FileField(widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))

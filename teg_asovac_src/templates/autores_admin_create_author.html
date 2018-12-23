@@ -1,0 +1,48 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+
+				<h2 class="text-left">Datos del autor</h2>
+				{% include "errors_form.html" %}
+				<form id="admin-create-author-form" method="post">
+					{% csrf_token %}
+					{{ form | crispy }}
+					<div class="form-group">
+						<label class="control-label  requiredField" for="area_select"> Área <span class="asteriskField">*</span></label>
+						<div class="controls was-validated" name="area" >
+							<select data-url="{% url 'main_app:cargar_subareas' '0' %}" name="area_select" class="form-control" id="area_select" required>
+								<option value="">Seleccione un Área</option>
+								{% for area in areas %}
+								<!-- <option value="{{area.id}}">{{ area.nombre }}</option> -->
+								<option value="{{area.id}}">{{ area.nombre }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group"  style="display: none" id="content_subarea">
+							{% include 'ajax/show_subareas.html' %}
+					</div>
+
+					<div class="row">
+						<div class="col-sm-offset-8 col-sm-2">
+					    	<a role="button" class="btn btn-danger btn-block btn-lg" href="{% url 'autores:authors_list' %}">Cancelar</a>
+					    </div>
+					    <div class="col-sm-2">
+					    	<button type="submit" class="btn btn-success btn-lg btn-block">Añadir</button>
+					    </div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+</div>
+{% endblock %}
