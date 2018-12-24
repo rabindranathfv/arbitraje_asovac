@@ -24,13 +24,13 @@
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 								<ul class="dropdown-menu">
 									<li>
-										<a  href="#" class="show-form" data-url="{% url 'main_app:crear_usuario' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fas fa-plus-circle"></i> Crear usuario</a>
+										<!-- <a  href="#" class="show-form" data-url="{% url 'main_app:crear_usuario' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fas fa-plus-circle"></i> Crear usuario</a> -->
 									</li>
 									<li>
-										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Usuarios</a>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i>Cargar Coordinador <br> de Área</a>
 									</li>
 									<li>
-										<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Roles</a>
+										<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
 									</li>
 								</ul>
 							</div>

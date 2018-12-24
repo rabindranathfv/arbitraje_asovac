@@ -1314,8 +1314,9 @@ def load_subareas_modal(request):
 ########################     Carga de usuarios via files     ######################
 ###################################################################################
 
-def load_users_modal(request,arbitraje_id):
+def load_users_modal(request,arbitraje_id,rol):
     data=dict()
+
     if request.method == 'POST':
         print 'el metodo es post'
         form= UploadFileForm(request.POST, request.FILES)
@@ -1326,7 +1327,7 @@ def load_users_modal(request,arbitraje_id):
             extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo 
-            response= validate_load_users(file_name, extension)
+            response= validate_load_users(file_name, extension,arbitraje_id,rol)
             print response
 
             context={
@@ -1341,7 +1342,8 @@ def load_users_modal(request,arbitraje_id):
             form= UploadFileForm(request.POST, request.FILES)
             context={
             'form': form,
-            'arbitraje_id': arbitraje_id
+            'arbitraje_id': arbitraje_id,
+            'rol': rol,
             }
             data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
             return JsonResponse(data) 
@@ -1351,7 +1353,8 @@ def load_users_modal(request,arbitraje_id):
 
         context={
             'form': form,
-            'arbitraje_id': arbitraje_id
+            'arbitraje_id': arbitraje_id,
+            'rol': rol,
         }
         data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
         return JsonResponse(data) 
@@ -1360,7 +1363,7 @@ def load_users_modal(request,arbitraje_id):
 ############     Valida el contenido del excel para cargar usuarios     ###########
 ###################################################################################
 
-def validate_load_users(filename,extension):
+def validate_load_users(filename,extension,arbitraje_id,rol):
     data= dict()
     data['status']=400
     data['message']="La estructura del archivo no es correcta"
@@ -1492,7 +1495,7 @@ def validate_load_users(filename,extension):
 
                 # Inserta los registros una vez realizada la validación correspondiente
                 if data['status'] == 200:
-                    create_users(sh)
+                    create_users(sh,arbitraje_id,rol)
                     print "Los datos del archivo son válidos"
 
     return data 
@@ -1535,7 +1538,7 @@ def count_username(sh,username):
         # print "El contador vale: ",cont
     return cont
 
-def create_users(sh):
+def create_users(sh,arbitraje_id,rol):
     
     for fila in range(sh.nrows):
         if fila > 0: 
@@ -1548,8 +1551,10 @@ def create_users(sh):
             user.password=make_password(user.username+"12345")
             user.save()
             # print "Se crea el usuario: ", user.first_name
+
             # Guarda la subarea
             usuario_asovac= Usuario_asovac.objects.get(usuario=user)
+            arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
 
             if sh.cell_value(rowx=fila, colx=5) != "":
                 # calcular el id de cada subarea para mandarlo por parametro
@@ -1571,6 +1576,16 @@ def create_users(sh):
                 subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=7).strip())
                 usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
                 usuario_asovac.save()
+
+            # Guarda el rol asociado al sistema donde se esta cargando el usuario 
+            itemRole= Rol.objects.get(id=rol)
+            # Se construye el objeto para crear los roles
+            addRol=Usuario_rol_in_sistema()
+            addRol.usuario_asovac=usuario_asovac
+            addRol.rol=itemRole
+            addRol.sistema_asovac=arbitraje
+            addRol.save()
+
 
 ###################################################################################
 ############      Para obtener el id de la subarea importada      #################

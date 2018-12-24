@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id %}">
+<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id rol %}">
     {% csrf_token %}
     
     <div class="modal-header">
