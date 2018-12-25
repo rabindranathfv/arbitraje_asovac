@@ -6,11 +6,11 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
 
-from main_app.models import Sistema_asovac
+from main_app.models import Sistema_asovac, User
 from trabajos.models import Trabajo
 from .models import Autor, Datos_pagador, Pago, Factura, Autores_trabajos, Universidad
 
-
+from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
 
 #Form para que el autor cree su instancia de autor
 class AuthorCreateAutorForm(forms.ModelForm):
@@ -239,7 +239,23 @@ class AdminCreateAutorForm(forms.ModelForm):
 	                css_class='row')
 	       		 )
 			)
-			
+	
+	def clean_correo_electronico(self):
+		correo_electronico = self.cleaned_data['correo_electronico']
+		# Si el email ya esta en uso, levantamos un error.
+		if User.objects.filter(email=correo_electronico).exists():
+			raise forms.ValidationError(_("Dirección de correo ya esta en uso, escoja otra."),code="invalid")
+		return correo_electronico
+
+	def clean_cedula_pasaporte(self):
+		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
+		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
+			raise forms.ValidationError(_("Ya hay un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
+			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
+		if not cedula_pasaporte[1:].isdigit():
+			raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de cédula o pasaporte."), code = "formato incorrecto")
+		return cedula_pasaporte
 
 
 #Form para que el admin o coordinador general cree un autor
