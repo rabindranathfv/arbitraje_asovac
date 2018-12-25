@@ -350,23 +350,25 @@ def author_edit_modal(request, user_id):
 	data = dict()
 	user =  User.objects.get(id = user_id)
 	autor = Autor.objects.get(usuario__usuario = user)
-	form =	EditAutorForm(instance = autor)
+	form =	EditAutorForm(user= user,instance = autor)
 	if request.method == "POST":
 		# Este formulario tiene todas las opciones populadas de acuerdo al formulario enviado por POST.
-		form = EditAutorForm(request.POST, instance = autor)
+		form = EditAutorForm(request.POST,user=user, instance = autor)
         if form.is_valid():
-            autor = form.save()
-            user.first_name = autor.nombres
-            user.last_name = autor.apellidos
-            user.email = autor.correo_electronico
-            user.save() 
-            data['form_is_valid']= True
-
-	else:
-		context ={
-			'form': form,
-		}
-		data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
+			try:
+				autor = form.save()
+				user.first_name = autor.nombres
+				user.last_name = autor.apellidos
+				user.email = autor.correo_electronico
+				user.save() 
+				messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
+				data['form_is_valid']= True
+			except:
+				pass
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
 	return JsonResponse(data)
 
 #Vista para generar certificado

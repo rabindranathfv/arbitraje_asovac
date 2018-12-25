@@ -148,6 +148,24 @@ $(document).ready(function(){
         return false;
     };
 
+// Ocultar ventana modal y enviar formulario via ajax
+    var SaveFormAndStayInModal= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+        return false;
+    };
+
 //Para obtener la informacin del archivo enviado
 var loadAreas= function(){
     console.log("Se envia el formulario");
@@ -442,9 +460,9 @@ var SaveAñadirPagoForm= function(){
     $('.showSubAreasForm').click(ShowForm);
     // Modal para que los usuarios creen su instancia de autor
     $('#user-create-author').click(ShowForm);
-    // Modal para que los usuarios creen su instancia de autor
+    // Modal para que los usuarios editen su instancia de autor
     $('#edit-author-profile').click(ShowForm);
-    $('#modal-user').on('submit', '.edit-author-form',SaveForm);
+    $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);
 
     // Modal para que los usuarios creen su instancia de autor en sistema
     $('.show-register-user-in-sistema-modal').click(ShowForm);

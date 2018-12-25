@@ -1,9 +1,9 @@
 {% load crispy_forms_tags %}
 <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" >Editar Autor:</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h4 class="modal-title" >Editar Autor:</h4>
 </div>
 <form method="POST" class="edit-author-form" data-url="{% url 'autores:author_edit_modal' user.id %}">
     <div class="modal-body">
@@ -11,6 +11,10 @@
         {{ form | crispy }}
     </div>
     <div class="modal-footer">
+        <div class="row text-center">
+            {% include "success_messages.html" %}
+            {% include "errors_form.html" %}
+        </div>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success">Actualizar</button>
     </div>

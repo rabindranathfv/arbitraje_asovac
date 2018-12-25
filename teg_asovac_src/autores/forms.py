@@ -297,7 +297,20 @@ class EditAutorForm(forms.ModelForm):
 	class Meta:
 		model = Autor
 		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
-		
+		widgets = {
+			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
+			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número.'}),
+            'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
+            														'rows':2 }),
+            'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
+            'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
+            'observaciones': forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí',
+            														'rows':2 })
+        }
 	def __init__(self, *args, **kwargs):
 		self.user = kwargs.pop('user',None)
 		super(EditAutorForm, self).__init__(*args, **kwargs)
@@ -330,7 +343,7 @@ class EditAutorForm(forms.ModelForm):
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
-				Field('observaciones',placeholder="Introduzca sus observaciones aquí"),
+				Field('observaciones',placeholder="Introduzca sus observaciones aquí", rows="2"),
 				Div(
 	                Div(
 	                    HTML("<a href=\"{% url 'autores:authors_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
