@@ -245,39 +245,46 @@ def list_authors (request):
 def author_edit(request, autor_id):
 	autor = get_object_or_404(Autor, id = autor_id)
 	if request.method == 'POST':
-		form = EditAutorForm(request.POST,instance = autor)
+		form = EditAutorForm(request.POST,user = autor.usuario.usuario, instance = autor)
+		user = autor.usuario.usuario
+		autor = Autor.objects.filter(nombres = user.first_name)
+		print(autor)
+		print(form.is_valid())
 		if form.is_valid():
-			autor = form.save()
-			user_id = autor.usuario.usuario.id
-			user = User.objects.get(id = user_id)
-			user.first_name = autor.nombres
-			user.last_name = autor.apellidos
-			user.save()
-	        return redirect('autores:authors_list')
-    
+			try:	
+				autor = form.save()
+				user_id = autor.usuario.usuario.id
+				user = User.objects.get(id = user_id)
+				user.first_name = autor.nombres
+				user.last_name = autor.apellidos
+				user.save()
+				return redirect('autores:authors_list')
+			except:
+				pass
 	else:
-		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+		form = EditAutorForm(user= autor.usuario.usuario,instance = autor)
+	
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-		# print (rol_id)
-		estado = request.session['estado']
-		arbitraje_id = request.session['arbitraje_id']
-		rol_id=get_roles(request.user.id , arbitraje_id)
+	print("Hola")
+	estado = request.session['estado']
+	arbitraje_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , arbitraje_id)
 
-		item_active = 2
-		items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+	item_active = 2
+	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-		route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-		route_seg= get_route_seguimiento(estado,rol_id)
-		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-		route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-		# print items
-		form = EditAutorForm(instance = autor)
+	# print items
 	context = {
 		'nombre_vista' : 'Editar autores',
 		'main_navbar_options' : main_navbar_options,
