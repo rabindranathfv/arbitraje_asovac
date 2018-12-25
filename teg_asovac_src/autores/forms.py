@@ -186,11 +186,12 @@ class AdminCreateAutorForm(forms.ModelForm):
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':2 }),
-            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
-            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
             'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
             'observaciones': forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí',
@@ -219,10 +220,10 @@ class AdminCreateAutorForm(forms.ModelForm):
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
-				Field('cedula_pasaporte',placeholder="Formato: xxxxxxxx"),
+				Field('cedula_pasaporte',placeholder="Formato: Vxxxxxxxx o Pxxxxxxxx"),
 				Field('correo_electronico',placeholder="Ejemplo: Juanito@servidor.com"),
-				Field('telefono_oficina',placeholder="Ejemplo: 04249999999"),
-				Field('telefono_habitacion_celular',placeholder="Ejemplo: 02129999999"),
+				Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
+				Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
 				Field('constancia_estudio',placeholder=""),
 				Field('direccion_envio_correspondencia',rows='2', placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
@@ -240,6 +241,20 @@ class AdminCreateAutorForm(forms.ModelForm):
 	       		 )
 			)
 	
+	def clean_nombres(self):
+		nombres=self.cleaned_data['nombres']
+		for char in nombres:
+			if not char.isalpha() and char !=' ':
+				raise forms.ValidationError(_("El nombre debe ser solo letras"), code="invalid_first_name")
+		return nombres
+
+	def clean_apellidos(self):
+		apellidos=self.cleaned_data['apellidos']
+		for char in apellidos:
+			if not char.isalpha() and char!= ' ':
+				raise forms.ValidationError(_("El apellido debe ser solo letras"), code="invalid_last_name")
+		return apellidos
+
 	def clean_correo_electronico(self):
 		correo_electronico = self.cleaned_data['correo_electronico']
 		# Si el email ya esta en uso, levantamos un error.
@@ -256,6 +271,24 @@ class AdminCreateAutorForm(forms.ModelForm):
 		if not cedula_pasaporte[1:].isdigit():
 			raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de cédula o pasaporte."), code = "formato incorrecto")
 		return cedula_pasaporte
+
+	def clean_telefono_oficina(self):
+		telefono_oficina = self.cleaned_data['telefono_oficina']
+		telefono_oficina_length = len(telefono_oficina)
+		if telefono_oficina_length < 10 or telefono_oficina_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de oficina inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_oficina.isdigit():
+			raise forms.ValidationError(_("El teléfono de oficina no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_oficina
+
+	def clean_telefono_habitacion_celular(self):
+		telefono_habitacion_celular = self.cleaned_data['telefono_habitacion_celular']
+		telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+		if telefono_habitacion_celular_length < 10 or telefono_habitacion_celular_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de habitacion/celular inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_habitacion_celular.isdigit():
+			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_habitacion_celular
 
 
 #Form para que el admin o coordinador general cree un autor
