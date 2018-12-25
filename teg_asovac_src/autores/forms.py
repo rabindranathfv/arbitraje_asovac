@@ -297,7 +297,7 @@ class EditAutorForm(forms.ModelForm):
 	class Meta:
 		model = Autor
 		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
-
+		
 	def __init__(self, *args, **kwargs):
 		self.user = kwargs.pop('user',None)
 		super(EditAutorForm, self).__init__(*args, **kwargs)
@@ -321,10 +321,10 @@ class EditAutorForm(forms.ModelForm):
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
-				Field('cedula_pasaporte',placeholder="Formato: xxxxxxxx"),
+				Field('cedula_pasaporte',placeholder="Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número."),
 				Field('correo_electronico',placeholder="Ejemplo: Juanito@servidor.com"),
-				Field('telefono_oficina',placeholder="Ejemplo: 04249999999"),
-				Field('telefono_habitacion_celular',placeholder="Ejemplo: 02129999999"),
+				Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
+				Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
 				Field('constancia_estudio',placeholder=""),
 				Field('direccion_envio_correspondencia',placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
