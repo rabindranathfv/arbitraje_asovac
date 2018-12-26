@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
-
+from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
 from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
 
@@ -41,6 +41,12 @@ class ChangePassForm(PasswordChangeForm):
             print ("La Contraseña es invalida: Old Password")
             raise forms.ValidationError(_("La contraseña es incorrecta."),code='invalid_password')
         return password
+
+    def clean_new_password1(self):
+        password1 = self.cleaned_data.get('new_password1')
+        if password1.isdigit():
+            raise forms.ValidationError(_("La contraseña no puede ser completamente númerica"), code="new_password_numeric")
+        return password1
 
     #Este codigo no lanza el mensaje.
     def clean_new_password2(self):

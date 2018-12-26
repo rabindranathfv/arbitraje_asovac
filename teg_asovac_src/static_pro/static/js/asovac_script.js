@@ -491,7 +491,7 @@ var SaveAñadirPagoForm= function(){
 
     // Modal para que los usuarios creen su instancia de autor
     $('#changepassword-user').click(ShowForm);
-    $('#modal-user').on('submit', '.changepassword-modal-form',SaveForm);
+    $('#modal-user').on('submit', '.changepassword-modal-form',SaveFormAndStayInModal);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
