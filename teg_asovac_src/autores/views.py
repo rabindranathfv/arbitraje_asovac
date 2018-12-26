@@ -270,7 +270,6 @@ def author_edit(request, autor_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-	print("Hola")
 	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
 	rol_id=get_roles(request.user.id , arbitraje_id)

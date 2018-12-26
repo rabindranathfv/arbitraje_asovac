@@ -976,24 +976,27 @@ def apps_selection(request):
 # Ajax/para el uso de ventanas modales
 def create_autor_instance_modal(request, user_id):
     data = dict()
+    form = AuthorCreateAutorForm()
     if request.method == 'POST':
         form = AuthorCreateAutorForm(request.POST)
         if form.is_valid():
-            autor = form.save(commit = False)
-            user = User.objects.get(id = user_id)
-            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
-            autor.usuario = usuario_asovac
-            autor.nombres = user.first_name
-            autor.apellidos = user.last_name
-            autor.correo_electronico = user.email
-            autor.save()
-            return redirect('main_app:home')
-    else:
-        form = AuthorCreateAutorForm()
-        context = {
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
+            try:
+                autor = form.save(commit = False)
+                user = User.objects.get(id = user_id)
+                usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+                autor.usuario = usuario_asovac
+                autor.nombres = user.first_name
+                autor.apellidos = user.last_name
+                autor.correo_electronico = user.email
+                autor.save()
+                data['form_is_valid']= True
+                data['url'] = reverse('main_app:home')
+            except:
+                pass
+    context = {
+        'form':form,
+    }
+    data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
     return JsonResponse(data)
 
 

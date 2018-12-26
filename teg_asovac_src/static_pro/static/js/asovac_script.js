@@ -148,7 +148,7 @@ $(document).ready(function(){
         return false;
     };
 
-// Ocultar ventana modal y enviar formulario via ajax
+// Mantener el formulario abierto
     var SaveFormAndStayInModal= function(){
         // console.log("SE envia el formulario");
         var form= $(this);
@@ -161,6 +161,27 @@ $(document).ready(function(){
 
             success: function(data){
                 $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+        return false;
+    };
+// Seguir en el formulario a menos que todo vaya bien
+    var SaveFormAndRedirect= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                if(data.form_is_valid){
+                    window.location.replace(data.url);
+                }else{
+                    $('#modal-user .modal-content').html(data.html_form)
+                }
             }
         });
         return false;
@@ -460,6 +481,7 @@ var SaveAñadirPagoForm= function(){
     $('.showSubAreasForm').click(ShowForm);
     // Modal para que los usuarios creen su instancia de autor
     $('#user-create-author').click(ShowForm);
+    $('#modal-user').on('submit', '.author-create-author-form',SaveFormAndRedirect);
     // Modal para que los usuarios editen su instancia de autor
     $('#edit-author-profile').click(ShowForm);
     $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);

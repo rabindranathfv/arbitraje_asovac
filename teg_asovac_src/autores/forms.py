@@ -20,14 +20,15 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
 				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
 		widgets = {
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
-            														'rows':4 }),
-            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
-            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            														'rows':2 }),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
             'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
         }
+
         
 	def __init__(self, *args, **kwargs):
 		super(AuthorCreateAutorForm, self).__init__(*args, **kwargs)
@@ -44,6 +45,34 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+
+	def clean_cedula_pasaporte(self):
+		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
+		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
+			raise forms.ValidationError(_("Ya hay un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
+			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
+		if not cedula_pasaporte[1:].isdigit():
+			raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de cédula o pasaporte."), code = "formato incorrecto")
+		return cedula_pasaporte
+
+	def clean_telefono_oficina(self):
+		telefono_oficina = self.cleaned_data['telefono_oficina']
+		telefono_oficina_length = len(telefono_oficina)
+		if telefono_oficina_length < 10 or telefono_oficina_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de oficina inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_oficina.isdigit():
+			raise forms.ValidationError(_("El teléfono de oficina no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_oficina
+
+	def clean_telefono_habitacion_celular(self):
+		telefono_habitacion_celular = self.cleaned_data['telefono_habitacion_celular']
+		telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+		if telefono_habitacion_celular_length < 10 or telefono_habitacion_celular_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de habitacion/celular inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_habitacion_celular.isdigit():
+			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_habitacion_celular
 
 
 
@@ -300,12 +329,12 @@ class EditAutorForm(forms.ModelForm):
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número.'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':2 }),
             'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
-            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
-            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999. Debe incluir el código de area y de operadora, no es necesario el "+"'}),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
             'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
             'observaciones': forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí',
