@@ -976,24 +976,27 @@ def apps_selection(request):
 # Ajax/para el uso de ventanas modales
 def create_autor_instance_modal(request, user_id):
     data = dict()
+    form = AuthorCreateAutorForm()
     if request.method == 'POST':
         form = AuthorCreateAutorForm(request.POST)
         if form.is_valid():
-            autor = form.save(commit = False)
-            user = User.objects.get(id = user_id)
-            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
-            autor.usuario = usuario_asovac
-            autor.nombres = user.first_name
-            autor.apellidos = user.last_name
-            autor.correo_electronico = user.email
-            autor.save()
-            return redirect('main_app:home')
-    else:
-        form = AuthorCreateAutorForm()
-        context = {
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
+            try:
+                autor = form.save(commit = False)
+                user = User.objects.get(id = user_id)
+                usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+                autor.usuario = usuario_asovac
+                autor.nombres = user.first_name
+                autor.apellidos = user.last_name
+                autor.correo_electronico = user.email
+                autor.save()
+                data['form_is_valid']= True
+                data['url'] = reverse('main_app:home')
+            except:
+                pass
+    context = {
+        'form':form,
+    }
+    data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
     return JsonResponse(data)
 
 
@@ -1635,35 +1638,39 @@ def changepassword_modal(request):
     if request.method == 'POST':
         form = ChangePassForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
+            try:
+                form.save()
+                update_session_auth_hash(request, form.user)
 
-            #Envio de email con las nuevas credenciales al correo electrónico del usuario
-            
-            user = User.objects.get(pk=request.user.id)
-            context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
+                #Envio de email con las nuevas credenciales al correo electrónico del usuario
+                
+                user = User.objects.get(pk=request.user.id)
+                context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
 
-            msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
-            msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
+                msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
+                msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
 
-            send_mail(
-                    'Cambio de Contraseña - Asovac',      #titulo
-                    msg_plain,                                  #mensaje txt
-                    config('EMAIL_HOST_USER'),                        #email de envio
-                    [user.email],                               #destinatario
-                    html_message=msg_html,                      #mensaje en html
-                    )
+                send_mail(
+                        'Cambio de Contraseña - Asovac',      #titulo
+                        msg_plain,                                  #mensaje txt
+                        config('EMAIL_HOST_USER'),                        #email de envio
+                        [user.email],                               #destinatario
+                        html_message=msg_html,                      #mensaje en html
+                        )
 
-            # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
-            messages.success(request, 'Se ha cambiado su contraseña con éxito')
-            data['form_is_valid']= True
-
+                # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
+                messages.success(request, 'Se ha cambiado su contraseña con éxito')
+                data['form_is_valid']= True
+            except:
+                pass
     else:
         form = ChangePassForm(request.user)
-        context = {
-            'form': form,
-        }
-        data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
+    
+    context = {
+        'form': form,
+    }
+    data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
+    
     return JsonResponse(data)
 
 ###################################################################################
