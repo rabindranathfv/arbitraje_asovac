@@ -14,7 +14,7 @@
 				
 				<div id ="toolbar">
 					<div class="btn-group">
-						<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+						<button class="btn btn-block btn-primary dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 						<ul class="dropdown-menu">
 							<li>
 								<a href="{% url 'autores:admin_create_author' %}" type="button"><i class="fa fa-user" style="color:black"></i> Crear Autor</a>
@@ -22,7 +22,6 @@
 							<li>
 								<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
 							</li>
-							
 						</ul>
 					</div>
 				</div>
@@ -33,7 +32,7 @@
 				data-side-pagination="server"
 				data-show-export="true"
 				data-toolbar="#toolbar"
-				data-toolbar-align="right"
+				data-toolbar-align="left"
 				data-pagination="true"
 				data-page-size="5"
 				data-page-list="[0,5,10,25,50,100, 200]"
