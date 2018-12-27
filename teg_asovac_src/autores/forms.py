@@ -20,7 +20,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
 				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
 		widgets = {
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx.'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':2 }),
             'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
@@ -49,7 +49,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
 		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
-			raise forms.ValidationError(_("Ya hay un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+			raise forms.ValidationError(_("Ya existe un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
 		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
 			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
 		if not cedula_pasaporte[1:].isdigit():
@@ -215,7 +215,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número.'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':2 }),
             'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
@@ -249,7 +249,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
-				Field('cedula_pasaporte',placeholder="Formato: Vxxxxxxxx o Pxxxxxxxx"),
+				Field('cedula_pasaporte',placeholder="Formato: V para CI y P para pasaporte, seguido del número."),
 				Field('correo_electronico',placeholder="Ejemplo: Juanito@servidor.com"),
 				Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
 				Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
@@ -294,7 +294,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
 		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
-			raise forms.ValidationError(_("Ya hay un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+			raise forms.ValidationError(_("Ya existe un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
 		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
 			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
 		if not cedula_pasaporte[1:].isdigit():
@@ -329,7 +329,7 @@ class EditAutorForm(forms.ModelForm):
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
-			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: Vxxxxxxxx o Pxxxxxxxx.'}),
+			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
             														'rows':2 }),
             'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
@@ -363,7 +363,7 @@ class EditAutorForm(forms.ModelForm):
 				Field('nombres',placeholder="Ejemplo: Juanito José"),
 				Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
 				Field('genero',placeholder="Masculino o Femenino"),
-				Field('cedula_pasaporte',placeholder="Formato: Vxxxxxxxx o Pxxxxxxxx. Notése que debe tener V o P antes del respectivo número."),
+				Field('cedula_pasaporte',placeholder="Formato: Vxxxxxxxx o Pxxxxxxxx. V para cédula venezolana o P para pasaporte."),
 				Field('correo_electronico',placeholder="Ejemplo: Juanito@servidor.com"),
 				Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
 				Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
@@ -410,7 +410,7 @@ class EditAutorForm(forms.ModelForm):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
 		autor = Autor.objects.get(usuario__usuario = self.user)
 		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists() and autor.cedula_pasaporte != cedula_pasaporte:
-			raise forms.ValidationError(_("Ya hay un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+			raise forms.ValidationError(_("Ya existe un autor con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
 		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
 			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
 		if not cedula_pasaporte[1:].isdigit():
