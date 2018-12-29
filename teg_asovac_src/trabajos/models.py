@@ -7,6 +7,12 @@ from datetime import datetime
 # Create your models here.
 
 
+
+CHOICES_TIPO_PRESENTACION_TRABAJO = (	('P', 'Presencial'),
+								('V', 'Virtual'),
+	)
+
+
 """""""""""""""""""""""""""
 Trabajo Model
 """""""""""""""""""""""""""
@@ -33,7 +39,7 @@ class Trabajo(models.Model):
 	titulo_espanol = models.CharField(max_length=100)
 	titulo_ingles = models.CharField(max_length=100, blank = True)
 	palabras_clave = models.CharField(max_length=60, blank = True)
-	forma_presentacion = models.CharField(max_length=40)
+	forma_presentacion = models.CharField(max_length=1,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
 	area = models.CharField(max_length=70)
 	subarea1 = models.CharField(max_length=70)
 	subarea2 = models.CharField(max_length=70, blank = True)

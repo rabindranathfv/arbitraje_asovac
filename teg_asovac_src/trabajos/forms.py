@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from django.core.urlresolvers import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from .models import Trabajo, Detalle_version_final
 
@@ -61,6 +62,14 @@ class TrabajoForm(forms.ModelForm):
 			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h3 class=\"modal-title\" id=\"ModalLongTitle\">Crear Trabajo</h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea crear el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-primary btn-success\">Postular</button></div></div></div></div>"),
 			)
 
+	def clean_archivo_trabajo(self):
+		trabajo = self.cleaned_data['archivo_trabajo']
+		tamano_nombre_trabajo = len(trabajo.name)
+		trabajo_extension = trabajo.name[tamano_nombre_trabajo - 3:].lower()
+		print(trabajo_extension)
+		if(trabajo_extension != "pdf"):
+			raise forms.ValidationError(_("El archivo indicado no es pdf, por favor seleccione un archivo pdf."), code = "formato_archivo_incorrecto")
+		return trabajo
 
 #Form para editar datos de un trabajo, sea para editar o para crear
 class EditTrabajoForm(forms.ModelForm):
@@ -113,6 +122,15 @@ class EditTrabajoForm(forms.ModelForm):
 			HTML("<div class=\"col-sm-2 col-sm-offset-8\"><a href=\"{% url 'trabajos:trabajos' %}\" class=\"btn btn-danger btn-block btn-lg\" >Cancelar</a></div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button></div>"),
 			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h3 class=\"modal-title\" id=\"ModalLongTitle\">Editar Trabajo</h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea editar el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-primary btn-success\">Postular</button></div></div></div></div>"),
 			)
+
+	def clean_archivo_trabajo(self):
+		trabajo = self.cleaned_data['archivo_trabajo']
+		tamano_nombre_trabajo = len(trabajo.name)
+		trabajo_extension = trabajo.name[tamano_nombre_trabajo - 3:].lower()
+		print(trabajo_extension)
+		if(trabajo_extension != "pdf"):
+			raise forms.ValidationError(_("El archivo indicado no es pdf, por favor seleccione un archivo pdf."), code = "formato_archivo_incorrecto")
+		return trabajo
 
 #Form para colocar observaciones a la versión final del trabajo
 class AutorObservationsFinalVersionJobForm(forms.ModelForm):

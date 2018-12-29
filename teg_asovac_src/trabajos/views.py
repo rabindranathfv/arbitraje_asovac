@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.urls import reverse
 
 from .models import Trabajo, Detalle_version_final
 from autores.models import Autor, Autores_trabajos
@@ -60,7 +61,6 @@ def trabajos(request):
             autor_trabajo.save()
 
 
-
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
 #   for trabajo in trabajos:
@@ -78,7 +78,6 @@ def trabajos(request):
         trabajos = paginator.page(paginator.num_pages)
 
 
-    form = TrabajoForm()
     autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
 
     context = {
@@ -217,9 +216,10 @@ def edit_trabajo(request, trabajo_id):
       
     if request.method == 'POST':
         form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
-        form.save()
-        messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
-        return redirect('trabajos:trabajos')
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
+            return redirect('trabajos:trabajos')
     else: 
         form = EditTrabajoForm(instance = autor_trabajo.trabajo)
 
@@ -432,23 +432,27 @@ def add_author_to_job(request, autor_trabajo_id):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
     sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)  
+    autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id) 
     if request.method == "POST":
-        form = AddAuthorToJobForm(request.POST)
-        if form.is_valid():
+        form = AddAuthorToJobForm(request.POST, autor_trabajo = autor_trabajo)
+        if form.is_valid():   
+            print("Entro")
             form_data = form.cleaned_data
             autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
             new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
             new_autor_trabajo.save()
             messages.success(request,"El autor fue añadido al trabajo con éxito.")
-            return redirect('trabajos:trabajos')           
-    else:
-        form = AddAuthorToJobForm()
-        context = {
-            'autor_trabajo': autor_trabajo,
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/add_author_to_job.html', context, request=request)
+            data['form_is_valid']= True
+            data['url'] = reverse('trabajos:trabajos')  
+            print(data['url'])       
+
+    else: 
+        form = AddAuthorToJobForm(autor_trabajo = autor_trabajo) 
+    context = {
+        'autor_trabajo': autor_trabajo,
+        'form':form,
+    }
+    data['html_form'] = render_to_string('ajax/add_author_to_job.html', context, request=request)
     return JsonResponse(data)
 
 

@@ -90,6 +90,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 	correo = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Introduzca el correo electrónico del coautor'}))
 	
 	def __init__(self, *args, **kwargs):
+		self.autor_trabajo = kwargs.pop('autor_trabajo',None)
 		super(AddAuthorToJobForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'add-author-to-job-form'
@@ -108,7 +109,15 @@ class AddAuthorToJobForm(forms.ModelForm):
 				css_class= "row"
 				)
 			)
+	def clean_correo(self):
+		correo = self.cleaned_data['correo']
+		if not Autor.objects.filter(correo_electronico = correo).exists():
+			raise forms.ValidationError(_("No existe algún autor con el correo indicado. Verifique el correo electronico suministrado, en el caso que el coautor no tenga cuenta.. debe crearse una y registrarse en la aplicacion de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
+		if Autores_trabajos.objects.filter(autor__correo_electronico = correo, trabajo = self.autor_trabajo.trabajo):
+			raise forms.ValidationError(_("Ya el autor indicado forma parte de este trabajo."), code = "author_repeated")
+		return correo
 
+		
 # Form para datos del pagador
 class DatosPagadorForm(forms.ModelForm):
 

@@ -344,7 +344,7 @@ def author_details(request, autor_id):
 	return render(request, 'autores_details.html', context)
 
 
-#Modal para crear datos de la factura
+#Modal para editar datos de autor del usuario logueado
 def author_edit_modal(request, user_id):
 	data = dict()
 	user =  User.objects.get(id = user_id)
