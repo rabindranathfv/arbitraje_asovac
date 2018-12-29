@@ -7,7 +7,6 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -18,6 +17,7 @@ from .models import Trabajo, Detalle_version_final
 from autores.models import Autor, Autores_trabajos
 from autores.forms import AddAuthorToJobForm
 
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from .forms import TrabajoForm,EditTrabajoForm, AutorObservationsFinalVersionJobForm
@@ -441,10 +441,15 @@ def add_author_to_job(request, autor_trabajo_id):
             autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
             new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
             new_autor_trabajo.save()
+            rol_autor = Rol.objects.get(id=5)
+
+            if not Usuario_rol_in_sistema.objects.filter(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario).exists():
+                new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario)
+                new_usuario_rol_in_sistema.save()
+
             messages.success(request,"El autor fue añadido al trabajo con éxito.")
             data['form_is_valid']= True
-            data['url'] = reverse('trabajos:trabajos')  
-            print(data['url'])       
+            data['url'] = reverse('trabajos:trabajos')     
 
     else: 
         form = AddAuthorToJobForm(autor_trabajo = autor_trabajo) 
