@@ -443,6 +443,7 @@ def add_author_to_job(request, autor_trabajo_id):
             new_autor_trabajo.save()
             rol_autor = Rol.objects.get(id=5)
 
+            # Esto es para darle los permisos del rol autor al autor si no está registrado en el sistema
             if not Usuario_rol_in_sistema.objects.filter(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario).exists():
                 new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario)
                 new_usuario_rol_in_sistema.save()
