@@ -20,6 +20,7 @@ from django.db.models import Count
 
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm,AssingRolForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from arbitrajes.models import Arbitro,Arbitros_Sistema_asovac
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -1377,8 +1378,8 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
             print "El numero de hojas es mayor a 0 "
             sh = book.sheet_by_index(0)
 
-            if sh.ncols == 8:
-                print "El archivo tiene 8 columnas"
+            if sh.ncols == 17:
+                print "El archivo tiene 17 columnas"
                 data['status']=200
                 data['message']="Se cargaron los usuarios de manera exitosa"
 
@@ -1390,42 +1391,77 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                         email_exist=exist_email(sh.cell_value(rowx=fila, colx=3).strip())
                         email_count=count_email(sh,sh.cell_value(rowx=fila, colx=3).strip())
                         
+                        # Se verifica que el campo nombre no este vacio
                         if sh.cell_value(rowx=fila, colx=0) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
                             data['message']="Error en la fila {0} el nombre es un campo obligatorio".format(fila)
                             break
 
+                        # Se verifica que el campo apellido no este vacio
                         if sh.cell_value(rowx=fila, colx=1) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
                             data['message']="Error en la fila {0} el apellido es un campo obligatorio".format(fila)
                             break
 
+                        # Se verifica que el campo nombre de usuario no este vacio
                         if sh.cell_value(rowx=fila, colx=2) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
                             data['message']="Error en la fila {0} el nombre de usuario es un campo obligatorio".format(fila)
                             break
 
+                        # Se verifica que el campo correo electronico no este vacio
                         if sh.cell_value(rowx=fila, colx=3) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
                             data['message']="Error en la fila {0} el correo es un campo obligatorio".format(fila)
                             break
                         
-                        if sh.cell_value(rowx=fila, colx=4) == '':
+                        # Se verifica que el campo genero no este vacio
+                        if sh.cell_value(rowx=fila, colx=8) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
-                            data['message']="Error en la fila {0} el área es un campo obligatorio".format(fila)
+                            data['message']="Error en la fila {0} el genero es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo cedula o pasaporte no este vacio
+                        if sh.cell_value(rowx=fila, colx=9) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la cédula o pasaporte es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo titulo no este vacio
+                        if sh.cell_value(rowx=fila, colx=10) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el titulo es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo linea de investigación no este vacio
+                        if sh.cell_value(rowx=fila, colx=11) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la linea de investigación es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo celular no este vacio
+                        if sh.cell_value(rowx=fila, colx=13) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el teléfono celular o habitación es un campo obligatorio".format(fila)
                             break
                         
+                        # Se verifica que el campo correo electronico sea unico
                         if email_count > 1:
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
                             data['message']="Error en la fila {0} el correo {1} debe ser asignado a un solo usuario".format(fila,sh.cell_value(rowx=fila, colx=3))
                             break
 
+                        # Se verifica que el campo correo electronico sea unico
                         if email_exist == True:
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
@@ -1540,6 +1576,7 @@ def count_username(sh,username):
 
 def create_users(sh,arbitraje_id,rol):
     
+    print rol
     for fila in range(sh.nrows):
         if fila > 0: 
             # Guarda el usuario 
@@ -1586,6 +1623,37 @@ def create_users(sh,arbitraje_id,rol):
             addRol.sistema_asovac=arbitraje
             addRol.save()
 
+            # Guarda los datos asociados al arbitro
+            
+            # Campos obliogatorios
+            arbitro =Arbitro()
+            arbitro.nombres=sh.cell_value(rowx=fila, colx=0).strip()
+            arbitro.apellidos=sh.cell_value(rowx=fila, colx=1).strip()
+            arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
+            arbitro.cedula_pasaporte=str(sh.cell_value(rowx=fila, colx=9)).replace(".0","").strip()
+            arbitro.titulo=sh.cell_value(rowx=fila, colx=10).strip()
+            arbitro.linea_investigacion=sh.cell_value(rowx=fila, colx=11).strip()
+            arbitro.telefono_habitacion_celular=str(sh.cell_value(rowx=fila, colx=13)).replace(".0","").strip()
+            arbitro.correo_electronico=user.email
+            arbitro.usuario=usuario_asovac
+
+            # Campos opcionales
+            if sh.cell_value(rowx=fila, colx=12) != "":
+                arbitro.telefono_oficina=str(sh.cell_value(rowx=fila, colx=12)).replace(".0","").strip()
+            if sh.cell_value(rowx=fila, colx=13) != "":
+                arbitro.institucion_trabajo=sh.cell_value(rowx=fila, colx=14).strip()
+            if sh.cell_value(rowx=fila, colx=14) != "":
+                arbitro.datos_institucion=sh.cell_value(rowx=fila, colx=15).strip()
+            if sh.cell_value(rowx=fila, colx=15) != "":
+                arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
+            arbitro.save()
+
+            if(rol == "4"):
+                # print "eres arbitro"
+                arbitro_sistema=Arbitros_Sistema_asovac()
+                arbitro_sistema.arbitro=arbitro
+                arbitro_sistema.sistema_asovac=arbitraje
+                arbitro_sistema.save()
 
 ###################################################################################
 ############      Para obtener el id de la subarea importada      #################
