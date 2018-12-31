@@ -20,7 +20,7 @@ from django.db.models import Count
 
 from .forms import ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm,AssingRolForm
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
-from arbitrajes.models import Arbitro,Arbitros_Sistema_asovac
+from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
 
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -1576,7 +1576,6 @@ def count_username(sh,username):
 
 def create_users(sh,arbitraje_id,rol):
     
-    print rol
     for fila in range(sh.nrows):
         if fila > 0: 
             # Guarda el usuario 
@@ -1649,11 +1648,8 @@ def create_users(sh,arbitraje_id,rol):
             arbitro.save()
 
             if(rol == "4"):
-                # print "eres arbitro"
-                arbitro_sistema=Arbitros_Sistema_asovac()
-                arbitro_sistema.arbitro=arbitro
-                arbitro_sistema.sistema_asovac=arbitraje
-                arbitro_sistema.save()
+                arbitro.Sistema_asovac.add(arbitraje)
+                arbitro.save()
 
 ###################################################################################
 ############      Para obtener el id de la subarea importada      #################
@@ -2182,9 +2178,20 @@ def changeRol(request,id,arbitraje_id):
             # Borrar registros anteriores para evitar repeticion de registros
             delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
             # Para verificar que el usuario tenga registro en la tabla de arbitros
-            # arbitro_exist=Arbitro.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).exists()
-            # print arbitro_exist
-            # delete_arbitro_sistema=Arbitros_Sistema_asovac.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
+            arbitro_exist=Arbitro.objects.filter(usuario=user_asovac).exists()
+        
+            if not arbitro_exist:
+                # Para crear registro en la tabla arbitro de usuarios no cargados por excel y se le modifique el rol
+                user_select= get_object_or_404(User,id=user_asovac.usuario_id)
+                arbitro =Arbitro()
+                arbitro.nombres=user_select.first_name
+                arbitro.apellidos=user_select.last_name
+                arbitro.correo_electronico=user_select.email
+                arbitro.usuario=user_asovac
+                arbitro.save()
+            else:
+                arbitro= get_object_or_404(Arbitro,usuario=user_asovac)
+                arbitro.Sistema_asovac.remove(arbitraje)
             # print delete
            
             for item in params_rol:
@@ -2196,12 +2203,9 @@ def changeRol(request,id,arbitraje_id):
                 addRol.sistema_asovac=arbitraje
                 # Para asignar el arbitro al sistema asovac al que pertenece
                 if item == "4":
-                    print "El rol es: ",item
                     arbitro= get_object_or_404(Arbitro,usuario=user_asovac)
-                    arbitro_sistema= Arbitros_Sistema_asovac()
-                    arbitro_sistema.sistema_asovac=arbitraje
-                    arbitro_sistema.arbitro=arbitro
-                    arbitro_sistema.save()
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
                 addRol.save()
                 # form.save()
             data['status']= 200

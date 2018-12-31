@@ -56,8 +56,8 @@ Arbitro Model
 class Arbitro(models.Model):
 
 	usuario = models.OneToOneField('main_app.Usuario_asovac',on_delete = models.CASCADE,blank=True, null=True)
-	arbitraje_id = models.ManyToManyField(Arbitraje,blank=True)
-	# Sistema_asovac_id = models.ManyToManyField('main_app.Sistema_asovac', blank=True)
+	arbitraje = models.ManyToManyField(Arbitraje,blank=True)
+	Sistema_asovac = models.ManyToManyField('main_app.Sistema_asovac', blank=True)
 
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
@@ -77,15 +77,15 @@ class Arbitro(models.Model):
 	def __str__(self):
 		return self.nombres#.encode('utf-8', errors='replace')
 
-"""""""""""""""""""""""""""
-arbitrajes_arbitro_Sistema_asovac_id Model
-"""""""""""""""""""""""""""
-class Arbitros_Sistema_asovac(models.Model):
+# """""""""""""""""""""""""""
+# arbitrajes_arbitro_Sistema_asovac_id Model
+# """""""""""""""""""""""""""
+# class Arbitros_Sistema_asovac(models.Model):
 	
-	arbitro = models.ForeignKey(Arbitro)
-	sistema_asovac = models.ForeignKey(Sistema_asovac)
+# 	arbitro = models.ForeignKey(Arbitro)
+# 	sistema_asovac = models.ForeignKey(Sistema_asovac)
 
 
-	def __str__(self):
-		return "{} {} {}".format(self.arbitro.nombres,self.sistema_asovac.nombre).encode('utf-8', errors='replace')
+# 	def __str__(self):
+# 		return "{} {} {}".format(self.arbitro.nombres,self.sistema_asovac.nombre).encode('utf-8', errors='replace')
 
