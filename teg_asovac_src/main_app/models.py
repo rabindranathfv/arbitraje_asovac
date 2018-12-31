@@ -73,6 +73,8 @@ class Sistema_asovac(models.Model):
 	clave_maestra_arbitro_area = models.CharField(max_length=100,blank=True)
 	clave_maestra_coordinador_general = models.CharField(max_length=100,blank=True)
 	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
+	porcentaje_iva = models.SmallIntegerField()
+	monto_pagar_trabajo = models.IntegerField()
 	
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
