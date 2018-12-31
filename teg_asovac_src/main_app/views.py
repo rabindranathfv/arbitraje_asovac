@@ -2181,6 +2181,10 @@ def changeRol(request,id,arbitraje_id):
             # print "Se guarda el valor del formulario"
             # Borrar registros anteriores para evitar repeticion de registros
             delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
+            # Para verificar que el usuario tenga registro en la tabla de arbitros
+            # arbitro_exist=Arbitro.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).exists()
+            # print arbitro_exist
+            # delete_arbitro_sistema=Arbitros_Sistema_asovac.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
             # print delete
            
             for item in params_rol:
@@ -2190,7 +2194,14 @@ def changeRol(request,id,arbitraje_id):
                 addRol.usuario_asovac=user_asovac
                 addRol.rol=itemRole
                 addRol.sistema_asovac=arbitraje
-                # print addRol
+                # Para asignar el arbitro al sistema asovac al que pertenece
+                if item == "4":
+                    print "El rol es: ",item
+                    arbitro= get_object_or_404(Arbitro,usuario=user_asovac)
+                    arbitro_sistema= Arbitros_Sistema_asovac()
+                    arbitro_sistema.sistema_asovac=arbitraje
+                    arbitro_sistema.arbitro=arbitro
+                    arbitro_sistema.save()
                 addRol.save()
                 # form.save()
             data['status']= 200
