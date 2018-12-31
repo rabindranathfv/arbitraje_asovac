@@ -149,6 +149,45 @@ $(document).ready(function(){
         return false;
     };
 
+// Mantener el formulario abierto
+    var SaveFormAndStayInModal= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+        return false;
+    };
+// Seguir en el formulario a menos que todo vaya bien
+    var SaveFormAndRedirect= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                if(data.form_is_valid){
+                    window.location.replace(data.url);
+                }else{
+                    $('#modal-user .modal-content').html(data.html_form)
+                }
+            }
+        });
+        return false;
+    };
+
 //Para obtener la informacin del archivo enviado
 var loadAreas= function(){
     console.log("Se envia el formulario");
@@ -442,6 +481,19 @@ var SaveAñadirPagoForm= function(){
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
     $('.showSubAreasForm').click(ShowForm);
     $('.showUsersForm').click(ShowForm);
+    // Modal para que los usuarios creen su instancia de autor
+    $('#user-create-author').click(ShowForm);
+    $('#modal-user').on('submit', '.author-create-author-form',SaveFormAndRedirect);
+    // Modal para que los usuarios editen su instancia de autor
+    $('#edit-author-profile').click(ShowForm);
+    $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);
+
+    // Modal para que los usuarios creen su instancia de autor en sistema
+    $('.show-register-user-in-sistema-modal').click(ShowForm);
+
+    // Modal para que los usuarios creen su instancia de autor
+    $('#changepassword-user').click(ShowForm);
+    $('#modal-user').on('submit', '.changepassword-modal-form',SaveFormAndStayInModal);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
