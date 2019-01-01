@@ -364,7 +364,7 @@ def register(request):
         else:
             areas= Area.objects.all()
             subareas= Sub_area.objects.all()
-            form = RegisterForm()
+            # form = RegisterForm()
             subareaform=SubAreaRegistForm()
             context={
                     "form":form,
