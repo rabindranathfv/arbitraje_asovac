@@ -100,6 +100,20 @@ $.ajaxSetup({
         ].join('');
     }
 
+    function operateReferees(value, row, index) {
+        return [
+            '<a class="viewUsuario" href="javascript:void(0)" title="Ver">',
+            '<i class="far fa-eye"></i>',
+            '</a>  ',
+            '<a class="editUsuario" href="javascript:void(0)" title="Editar" >',
+            '<i class="far fa-edit"></i>',
+            '</a>  ',
+            '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fa fa-trash"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
 /*******************************************************************************************/
 /**************     Para capturar el evento de los botones de las tablas     ***************/
 /*******************************************************************************************/
