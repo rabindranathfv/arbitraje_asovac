@@ -261,24 +261,6 @@ var ValidateAccess= function(){
     return false;
 };
 
-// Para manejar los formularios sucesivos de añadir pago
-var ShowAñadirPagoForm= function(){
-        var btn= $(this);
-        // alert('ShowForm');
-        $.ajax({
-            url: btn.attr('data-url'),
-            type: 'get',
-            dataType: 'json',
-            beforeSend: function(){
-              $('#modal-user' ).modal('show');  
-            },
-            success: function (data){
-                // console.log(data.html_form);
-                $('#modal-user .modal-content').html(data.html_form);
-                
-            }
-        });
-    };
 
 // Para manejar las peticiones POST de añadir pago
 var SaveAñadirPagoForm= function(){
