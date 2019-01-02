@@ -8,79 +8,60 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="row">
-					<div class="col-sm-8">
-						<h2 class="text-left">Listado de Espacios</h2>
-					</div>
-					<div class="col-sm-4">
-						<form class="form-inline text-right">
-								<div class="input-group">
-									<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
-									<span class="input-group-btn">
-										<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-									</span>
-								</div>
-						</form>
+				<h2 class="text-left">Listado de Espacios</h2>
+
+				<!-- data table -->
+				<input type="hidden" id="listSpaces" name="list" data-url="">
+
+				<div id ="toolbar">
+					<div class="btn-group">
+						<button class="btn btn-block btn-primary dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-building" id="menu-toggle-icon" style="color:black"></i> Carga de Espacios</a>
+							</li>
+						</ul>
 					</div>
 				</div>
-				
-				<br>
-				<table class="table table-bordered">
+
+				<table id="table"
+				data-toggle="table"
+				data-ajax="ajaxSpaces"
+				data-side-pagination="server"
+				data-show-export="true"
+				data-toolbar="#toolbar"
+				data-toolbar-align="right"
+				data-pagination="true"
+				data-page-size="5"
+				data-page-list="[0,5,10,25,50,100, 200]"
+				data-show-refresh="true"
+				data-search="true"
+				data-sort-name="nombre_url"
+				data-show-toggle="true"
+				data-show-columns="true">
 					<thead>
 						<tr>
-							<th>Tipo</th>
-							<th>Fecha de ocupación</th>
-							<th>Capacidad</th>
-							<th>Turno</th>
-							<th>Nombre/Url</th>
-							<th >Acciones</th>
+							<th data-field="id" data-visible="false" data-show-columns="false">ID</th>
+							<th data-field="tipo" data-sortable="true">Tipo</th>
+							<th data-field="fecha_ocupacion" data-sortable="true">Fecha de Ocupación</th>
+							<th data-field="capacidad" data-sortable="true">Capacidad</th>
+							<th data-field="turno" data-sortable="true">Turno</th>
+							<th data-field="nombre_url" data-visible="true" data-sortable="true">Nombre/URL</th>
+							<th data-field="operate" data-events="operateEvents" data-formatter="operateSessions" data-align="center">Acciones</th>
+							<!-- <a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-edit"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-times"></i>
+								</a>
+								<a href="#" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-envelope"></i>
+								</a>
+								<a href="" class="btn btn-sm btn-info" role="button">
+									<i class="fas fa-door-open"></i>
+								</a> -->
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<td>Fisico</td>
-							<td>10/12/2018</td>
-							<td>20</td>
-							<td>tarde</td>
-							<td>Aula 5</td>
-							<td >
-								<a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-edit"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-times"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-envelope"></i>
-								</a>
-								<a href="" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-door-open"></i>
-								</a>
-							</td>
-						</tr>
-						<tr>
-							<td>Fisico</td>
-							<td>10/12/2018</td>
-							<td>20</td>
-							<td>tarde</td>
-							<td>Aula 5</td>
-							<td >
-								<a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-edit"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-times"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-envelope"></i>
-								</a>
-								<a href="" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-door-open"></i>
-								</a>
-							</td>
-						</tr>
-
-					</tbody>
 				</table>
 			</div>
 		</div>
@@ -88,4 +69,48 @@
 </div>
 {% endblock %}
 
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}">
+	</script>
+	<script>
+		var $table = $('#table');
+		// function operateSessions(value, row, index) {
+	 //        var route_details="{% url 'autores:author_details' 1 %}".replace(1, row.id);
+	 //        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
+	 //        return [
+	 //            '<a class="editAuthors" href="',
+	 //            route_edit,
+	 //            ' "',
+	 //            'title="Editar" >',
+	 //            '<i class="far fa-edit"></i>',
+	 //            '</a>  ',
+	 //            '<a class="authorsDetails" href="',
+	 //            route_details,
+	 //            ' "',
+	 //            'title="Detalles del autor" >',
+	 //            '<i class="fa fa-user"></i>',
+	 //            '</a>  ',
+	 //        ].join('');
+	 //    }
 
+	    // Custom ajax request here
+		function ajaxSessions(params) {
+			var route= $("#listSpaces").attr("data-url");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+				 }
+			 });
+		}
+	</script>
