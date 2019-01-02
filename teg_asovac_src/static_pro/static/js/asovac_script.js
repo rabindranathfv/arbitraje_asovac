@@ -296,20 +296,27 @@ var SaveAñadirPagoForm= function(){
                 //$('#modal-user').modal('hide');
                 //
                 //alert(data.message)
-                $.ajax({
-                    url: data.url,
-                    type: 'get',
-                    dataType: 'json',
+                if(data.form_is_valid)
+                {    
+                    $.ajax({
+                        url: data.url,
+                        type: 'get',
+                        dataType: 'json',
 
-                    beforeSend: function(){
-                      $('#modal-user' ).modal('show');  
-                    },
-                    success: function (data){
-                        // console.log(data.html_form);
-                        $('#modal-user .modal-content').html(data.html_form);
-                        
-                    }
-                });
+                        beforeSend: function(){
+                          $('#modal-user' ).modal('show');  
+                        },
+                        success: function (data){
+                            // console.log(data.html_form);
+                            $('#modal-user .modal-content').html(data.html_form);
+                            
+                        }
+                    });
+                }
+                else
+                {
+                    $('#modal-user .modal-content').html(data.html_form);
+                }
                 //
             }
         });
@@ -409,7 +416,34 @@ var SaveAñadirPagoForm= function(){
         });
     
     };
-
+    var savePagoForm = function () {
+        var form = $(this);
+        var formData = new FormData(form[0]);
+        $.ajax({
+          url: form.attr('data-url'),
+          data: formData,
+          type: form.attr('method'),
+          dataType: 'json',
+          async: true,
+          cache: false,
+          contentType: false,
+          enctype: form.attr("enctype"),
+          processData: false,
+          success: function (data) {
+            if(data.form_is_valid){
+                window.location.replace(data.url);
+            }else{
+                $('#modal-user .modal-content').html(data.html_form)
+            }
+          }
+        });
+        return false;
+      };
+  /* Binding */
+  // Create document
+  //$(".js-add-document").click(loadForm);
+  $('#modal-user').on('submit','.create-datos-pago',savePagoForm);
+      
     // create
     $('.show-form').click(ShowForm);
     $('#modal-user').on('submit', '.create-form',SaveForm);

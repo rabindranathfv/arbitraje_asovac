@@ -5,7 +5,7 @@
         </button>
         <h4 class="modal-title" >Datos de pago del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h4>
 </div>
-<form method="POST" enctype="multipart/form-data" class="create-datos-pago" action="{% url 'autores:postular_trabajo_pago_modal' autor_trabajo.id %}">
+<form method="POST" enctype="multipart/form-data" class="create-datos-pago" data-url="{% url 'autores:postular_trabajo_pago_modal' autor_trabajo.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
