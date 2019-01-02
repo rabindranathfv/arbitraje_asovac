@@ -85,7 +85,7 @@ def referee_list(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
     }
-    return render(request, 'main_app_referee_list.html', context)
+    return render(request, 'arbitrajes_referee_list.html', context)
 
 def referee_edit(request):
 
