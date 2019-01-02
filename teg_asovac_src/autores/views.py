@@ -503,7 +503,7 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 		form = PagoForm(request.POST, request.FILES)
 		print(form.is_valid())
 		if form.is_valid():
-			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'])
+			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'], categorias_pago = request.session['datos_pagador']['categorias_pago'])
 			datos_pagador.save()
 			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
 			pagador.save()
