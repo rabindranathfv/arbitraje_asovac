@@ -416,7 +416,7 @@ var SaveAñadirPagoForm= function(){
         });
     
     };
-    var savePagoForm = function () {
+    var saveFileFormAndRedirect = function () {
         var form = $(this);
         var formData = new FormData(form[0]);
         $.ajax({
@@ -439,11 +439,7 @@ var SaveAñadirPagoForm= function(){
         });
         return false;
       };
-  /* Binding */
-  // Create document
-  //$(".js-add-document").click(loadForm);
-  $('#modal-user').on('submit','.create-datos-pago',savePagoForm);
-      
+
     // create
     $('.show-form').click(ShowForm);
     $('#modal-user').on('submit', '.create-form',SaveForm);
@@ -474,9 +470,10 @@ var SaveAñadirPagoForm= function(){
     $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
 
     // Añadir pago a un trabajo
-    $('.añadir-pago-form').click(ShowAñadirPagoForm);
+    $('.añadir-pago-form').click(ShowForm);
     $('#modal-user').on('submit','.create-datos-pagador',SaveAñadirPagoForm);
     $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
+    $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
 
     //show areas 
     $('.show_areas').click(ShowForm);
