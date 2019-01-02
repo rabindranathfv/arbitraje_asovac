@@ -57,7 +57,7 @@ def trabajos(request):
             new_trabajo = form.save()
 
             #Código para crear una instancia de Autores_trabajos
-            autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
+            autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
 
 
