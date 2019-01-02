@@ -45,7 +45,7 @@
 
 							<div class="col-sm-4">
 								<h2 class="text-center"> Datos del pago</h2>
-								<p><strong>Tipo de pago:</strong> {{ factura.pago.tipo_pago }} </p>
+								<p><strong>Tipo de pago:</strong> {{ factura.pago.get_tipo_pago_display }} </p>
 								<p><strong>Número de cuenta origen:</strong> {{ factura.pago.numero_cuenta_origen }} </p>
 								<p><strong>Banco origen:</strong> {{ factura.pago.get_banco_origen_display }} </p>
 								{% if factura.pago.numero_transferencia %} 

@@ -507,7 +507,9 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 			datos_pagador.save()
 			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
 			pagador.save()
-			pago = form.save()
+			pago = form.save(commit=False)
+			pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
+			pago.save()
 			factura = Factura(pagador = pagador, pago = pago, monto_subtotal = request.session['factura']['monto_subtotal'], iva = request.session['factura']['iva'], monto_total = request.session['factura']['monto_total'], fecha_emision = request.session['factura']['fecha_emision'])
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
