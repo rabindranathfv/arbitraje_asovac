@@ -23,7 +23,6 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from .forms import TrabajoForm,EditTrabajoForm, AutorObservationsFinalVersionJobForm
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
-    form = TrabajoForm()
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -54,12 +53,29 @@ def trabajos(request):
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
         if form.is_valid():
-            new_trabajo = form.save()
+            new_trabajo = form.save(commit = False)
+            area= request.POST.get("area_select")
+            subarea_list = request.POST.getlist("subarea_select")
+
+            new_trabajo.area = Area.objects.get(id = area)
+            counter = 0
+            for subarea in subarea_list:
+                area_to_assign = Sub_area.objects.get(id = subarea)
+                if(counter == 0):
+                    new_trabajo.subarea1 = area_to_assign
+                elif (counter == 1):
+                    new_trabajo.subarea2 = area_to_assign
+                elif (counter == 2):
+                    new_trabajo.subarea3 = area_to_assign
+                counter += 1
+
+            new_trabajo.save()
 
             #Código para crear una instancia de Autores_trabajos
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
-
+    else:
+        form = TrabajoForm()
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
@@ -79,7 +95,8 @@ def trabajos(request):
 
 
     autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
-
+    areas= Area.objects.all()
+    subareas= Sub_area.objects.all()
     context = {
         "nombre_vista": 'Autores',
         "form": form,
@@ -96,6 +113,8 @@ def trabajos(request):
         'route_resultados': route_resultados,
         'trabajos': trabajos,
         'autores_trabajos_list': autores_trabajos_list,
+        'areas':areas,
+        'subareas':subareas
     }
     return render(request,"trabajos.html",context)
 

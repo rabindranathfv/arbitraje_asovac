@@ -117,7 +117,9 @@
 						<div class="container-fluid">
 							<div class="row middle-content">
 								<div class="col-sm-12">
-									{% crispy form %}
+									<form method="POST" id="create-job-form" enctype="multipart/form-data" action="{% url 'trabajos:trabajos' %}">
+										{% crispy form %}
+									</form>
 								</div>
 							</div>
 						</div>

@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 from .validators import validate_file_extension
 from datetime import datetime
+
+from main_app.models import Area, Sub_area
 # Create your models here.
 
 
@@ -34,16 +36,17 @@ class Trabajo(models.Model):
 	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
 	# autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
+	area = models.ForeignKey(Area)
+	subarea1 = models.ForeignKey(Sub_area, related_name ="subarea1")
+	subarea2 = models.ForeignKey(Sub_area, null= True, blank = True, related_name ="subarea2")
+	subarea3 = models.ForeignKey(Sub_area, null = True, blank = True, related_name ="subarea3")
+
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=100)
 	titulo_ingles = models.CharField(max_length=100, blank = True)
 	palabras_clave = models.CharField(max_length=60, blank = True)
 	forma_presentacion = models.CharField(max_length=1,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
-	area = models.CharField(max_length=70)
-	subarea1 = models.CharField(max_length=70)
-	subarea2 = models.CharField(max_length=70, blank = True)
-	subarea3 = models.CharField(max_length=70, blank = True)
 	resumen = models.TextField(max_length=255)
 	documento_inscrito =  models.CharField(max_length=100,blank=True)
 	observaciones = models.TextField(max_length=255, blank = True)
