@@ -52,10 +52,10 @@ def trabajos(request):
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
-        if form.is_valid():
+        subarea_list = request.POST.getlist("subarea_select")
+        if form.is_valid() and len(subarea_list) <= 3:
             new_trabajo = form.save(commit = False)
             area= request.POST.get("area_select")
-            subarea_list = request.POST.getlist("subarea_select")
 
             new_trabajo.area = Area.objects.get(id = area)
             counter = 0
@@ -74,6 +74,9 @@ def trabajos(request):
             #Código para crear una instancia de Autores_trabajos
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
+        else:
+            if(3 < len(subarea_list)):
+                messages.error(request,"Solo puede elegir hasta 3 subareas.")
     else:
         form = TrabajoForm()
 
