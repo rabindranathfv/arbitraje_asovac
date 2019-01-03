@@ -74,9 +74,10 @@ def trabajos(request):
             #Código para crear una instancia de Autores_trabajos
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
+            form = TrabajoForm()
         else:
             if(3 < len(subarea_list)):
-                messages.error(request,"Solo puede elegir hasta 3 subareas.")
+                messages.error(request,"Solo puede elegir hasta 3 subareas al momento de crear un trabajo.")
     else:
         form = TrabajoForm()
 
