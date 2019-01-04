@@ -36,15 +36,16 @@ class TrabajoForm(forms.ModelForm):
 					Field('titulo_espanol',placeholder="Ejemplo: Titulo del trabajo"),
 					Field('titulo_ingles',placeholder="Ejemplo: Job's title"),
 					Field('palabras_clave',placeholder="Introduzca sus palabras separadas con espacio"),
+					Field('resumen', rows="4", placeholder="Introduzca el resumen del trabajo"),			
 					Field('forma_presentacion',placeholder="Ejemplo: Fisica"),
-					'archivo_trabajo',
 					css_class='col-sm-6',
 					),
 				Div(
 					Field('version',placeholder="Ejemplo: 1.0"),
 					Field('url_trabajo',placeholder="Ejemplo: www.github.com/YYYY"),
 					'documento_inscrito',
-					Field('resumen', rows="4", placeholder="Introduzca el resumen del trabajo"),
+					Field('observaciones', rows="4", placeholder="Introduzca sus observaciones"),	
+					'archivo_trabajo',
 					css_class='col-sm-6',
 				),
 				css_class='row'
@@ -54,7 +55,6 @@ class TrabajoForm(forms.ModelForm):
 				HTML("<div class=\"form-group col-sm-6\"  style=\"display: none\" id=\"content_subarea\">{% include 'ajax/show_subareas.html' %}</div>"),			
 				css_class = 'row'
 				),
-			Field('observaciones', rows="4", placeholder="Introduzca sus observaciones"),				
 			HTML("<div class=\"col-sm-2 col-sm-offset-8\"><a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a></div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button></div>"),
 			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h3 class=\"modal-title\" id=\"ModalLongTitle\">Crear Trabajo</h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea crear el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-primary btn-success\">Postular</button></div></div></div></div>"),
 			)
@@ -94,20 +94,20 @@ class EditTrabajoForm(forms.ModelForm):
 					Field('titulo_espanol',placeholder="Ejemplo: Titulo del trabajo"),
 					Field('titulo_ingles',placeholder="Ejemplo: Job's title"),
 					Field('palabras_clave',placeholder="Introduzca sus palabras separadas con espacio"),
-					Field('forma_presentacion',placeholder="Ejemplo: Fisica"),
-					'archivo_trabajo',
+					Field('resumen', rows="4", placeholder="Introduzca el resumen del trabajo"),
+					Field('forma_presentacion',placeholder="Ejemplo: Fisica"),			
 					css_class='col-sm-6',
 					),
 				Div(
 					Field('version',placeholder="Ejemplo: 1.0"),
 					Field('url_trabajo',placeholder="Ejemplo: www.github.com/YYYY"),
 					'documento_inscrito',
-					Field('resumen', rows="4", placeholder="Introduzca el resumen del trabajo"),			
 					Field('observaciones', rows="4", placeholder="Introduzca sus observaciones"),
+					'archivo_trabajo',
 					css_class='col-sm-6',
 				),
 				css_class='row'
-			),
+			),				
 			HTML("<div class=\"col-sm-2 col-sm-offset-8\"><a href=\"{% url 'trabajos:trabajos' %}\" class=\"btn btn-danger btn-block btn-lg\" >Cancelar</a></div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button></div>"),
 			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><h3 class=\"modal-title\" id=\"ModalLongTitle\">Editar Trabajo</h5><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea editar el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-secondary btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-primary btn-success\">Postular</button></div></div></div></div>"),
 			)
