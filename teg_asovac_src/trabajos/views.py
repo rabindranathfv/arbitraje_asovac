@@ -255,6 +255,7 @@ def edit_trabajo(request, trabajo_id):
                         trabajo_edit.subarea2 = new_subarea
                     elif counter == 2:
                         trabajo_edit.subarea3 = new_subarea
+                    counter += 1
 
                 subarea_list_length = len(subarea_list) 
                 if subarea_list_length == 1:
