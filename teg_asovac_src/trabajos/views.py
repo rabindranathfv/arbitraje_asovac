@@ -191,7 +191,6 @@ def jobs_edit(request):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-
     context = {
         'nombre_vista' : 'Trabajos',
         'main_navbar_options' : main_navbar_options,
@@ -239,14 +238,45 @@ def edit_trabajo(request, trabajo_id):
       
     if request.method == 'POST':
         form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
-        if form.is_valid():
-            form.save()
+        subarea_list = request.POST.getlist("subarea_select")
+        area= request.POST.get("area_select")
+        if (form.is_valid() and (not area or (subarea_list and len(subarea_list) <= 3))):
+            trabajo_edit = form.save()
+            if(area): 
+                new_area = Area.objects.get(id = area)
+                trabajo_edit.area = new_area
+
+                counter = 0
+                for subarea in subarea_list:
+                    new_subarea = Sub_area.objects.get(id = subarea)
+                    if counter == 0:                      
+                        trabajo_edit.subarea1 = new_subarea
+                    elif counter == 1:
+                        trabajo_edit.subarea2 = new_subarea
+                    elif counter == 2:
+                        trabajo_edit.subarea3 = new_subarea
+
+                subarea_list_length = len(subarea_list) 
+                if subarea_list_length == 1:
+                    trabajo_edit.subarea2 = None
+                    trabajo_edit.subarea3 = None
+                elif subarea_list_length == 2:
+                    trabajo_edit.subarea3 = None
+                
+                trabajo_edit.save()
+
+
             messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
             return redirect('trabajos:trabajos')
+        else:
+            if (3 < len(subarea_list)):
+                messages.error(request, 'Solo puede elegir hasta 3 subáreas.')
+                
     else: 
         form = EditTrabajoForm(instance = autor_trabajo.trabajo)
 
-
+    areas= Area.objects.all()
+    subareas= Sub_area.objects.all()
     context = {
         'nombre_vista' : 'Editar Trabajo',
         'main_navbar_options' : main_navbar_options,
@@ -261,6 +291,9 @@ def edit_trabajo(request, trabajo_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'form':form,
+        'trabajo': trabajo,
+        'areas': areas,
+        'subareas':subareas
     }
     return render(request,"trabajos_edit_trabajo.html",context)
 

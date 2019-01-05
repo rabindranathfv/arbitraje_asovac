@@ -488,7 +488,7 @@ var SaveAñadirPagoForm= function(){
 
     // Add organizer to event
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
-
+    
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);

@@ -2,7 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block inner_content %}
-<div class="container col-sm-11" id="content-wrapper">
+<div class="container col-sm-12" id="content-wrapper">
 	{% include "success_messages.html" %}
 	{% include "errors_form.html" %}
 	{% include "toggle_title.html" %}
@@ -66,6 +66,7 @@
 										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
+
 
 										<!-- Esto es lo que hay que verificar -->
 										<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
