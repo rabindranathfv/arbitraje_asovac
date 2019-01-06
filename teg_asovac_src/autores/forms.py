@@ -90,6 +90,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 	correo = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Introduzca el correo electrónico del coautor'}))
 	
 	def __init__(self, *args, **kwargs):
+		self.autor_trabajo = kwargs.pop('autor_trabajo',None)
 		super(AddAuthorToJobForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'add-author-to-job-form'
@@ -108,7 +109,15 @@ class AddAuthorToJobForm(forms.ModelForm):
 				css_class= "row"
 				)
 			)
+	def clean_correo(self):
+		correo = self.cleaned_data['correo']
+		if not Autor.objects.filter(correo_electronico = correo).exists():
+			raise forms.ValidationError(_("No existe algún autor con el correo indicado. Verifique el correo electronico suministrado. En el caso que el coautor no tenga cuenta, debe crearse una y registrarse en la aplicacion de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
+		if Autores_trabajos.objects.filter(autor__correo_electronico = correo, trabajo = self.autor_trabajo.trabajo):
+			raise forms.ValidationError(_("Ya el autor indicado forma parte de este trabajo."), code = "author_repeated")
+		return correo
 
+		
 # Form para datos del pagador
 class DatosPagadorForm(forms.ModelForm):
 
@@ -116,13 +125,12 @@ class DatosPagadorForm(forms.ModelForm):
 		model = Datos_pagador
 		fields = ['categorias_pago','cedula', 'nombres', 'apellidos', 'pasaporte_rif', 'telefono_oficina', 'telefono_habitacion_celular', 'direccion_fiscal']
 		widgets = {
-            'categorias_pago': forms.TextInput(attrs={'placeholder': 'Personal, terceros o instituciones'}),
             'cedula': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678'}),
             'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo: Juan Enrique'}),
             'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Carrasco Lopez'}),
-            'pasaporte_rif': forms.TextInput(attrs={'placeholder': 'Ejemplo:12345678-1'}),
-            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
-            'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Formato: xxxx-xxx-xx-xx'}),
+            'pasaporte_rif': forms.TextInput(attrs={'placeholder': 'Formato: Jxxxxxxxx o Pxxxxxxxx'}),
+            'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 582129999999'}),
+            'telefono_habitacion_celular': forms.TextInput(attrs={'Ejemplo': 'Ejemplo: 584249999999'}),
             'direccion_fiscal': forms.Textarea(attrs={'placeholder': 'Introduzca su dirección aquí', 'rows':'4'}),
         }
 
@@ -144,6 +152,54 @@ class DatosPagadorForm(forms.ModelForm):
 		self.fields['telefono_habitacion_celular'].label = "Teléfono de habitación/Celular"
 		self.fields['direccion_fiscal'].label = "Dirección Fiscal"
 
+	def clean_cedula(self):
+		cedula = self.cleaned_data['cedula']
+		if not cedula.isdigit():
+			raise forms.ValidationError(_("Introduzca el formato correcto, la cédula debe tener solamente dígitos."), code = "invalid_number")
+		return cedula
+
+	def clean_nombres(self):
+		nombres=self.cleaned_data['nombres']
+		for char in nombres:
+			if not char.isalpha() and char !=' ':
+				raise forms.ValidationError(_("El nombre debe ser solo letras"), code="invalid_first_name")
+		return nombres
+
+	def clean_apellidos(self):
+		apellidos=self.cleaned_data['apellidos']
+		for char in apellidos:
+			if not char.isalpha() and char!= ' ':
+				raise forms.ValidationError(_("El apellido debe ser solo letras"), code="invalid_last_name")
+		return apellidos
+
+	def clean_pasaporte_rif(self):
+		pasaporte_rif = self.cleaned_data['pasaporte_rif']
+		if pasaporte_rif:	
+			if pasaporte_rif[0] != 'P' and pasaporte_rif[0] != 'J':
+				raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'J' o 'P'."), code = "formato incorrecto")
+			if not pasaporte_rif[1:].isdigit():
+				raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de rif o pasaporte."), code = "formato incorrecto")
+		return pasaporte_rif
+
+	def clean_telefono_oficina(self):
+		telefono_oficina = self.cleaned_data['telefono_oficina']
+		telefono_oficina_length = len(telefono_oficina)
+		if telefono_oficina:	
+			if telefono_oficina_length < 10 or telefono_oficina_length > 15:
+				raise forms.ValidationError(_("Cantidad de dígitos de teléfono de oficina inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+			if not telefono_oficina.isdigit():
+				raise forms.ValidationError(_("El teléfono de oficina no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_oficina
+
+	def clean_telefono_habitacion_celular(self):
+		telefono_habitacion_celular = self.cleaned_data['telefono_habitacion_celular']
+		telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+		if telefono_habitacion_celular_length < 10 or telefono_habitacion_celular_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de habitacion/celular inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_habitacion_celular.isdigit():
+			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_habitacion_celular
+
 		
 
 # Form para vista de pago
@@ -153,11 +209,9 @@ class PagoForm(forms.ModelForm):
 		model = Pago
 		fields = ['tipo_pago', 'numero_cuenta_origen', 'banco_origen', 'numero_transferencia', 'numero_cheque', 'fecha_pago', 'observaciones', 'comprobante_pago']
 		widgets = {
-            'tipo_pago': forms.TextInput(attrs={'placeholder': 'Transferencia o cheque'}),
-            'numero_cuenta_origen': forms.TextInput(attrs={'placeholder': 'XXXXXXXXXXXXXXXXXXXX'}),
-            #'banco_origen': forms.TextInput(attrs={'placeholder': 'Ejemplo: Banco de Venezuela'}),
-            'numero_transferencia': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
-            'numero_cheque': forms.TextInput(attrs={'placeholder': 'Ejemplo: XXXXXXXXXX'}),
+            'numero_cuenta_origen': forms.TextInput(attrs={'placeholder': 'Formato: XXXX-XXXX-XXXX-XXXX-XXXX'}),
+            'numero_transferencia': forms.TextInput(attrs={'placeholder': 'Formato: XXXXXXXXXX'}),
+            'numero_cheque': forms.TextInput(attrs={'placeholder': 'Formato: XXXXXXXXXX'}),
             'fecha_pago': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
             'observaciones': forms.TextInput(attrs={'placeholder': 'Introduzca sus observaciones'}),
         }
@@ -178,6 +232,47 @@ class PagoForm(forms.ModelForm):
 		self.fields['observaciones'].label = "Observaciones"
 		self.fields['comprobante_pago'].label = "Comprobante de pago"
 
+	def clean_numero_cuenta_origen(self):
+		numero_cuenta_origen = self.cleaned_data['numero_cuenta_origen']
+		if(numero_cuenta_origen[4] != '-' or numero_cuenta_origen[9] != '-' or numero_cuenta_origen[14] != '-' or numero_cuenta_origen[19] != '-'):
+			raise forms.ValidationError(_("Formato incorrecto, debe ser de la siguiente forma: XXXX-XXXX-XXXX-XXXX-XXXX (incluyendo guiones)"),code="invalid")
+		if(not numero_cuenta_origen[:4].isdigit() or not numero_cuenta_origen[5:9].isdigit() or not numero_cuenta_origen[10:14].isdigit() or not numero_cuenta_origen[15:19].isdigit() or not numero_cuenta_origen[20:].isdigit()):
+			raise forms.ValidationError(_("El número de cuenta no puede tener letras o espacios."), code="invalid")
+		return numero_cuenta_origen
+
+	def clean_numero_transferencia(self):
+		numero_transferencia = self.cleaned_data['numero_transferencia']
+		if(self.cleaned_data['tipo_pago'] == 'T'):
+			if(not numero_transferencia):
+				raise forms.ValidationError(_("Falta indicar el número de transferencia, ya que indicó que el tipo de pago es transferencia"),code="required_numero_transferencia")
+			else:
+				if(numero_transferencia[0] == '0'):
+					raise forms.ValidationError(_("El número de transferencia no puede tener 0's a la izquierda."), code="invalid_numero_transferencia")
+				if(not numero_transferencia.isdigit()):
+					raise forms.ValidationError(_("El número de transferencia no puede contener letras ni espacios."), code="invalid_numero_transferencia")
+				if(Pago.objects.filter(numero_transferencia = numero_transferencia).exists()):
+					raise forms.ValidationError(_("Ya existe un pago registrado con este número de transferencia"), code = "numero_transferencia_duplicated")
+		else:
+			if(numero_transferencia):
+				raise forms.ValidationError(_("El tipo de pago indicado es CHEQUE, si es correcto por favor deje este campo en blanco."))
+		return numero_transferencia
+
+	def clean_numero_cheque(self):
+		numero_cheque = self.cleaned_data['numero_cheque']
+		if(self.cleaned_data['tipo_pago'] == 'C'):
+			if(not numero_cheque):
+				raise forms.ValidationError(_("Falta indicar el número de cheque, ya que indicó que el tipo de pago es cheque"),code="required_numero_cheque")
+			else:
+				if(numero_cheque[0] == '0'):
+					raise forms.ValidationError(_("El número de cheque no puede tener 0's a la izquierda."), code="invalid_numero_cheque")
+				if(not numero_cheque.isdigit()):
+					raise forms.ValidationError(_("El número de cheque no puede contener letras ni espacios."), code="invalid_numero_cheque")
+				if(Pago.objects.filter(numero_transferencia = numero_cheque).exists()):
+					raise forms.ValidationError(_("Ya existe un pago registrado con este número de cheque"), code = "numero_cheque_duplicated")
+		else:
+			if(numero_cheque):
+				raise forms.ValidationError(_("El tipo de pago indicado es TRANSFERENCIA, si es correcto por favor deje este campo en blanco."))
+		return numero_cheque
 
 
 # Form para vista de Factura
@@ -185,26 +280,27 @@ class FacturaForm(forms.ModelForm):
 	
 	class Meta:
 		model = Factura
-		fields = ['monto_subtotal','fecha_emision', 'iva', 'monto_total']
+		fields = ['fecha_emision', 'monto_total']
 		widgets = {
-            'monto_subtotal': forms.TextInput(attrs={'placeholder': 'Ejemplo: 50.00'}),
             'fecha_emision': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
-            'iva': forms.TextInput(attrs={'placeholder': 'Ejemplo: 4.00'}),
-            'monto_total': forms.TextInput(attrs={'placeholder': 'Ejemplo:54.00'}),
         }
 	def __init__(self, *args, **kwargs):
 		super(FacturaForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
+		self.fields['monto_total'].widget.attrs['placeholder'] = 'Ejemplo: 100.50'
 		self.helper.form_id = 'factura-form'
 		self.helper.form_method = 'post'
 		self.helper.form_class =  'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['monto_subtotal'].label = "Monto Subtotal"
 		self.fields['fecha_emision'].label = "Fecha de emisión"
-		self.fields['iva'].label = "IVA"
 		self.fields['monto_total'].label = "Monto Total"
 
+	def clean_monto_total(self):
+		monto_total = self.cleaned_data['monto_total']
+		if monto_total <= 0:
+			raise forms.ValidationError(_("El monto debe ser mayor que 0."),code = "invalid_monto_total")
+		return monto_total
 
 #Form para que el admin o coordinador general cree un autor
 class AdminCreateAutorForm(forms.ModelForm):

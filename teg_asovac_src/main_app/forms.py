@@ -86,10 +86,10 @@ class CreateArbitrajeForm(forms.ModelForm):
 
     class Meta:
         model = Sistema_asovac
-        fields = ['nombre','descripcion', 'fecha_inicio_arbitraje', 'fecha_fin_arbitraje']
+        fields = ['nombre','descripcion', 'fecha_inicio_arbitraje', 'fecha_fin_arbitraje','porcentaje_iva', 'monto_pagar_trabajo']
         widgets = {'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
                    'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)}
-        labels = {'descripcion': 'Descripción', 'fecha_fin_arbitraje': 'Fecha de Culminación', 'fecha_inicio_arbitraje': 'Fecha de Inicio'}
+        labels = {'descripcion': 'Descripción', 'fecha_fin_arbitraje': 'Fecha de Culminación', 'fecha_inicio_arbitraje': 'Fecha de Inicio','porcentaje_iva' : 'Porcentaje del IVA', 'monto_pagar_trabajo' : 'Monto para postular trabajos'}
 
     def __init__(self, *args, **kwargs):
         super(CreateArbitrajeForm, self).__init__(*args, **kwargs)
@@ -106,6 +106,8 @@ class CreateArbitrajeForm(forms.ModelForm):
             Field('descripcion', rows="4"),
             'fecha_inicio_arbitraje',
             'fecha_fin_arbitraje',
+            'porcentaje_iva', 
+            'monto_pagar_trabajo',
             Div(
                 Div(
                     HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
