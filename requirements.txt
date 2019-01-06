@@ -29,3 +29,5 @@ pyexcel-io==0.5.9.1
 pyexcel-webio==0.1.4
 pyexcel-xls==0.5.8
 pyexcel-xlsx==0.5.6
+xlrd==1.2.0
+passlib==1.7.1

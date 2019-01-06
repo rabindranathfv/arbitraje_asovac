@@ -145,10 +145,10 @@ def crear_usuario_asovac(sender, **kwargs):
 			rol = Rol(nombre="Coordinador General", descripcion ="CG")
 			rol.save()
 
-			rol = Rol(nombre="Coordinador de Area", descripcion ="CA")
+			rol = Rol(nombre="Coordinador de Área", descripcion ="CA")
 			rol.save()
 
-			rol = Rol(nombre="Arbitro de Subarea", descripcion ="AS")
+			rol = Rol(nombre="Árbitro de Subárea", descripcion ="AS")
 			rol.save()
 
 			rol = Rol(nombre="Autor",descripcion="Autor")
