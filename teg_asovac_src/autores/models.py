@@ -10,8 +10,9 @@ CHOICES_GENERO = ((0,'Masculino'),
 
 # Create your models here.
 CHOICES_CATEGORIA_PAGO = (('P','Personal'),
-                 ('I','Instituciones'),
-                 ('T', 'Terceros')
+                 ('I','Institutos profesionales'),
+                 ('T', 'Terceros'),
+				 ('U', 'Universidades')
                  )
 
 # Create your models here.

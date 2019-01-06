@@ -9,7 +9,7 @@
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
-        <strong>*Recuerde que el IVA es de {{ autor_trabajo.sistema_asovac.porcentaje_iva}}%, será calculado automáticamente en base a su monto total indicado.</strong>
+        <strong style="font-size: 18px">*Recuerde que el IVA es de {{ autor_trabajo.sistema_asovac.porcentaje_iva }}%, será calculado automáticamente en base a su monto total indicado.</strong>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
