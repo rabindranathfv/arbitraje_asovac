@@ -53,13 +53,15 @@
 							data-sort-name="pk"
 							data-show-toggle="true"
 							data-show-columns="true"
+							data-detail-view="true"
+							data-detail-formatter="detailFormatter"
 							>
 							<thead>
 								<tr>
-									<th data-field="nombre" data-sortable="true">Nombres</th>
-									<th data-field="apellido" data-sortable="true">Apellidos </th>
-									<th data-field="nombre_user" data-sortable="true">Nombre de usuario</th>
-									<th data-field="correo" data-sortable="true">Correo</th>
+									<th data-field="first_name" data-sortable="true">Nombres</th>
+									<th data-field="last_name" data-sortable="true">Apellidos </th>
+									<th data-field="username" data-sortable="true">Nombre de usuario</th>
+									<th data-field="email" data-sortable="true">Correo</th>
 									<th data-field="operate" data-events="operateEvents" data-formatter="operateUsuarios" data-align="center">Acciones</th>
 								</tr>
 						</thead>
@@ -109,6 +111,25 @@
 			 });
 		}
 		
+		function detailFormatter(index, row) {
+		
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+		var init=init+ '<th style="text-align: center;" >Cédula/Pasaporte</th>'; 
+		var init=init+ '<th style="text-align: center;" >Título</th>'; 
+		var init=init+ '<th style="text-align: center;" >Área</th>'; 
+		var init=init+ '<th style="text-align: center;" >Línea de investigación</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "linea_investigacion" || key == "cedula_pasaporte" || key == "nombre" || key == "titulo"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
 	</script> 
 
 {% endblock %}
