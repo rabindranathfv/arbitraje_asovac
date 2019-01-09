@@ -36,11 +36,7 @@ class Trabajo(models.Model):
 	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
 	# autor_id = models.ManyToManyField('autores.Autor')
 	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
-	area = models.ForeignKey(Area)
-	subarea1 = models.ForeignKey(Sub_area, related_name ="subarea1")
-	subarea2 = models.ForeignKey(Sub_area, null= True, blank = True, related_name ="subarea2")
-	subarea3 = models.ForeignKey(Sub_area, null = True, blank = True, related_name ="subarea3")
-
+	subareas = models.ManyToManyField(Sub_area) #Se permiten hasta 3 subareas
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=100)
@@ -54,7 +50,7 @@ class Trabajo(models.Model):
 	version = models.CharField(max_length=20,blank=True)
 	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
 	def __str__(self):
-    		return self.titulo_espanol#.encode('utf-8', errors='replace')
+    		return self.titulo_espanol.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -68,12 +64,11 @@ class Detalle_version_final(models.Model):
 	estatus_final = models.CharField(max_length=20, default="Pendiente")
 	observaciones = models.TextField(max_length=255, blank = True)
 	se_recibio_version_final_corregida = models.BooleanField(default=False)
-	#url_version_final_trabajo = models.CharField(max_length=35, blank = True)
 	fecha_envio_version_final = models.DateField(default = datetime.now)
 	se_recibio_version_final_presentacion = models.BooleanField(default=False)
 	url_version_final_presentacion = models.CharField(max_length=35)
 	fecha_envio_version_final_presentacion = models.DateField(blank = True, null = True)
-	#archivo_trabajo_final = models.FileField(validators=[validate_file_extension])
+
 	def __str__(self):
 		return self.trabajo.titulo_espanol#.encode('utf-8', errors='replace')
 

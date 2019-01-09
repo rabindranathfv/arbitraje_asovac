@@ -39,10 +39,10 @@
                                 <strong>Forma de Presentación:</strong> {{ autor_trabajo.trabajo.get_forma_presentacion_display }}
                             </p>
                             <p class="p-md">
-                                <strong>Area:</strong> {{ autor_trabajo.trabajo.area }}
+                                <strong>Área:</strong> {{ autor_trabajo.trabajo.subareas.first.area }}
                             </p>
                             <p class="p-md">
-                                <strong>Subarea 1:</strong> {{ autor_trabajo.trabajo.subarea1 }}
+                                <strong>Subáreas:</strong> {% for subarea in autor_trabajo.trabajo.subareas.all %} {{ subarea }} {% if subarea != autor_trabajo.trabajo.subareas.all.last %}, {% endif %} {% endfor %}
                             </p>
                             {% if autor_trabajo.trabajo.subarea2 %}
                                 <p class="p-md">

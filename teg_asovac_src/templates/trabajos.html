@@ -33,8 +33,8 @@
 						{% for trabajo in trabajos %}
 							<tr>
 								<td style="vertical-align: middle;">{{ trabajo.trabajo.titulo_espanol }}</td>
-								<td style="vertical-align: middle;">{{ trabajo.trabajo.area }}</td>
-								<td style="vertical-align: middle;">{{ trabajo.trabajo.subarea1 }}</td>
+								<td style="vertical-align: middle;">{{ trabajo.trabajo.subareas.all.first.area }}</td>
+								<td style="vertical-align: middle;">{{ trabajo.trabajo.subareas.all.first }}</td>
 								<td style="vertical-align: middle;">
 									{{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
 									<br>
