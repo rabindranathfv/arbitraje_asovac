@@ -88,4 +88,7 @@ urlpatterns = [
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
 
+    # Generar Reportes
+    url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
+
 ]

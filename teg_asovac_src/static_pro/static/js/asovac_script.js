@@ -506,5 +506,4 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
     
-
 });

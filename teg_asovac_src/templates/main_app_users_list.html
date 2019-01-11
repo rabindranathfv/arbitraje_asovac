@@ -38,12 +38,22 @@
 					<input type="hidden" id="listUsuarios" name="list" data-url="{% url 'main_app:list_usuarios' %}">
 					
 					<div id="toolbar">
+						<div class="form-inline" role="form">
+							<!-- <div class="form-group">
+								<select class="form-control" id="type_export">
+									<option value="view">Exportar página</option>
+									<option value="all">Exportar todo</option>
+								</select>
+							</div> -->
+							<!-- <button id="export" type="submit" data-target="#table" class="btn btn-default"><i class="fas fa-download"></i></button> -->
+							<a href="{% url 'main_app:generar_reporte' 1 %}"  class="btn btn-default"><i class="fas fa-download"></i></a>
+						</div>
 					</div>
 					<table id="table"
 							data-toggle="table"
 							data-ajax="ajaxUsuarios"
 							data-side-pagination="server"
-							data-show-export="true"
+							data-show-export="false"
 							data-toolbar="#toolbar"
 							data-pagination="true"
 							data-page-size="5"
@@ -130,6 +140,18 @@
 		html.push(fin);
 		return html.join('');
 		}
+
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listUsuarios").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
+		
+		
+
 	</script> 
 
 {% endblock %}

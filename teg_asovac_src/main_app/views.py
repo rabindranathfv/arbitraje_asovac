@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string,xlrd,os,sys
+import random, string,xlrd,os,sys,xlwt
+from openpyxl import Workbook
 from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
@@ -2080,6 +2081,7 @@ def list_usuarios(request):
     sort= request.POST['sort']
     order= request.POST['order']
     search= request.POST['search']
+    
     # Se verifica la existencia del parametro
     if request.POST.get('offset', False) != False:
         init= int(request.POST['offset'])
@@ -2087,12 +2089,18 @@ def list_usuarios(request):
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
         limit= int(request.POST['limit'])+init
+    
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
 
     if sort == 'pk':
         sort='first_name'
 
 
-    if search != "":
+    if search != "" and export == "":
+        print "Consulta Search"
         # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
@@ -2102,7 +2110,6 @@ def list_usuarios(request):
         where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
         # where=' WHERE au.first_name LIKE %s' 
         query= query+where
-        print query
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         # query= query + " ORDER BY " + order_by
         
@@ -2112,11 +2119,13 @@ def list_usuarios(request):
         for item in data_count:
             total=total+1
     else:
-        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
-            print "consulta para exportar"
-            
+        # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+        if export !=  "":
+    
+            print "Consulta para Exportar Todo"
+
         else:
-            print "consulta normal"
+            print "Consulta Normal"
             arbitraje_id = request.session['arbitraje_id']
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
@@ -2159,6 +2168,45 @@ def list_usuarios(request):
     }
    
     return JsonResponse(response)
+
+###################################################################################
+###########################     Exportar Usuarios     #############################
+###################################################################################
+def generate_report(request,tipo):
+
+    # Para exportar información de usuarios 
+    if tipo == '1':
+        # consulta para obtener informacion de los usuarios
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        query_count=query
+        query= query
+        
+        data= User.objects.raw(query)
+        data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
+
+        # Para definir propiedades del documento de excel
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Usuarios.xls'
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet("Usuarios")
+        # Para agregar los titulos de cada columna
+        row_num = 0
+        columns = ['Nombres (*)', 'Apellidos (*)', 'Nombre de usuario (*)','Correo electronico (*)','Área (*)','Subarea 1 (*)','Subarea 2','Subarea 3','Género (*)','Cédula o pasaporte (*)','Título (*)','Línea de investigación (*)','Teléfono oficina','Teléfono celular o habitación (*)','Institución donde  trabaja','Datos de la institución','Observaciones']
+        for col_num in range(len(columns)):
+            worksheet.write(row_num, col_num, columns[col_num])     
+        
+        for item in data:
+            row_num += 1
+            row = [item.first_name ,item.last_name ,item.username ,item.email,item.nombre,'-','-','-','-',item.cedula_pasaporte,item.titulo,item.linea_investigacion,'-','-','-','-','-']
+            for col_num in range(len(row)):
+                worksheet.write(row_num, col_num, row[col_num])
+        
+        workbook.save(response)
+
+    return response
 
 ###################################################################################
 #############################     Crud Usuarios     ###############################
