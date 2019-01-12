@@ -10,6 +10,8 @@ from django.shortcuts import render
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
+from .models import Arbitro
+
 # Create your views here.
 def arbitrajes_pag(request):
     context = {
@@ -72,6 +74,8 @@ def referee_list(request):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
+    referee_data = Arbitro.objects.all().order_by('-id')
+
     context = {
         'nombre_vista' : 'Listado de Arbitros',
         'estado' : estado,
@@ -79,6 +83,7 @@ def referee_list(request):
         'arbitraje_id' : arbitraje_id,
         'item_active' : item_active,
         'items':items,
+        'referee_data': referee_data,
         'route_conf':route_conf,
         'route_seg':route_seg,
         'route_trabajos_sidebar':route_trabajos_sidebar,
