@@ -10,9 +10,6 @@
 			<div class="jumbotron RLcard">
 				<h2 class="text-left">Listado de Espacios</h2>
 
-				<!-- data table -->
-				<input type="hidden" id="listSpaces" name="list" data-url="">
-
 				<div id ="toolbar">
 					<div class="btn-group">
 						<button class="btn btn-block btn-primary dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
@@ -26,7 +23,6 @@
 
 				<table id="table"
 				data-toggle="table"
-				data-ajax="ajaxSpaces"
 				data-side-pagination="server"
 				data-show-export="true"
 				data-toolbar="#toolbar"
@@ -39,6 +35,7 @@
 				data-sort-name="nombre_url"
 				data-show-toggle="true"
 				data-show-columns="true">
+				{% if spaces_data %}
 					<thead>
 						<tr>
 							<th data-field="id" data-visible="false" data-show-columns="false">ID</th>
@@ -47,21 +44,28 @@
 							<th data-field="capacidad" data-sortable="true">Capacidad</th>
 							<th data-field="turno" data-sortable="true">Turno</th>
 							<th data-field="nombre_url" data-visible="true" data-sortable="true">Nombre/URL</th>
-							<th data-field="operate" data-events="operateEvents" data-formatter="operateSessions" data-align="center">Acciones</th>
-							<!-- <a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-edit"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-times"></i>
-								</a>
-								<a href="#" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-envelope"></i>
-								</a>
-								<a href="" class="btn btn-sm btn-info" role="button">
-									<i class="fas fa-door-open"></i>
-								</a> -->
+							<th data-switchable="false">Acciones</th>
 						</tr>
 					</thead>
+					<tbody class="searchable">
+						{% for space in spaces_data %}
+							<tr>
+								<td class="text-center">{{ space.id }}</td>
+								<td class="text-center">{{ space.tipo }}</td>
+								<td class="text-center">{{ space.fecha_ocupacion }}</td>
+								<td class="text-center">{{ space.capacidad }}</td>
+								<td class="text-center">{{ space.turno }}</td>
+								<td class="text-center">{{ space.nombre_url }}</td>
+								<td class="text-center">
+									<a href="{% url 'sesiones:sesions_space_edit'%}" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" title="Editar"><i class="fas fa-edit"></i></a>
+									<a href="#" class="btn btn-sm btn-info" role="button" title="Eliminar"><i class="fas fa-times"></i></a>
+									<a href="#" class="btn btn-sm btn-info" role="button" title="Enviar"><i class="fas fa-envelope"></i></a>
+									<a href="" class="btn btn-sm btn-info" role="button" title="Entrar"><i class="fas fa-door-open"></i></a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					{% endif %}
 				</table>
 			</div>
 		</div>
@@ -114,3 +118,4 @@
 			 });
 		}
 	</script>
+{% endblock %}

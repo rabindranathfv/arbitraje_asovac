@@ -97,10 +97,10 @@ def sesions_space_list(request):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    rol_id=get_roles(request.user.id)
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id, arbitraje_id)
 
     item_active = 4
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
