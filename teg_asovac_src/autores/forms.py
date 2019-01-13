@@ -17,8 +17,8 @@ class AuthorCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad','genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
-				 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
+		fields = ['genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
+					'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
 		widgets = {
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
@@ -37,7 +37,6 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.helper.form_class =  'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['universidad'].queryset = Universidad.objects.order_by('nombre')
 		self.fields['genero'].label = "Género"
 		self.fields['cedula_pasaporte'].label = "Cédula/Pasaporte"
 		self.fields['telefono_oficina'].label = "Teléfono de oficina"
@@ -530,3 +529,29 @@ class EditAutorForm(forms.ModelForm):
 		if not telefono_habitacion_celular.isdigit():
 			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
 		return telefono_habitacion_celular
+
+
+
+class CreateUniversityForm(forms.ModelForm):
+
+	class Meta:
+		model = Universidad
+		fields = ['nombre', 'facultad', 'escuela', 'instituto_investigacion']
+		widgets = {
+			'nombre': forms.TextInput(attrs={'placeholder': 'Ejemplo: Universidad Central de Venezuela'}),
+			'facultad': forms.TextInput(attrs={'placeholder': 'Ejemplo: Ciencias'}),
+			'escuela': forms.TextInput(attrs={'placeholder': 'Ejemplo: Computación'}),
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(CreateUniversityForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
+		self.fields['nombre'].label = "Nombre"
+		self.fields['facultad'].label = "Facultad"
+		self.fields['escuela'].label = "Escuela"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
+		
