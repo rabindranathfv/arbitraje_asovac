@@ -470,6 +470,12 @@ def dashboard(request, arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
+    try:
+        autor = Autor.objects.get( usuario = user )
+        request.session['is_author_created'] = True
+    except:
+        request.session['is_author_created'] = False
+
     item_active = 1
     #print(request.session['estado'])
     items=validate_rol_status(estado, rol_id, item_active, arbitraje_id)
@@ -1013,8 +1019,9 @@ def create_autor_instance_modal(request, user_id):
                 autor.apellidos = user.last_name
                 autor.correo_electronico = user.email
                 autor.save()
+                request.session['is_author_created'] = True
                 data['form_is_valid']= True
-                data['url'] = reverse('main_app:home')
+                data['url'] = reverse('trabajos:trabajos')
             except:
                 pass
     context = {
