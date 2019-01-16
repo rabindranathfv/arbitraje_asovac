@@ -126,10 +126,10 @@
 				<li>					
 					<a role="button" class="navbar-link" id = "dropdownMenuButton" data-toggle = "dropdown"><i class="fas fa-user"></i> {{ user.username }}</a>	
 					<ul class="dropdown-menu" style ="z-index:2">
-    					{% if not events_app %}
+    					{% if not events_app  and request.session.is_author_created %}
                             <li>
-    							<a class="dropdown-item" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' ><i class="fas fa-edit"></i> Editar datos de autor</a>
-    						</li>
+                                <a class="dropdown-item" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' ><i class="fas fa-edit"></i> Editar datos de autor</a>
+                            </li>
                         {% endif %}
 						<li>
 							<a class="dropdown-item" data-url="{% url 'main_app:changepassword_modal' %}" id='changepassword-user' ><i class="fas fa-key"></i> Cambiar Contraseña</a>
