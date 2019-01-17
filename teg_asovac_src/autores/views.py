@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from decouple import config
 from django.conf import settings
+from django.core import serializers
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
@@ -12,7 +13,7 @@ from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm
 
 from django.contrib import messages
 
@@ -592,3 +593,28 @@ def detalles_pago(request, pagador_id):
     }
 
 	return render(request,"autores_detalles_pago.html",context)
+
+
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def create_university_modal(request):
+	data = dict()
+
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST)
+		if form.is_valid():
+			universidad = form.save()
+			autor = serializers.json.Deserializer(request.session['autor']).next().object
+			autor.universidad = universidad
+			autor.save()
+			data['url'] = reverse('trabajos:trabajos')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False		
+	else:
+		form = CreateUniversityForm()
+
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/create_university.html', context, request=request)
+	return JsonResponse(data)

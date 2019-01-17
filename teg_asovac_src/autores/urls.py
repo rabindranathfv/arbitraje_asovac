@@ -23,6 +23,7 @@ urlpatterns = [
 
 
     url(r'^administrador/crear-autor/$',views.admin_create_author,name='admin_create_author'),
+    url(r'^crear-universidad/$',views.create_university_modal, name='create_university_modal'),
     url(r'^listar-autores/$',views.authors_list,name='authors_list'),
     url(r'^editar-autor/(?P<autor_id>\d+)/$',views.author_edit,name='author_edit'),
     url(r'^detalles/(?P<autor_id>\d+)/$',views.author_details,name='author_details'),

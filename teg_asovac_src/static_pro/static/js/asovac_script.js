@@ -122,6 +122,20 @@ $(document).ready(function(){
             }
         });
     };
+
+    var ReloadModal= function(){
+        var btn= $(this);
+        // alert('ShowForm');
+        $.ajax({
+            url: btn.attr('data-url'),
+            type: 'get',
+            dataType: 'json',
+            success: function (data){
+                // console.log(data.html_form);
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+    };
 // Ocultar ventana modal y enviar formulario via ajax
     var SaveForm= function(){
         // console.log("SE envia el formulario");
@@ -179,7 +193,22 @@ $(document).ready(function(){
 
             success: function(data){
                 if(data.form_is_valid){
-                    window.location.replace(data.url);
+                    if(data.reload_modal)
+                    {
+                        $.ajax({
+                            url: data.url,
+                            type: 'get',
+                            dataType: 'json',
+                            success: function (data){
+                                // console.log(data.html_form);
+                                $('#modal-user .modal-content').html(data.html_form);
+                                
+                            }
+                        });
+                    }
+                    else{
+                        window.location.replace(data.url);
+                    }
                 }else{
                     $('#modal-user .modal-content').html(data.html_form)
                 }
@@ -504,6 +533,13 @@ var SaveAñadirPagoForm= function(){
 
     // Modal para que los usuarios creen su instancia de autor en sistema
     $('.show-register-user-in-sistema-modal').click(ShowForm);
+    
+
+
+    // Modal para que añadan alguna universidad que no ha sido creada
+    $('#create-university-modal').click(ReloadModal);
+    $('#modal-user').on('submit', '.create-university-modal-form',SaveFormAndRedirect);
+
 
     // Modal para que los usuarios creen su instancia de autor
     $('#changepassword-user').click(ShowForm);

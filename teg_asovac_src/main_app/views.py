@@ -24,7 +24,7 @@ from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, Create
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
 
-from autores.models import Autor
+from autores.models import Autor, Universidad
 from autores.forms import AuthorCreateAutorForm
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -469,6 +469,12 @@ def dashboard(request, arbitraje_id):
     rol_id=get_roles(request.user.id, arbitraje.id)
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+
+    try:
+        autor = Autor.objects.get( usuario = user )
+        request.session['is_author_created'] = True
+    except:
+        request.session['is_author_created'] = False
 
     item_active = 1
     #print(request.session['estado'])
@@ -1003,6 +1009,7 @@ def create_autor_instance_modal(request, user_id):
     form = AuthorCreateAutorForm()
     if request.method == 'POST':
         form = AuthorCreateAutorForm(request.POST)
+        universidad = request.POST.get("university_select") #Se colocó el valor de -1 para añadir una nueva universidad
         if form.is_valid():
             try:
                 autor = form.save(commit = False)
@@ -1012,13 +1019,22 @@ def create_autor_instance_modal(request, user_id):
                 autor.nombres = user.first_name
                 autor.apellidos = user.last_name
                 autor.correo_electronico = user.email
-                autor.save()
-                data['form_is_valid']= True
-                data['url'] = reverse('main_app:home')
+                if universidad != '-1':
+                    autor.universidad = Universidad.objects.get(id = universidad)
+                    autor.save()
+                    request.session['is_author_created'] = True
+                    data['url'] = reverse('trabajos:trabajos')
+                else:
+                    data['url'] = reverse('autores:create_university_modal')
+                    request.session['autor'] = serializers.serialize('json', [ autor, ])
+                    data['reload_modal'] = True
+                data['form_is_valid']= True             
             except:
                 pass
+    universidades = Universidad.objects.all()
     context = {
         'form':form,
+        'universidades': universidades
     }
     data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
     return JsonResponse(data)

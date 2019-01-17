@@ -54,20 +54,11 @@ def trabajos(request):
         form = TrabajoForm(request.POST, request.FILES)
         subarea_list = request.POST.getlist("subarea_select")
         if form.is_valid() and len(subarea_list) <= 3:
-            new_trabajo = form.save(commit = False)
-            area= request.POST.get("area_select")
-
-            new_trabajo.area = Area.objects.get(id = area)
+            new_trabajo = form.save()
             counter = 0
             for subarea in subarea_list:
                 area_to_assign = Sub_area.objects.get(id = subarea)
-                if(counter == 0):
-                    new_trabajo.subarea1 = area_to_assign
-                elif (counter == 1):
-                    new_trabajo.subarea2 = area_to_assign
-                elif (counter == 2):
-                    new_trabajo.subarea3 = area_to_assign
-                counter += 1
+                new_trabajo.subareas.add(area_to_assign)
 
             new_trabajo.save()
 
@@ -245,24 +236,12 @@ def edit_trabajo(request, trabajo_id):
             if(area): 
                 new_area = Area.objects.get(id = area)
                 trabajo_edit.area = new_area
-
-                counter = 0
+                trabajo_edit.subareas.clear()
+                
                 for subarea in subarea_list:
                     new_subarea = Sub_area.objects.get(id = subarea)
-                    if counter == 0:                      
-                        trabajo_edit.subarea1 = new_subarea
-                    elif counter == 1:
-                        trabajo_edit.subarea2 = new_subarea
-                    elif counter == 2:
-                        trabajo_edit.subarea3 = new_subarea
-                    counter += 1
+                    trabajo_edit.subareas.add(new_subarea)
 
-                subarea_list_length = len(subarea_list) 
-                if subarea_list_length == 1:
-                    trabajo_edit.subarea2 = None
-                    trabajo_edit.subarea3 = None
-                elif subarea_list_length == 2:
-                    trabajo_edit.subarea3 = None
                 
                 trabajo_edit.save()
 
