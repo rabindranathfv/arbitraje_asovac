@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from decouple import config
 from django.conf import settings
+from django.core import serializers
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
@@ -12,7 +13,7 @@ from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm
 
 from django.contrib import messages
 
@@ -26,97 +27,102 @@ from django.template.loader import render_to_string
 def admin_create_author(request):
 	if request.method == "POST":
 		form = AdminCreateAutorForm(request.POST)
+		print(form.is_valid(),"Ok")
 		if form.is_valid():
-			new_autor = form.save(commit = False)
-			usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
-			
-			username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
-	        counter = 1
-	        username = username_base
-	        while User.objects.filter(username=username):
-	            username = username_base + str(counter)
-	            counter += 1
-	        
-	        usuario.username = username
-	        password = User.objects.make_random_password().lower()
-	        usuario.set_password(password)
-	        usuario.save()
-	        
-	        print(usuario.username)
-	        print(password)
-	        usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
-	        new_autor.usuario = usuario_asovac
-	        new_autor.save()
+			try:	
+				new_autor = form.save(commit = False)
+				usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
+				print("NO debería")
+				username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
+				counter = 1
+				username = username_base
+				while User.objects.filter(username=username):
+					username = username_base + str(counter)
+					counter += 1
 
-	        rol = Rol.objects.get(id=5)
-	        sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
-	        usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
-	        usuario_rol_in_sistema.save()
-	        
-	        subarea= request.POST.getlist("subarea_select")
-	        for item in subarea:
-	        	usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
-			usuario_asovac.save()
+				usuario.username = username
+				password = User.objects.make_random_password().lower()
+				usuario.set_password(password)
+				usuario.save()
 
-			context = {
-			'username': username,
-			'sistema_asovac': sistema_asovac.nombre,
-			'password': password,
-			}
-			msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
-			msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
-			send_mail(
-                    'Creación de usuario',         #titulo
-                    msg_plain,                          #mensaje txt
-                    config('EMAIL_HOST_USER'),          #email de envio
-                    [usuario.email],               #destinatario
-                    html_message=msg_html,              #mensaje en html
-                    )
-			return redirect('autores:authors_list')
-			
+				print(usuario.username)
+				print(password)
+				usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+				new_autor.usuario = usuario_asovac
+				new_autor.save()
+
+				rol = Rol.objects.get(id=5)
+				sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+				usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
+				usuario_rol_in_sistema.save()
+
+				subarea= request.POST.getlist("subarea_select")
+				for item in subarea:
+					usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+				usuario_asovac.save()
+
+				context = {
+				'username': username,
+				'sistema_asovac': sistema_asovac.nombre,
+				'password': password,
+				}
+				msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
+				msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
+				send_mail(
+				        'Creación de usuario',         #titulo
+				        msg_plain,                          #mensaje txt
+				        config('EMAIL_HOST_USER'),          #email de envio
+				        [usuario.email],               #destinatario
+				        html_message=msg_html,              #mensaje en html
+				        )
+				return redirect('autores:authors_list')
+			except:
+				pass
 	else:
-		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
-		# print (rol_id)
-		estado = request.session['estado']
-		event_id = request.session['arbitraje_id']
-		rol_id=get_roles(request.user.id , event_id)
-
-		item_active = 0
-		items = validate_rol_status(estado,rol_id,item_active,event_id)
-
-		route_conf = get_route_configuracion(estado,rol_id,event_id)
-		route_seg = get_route_seguimiento(estado,rol_id)
-		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-		route_resultados = get_route_resultados(estado,rol_id, event_id)
-
-		# print items
 		form = AdminCreateAutorForm()
-		areas= Area.objects.all()
-		subareas= Sub_area.objects.all()
-		context = {
-			"nombre_vista": 'Administración - Crear Autor',
-			'main_navbar_options' : main_navbar_options,
-			'estado' : estado,
-			'rol_id' : rol_id,
-			'event_id' : event_id,
-			'arbitraje_id' : event_id,
-			'item_active' : item_active,
-			'items':items,
-			'route_conf':route_conf,
-	        'route_seg':route_seg,
-	        'route_trabajos_sidebar':route_trabajos_sidebar,
-	        'route_trabajos_navbar': route_trabajos_navbar,
-	        'route_resultados': route_resultados,
-	        'form': form,
-	        'areas':areas,
-	        'subareas':subareas
-	    }
+
+
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+
+	# print (rol_id)
+	estado = request.session['estado']
+	event_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , event_id)
+
+	item_active = 0
+	items = validate_rol_status(estado,rol_id,item_active,event_id)
+
+	route_conf = get_route_configuracion(estado,rol_id,event_id)
+	route_seg = get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, event_id)
+
+	# print items
+	
+	areas= Area.objects.all()
+	subareas= Sub_area.objects.all()
+	context = {
+		"nombre_vista": 'Administración - Crear Autor',
+		'main_navbar_options' : main_navbar_options,
+		'estado' : estado,
+		'rol_id' : rol_id,
+		'arbitraje_id' : event_id,
+		'item_active' : item_active,
+		'items':items,
+		'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'form': form,
+        'areas':areas,
+        'subareas':subareas
+    }
 	return render(request,"autores_admin_create_author.html",context)
 
 
@@ -240,39 +246,45 @@ def list_authors (request):
 def author_edit(request, autor_id):
 	autor = get_object_or_404(Autor, id = autor_id)
 	if request.method == 'POST':
-		form = EditAutorForm(request.POST,instance = autor)
+		form = EditAutorForm(request.POST,user = autor.usuario.usuario, instance = autor)
+		user = autor.usuario.usuario
+		autor = Autor.objects.filter(nombres = user.first_name)
+		print(autor)
+		print(form.is_valid())
 		if form.is_valid():
-			autor = form.save()
-			user_id = autor.usuario.usuario.id
-			user = User.objects.get(id = user_id)
-			user.first_name = autor.nombres
-			user.last_name = autor.apellidos
-			user.save()
-	        return redirect('autores:authors_list')
-    
+			try:	
+				autor = form.save()
+				user_id = autor.usuario.usuario.id
+				user = User.objects.get(id = user_id)
+				user.first_name = autor.nombres
+				user.last_name = autor.apellidos
+				user.save()
+				return redirect('autores:authors_list')
+			except:
+				pass
 	else:
-		main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-	                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-	                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-	                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+		form = EditAutorForm(user= autor.usuario.usuario,instance = autor)
+	
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-		# print (rol_id)
-		estado = request.session['estado']
-		arbitraje_id = request.session['arbitraje_id']
-		rol_id=get_roles(request.user.id , arbitraje_id)
+	estado = request.session['estado']
+	arbitraje_id = request.session['arbitraje_id']
+	rol_id=get_roles(request.user.id , arbitraje_id)
 
-		item_active = 2
-		items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+	item_active = 2
+	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
-		route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-		route_seg= get_route_seguimiento(estado,rol_id)
-		route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-		route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-		route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-		# print items
-		form = EditAutorForm(instance = autor)
+	# print items
 	context = {
 		'nombre_vista' : 'Editar autores',
 		'main_navbar_options' : main_navbar_options,
@@ -333,28 +345,30 @@ def author_details(request, autor_id):
 	return render(request, 'autores_details.html', context)
 
 
-#Modal para crear datos de la factura
+#Modal para editar datos de autor del usuario logueado
 def author_edit_modal(request, user_id):
 	data = dict()
 	user =  User.objects.get(id = user_id)
 	autor = Autor.objects.get(usuario__usuario = user)
-	form =	EditAutorForm(instance = autor)
+	form =	EditAutorForm(user= user,instance = autor)
 	if request.method == "POST":
 		# Este formulario tiene todas las opciones populadas de acuerdo al formulario enviado por POST.
-		form = EditAutorForm(request.POST, instance = autor)
+		form = EditAutorForm(request.POST,user=user, instance = autor)
         if form.is_valid():
-            autor = form.save()
-            user.first_name = autor.nombres
-            user.last_name = autor.apellidos
-            user.email = autor.correo_electronico
-            user.save() 
-            data['form_is_valid']= True
-
-	else:
-		context ={
-			'form': form,
-		}
-		data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
+			try:
+				autor = form.save()
+				user.first_name = autor.nombres
+				user.last_name = autor.apellidos
+				user.email = autor.correo_electronico
+				user.save() 
+				messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
+				data['form_is_valid']= True
+			except:
+				pass
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
 	return JsonResponse(data)
 
 #Vista para generar certificado
@@ -434,14 +448,18 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id):
 		if form.is_valid():
 			request.session['datos_pagador'] = form.cleaned_data
 			data['url'] = reverse('autores:postular_trabajo_factura_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['message'] = "Formulario de pagador llenado con éxito, llene el siguiente formulario"
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
+		
+		print(data['form_is_valid'])
 	else:
 		form = DatosPagadorForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -453,22 +471,27 @@ def postular_trabajo_factura_modal(request, autor_trabajo_id):
 	if request.method == "POST":
 		form = FacturaForm(request.POST)
 		if form.is_valid():
+			iva = form.cleaned_data['monto_total'] * autor_trabajo.sistema_asovac.porcentaje_iva / 100
+			monto_subtotal = form.cleaned_data['monto_total'] - iva
 			factura = {
-				'monto_subtotal': form.cleaned_data['monto_subtotal'],
-				'iva': form.cleaned_data['iva'],
+				'monto_subtotal': monto_subtotal,
+				'iva': iva,
 				'monto_total': form.cleaned_data['monto_total'],
 				'fecha_emision': str(form.cleaned_data['fecha_emision']), }
 			request.session['factura'] = factura
 			data['url'] = reverse('autores:postular_trabajo_pago_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['message'] = "Formulario de factura llenado con éxito, llene el siguiente formulario"
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
 
 	else:
 		form =	FacturaForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_factura.html', context, request=request)
+	
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_factura.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -479,13 +502,15 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 
 	if request.method == "POST":
 		form = PagoForm(request.POST, request.FILES)
+		print(form.is_valid())
 		if form.is_valid():
-			print("LLegó Aquí")
-			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'])
+			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'], categorias_pago = request.session['datos_pagador']['categorias_pago'])
 			datos_pagador.save()
 			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
 			pagador.save()
-			pago = form.save()
+			pago = form.save(commit=False)
+			pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
+			pago.save()
 			factura = Factura(pagador = pagador, pago = pago, monto_subtotal = request.session['factura']['monto_subtotal'], iva = request.session['factura']['iva'], monto_total = request.session['factura']['monto_total'], fecha_emision = request.session['factura']['fecha_emision'])
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
@@ -493,19 +518,23 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 			if autor_trabajo.monto_total <= 0:
 				trabajo_version_final = Detalle_version_final(trabajo = autor_trabajo.trabajo)
 				trabajo_version_final.save()
+				autor_trabajo.pagado = True
 
 			print(request.session['factura']['monto_total'])
 			print(request.session['datos_pagador']['nombres'])
 
-			return redirect('autores:postular_trabajo')
-
+			data['url'] = reverse('autores:postular_trabajo')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
 	else:
 		form =	PagoForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
+
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -564,3 +593,28 @@ def detalles_pago(request, pagador_id):
     }
 
 	return render(request,"autores_detalles_pago.html",context)
+
+
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def create_university_modal(request):
+	data = dict()
+
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST)
+		if form.is_valid():
+			universidad = form.save()
+			autor = serializers.json.Deserializer(request.session['autor']).next().object
+			autor.universidad = universidad
+			autor.save()
+			data['url'] = reverse('trabajos:trabajos')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False		
+	else:
+		form = CreateUniversityForm()
+
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/create_university.html', context, request=request)
+	return JsonResponse(data)

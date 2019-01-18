@@ -5,7 +5,7 @@
         </button>
         <h4 class="modal-title" >Añadir autor al trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h4>
 </div>
-<form method="POST" class="add-autor-form" action="{% url 'trabajos:add_author_to_job' autor_trabajo.id %}">
+<form method="POST" class="add-autor-form" data-url="{% url 'trabajos:add_author_to_job' autor_trabajo.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}

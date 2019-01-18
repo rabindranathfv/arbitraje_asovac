@@ -7,22 +7,22 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.urls import reverse
 
 from .models import Trabajo, Detalle_version_final
 from autores.models import Autor, Autores_trabajos
 from autores.forms import AddAuthorToJobForm
 
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from .forms import TrabajoForm,EditTrabajoForm, AutorObservationsFinalVersionJobForm
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 def trabajos(request):
-    form = TrabajoForm()
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -52,14 +52,25 @@ def trabajos(request):
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
-        if form.is_valid():
+        subarea_list = request.POST.getlist("subarea_select")
+        if form.is_valid() and len(subarea_list) <= 3:
             new_trabajo = form.save()
+            counter = 0
+            for subarea in subarea_list:
+                area_to_assign = Sub_area.objects.get(id = subarea)
+                new_trabajo.subareas.add(area_to_assign)
+
+            new_trabajo.save()
 
             #Código para crear una instancia de Autores_trabajos
-            autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac)
+            autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
-
-
+            form = TrabajoForm()
+        else:
+            if(3 < len(subarea_list)):
+                messages.error(request,"Solo puede elegir hasta 3 subareas al momento de crear un trabajo.")
+    else:
+        form = TrabajoForm()
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
@@ -78,9 +89,9 @@ def trabajos(request):
         trabajos = paginator.page(paginator.num_pages)
 
 
-    form = TrabajoForm()
     autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
-
+    areas= Area.objects.all()
+    subareas= Sub_area.objects.all()
     context = {
         "nombre_vista": 'Autores',
         "form": form,
@@ -97,6 +108,8 @@ def trabajos(request):
         'route_resultados': route_resultados,
         'trabajos': trabajos,
         'autores_trabajos_list': autores_trabajos_list,
+        'areas':areas,
+        'subareas':subareas
     }
     return render(request,"trabajos.html",context)
 
@@ -169,7 +182,6 @@ def jobs_edit(request):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-
     context = {
         'nombre_vista' : 'Trabajos',
         'main_navbar_options' : main_navbar_options,
@@ -217,13 +229,34 @@ def edit_trabajo(request, trabajo_id):
       
     if request.method == 'POST':
         form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
-        form.save()
-        messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
-        return redirect('trabajos:trabajos')
+        subarea_list = request.POST.getlist("subarea_select")
+        area= request.POST.get("area_select")
+        if (form.is_valid() and (not area or (subarea_list and len(subarea_list) <= 3))):
+            trabajo_edit = form.save()
+            if(area): 
+                new_area = Area.objects.get(id = area)
+                trabajo_edit.area = new_area
+                trabajo_edit.subareas.clear()
+                
+                for subarea in subarea_list:
+                    new_subarea = Sub_area.objects.get(id = subarea)
+                    trabajo_edit.subareas.add(new_subarea)
+
+                
+                trabajo_edit.save()
+
+
+            messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
+            return redirect('trabajos:trabajos')
+        else:
+            if (3 < len(subarea_list)):
+                messages.error(request, 'Solo puede elegir hasta 3 subáreas.')
+                
     else: 
         form = EditTrabajoForm(instance = autor_trabajo.trabajo)
 
-
+    areas= Area.objects.all()
+    subareas= Sub_area.objects.all()
     context = {
         'nombre_vista' : 'Editar Trabajo',
         'main_navbar_options' : main_navbar_options,
@@ -238,6 +271,9 @@ def edit_trabajo(request, trabajo_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'form':form,
+        'trabajo': trabajo,
+        'areas': areas,
+        'subareas':subareas
     }
     return render(request,"trabajos_edit_trabajo.html",context)
 
@@ -432,23 +468,33 @@ def add_author_to_job(request, autor_trabajo_id):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
     sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)  
+    autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id) 
     if request.method == "POST":
-        form = AddAuthorToJobForm(request.POST)
-        if form.is_valid():
+        form = AddAuthorToJobForm(request.POST, autor_trabajo = autor_trabajo)
+        if form.is_valid():   
+            print("Entro")
             form_data = form.cleaned_data
             autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
             new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
             new_autor_trabajo.save()
+            rol_autor = Rol.objects.get(id=5)
+
+            # Esto es para darle los permisos del rol autor al autor si no está registrado en el sistema
+            if not Usuario_rol_in_sistema.objects.filter(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario).exists():
+                new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_autor, sistema_asovac = sistema_asovac, usuario_asovac = autor.usuario)
+                new_usuario_rol_in_sistema.save()
+
             messages.success(request,"El autor fue añadido al trabajo con éxito.")
-            return redirect('trabajos:trabajos')           
-    else:
-        form = AddAuthorToJobForm()
-        context = {
-            'autor_trabajo': autor_trabajo,
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/add_author_to_job.html', context, request=request)
+            data['form_is_valid']= True
+            data['url'] = reverse('trabajos:trabajos')     
+
+    else: 
+        form = AddAuthorToJobForm(autor_trabajo = autor_trabajo) 
+    context = {
+        'autor_trabajo': autor_trabajo,
+        'form':form,
+    }
+    data['html_form'] = render_to_string('ajax/add_author_to_job.html', context, request=request)
     return JsonResponse(data)
 
 

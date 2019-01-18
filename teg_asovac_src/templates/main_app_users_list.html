@@ -32,10 +32,10 @@
 								<a class="showAreasForm" href="#"><i class="fas fa-upload"></i> Cargar autores</a>
 							</li>
 							<li>
-								<a class="showAreasForm" href="#"><i class="fas fa-upload"></i> Cargar arbitros</a>
+								<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
 							</li>
 							<li>
-								<a class="showAreasForm" href="#"><i class="fas fa-upload"></i> Cargar coordinador de área</a>
+								<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i>Cargar Coordinador <br> de Área</a>
 							</li>
 							<li>
 								<a class="showAreasForm" href="#"><i class="fas fa-upload"></i> Cargar coordinador general</a>
@@ -85,6 +85,7 @@
 	<!-- js extra -->
 	<script src="{% static 'js/grid.js' %}"></script>
 	<script>
+
 		var $table = $('#table');
 		// your custom ajax request here
 		

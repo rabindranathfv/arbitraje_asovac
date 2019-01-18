@@ -122,6 +122,20 @@ $(document).ready(function(){
             }
         });
     };
+
+    var ReloadModal= function(){
+        var btn= $(this);
+        // alert('ShowForm');
+        $.ajax({
+            url: btn.attr('data-url'),
+            type: 'get',
+            dataType: 'json',
+            success: function (data){
+                // console.log(data.html_form);
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+    };
 // Ocultar ventana modal y enviar formulario via ajax
     var SaveForm= function(){
         // console.log("SE envia el formulario");
@@ -139,8 +153,63 @@ $(document).ready(function(){
                     console.log('data is saved')
                     $('#show_users tbody').html(data.user_list);
                     $('#modal-user').modal('hide');
+                    $('#table').bootstrapTable('refresh');
                 }else{
                     console.log('data is invalid')
+                    $('#modal-user .modal-content').html(data.html_form)
+                }
+            }
+        });
+        return false;
+    };
+
+// Mantener el formulario abierto
+    var SaveFormAndStayInModal= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                $('#modal-user .modal-content').html(data.html_form);
+            }
+        });
+        return false;
+    };
+// Seguir en el formulario a menos que todo vaya bien
+    var SaveFormAndRedirect= function(){
+        // console.log("SE envia el formulario");
+        var form= $(this);
+        // alert('SaveForm');
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                if(data.form_is_valid){
+                    if(data.reload_modal)
+                    {
+                        $.ajax({
+                            url: data.url,
+                            type: 'get',
+                            dataType: 'json',
+                            success: function (data){
+                                // console.log(data.html_form);
+                                $('#modal-user .modal-content').html(data.html_form);
+                                
+                            }
+                        });
+                    }
+                    else{
+                        window.location.replace(data.url);
+                    }
+                }else{
                     $('#modal-user .modal-content').html(data.html_form)
                 }
             }
@@ -222,24 +291,6 @@ var ValidateAccess= function(){
     return false;
 };
 
-// Para manejar los formularios sucesivos de añadir pago
-var ShowAñadirPagoForm= function(){
-        var btn= $(this);
-        // alert('ShowForm');
-        $.ajax({
-            url: btn.attr('data-url'),
-            type: 'get',
-            dataType: 'json',
-            beforeSend: function(){
-              $('#modal-user' ).modal('show');  
-            },
-            success: function (data){
-                // console.log(data.html_form);
-                $('#modal-user .modal-content').html(data.html_form);
-                
-            }
-        });
-    };
 
 // Para manejar las peticiones POST de añadir pago
 var SaveAñadirPagoForm= function(){
@@ -257,20 +308,27 @@ var SaveAñadirPagoForm= function(){
                 //$('#modal-user').modal('hide');
                 //
                 //alert(data.message)
-                $.ajax({
-                    url: data.url,
-                    type: 'get',
-                    dataType: 'json',
+                if(data.form_is_valid)
+                {    
+                    $.ajax({
+                        url: data.url,
+                        type: 'get',
+                        dataType: 'json',
 
-                    beforeSend: function(){
-                      $('#modal-user' ).modal('show');  
-                    },
-                    success: function (data){
-                        // console.log(data.html_form);
-                        $('#modal-user .modal-content').html(data.html_form);
-                        
-                    }
-                });
+                        beforeSend: function(){
+                          $('#modal-user' ).modal('show');  
+                        },
+                        success: function (data){
+                            // console.log(data.html_form);
+                            $('#modal-user .modal-content').html(data.html_form);
+                            
+                        }
+                    });
+                }
+                else
+                {
+                    $('#modal-user .modal-content').html(data.html_form);
+                }
                 //
             }
         });
@@ -370,6 +428,29 @@ var SaveAñadirPagoForm= function(){
         });
     
     };
+    var saveFileFormAndRedirect = function () {
+        var form = $(this);
+        var formData = new FormData(form[0]);
+        $.ajax({
+          url: form.attr('data-url'),
+          data: formData,
+          type: form.attr('method'),
+          dataType: 'json',
+          async: true,
+          cache: false,
+          contentType: false,
+          enctype: form.attr("enctype"),
+          processData: false,
+          success: function (data) {
+            if(data.form_is_valid){
+                window.location.replace(data.url);
+            }else{
+                $('#modal-user .modal-content').html(data.html_form)
+            }
+          }
+        });
+        return false;
+      };
 
     // create
     $('.show-form').click(ShowForm);
@@ -390,8 +471,9 @@ var SaveAñadirPagoForm= function(){
     // Delete Job
     $('#show-job').on('click','.show-form-delete',ShowForm);
 
-    // Añadir autores al trabajo
+    // Añadir coautores al trabajo
     $('#show-job').on('click','.show-form-add-author',ShowForm);
+    $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);
 
     //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
@@ -400,9 +482,10 @@ var SaveAñadirPagoForm= function(){
     $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
 
     // Añadir pago a un trabajo
-    $('.añadir-pago-form').click(ShowAñadirPagoForm);
+    $('.añadir-pago-form').click(ShowForm);
     $('#modal-user').on('submit','.create-datos-pagador',SaveAñadirPagoForm);
     $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
+    $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
 
     //show areas 
     $('.show_areas').click(ShowForm);
@@ -435,23 +518,32 @@ var SaveAñadirPagoForm= function(){
 
     // Add organizer to event
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
-
+    
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
     $('.showSubAreasForm').click(ShowForm);
+    $('.showUsersForm').click(ShowForm);
     // Modal para que los usuarios creen su instancia de autor
     $('#user-create-author').click(ShowForm);
-    // Modal para que los usuarios creen su instancia de autor
+    $('#modal-user').on('submit', '.author-create-author-form',SaveFormAndRedirect);
+    // Modal para que los usuarios editen su instancia de autor
     $('#edit-author-profile').click(ShowForm);
-    $('#modal-user').on('submit', '.edit-author-form',SaveForm);
+    $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);
 
     // Modal para que los usuarios creen su instancia de autor en sistema
     $('.show-register-user-in-sistema-modal').click(ShowForm);
+    
+
+
+    // Modal para que añadan alguna universidad que no ha sido creada
+    $('#create-university-modal').click(ReloadModal);
+    $('#modal-user').on('submit', '.create-university-modal-form',SaveFormAndRedirect);
+
 
     // Modal para que los usuarios creen su instancia de autor
     $('#changepassword-user').click(ShowForm);
-    $('#modal-user').on('submit', '.changepassword-modal-form',SaveForm);
+    $('#modal-user').on('submit', '.changepassword-modal-form',SaveFormAndStayInModal);
 
     // CRUD Areas
     $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
