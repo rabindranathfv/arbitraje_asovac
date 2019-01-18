@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from decouple import config
 from django.conf import settings
+from django.core import serializers
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
@@ -12,7 +13,7 @@ from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm
 
 from django.contrib import messages
 
@@ -344,7 +345,7 @@ def author_details(request, autor_id):
 	return render(request, 'autores_details.html', context)
 
 
-#Modal para crear datos de la factura
+#Modal para editar datos de autor del usuario logueado
 def author_edit_modal(request, user_id):
 	data = dict()
 	user =  User.objects.get(id = user_id)
@@ -447,14 +448,18 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id):
 		if form.is_valid():
 			request.session['datos_pagador'] = form.cleaned_data
 			data['url'] = reverse('autores:postular_trabajo_factura_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['message'] = "Formulario de pagador llenado con éxito, llene el siguiente formulario"
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
+		
+		print(data['form_is_valid'])
 	else:
 		form = DatosPagadorForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -466,22 +471,27 @@ def postular_trabajo_factura_modal(request, autor_trabajo_id):
 	if request.method == "POST":
 		form = FacturaForm(request.POST)
 		if form.is_valid():
+			iva = form.cleaned_data['monto_total'] * autor_trabajo.sistema_asovac.porcentaje_iva / 100
+			monto_subtotal = form.cleaned_data['monto_total'] - iva
 			factura = {
-				'monto_subtotal': form.cleaned_data['monto_subtotal'],
-				'iva': form.cleaned_data['iva'],
+				'monto_subtotal': monto_subtotal,
+				'iva': iva,
 				'monto_total': form.cleaned_data['monto_total'],
 				'fecha_emision': str(form.cleaned_data['fecha_emision']), }
 			request.session['factura'] = factura
 			data['url'] = reverse('autores:postular_trabajo_pago_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['message'] = "Formulario de factura llenado con éxito, llene el siguiente formulario"
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
 
 	else:
 		form =	FacturaForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_factura.html', context, request=request)
+	
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_factura.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -492,13 +502,15 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 
 	if request.method == "POST":
 		form = PagoForm(request.POST, request.FILES)
+		print(form.is_valid())
 		if form.is_valid():
-			print("LLegó Aquí")
-			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'])
+			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'], categorias_pago = request.session['datos_pagador']['categorias_pago'])
 			datos_pagador.save()
 			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
 			pagador.save()
-			pago = form.save()
+			pago = form.save(commit=False)
+			pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
+			pago.save()
 			factura = Factura(pagador = pagador, pago = pago, monto_subtotal = request.session['factura']['monto_subtotal'], iva = request.session['factura']['iva'], monto_total = request.session['factura']['monto_total'], fecha_emision = request.session['factura']['fecha_emision'])
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
@@ -506,19 +518,23 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 			if autor_trabajo.monto_total <= 0:
 				trabajo_version_final = Detalle_version_final(trabajo = autor_trabajo.trabajo)
 				trabajo_version_final.save()
+				autor_trabajo.pagado = True
 
 			print(request.session['factura']['monto_total'])
 			print(request.session['datos_pagador']['nombres'])
 
-			return redirect('autores:postular_trabajo')
-
+			data['url'] = reverse('autores:postular_trabajo')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False
 	else:
 		form =	PagoForm()
-		context ={
-			'form': form,
-			'autor_trabajo': autor_trabajo,
-		}
-		data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
+
+	context ={
+		'form': form,
+		'autor_trabajo': autor_trabajo,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
 	return JsonResponse(data)
 
 
@@ -577,3 +593,28 @@ def detalles_pago(request, pagador_id):
     }
 
 	return render(request,"autores_detalles_pago.html",context)
+
+
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def create_university_modal(request):
+	data = dict()
+
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST)
+		if form.is_valid():
+			universidad = form.save()
+			autor = serializers.json.Deserializer(request.session['autor']).next().object
+			autor.universidad = universidad
+			autor.save()
+			data['url'] = reverse('trabajos:trabajos')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False		
+	else:
+		form = CreateUniversityForm()
+
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/create_university.html', context, request=request)
+	return JsonResponse(data)

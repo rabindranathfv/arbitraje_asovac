@@ -6,15 +6,29 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-    <h4 class="modal-title" >Registrando autor en aplicación de arbitrajes: </h4>
+    <div class="row">    
+        <h4 class="modal-title col-sm-8" >Registrando autor en aplicación de arbitrajes: </h4>
+    </div>
 </div>
 <form method="POST" class="author-create-author-form" data-url="{% url 'main_app:create_autor_instance_modal' request.user.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
+        <div class="form-group">
+            <label class="control-label col-sm-12 requiredField" for="university_select"> Universidad(Si no está en la lista, seleccione la opción para añadirla) <span class="asteriskField">*</span></label>	
+            <div class="controls was-validated" name="university" >
+                <select name="university_select" class="form-control" id="university_select" required>
+                    <option value="">Seleccione una universidad</option>
+                    {% for universidad in universidades %}
+                        <option value="{{universidad.id}}">{{ universidad.nombre }}</option>
+                    {% endfor %}
+                    <option value="-1">Añadir universidad</option>
+                </select>
+            </div>
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Registrar e ingresar</button>
+        <button type="submit" class="btn btn-success">Registrar</button>
     </div>
 </form>
