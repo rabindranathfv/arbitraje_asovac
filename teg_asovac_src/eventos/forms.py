@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions,InlineRadios
+
+
 from django import forms
 from django.core.urlresolvers import reverse
 from django.core.validators import EmailValidator,URLValidator
@@ -207,6 +209,20 @@ class CreateEventForm(forms.ModelForm):
                 css_class='row')
         )
 
+    def clean_fecha_fin(self):
+        fecha_inicio = self.cleaned_data['fecha_inicio']
+        fecha_fin = self.cleaned_data['fecha_fin']
+        if fecha_inicio > fecha_fin:
+			raise forms.ValidationError(_("El evento no puede tener una fecha de fin que sea anterior a la fecha de inicio"),code="invalid")
+        return fecha_fin
+
+    def clean_email_organizador(self):
+        correo_electronico = self.cleaned_data['email_organizador']
+        if not Organizador.objects.filter(correo_electronico = correo_electronico).exists():
+            raise forms.ValidationError(_("No existe un organizador asociado a este correo."),code="invalid")
+        return correo_electronico
+
+    
 
 
 

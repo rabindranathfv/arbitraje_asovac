@@ -88,16 +88,28 @@ def home(request):
 def event_create(request):
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
+        
         if form.is_valid():
-            evento = form.save()
-            locacion_preferida = form.cleaned_data['locacion_preferida']
-            email_organizador = form.cleaned_data['email_organizador']
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            fecha_fin = form.cleaned_data['fecha_fin']
+            fecha_preferida = form.cleaned_data['fecha_preferida']
+            dia_asignado = form.cleaned_data['dia_asignado']
+            if fecha_inicio <= dia_asignado and fecha_inicio <= fecha_preferida and dia_asignado <= fecha_fin and fecha_preferida <= fecha_fin:
+                evento = form.save()
+                locacion_preferida = form.cleaned_data['locacion_preferida']
+                email_organizador = form.cleaned_data['email_organizador']
 
-            organizador = Organizador.objects.get(correo_electronico = email_organizador)
-            organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
-            organizador_evento.save()
-            print("El form es valido y se guardo satisfactoriamente el EVENTO")
-            return redirect(reverse('eventos:event_list')) 
+                organizador = Organizador.objects.get(correo_electronico = email_organizador)
+                organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = locacion_preferida)
+                organizador_evento.save()
+                print("El form es valido y se guardo satisfactoriamente el EVENTO")
+                return redirect(reverse('eventos:event_list')) 
+            else:
+                if fecha_preferida < fecha_inicio or fecha_fin < fecha_preferida:
+                    messages.error(request, "La fecha preferida está fuera del rango del evento")
+                if dia_asignado < fecha_inicio or fecha_fin < dia_asignado:
+                    messages.error(request, "El día asignado está fuera del rango del evento")
+    
     else:
         form = CreateEventForm()
     context = {
