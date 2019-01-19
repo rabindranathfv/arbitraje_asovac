@@ -75,14 +75,14 @@ class CreateOrganizerForm(forms.ModelForm):
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
-            'nombres',
-            'apellidos',
+            Field('nombres',placeholder="Ejemplo: Juanito José"),
+			Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
             'genero',
-            'cedula_o_pasaporte',
+            Field('cedula_o_pasaporte', placeholder = "Formato: Vxxxxxxxx o Pxxxxxxxx. V para cédula venezolana o P para pasaporte."),
             'correo_electronico',
             'institucion',
-            'telefono_oficina',
-            'telefono_habitacion_celular',
+            Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
+			Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
             'direccion_correspondencia',
             'es_miembro_asovac',
             'capitulo_asovac',
@@ -386,14 +386,14 @@ class EditOrganizerForm(forms.ModelForm):
         #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
-            'nombres',
-            'apellidos',
+            Field('nombres',placeholder="Ejemplo: Juanito José"),
+			Field('apellidos',placeholder="Ejemplo: Pérez Jiménez"),
             'genero',
-            'cedula_o_pasaporte',
+            Field('cedula_o_pasaporte', placeholder = "Formato: Vxxxxxxxx o Pxxxxxxxx. V para cédula venezolana o P para pasaporte."),
             'correo_electronico',
             'institucion',
-            'telefono_oficina',
-            'telefono_habitacion_celular',
+            Field('telefono_oficina',placeholder="Ejemplo: 584249999999"),
+			Field('telefono_habitacion_celular',placeholder="Ejemplo: 582129999999"),
             'direccion_correspondencia',
             'es_miembro_asovac',
             'capitulo_asovac',
