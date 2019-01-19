@@ -38,7 +38,7 @@ def sesions_list(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Recursos',
+        'nombre_vista' : 'Sesiones',
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
@@ -76,7 +76,7 @@ def sesions_edit(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Recursos',
+        'nombre_vista' : 'Sesiones',
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
@@ -114,7 +114,7 @@ def sesions_space_list(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Recursos',
+        'nombre_vista' : 'Espacios',
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
@@ -152,7 +152,7 @@ def sesions_space_edit(request):
     # print items
 
     context = {
-        'nombre_vista' : 'Recursos',
+        'nombre_vista' : 'Espacios',
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
