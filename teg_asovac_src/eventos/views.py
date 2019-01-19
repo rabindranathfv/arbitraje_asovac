@@ -254,7 +254,8 @@ def event_place_create(request):
         if form.is_valid():
             form.save()
             return redirect(reverse('eventos:event_place_list'))
-    form = CreateLocacionForm()
+    else: 
+        form = CreateLocacionForm()
     context = {
         'nombre_vista' : 'Crear locación de evento',
         'username': request.user.username,
@@ -279,8 +280,8 @@ def event_place_edit(request, locacion_id):
         if form.is_valid():
             form.save()
             return redirect(reverse('eventos:event_place_list'))
-
-    form = CreateLocacionForm(instance = locacion)   
+    else:
+        form = CreateLocacionForm(instance = locacion)   
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,

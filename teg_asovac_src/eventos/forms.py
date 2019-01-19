@@ -299,6 +299,11 @@ class CreateLocacionForm(forms.ModelForm):
                 css_class='col-sm-4'),
             css_class='row')
         )
+    def clean_capacidad_de_asistentes(self):
+        capacidad_asistente = self.cleaned_data['capacidad_de_asistentes']
+        if(capacidad_asistente <= 0):
+            raise forms.ValidationError(_("La capacidad de asistentes debe ser mayor que 0."), code="invalid_capacity")
+        return capacidad_asistente
 
 
 
