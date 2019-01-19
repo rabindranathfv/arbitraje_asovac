@@ -14,7 +14,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, validate_rol_status ,validate_rol_status,get_route_configuracion,get_route_seguimiento
 
 #Import forms
-from eventos.forms import CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
+from eventos.forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
 
 #Import Models
 from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -204,12 +204,12 @@ def organizer_list(request):
 def organizer_edit(request, organizador_id):
     organizador = get_object_or_404(Organizador,id = organizador_id)
     if request.method == 'POST':
-        form = CreateOrganizerForm(request.POST, instance = organizador)
+        form = EditOrganizerForm(request.POST, organizer = organizador, instance = organizador)
         if form.is_valid():
             form.save()
             return redirect(reverse('eventos:organizer_list'))
-
-    form = CreateOrganizerForm(instance = organizador)   
+    else:
+        form = EditOrganizerForm(organizer = organizador,instance = organizador)   
     context = {
         'nombre_vista' : 'Autores',
         'username': request.user.username,

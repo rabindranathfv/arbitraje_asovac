@@ -328,3 +328,111 @@ class AddObservationsForm(forms.Form):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-sm-3'
         self.helper.field_class = 'col-sm-7'
+
+
+
+class EditOrganizerForm(forms.ModelForm):
+
+    class Meta:
+        model = Organizador
+        fields = ['nombres','apellidos', 'genero','cedula_o_pasaporte', 'correo_electronico','institucion',
+                'telefono_oficina','telefono_habitacion_celular','direccion_correspondencia',
+                'es_miembro_asovac','capitulo_asovac','cargo_en_institucion','url_organizador']
+
+    def __init__(self, *args, **kwargs):
+        self.organizer = kwargs.pop('organizer',None)
+        super(EditOrganizerForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'create-organizer-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-8'
+        self.fields['nombres'].label = "Nombres"
+        self.fields['apellidos'].label = "Apellidos"
+        self.fields['genero'].label = "Genero"
+        self.fields['cedula_o_pasaporte'].label = "Cédula o Pasaporte"
+        self.fields['correo_electronico'].label = "Correo Electronico"
+        self.fields['institucion'].label = "Institución"
+        self.fields['telefono_oficina'].label = "Teléfono de Oficina"
+        self.fields['telefono_habitacion_celular'].label = "Teléfono Habitacion/Celular"
+        self.fields['direccion_correspondencia'].label = "Dirección"
+        self.fields['es_miembro_asovac'].label = "Es Miembro de AsoVAC"
+        self.fields['capitulo_asovac'].label = "Capitulo AsoVAC"
+        self.fields['cargo_en_institucion'].label = "Cargo en la Institución"
+        self.fields['url_organizador'].label = "Enlace del Organizador"
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            'nombres',
+            'apellidos',
+            'genero',
+            'cedula_o_pasaporte',
+            'correo_electronico',
+            'institucion',
+            'telefono_oficina',
+            'telefono_habitacion_celular',
+            'direccion_correspondencia',
+            'es_miembro_asovac',
+            'capitulo_asovac',
+            'cargo_en_institucion',
+            'url_organizador',
+            Div(
+                Div(
+                    HTML("<a href=\"{% url 'eventos:organizer_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
+                css_class='col-sm-offset-7 col-sm-2'),
+
+                Div(
+                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block'),
+                css_class='col-sm-3'),
+            css_class='row')
+        )
+
+    def clean_nombres(self):
+		nombres=self.cleaned_data['nombres']
+		for char in nombres:
+			if not char.isalpha() and char !=' ':
+				raise forms.ValidationError(_("El nombre debe ser solo letras"), code="invalid_first_name")
+		return nombres
+
+    def clean_apellidos(self):
+		apellidos=self.cleaned_data['apellidos']
+		for char in apellidos:
+			if not char.isalpha() and char!= ' ':
+				raise forms.ValidationError(_("El apellido debe ser solo letras"), code="invalid_last_name")
+		return apellidos
+
+    def clean_cedula_o_pasaporte(self):
+		cedula_pasaporte = self.cleaned_data['cedula_o_pasaporte']
+		if Organizador.objects.filter(cedula_o_pasaporte = cedula_pasaporte).exists() and self.organizer.cedula_o_pasaporte != cedula_pasaporte:
+			raise forms.ValidationError(_("Ya existe un organizador con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
+			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
+		if not cedula_pasaporte[1:].isdigit():
+			raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de cédula o pasaporte."), code = "formato incorrecto")
+		return cedula_pasaporte
+
+    def clean_telefono_oficina(self):
+		telefono_oficina = self.cleaned_data['telefono_oficina']
+		telefono_oficina_length = len(telefono_oficina)
+		if telefono_oficina_length < 10 or telefono_oficina_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de oficina inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_oficina.isdigit():
+			raise forms.ValidationError(_("El teléfono de oficina no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_oficina
+
+    def clean_telefono_habitacion_celular(self):
+		telefono_habitacion_celular = self.cleaned_data['telefono_habitacion_celular']
+		telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+		if telefono_habitacion_celular_length < 10 or telefono_habitacion_celular_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de habitacion/celular inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_habitacion_celular.isdigit():
+			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_habitacion_celular
+
+    def clean_correo_electronico(self):
+		correo_electronico = self.cleaned_data['correo_electronico']
+		# Si el email ya esta en uso, levantamos un error.
+		if Organizador.objects.filter(correo_electronico=correo_electronico).exists() and self.organizer.correo_electronico != correo_electronico:
+			raise forms.ValidationError(_("Dirección de correo ya está en uso por otro organizador, por favor escoja otra."),code="invalid")
+		return correo_electronico
