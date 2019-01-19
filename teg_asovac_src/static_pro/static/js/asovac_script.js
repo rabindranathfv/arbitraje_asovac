@@ -509,6 +509,8 @@ var SaveAñadirPagoForm= function(){
 
     // Add organizer to event
     $('#event-list').on('click','.show-form-add-organizer-to-event',ShowForm);
+    $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
+
 
      // Add observations to event
     $('#event-list').on('click','.show-form-observations',ShowForm);
@@ -519,6 +521,7 @@ var SaveAñadirPagoForm= function(){
     // Add observations to organizer
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
     
+
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);

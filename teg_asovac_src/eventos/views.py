@@ -94,7 +94,7 @@ def event_create(request):
             fecha_fin = form.cleaned_data['fecha_fin']
             fecha_preferida = form.cleaned_data['fecha_preferida']
             dia_asignado = form.cleaned_data['dia_asignado']
-            if fecha_inicio <= dia_asignado and fecha_inicio <= fecha_preferida and dia_asignado <= fecha_fin and fecha_preferida <= fecha_fin:
+            if fecha_inicio <= fecha_fin and fecha_inicio <= dia_asignado and fecha_inicio <= fecha_preferida and dia_asignado <= fecha_fin and fecha_preferida <= fecha_fin:
                 evento = form.save()
                 locacion_preferida = form.cleaned_data['locacion_preferida']
                 email_organizador = form.cleaned_data['email_organizador']
@@ -105,10 +105,14 @@ def event_create(request):
                 print("El form es valido y se guardo satisfactoriamente el EVENTO")
                 return redirect(reverse('eventos:event_list')) 
             else:
-                if fecha_preferida < fecha_inicio or fecha_fin < fecha_preferida:
-                    messages.error(request, "La fecha preferida está fuera del rango del evento")
-                if dia_asignado < fecha_inicio or fecha_fin < dia_asignado:
-                    messages.error(request, "El día asignado está fuera del rango del evento")
+                if fecha_fin < fecha_inicio:
+                    messages.error(request, "La fecha final del evento no puede ser anterior a la fecha de inicio")
+                else:    
+                    if fecha_preferida < fecha_inicio or fecha_fin < fecha_preferida:
+                        messages.error(request, "La fecha preferida está fuera del rango del evento")
+                    if dia_asignado < fecha_inicio or fecha_fin < dia_asignado:
+                        messages.error(request, "El día asignado está fuera del rango del evento")
+                
     
     else:
         form = CreateEventForm()
@@ -138,8 +142,22 @@ def event_edit(request, evento_id):
     if request.method == 'POST':
         form = EditEventForm(request.POST, instance = evento)
         if form.is_valid():
-            form.save()
-            return redirect(reverse('eventos:event_list'))
+            fecha_inicio = form.cleaned_data['fecha_inicio']
+            fecha_fin = form.cleaned_data['fecha_fin']
+            fecha_preferida = form.cleaned_data['fecha_preferida']
+            dia_asignado = form.cleaned_data['dia_asignado']
+            if fecha_inicio <= fecha_fin and fecha_inicio <= dia_asignado and fecha_inicio <= fecha_preferida and dia_asignado <= fecha_fin and fecha_preferida <= fecha_fin:
+                form.save()
+                return redirect(reverse('eventos:event_list'))
+            else:
+                if fecha_fin < fecha_inicio:
+                    messages.error(request, "La fecha final del evento no puede ser anterior a la fecha de inicio")
+                else:
+                    if fecha_preferida < fecha_inicio or fecha_fin < fecha_preferida:
+                        messages.error(request, "La fecha preferida está fuera del rango del evento")
+                    if dia_asignado < fecha_inicio or fecha_fin < dia_asignado:
+                        messages.error(request, "El día asignado está fuera del rango del evento")
+                
 
     form = EditEventForm(instance = evento)   
     context = {
@@ -332,23 +350,24 @@ def add_organizer_to_event(request, evento_id):
     data = dict()
     evento = get_object_or_404(Evento, id = evento_id)
     if request.method == 'POST':
-        form = AddOrganizerToEventForm(request.POST)
+        form = AddOrganizerToEventForm(request.POST, event = evento)
         if form.is_valid():
             form_data = form.cleaned_data
             organizador = get_object_or_404(Organizador, correo_electronico = form_data['correo_electronico'])
             organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = form_data['locacion_preferida'])
             organizador_evento.save()
             messages.success(request, 'El organizador fue añadido con éxito al evento.')
-            return redirect(reverse('eventos:event_list'))
+            data['url'] = reverse('eventos:event_list')
+            data['form_is_valid'] = True
     else:
-        form = AddOrganizerToEventForm() 
-        context = {
-            'nombre_vista' : 'Autores',
-            'username': request.user.username,
-            'evento':evento,
-            'form':form
-            }
-        data['html_form'] = render_to_string('ajax/add_organizer_to_event.html',context,request=request)
+        form = AddOrganizerToEventForm(event = evento) 
+    context = {
+        'nombre_vista' : 'Autores',
+        'username': request.user.username,
+        'evento':evento,
+        'form':form
+        }
+    data['html_form'] = render_to_string('ajax/add_organizer_to_event.html',context,request=request)
     return JsonResponse(data)
 
 

@@ -209,13 +209,6 @@ class CreateEventForm(forms.ModelForm):
                 css_class='row')
         )
 
-    def clean_fecha_fin(self):
-        fecha_inicio = self.cleaned_data['fecha_inicio']
-        fecha_fin = self.cleaned_data['fecha_fin']
-        if fecha_inicio > fecha_fin:
-			raise forms.ValidationError(_("El evento no puede tener una fecha de fin que sea anterior a la fecha de inicio"),code="invalid")
-        return fecha_fin
-
     def clean_email_organizador(self):
         correo_electronico = self.cleaned_data['email_organizador']
         if not Organizador.objects.filter(correo_electronico = correo_electronico).exists():
@@ -328,6 +321,7 @@ class AddOrganizerToEventForm(forms.Form):
     locacion_preferida = forms.CharField(max_length = 50, widget=forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}))
 
     def __init__(self, *args, **kwargs):
+        self.event = kwargs.pop('event',None)
         super(AddOrganizerToEventForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'add-organizer-to-event-form'
@@ -338,6 +332,13 @@ class AddOrganizerToEventForm(forms.Form):
         self.fields['correo_electronico'].label = "Correo electrónico del organizador"
         self.fields['locacion_preferida'].label = "Lugar preferido"
 
+    def clean_correo_electronico(self):
+        correo_electronico = self.cleaned_data['correo_electronico']
+        if not Organizador.objects.filter(correo_electronico = correo_electronico). exists():
+            raise forms.ValidationError(_("No existe un organizador asociado a ese correo."),code = "invalid_organizer")
+        if Organizador_evento.objects.filter(evento = self.event, organizador__correo_electronico = correo_electronico).exists():
+            raise forms.ValidationError(_("Ya el organizador está asociado a este evento"), code = "invalid")
+        return correo_electronico
 
 class AddObservationsForm(forms.Form):
     observaciones = forms.CharField(max_length = 400, widget=forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí.'}))
