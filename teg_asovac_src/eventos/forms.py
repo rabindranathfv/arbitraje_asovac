@@ -11,6 +11,8 @@ from django.core.validators import EmailValidator,URLValidator
 from eventos.validators import validate_ced_passport,validate_phone_office,validate_phone_personal,validate_cap_asovac 
 from eventos.models import Organizador,Evento,Locacion_evento,Organizador_evento
 
+from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
+
 
 # class MyLoginForm(forms.Form):
 #     username = forms.CharField(label="Usuario", max_length=100)
@@ -62,7 +64,7 @@ class CreateOrganizerForm(forms.ModelForm):
         self.fields['telefono_oficina'].label = "Teléfono de Oficina"
         self.fields['telefono_habitacion_celular'].label = "Teléfono Habitacion/Celular"
         self.fields['direccion_correspondencia'].label = "Dirección"
-        self.fields['es_miembro_asovac'].label = "Es Mienbro de AsoVAC"
+        self.fields['es_miembro_asovac'].label = "Es Miembro de AsoVAC"
         self.fields['capitulo_asovac'].label = "Capitulo AsoVAC"
         self.fields['cargo_en_institucion'].label = "Cargo en la Institución"
         self.fields['url_organizador'].label = "Enlace del Organizador"
@@ -96,6 +98,55 @@ class CreateOrganizerForm(forms.ModelForm):
                 css_class='col-sm-3'),
             css_class='row')
         )
+
+    def clean_nombres(self):
+		nombres=self.cleaned_data['nombres']
+		for char in nombres:
+			if not char.isalpha() and char !=' ':
+				raise forms.ValidationError(_("El nombre debe ser solo letras"), code="invalid_first_name")
+		return nombres
+
+    def clean_apellidos(self):
+		apellidos=self.cleaned_data['apellidos']
+		for char in apellidos:
+			if not char.isalpha() and char!= ' ':
+				raise forms.ValidationError(_("El apellido debe ser solo letras"), code="invalid_last_name")
+		return apellidos
+
+    def clean_cedula_o_pasaporte(self):
+		cedula_pasaporte = self.cleaned_data['cedula_o_pasaporte']
+		if Organizador.objects.filter(cedula_o_pasaporte = cedula_pasaporte).exists():
+			raise forms.ValidationError(_("Ya existe un organizador con esa cédula o pasaporte."), code = "cedula_pasaporte_duplicado")
+		if cedula_pasaporte[0] != 'P' and cedula_pasaporte[0] != 'V':
+			raise forms.ValidationError(_("Introduzca el formato correcto, antes del número debe ir 'V' o 'P'."), code = "formato incorrecto")
+		if not cedula_pasaporte[1:].isdigit():
+			raise forms.ValidationError(_("Introduzca el formato correcto, hay letras donde debería ir el número de cédula o pasaporte."), code = "formato incorrecto")
+		return cedula_pasaporte
+
+    def clean_telefono_oficina(self):
+		telefono_oficina = self.cleaned_data['telefono_oficina']
+		telefono_oficina_length = len(telefono_oficina)
+		if telefono_oficina_length < 10 or telefono_oficina_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de oficina inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_oficina.isdigit():
+			raise forms.ValidationError(_("El teléfono de oficina no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_oficina
+
+    def clean_telefono_habitacion_celular(self):
+		telefono_habitacion_celular = self.cleaned_data['telefono_habitacion_celular']
+		telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+		if telefono_habitacion_celular_length < 10 or telefono_habitacion_celular_length > 15:
+			raise forms.ValidationError(_("Cantidad de dígitos de teléfono de habitacion/celular inválido, debe estar entre 10-15 dígitos (Incluyendo código de aŕea del país y operadora)"), code = "telefono_oficina_invalido")
+		if not telefono_habitacion_celular.isdigit():
+			raise forms.ValidationError(_("El teléfono de habitación/celular no puede tener letras ni espacios."), code = "invalid_phone")
+		return telefono_habitacion_celular
+
+    def clean_correo_electronico(self):
+		correo_electronico = self.cleaned_data['correo_electronico']
+		# Si el email ya esta en uso, levantamos un error.
+		if Organizador.objects.filter(correo_electronico=correo_electronico).exists():
+			raise forms.ValidationError(_("Dirección de correo ya está en uso por otro organizador, por favor escoja otra."),code="invalid")
+		return correo_electronico
     
 
 
