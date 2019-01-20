@@ -509,16 +509,19 @@ var SaveAñadirPagoForm= function(){
 
     // Add organizer to event
     $('#event-list').on('click','.show-form-add-organizer-to-event',ShowForm);
+    $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
 
-     // Add organizer to event
+
+     // Add observations to event
     $('#event-list').on('click','.show-form-observations',ShowForm);
 
     // Add organizer to event
     $('#location-list').on('click','.show-form-observations',ShowForm);
 
-    // Add organizer to event
+    // Add observations to organizer
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
     
+
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
