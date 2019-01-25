@@ -8,7 +8,9 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area
+from django.contrib.auth.models import User
+from django.http import JsonResponse,HttpResponse
 
 # Create your views here.
 def arbitrajes_pag(request):
@@ -85,7 +87,7 @@ def referee_list(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
     }
-    return render(request, 'main_app_referee_list.html', context)
+    return render(request, 'arbitrajes_referee_list.html', context)
 
 def referee_edit(request):
 
@@ -184,3 +186,139 @@ def asignacion_de_sesion(request):
         'route_resultados': route_resultados,
     }
     return render(request, 'arbitrajes_asignacion_de_sesion.html', context)
+
+#---------------------------------------------------------------------------------#
+##############     Carga el contenido de la tabla de usuarios     #################
+#---------------------------------------------------------------------------------#
+
+def list_arbitros(request):
+    
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    user_area=get_area(request.user.id)
+
+    print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    search= request.POST['search']
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+    if sort == 'pk':
+        sort='first_name'
+
+
+    if search != "" and export == "":
+        print "Consulta Search"
+        # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
+        # total= len(data)
+        # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
+        if rol_user == 1 or rol_user == 2:
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            query_count=query
+            search= search+'%'
+            where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
+            # where=' WHERE au.first_name LIKE %s' 
+            query= query+where
+        else:
+            if rol_user == 3:
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+                search= search+'%'
+                where=' WHERE (au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s) and a.id= %s'
+                # where=' WHERE au.first_name LIKE %s' 
+                query= query+where
+                query_count=query
+        
+        order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+        query= query + " ORDER BY " + order_by
+
+        if rol_user == 1 or rol_user ==2 :
+            data= User.objects.raw(query,[search,search,search,search])
+            data_count= User.objects.raw(query_count)
+        else:
+            if rol_user == 3:
+                area= str(user_area.id)
+                data= User.objects.raw(query,[search,search,search,search,area])
+                data_count= User.objects.raw(query_count,[search,search,search,search,area])
+
+        total=0
+        for item in data_count:
+            total=total+1
+    else:
+        # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+        if export !=  "":
+    
+            print "Consulta para Exportar Todo"
+
+        else:
+            print "Consulta Normal"
+            arbitraje_id = request.session['arbitraje_id']
+            # consulta basica
+            # data=User.objects.all().order_by(order)[init:limit].query
+            # data=User.objects.all().order_by('pk')[init:limit].query
+
+            # consulta mas completa
+            if rol_user == 1 or rol_user == 2:
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            else:
+                if rol_user == 3:
+                    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+                    where=' WHERE a.id=  %s '
+                    query= query+where
+            
+            order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+            query_count=query
+            query= query + " ORDER BY " + order_by
+            
+            if rol_user == 1 or rol_user ==2 :
+                data= User.objects.raw(query)
+                data_count= User.objects.raw(query_count)
+            else:
+                if rol_user == 3:
+                    area= str(user_area.id)
+                    data= User.objects.raw(query,area)
+                    data_count= User.objects.raw(query_count,area)
+
+            total=0
+            for item in data_count:
+                total=total+1
+  
+            # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
+            # total= len(data)
+
+    # for item in data:
+        # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
+        # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
+    
+    for item in data:
+        username= item.username 
+        first_name= item.first_name 
+        last_name= item.last_name 
+        email= item.email 
+        area= item.nombre 
+        linea_investigacion= item.linea_investigacion 
+        cedula_pasaporte=  item.cedula_pasaporte 
+        titulo= item.titulo 
+        response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'username':username ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
