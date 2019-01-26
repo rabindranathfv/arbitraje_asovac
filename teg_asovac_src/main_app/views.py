@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string,xlrd,os,sys
+import random, string,xlrd,os,sys,xlwt
+from openpyxl import Workbook
 from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
@@ -1584,7 +1585,11 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
 
                 # Inserta los registros una vez realizada la validación correspondiente
                 if data['status'] == 200:
-                    create_users(sh,arbitraje_id,rol)
+                    is_create=create_users(sh,arbitraje_id,rol)
+                    print is_create
+                    if is_create == 400:
+                        data['status']=400
+                        data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
                     print "Los datos del archivo son válidos"
 
     return data 
@@ -1631,78 +1636,84 @@ def create_users(sh,arbitraje_id,rol):
     
     for fila in range(sh.nrows):
         if fila > 0: 
-            # Guarda el usuario 
-            user= User()
-            user.first_name=sh.cell_value(rowx=fila, colx=0).strip()
-            user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
-            user.username=sh.cell_value(rowx=fila, colx=2).strip()
-            user.email=sh.cell_value(rowx=fila, colx=3).strip()
-            user.password=make_password(user.username+"12345")
-            user.save()
-            # print "Se crea el usuario: ", user.first_name
+            # Guarda el usuario
+            try: 
+                user= User()
+                user.first_name=sh.cell_value(rowx=fila, colx=0).strip()
+                user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
+                user.username=sh.cell_value(rowx=fila, colx=2).strip()
+                user.email=sh.cell_value(rowx=fila, colx=3).strip()
+                user.password=make_password(user.username+"12345")
+                user.save()
+                # print "Se crea el usuario: ", user.first_name
 
-            # Guarda la subarea
-            usuario_asovac= Usuario_asovac.objects.get(usuario=user)
-            arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+                # Guarda la subarea
+                usuario_asovac= Usuario_asovac.objects.get(usuario=user)
+                arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
 
-            if sh.cell_value(rowx=fila, colx=5) != "":
-                # calcular el id de cada subarea para mandarlo por parametro
-                # print "subarea 1"
-                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=5).strip())
-                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
-                usuario_asovac.save()
-            
-            if sh.cell_value(rowx=fila, colx=6) != "":
-                # calcular el id de cada subarea para mandarlo por parametro
-                # print "subarea 2"
-                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=6).strip())
-                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
-                usuario_asovac.save()
-            
-            if sh.cell_value(rowx=fila, colx=7) != "":
-                # calcular el id de cada subarea para mandarlo por parametro
-                # print "subarea 3"
-                subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=7).strip())
-                usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
-                usuario_asovac.save()
+                if sh.cell_value(rowx=fila, colx=5) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 1"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=5).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
+                
+                if sh.cell_value(rowx=fila, colx=6) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 2"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=6).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
+                
+                if sh.cell_value(rowx=fila, colx=7) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 3"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=7).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
 
-            # Guarda el rol asociado al sistema donde se esta cargando el usuario 
-            itemRole= Rol.objects.get(id=rol)
-            # Se construye el objeto para crear los roles
-            addRol=Usuario_rol_in_sistema()
-            addRol.usuario_asovac=usuario_asovac
-            addRol.rol=itemRole
-            addRol.sistema_asovac=arbitraje
-            addRol.save()
+                # Guarda el rol asociado al sistema donde se esta cargando el usuario 
+                itemRole= Rol.objects.get(id=rol)
+                # Se construye el objeto para crear los roles
+                addRol=Usuario_rol_in_sistema()
+                addRol.usuario_asovac=usuario_asovac
+                addRol.rol=itemRole
+                addRol.sistema_asovac=arbitraje
+                addRol.save()
 
-            # Guarda los datos asociados al arbitro
-            
-            # Campos obliogatorios
-            arbitro =Arbitro()
-            arbitro.nombres=sh.cell_value(rowx=fila, colx=0).strip()
-            arbitro.apellidos=sh.cell_value(rowx=fila, colx=1).strip()
-            arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
-            arbitro.cedula_pasaporte=str(sh.cell_value(rowx=fila, colx=9)).replace(".0","").strip()
-            arbitro.titulo=sh.cell_value(rowx=fila, colx=10).strip()
-            arbitro.linea_investigacion=sh.cell_value(rowx=fila, colx=11).strip()
-            arbitro.telefono_habitacion_celular=str(sh.cell_value(rowx=fila, colx=13)).replace(".0","").strip()
-            arbitro.correo_electronico=user.email
-            arbitro.usuario=usuario_asovac
+                # Guarda los datos asociados al arbitro
+                
+                # Campos obliogatorios
+                arbitro =Arbitro()
+                arbitro.nombres=sh.cell_value(rowx=fila, colx=0).strip()
+                arbitro.apellidos=sh.cell_value(rowx=fila, colx=1).strip()
+                arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
+                arbitro.cedula_pasaporte=str(sh.cell_value(rowx=fila, colx=9)).replace(".0","").strip()
+                arbitro.titulo=sh.cell_value(rowx=fila, colx=10).strip()
+                arbitro.linea_investigacion=sh.cell_value(rowx=fila, colx=11).strip()
+                arbitro.telefono_habitacion_celular=str(sh.cell_value(rowx=fila, colx=13)).replace(".0","").strip()
+                arbitro.correo_electronico=user.email
+                arbitro.usuario=usuario_asovac
 
-            # Campos opcionales
-            if sh.cell_value(rowx=fila, colx=12) != "":
-                arbitro.telefono_oficina=str(sh.cell_value(rowx=fila, colx=12)).replace(".0","").strip()
-            if sh.cell_value(rowx=fila, colx=13) != "":
-                arbitro.institucion_trabajo=sh.cell_value(rowx=fila, colx=14).strip()
-            if sh.cell_value(rowx=fila, colx=14) != "":
-                arbitro.datos_institucion=sh.cell_value(rowx=fila, colx=15).strip()
-            if sh.cell_value(rowx=fila, colx=15) != "":
-                arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
-            arbitro.save()
+                # Campos opcionales
+                if sh.cell_value(rowx=fila, colx=12) != "":
+                    arbitro.telefono_oficina=str(sh.cell_value(rowx=fila, colx=12)).replace(".0","").strip()
+                if sh.cell_value(rowx=fila, colx=13) != "":
+                    arbitro.institucion_trabajo=sh.cell_value(rowx=fila, colx=14).strip()
+                if sh.cell_value(rowx=fila, colx=14) != "":
+                    arbitro.datos_institucion=sh.cell_value(rowx=fila, colx=15).strip()
+                if sh.cell_value(rowx=fila, colx=15) != "":
+                    arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
 
-            if(rol == "4"):
-                arbitro.Sistema_asovac.add(arbitraje)
-                arbitro.save()
+                if(rol == "4"):
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
+                else:
+                    arbitro.save()
+            except:
+                print "Ha ocurrido un error con los parametros recibidos"   
+                return 400
+    return 200 
 
 ###################################################################################
 ############      Para obtener el id de la subarea importada      #################
@@ -2078,14 +2089,15 @@ def changepassword_modal(request):
 ##############     Carga el contenido de la tabla de usuarios     #################
 ###################################################################################
 
-
 def list_usuarios(request):
     
     response = {}
     response['query'] = []
 
     sort= request.POST['sort']
+    order= request.POST['order']
     search= request.POST['search']
+    
     # Se verifica la existencia del parametro
     if request.POST.get('offset', False) != False:
         init= int(request.POST['offset'])
@@ -2093,53 +2105,78 @@ def list_usuarios(request):
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
         limit= int(request.POST['limit'])+init
-
-    if request.POST['order'] == 'asc':
-        if sort == 'fields.nombre':
-            order='nombre'
-        else:
-            if sort == 'fields.descripcion':
-                order='descripcion'
-            else:
-                order=sort
+    
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
     else:
-        if sort == 'fields.nombre':
-            order='-nombre'
-        else:
-            if sort == 'fields.descripcion':
-                order='-descripcion'
-            else:
-                order='-'+sort
+        export= ""
 
-    if search != "":
-        data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
-        total= len(data)
+    if sort == 'pk':
+        sort='first_name'
+
+
+    if search != "" and export == "":
+        print "Consulta Search"
+        # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
+        # total= len(data)
+        # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        query_count=query
+        search= search+'%'
+        where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
+        # where=' WHERE au.first_name LIKE %s' 
+        query= query+where
+        order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+        # query= query + " ORDER BY " + order_by
+        
+        data= User.objects.raw(query,[search,search,search,search])
+        data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
     else:
-        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
-            print "consulta para exportar"
-            print Sub_area.objects.all().order_by(order).query
-            data=Sub_area.objects.all().order_by(order)
-            total= Sub_area.objects.all().count()
+        # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+        if export !=  "":
+    
+            print "Consulta para Exportar Todo"
+
         else:
-            print "consulta normal"
+            print "Consulta Normal"
             arbitraje_id = request.session['arbitraje_id']
-            # users = User.objects.all()
-            # users = Usuario_asovac.objects.all().query
-            # print users
-            # for item in users:
-            #     print "Resultado de la consulta: ",item
+            # consulta basica
+            # data=User.objects.all().order_by(order)[init:limit].query
+            # data=User.objects.all().order_by('pk')[init:limit].query
 
-            # print Sub_area.objects.all().order_by(order)[init:limit].query
-            # test= Sub_area.objects.all().order_by(order)[init:limit]
-            data=User.objects.all().order_by(order)[init:limit]
-            # print User.objects.all().order_by(order)[init:limit].query
-            total= User.objects.all().count()
-            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # response['total']=total
-    # print response
-    for item in data:
+            # consulta mas completa
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+            query_count=query
+            query= query + " ORDER BY " + order_by
+            
+            data= User.objects.raw(query)
+            data_count= User.objects.raw(query_count)
+            total=0
+            for item in data_count:
+                total=total+1
+  
+            # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
+            # total= len(data)
+
+    # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
-        response['query'].append({'id':item.id,'nombre': item.first_name,'apellido':item.last_name,'nombre_user': item.username,'correo':item.email})
+        # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
+    
+    for item in data:
+        username= item.username 
+        first_name= item.first_name 
+        last_name= item.last_name 
+        email= item.email 
+        area= item.nombre 
+        linea_investigacion= item.linea_investigacion 
+        cedula_pasaporte=  item.cedula_pasaporte 
+        titulo= item.titulo 
+        response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'username':username ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
+
 
     response={
         'total': total,
@@ -2147,6 +2184,45 @@ def list_usuarios(request):
     }
    
     return JsonResponse(response)
+
+###################################################################################
+###########################     Exportar Usuarios     #############################
+###################################################################################
+def generate_report(request,tipo):
+
+    # Para exportar información de usuarios 
+    if tipo == '1':
+        # consulta para obtener informacion de los usuarios
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        query_count=query
+        query= query
+        
+        data= User.objects.raw(query)
+        data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
+
+        # Para definir propiedades del documento de excel
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Usuarios.xls'
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet("Usuarios")
+        # Para agregar los titulos de cada columna
+        row_num = 0
+        columns = ['Nombres (*)', 'Apellidos (*)', 'Nombre de usuario (*)','Correo electronico (*)','Área (*)','Subarea 1 (*)','Subarea 2','Subarea 3','Género (*)','Cédula o pasaporte (*)','Título (*)','Línea de investigación (*)','Teléfono oficina','Teléfono celular o habitación (*)','Institución donde  trabaja','Datos de la institución','Observaciones']
+        for col_num in range(len(columns)):
+            worksheet.write(row_num, col_num, columns[col_num])     
+        
+        for item in data:
+            row_num += 1
+            row = [item.first_name ,item.last_name ,item.username ,item.email,item.nombre,'-','-','-','-',item.cedula_pasaporte,item.titulo,item.linea_investigacion,'-','-','-','-','-']
+            for col_num in range(len(row)):
+                worksheet.write(row_num, col_num, row[col_num])
+        
+        workbook.save(response)
+
+    return response
 
 ###################################################################################
 #############################     Crud Usuarios     ###############################

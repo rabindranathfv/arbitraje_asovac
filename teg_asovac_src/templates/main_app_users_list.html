@@ -21,6 +21,11 @@
 								</a>
 							</li>
 							<li>
+								<a href="{% url 'main_app:generar_reporte' 1 %}"  class="btn btn-default">
+									<i class="fas fa-download"></i>
+								</a>
+							</li>
+							<li>
 								<a class="showSubAreasForm" href="#" data-url="{% url 'main_app:load_subareas' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
 									<i class="fa fa-upload"></i> Cargar Subáreas
 								</a>
@@ -85,10 +90,8 @@
 	<!-- js extra -->
 	<script src="{% static 'js/grid.js' %}"></script>
 	<script>
-
 		var $table = $('#table');
 		// your custom ajax request here
-		
 
 		function ajaxUsuarios(params) {
 			var route= $("#listUsuarios").attr("data-url");
@@ -109,11 +112,35 @@
 					total: data.total,
 					rows: data.query.query
 					});
-
 				 }
 			 });
 		}
-		
-	</script>
 
+		function detailFormatter(index, row) {
+			var html = [];
+			var init= '<table class="table-bordered"><thead><tr>';
+			var init=init+ '<th style="text-align: center;" >Cédula/Pasaporte</th>'; 
+			var init=init+ '<th style="text-align: center;" >Título</th>'; 
+			var init=init+ '<th style="text-align: center;" >Área</th>'; 
+			var init=init+ '<th style="text-align: center;" >Línea de investigación</th>'; 
+			var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+			html.push(init);
+			$.each(row, function (key, value) {
+				if(key == "linea_investigacion" || key == "cedula_pasaporte" || key == "nombre" || key == "titulo"){
+				html.push('<td >'+ value + '</td>');
+				}
+			});
+			var fin= '</tr></table>';
+			html.push(fin);
+			return html.join('');
+		}
+
+		$("#export").click(function(){
+		console.log("Descargar excel");
+		var route= $("#listUsuarios").attr("data-url");
+		type= $("#type_export").val();
+
+		buildBoostrapTable($(this).attr("data-target"),type);
+		});
+	</script>
 {% endblock %}

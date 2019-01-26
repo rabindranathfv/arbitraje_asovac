@@ -323,6 +323,18 @@ $.ajaxSetup({
     };
 
 
+// Para generar excel 
+function buildBoostrapTable(idTabla, type) {
+    $tabla = $(idTabla);
 
+    $tabla.bootstrapTable("refresh",{
+        url: $tabla.attr("data-url"),
+        query: {
+        export: type,
+    }
+    }
+    );
+        
+}
 
   
