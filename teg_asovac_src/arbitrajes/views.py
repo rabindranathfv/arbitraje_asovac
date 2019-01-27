@@ -7,9 +7,10 @@ from django.contrib import admin
 from django.core.mail import send_mail
 from django.shortcuts import render
 
+import random, string,xlrd,os,sys,xlwt
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from .models import Arbitro
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
 from django.template.loader import render_to_string
@@ -232,34 +233,34 @@ def list_arbitros(request):
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"           
             query_count=query
             search= search+'%'
-            where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
+            where=' WHERE arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s '
             # where=' WHERE au.first_name LIKE %s' 
             query= query+where
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"          
                 search= search+'%'
-                where=' WHERE (au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s) and a.id= %s'
+                where=' WHERE (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) and a.id= %s '
                 # where=' WHERE au.first_name LIKE %s' 
                 query= query+where
                 query_count=query
         
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         query= query + " ORDER BY " + order_by
-
         if rol_user == 1 or rol_user ==2 :
-            data= User.objects.raw(query,[search,search,search,search])
+            data= User.objects.raw(query,[search,search,search,search,search,search,search])
             data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
                 area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,area])
-                data_count= User.objects.raw(query_count,[search,search,search,search,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,search,area])
+                data_count= User.objects.raw(query_count,[search,search,search,search,search,search,search,area])
 
         total=0
+
         for item in data_count:
             total=total+1
     else:
@@ -277,10 +278,10 @@ def list_arbitros(request):
 
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
-                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"           
             else:
                 if rol_user == 3:
-                    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+                    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
                     where=' WHERE a.id=  %s '
                     query= query+where
             
@@ -317,7 +318,8 @@ def list_arbitros(request):
         linea_investigacion= item.linea_investigacion 
         cedula_pasaporte=  item.cedula_pasaporte 
         titulo= item.titulo 
-        response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'username':username ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
+        genero= item.genero
+        response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'genero':genero ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
 
 
     response={
@@ -355,14 +357,32 @@ def editArbitro(request,id):
 
     if request.method == 'POST':
         
-        print "Editar arbitro post"
         form= ArbitroForm(request.POST,instance=arbitro)
         if form.is_valid():
-            print "Se guarda el valor del formulario"
-            form.save()
-            data['status']= 200
+        
+            if exist_email(request.POST.get("correo_electronico")):
+                # print "El correo existe"
+                user_email=User.objects.get(email=request.POST.get("correo_electronico"))
+                if user.id == user_email.id:
+                    # print "Cuando el correo a actualizar es para el mismo usuario"
+                    user.first_name=request.POST.get("nombres")
+                    user.last_name=request.POST.get("apellidos")
+                    user.email=request.POST.get("correo_electronico")
+                    user.save()
+                    form.save()
+                    data['status']= 200
+                else:
+                    # print "El correo ya esta siendo usado por otra persona"
+                    data['status']= 404
+            else:
+                # Cuando el correo no se repite
+                user.first_name=request.POST.get("nombres")
+                user.last_name=request.POST.get("apellidos")
+                user.email=request.POST.get("correo_electronico")
+                user.save()
+                form.save()
+                data['status']= 200
         else:
-            print form.is_valid()
             data['status']= 404
     else:
        
@@ -425,3 +445,44 @@ def removeArbitro(request,id,arbitraje_id):
         }
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
+
+#---------------------------------------------------------------------------------#
+#                               Exportar Arbitro                                 #
+#---------------------------------------------------------------------------------#
+def generate_report(request,tipo):
+    print "Excel para arbitros"
+    # Para exportar información de Arbitro 
+    if tipo == '1':
+        # consulta para obtener informacion de los Arbitros
+        # query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        query_count=query
+        query= query
+        
+        data= User.objects.raw(query)
+        data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
+
+        # Para definir propiedades del documento de excel
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Arbitros.xls'
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet("Usuarios")
+        # Para agregar los titulos de cada columna
+        row_num = 0
+        columns = ['Nombres (*)', 'Apellidos (*)', 'Nombre de usuario (*)','Correo electronico (*)','Área (*)','Subarea 1 (*)','Subarea 2','Subarea 3','Género (*)','Cédula o pasaporte (*)','Título (*)','Línea de investigación (*)','Teléfono oficina','Teléfono celular o habitación (*)','Institución donde  trabaja','Datos de la institución','Observaciones']
+        for col_num in range(len(columns)):
+            worksheet.write(row_num, col_num, columns[col_num])     
+        
+        for item in data:
+            row_num += 1
+            row = [item.first_name ,item.last_name ,item.username ,item.email,item.nombre,'-','-','-',item.genero,item.cedula_pasaporte,item.titulo,item.linea_investigacion,'-','-','-','-','-']
+            for col_num in range(len(row)):
+                worksheet.write(row_num, col_num, row[col_num])
+        
+        workbook.save(response)
+
+    return response
+

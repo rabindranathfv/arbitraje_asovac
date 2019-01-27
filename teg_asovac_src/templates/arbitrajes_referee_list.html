@@ -36,7 +36,7 @@
 
 				<div id="toolbar">
 					<div class="form-inline" role="form">
-						<a href="{% url 'main_app:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+						<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
 					</div>
 				</div>
 					<table id="table"
@@ -60,7 +60,7 @@
 								<tr>
 									<th data-field="first_name" data-sortable="true">Nombres</th>
 									<th data-field="last_name" data-sortable="true">Apellidos </th>
-									<th data-field="username" data-sortable="true">Nombre de usuario</th>
+									<th data-field="genero" data-sortable="true">Género</th>
 									<th data-field="email" data-sortable="true">Correo</th>
 									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
 								</tr>
@@ -154,7 +154,7 @@
 
 		$("#export").click(function(){
         console.log("Descargar excel");
-		var route= $("#listUsuarios").attr("data-url");
+		var route= $("#listArbitros").attr("data-url");
 		type= $("#type_export").val();
 	
 		buildBoostrapTable($(this).attr("data-target"),type);

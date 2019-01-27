@@ -1716,8 +1716,8 @@ def create_users(sh,arbitraje_id,rol):
                     arbitro.datos_institucion=sh.cell_value(rowx=fila, colx=15).strip()
                 if sh.cell_value(rowx=fila, colx=15) != "":
                     arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
-
                 if(rol == "4"):
+                    arbitro.save()
                     arbitro.Sistema_asovac.add(arbitraje)
                     arbitro.save()
                 else:
