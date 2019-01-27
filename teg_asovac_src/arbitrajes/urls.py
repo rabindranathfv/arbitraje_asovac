@@ -30,4 +30,7 @@ urlpatterns = [
     #Carga de contenido 
     url(r'^listArbitros$',views.list_arbitros,name='list_arbitros'),
     
+    # CRUD Arbitros
+    url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
+    url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
 ]

@@ -8,9 +8,13 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from .models import Arbitro
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area
 from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
+from django.template.loader import render_to_string
+
+from .forms import ArbitroForm
 
 # Create your views here.
 def arbitrajes_pag(request):
@@ -188,7 +192,7 @@ def asignacion_de_sesion(request):
     return render(request, 'arbitrajes_asignacion_de_sesion.html', context)
 
 #---------------------------------------------------------------------------------#
-##############     Carga el contenido de la tabla de usuarios     #################
+#                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
 
 def list_arbitros(request):
@@ -322,3 +326,102 @@ def list_arbitros(request):
     }
    
     return JsonResponse(response)
+
+
+#---------------------------------------------------------------------------------#
+#                                 Crud Arbitros                                   #
+#---------------------------------------------------------------------------------#
+def viewArbitro(request,id):
+
+    data= dict()
+    user=User.objects.get(id=id)
+    user_asovac= Usuario_asovac.objects.get(usuario=id)
+    arbitro= Arbitro.objects.get(usuario=user_asovac)
+
+    data['status']= 200
+    context={
+        'arbitro':arbitro,
+        'tipo':"show"
+    }
+    data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+    return JsonResponse(data)
+
+def editArbitro(request,id):
+    print "Edit Arbitro"
+    data= dict()
+    user=User.objects.get(id=id)
+    user_asovac= Usuario_asovac.objects.get(usuario=id)
+    arbitro= Arbitro.objects.get(usuario=user_asovac)
+
+    if request.method == 'POST':
+        
+        print "Editar arbitro post"
+        form= ArbitroForm(request.POST,instance=arbitro)
+        if form.is_valid():
+            print "Se guarda el valor del formulario"
+            form.save()
+            data['status']= 200
+        else:
+            print form.is_valid()
+            data['status']= 404
+    else:
+       
+        data['status']= 200
+        form= ArbitroForm(instance=arbitro)
+        context={
+            'tipo':"edit",
+            'arbitro_id':id,
+            'form':form,
+        }
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+    return JsonResponse(data)
+
+def removeArbitro(request,id,arbitraje_id):
+
+    data= dict()
+
+    # Usuario seleccionado 
+    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_role= get_roles(id,"is_admin")
+    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
+    rols= get_role_list(id,arbitraje_id)
+    
+    # Obtenemos el mayor rol del usuario que hizo la petición
+    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user_role= get_roles(request_user.id,"is_admin")
+
+    if(request_user_role > user_role):
+        permiso="rol-no-permitido"
+    else:
+        permiso="rol-permitido"
+
+    if request.method == 'POST':
+        print "post delete form"
+        user=get_object_or_404(User,id=id)
+        user.delete()
+        data['status']= 200
+        message="eliminado"
+        context={
+            'user':user,
+            'tipo':"deleted",
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+
+    else:
+        # print "get delete form"
+        user=get_object_or_404(User,id=id)
+        data['status']= 200
+        data['title']=user.username
+        form= PerfilForm(instance=user)
+        message="eliminar"
+        context={
+            'user':user,
+            'tipo':"delete",
+            'arbitraje_id':arbitraje_id,
+            'form':form,
+            'permiso':permiso,
+            'message':message,
+        }
+        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+    return JsonResponse(data)
