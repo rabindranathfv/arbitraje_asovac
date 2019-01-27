@@ -1,63 +1,91 @@
 {% extends "content_wrapper_with_sidebar.html" %}
 
 {% block inner_content %}
-<div class="container-fluid" id="content-wrapper">
+<div class="container" id="content-wrapper">
 
 	{% include "toggle_title.html" %}
 
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="row">
-					<div class="col-sm-12">
-						<h2>Listado de trabajos</h2>
+				<h2>Listado de trabajos</h2>
+
+				<!-- data table -->
+				<input type="hidden" id="listTrabajos" name="list" data-url="">
+
+
+				<div id="toolbar">
+					<div class="btn-group">
+						<button class="btn btn-block btn-primary dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+						<ul class="dropdown-menu">
+							<li>
+								<a class="showAreasForm" href="#" data-url="{% url 'main_app:load_areas' %}" type="button" data-toggle="modal" data-target="#ModalArbitrosExcel" style="color:black">
+									<i class="fa fa-file-excel"></i> Carga Excel
+								</a>
+							</li>
+						</ul>
 					</div>
 				</div>
-				<div class="container-fluid">
-					<div class="row middle-content">
-						<div class="col-sm-12">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>Título</th>
-										<th>Área</th>
-										<th>Subárea</th>
-										<th>Autor(es)</th>
-										<th>Estado</th>
-										<th class="col-sm-1">Ver.</th>
-										<th class="col-sm-2">Acciones</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Este es un T&iacute;tulo</td>
-										<td>Computaci&oacute;n</td>
-										<td>Computaci&oacute;n001</td>
-										<td>
-											Rabindranath Ferreira
-										</td>
-										<td><span class="label label-success lb-md center-block">Aprobado</span></td>
-										<td>2.0</td>
-										<td>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-												<i class="fas fa-edit"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
-												<i class="fas fa-times"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Enviar">
-												<i class="fas fa-envelope"></i>
-											</a>
-											<a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
-												<i class="fas fa-door-open"></i>
-											</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
+
+				<table id="table"
+						data-toggle="table"
+						data-side-pagination="server"
+						data-show-export="true"
+						data-toolbar="#toolbar"
+						data-toolbar-align="right"
+						data-pagination="true"
+						data-page-size="5"
+						data-page-list="[0,5,10,25,50,100, 200]"
+						data-search="true"
+						data-sort-name="titulo"
+						data-show-toggle="true"
+						data-show-columns="true">
+					{% if trabajos_data %}
+						<thead>
+							<tr>
+								<th data-field="titulo" data-sortable="true">Título</th>
+								<th data-field="area" data-sortable="true">Area </th>
+								<th data-field="subarea" data-sortable="true">Subarea</th>
+								<th data-field="autores" data-sortable="true">Autor(es)</th>
+								<th data-field="Estado" data-sortable="true">Estado</th>
+								<th data-field="version" data-sortable="true">Versión</th>
+								<th data-switchable="false">Acciones</th>
+							</tr>
+						</thead>
+						<tbody class="searchable">
+
+						{% for trabajo in trabajo_data %}
+						<tr>
+							<td class="text-center">{{ trabajo.nombres }}</td>
+							<td class="text-center">{{ trabajo.apellidos }}</td>
+							<td class="text-center">{{ trabajo.correo_electronico }}</td>
+							<td class="text-center">{{ trabajo.cedula_pasaporte }}</td>
+
+							<td class="text-center">
+								{% if usuario_asovac == trabajo.usuario_asovac %}
+									<a href="{% url 'eventos:organizer_edit' trabajo.id %}" role="button" title="Editar"><i class="fas fa-edit"></i></a>
+
+									<a class="show-form-delete" data-url="{% url 'eventos:organizer_delete' trabajo.id %}" title="Rechazar">
+										<i class="fas fa-times"></i>
+									</a>
+
+									<a class="show-form-observations" data-url="{% url 'eventos:add_observations_to_organizer' trabajo.id %}" title="Enviar">
+										<i class="far fa-envelope"></i>
+									</a>
+								{% endif %}
+
+								<a class="btn btn-info btn-sm show-details" data-url="{% url 'eventos:organizer_detail' trabajo.id %}" title="Entrar">
+									<i class="far fa-door-open"></i>
+								</a>
+							</td>
+						</tr>
+
+						{% endfor %}
+						</tbody>
+
+					{% endif %}
+				</table>
+
 			</div>
 		</div>
 	</div>

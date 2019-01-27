@@ -13,7 +13,7 @@
                     <div class="col-sm-6">
                         <strong>Nombres:</strong> <p>{{ autor.nombres }}</p>
                         <strong>Apellidos:</strong> <p>{{ autor.apellidos }}</p>
-                        <strong>Género:</strong> <p>{{ autor.genero }}</p>
+                        <strong>Género:</strong> <p>{{ autor.get_genero_display }}</p>
                         <strong>Universidad:</strong> <p>{{ autor.universidad.nombre }}</p>     
                         <strong>Cédula/Pasaporte:</strong> <p>{{ autor.cedula_pasaporte }}</p>
                         <strong>Corre Eletrónico:</strong> <p> {{ autor.correo_electronico }}</p>
