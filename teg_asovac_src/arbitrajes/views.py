@@ -13,6 +13,7 @@ from .models import Arbitro
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 
 from .forms import ArbitroForm
@@ -397,54 +398,38 @@ def editArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
-def removeArbitro(request,id,arbitraje_id):
+def removeArbitro(request,id):
 
+    print "eliminar arbitro"
     data= dict()
 
-    # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
-    user_role= get_roles(id,"is_admin")
-    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
-    rols= get_role_list(id,arbitraje_id)
-    
-    # Obtenemos el mayor rol del usuario que hizo la petición
-    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
-    request_user_role= get_roles(request_user.id,"is_admin")
-
-    if(request_user_role > user_role):
-        permiso="rol-no-permitido"
-    else:
-        permiso="rol-permitido"
+    user=User.objects.get(id=id)
+    user_asovac= Usuario_asovac.objects.get(usuario=id)
+    arbitro= Arbitro.objects.get(usuario=user_asovac)
+    sistema_asovac= request.session['arbitraje_id']
 
     if request.method == 'POST':
-        print "post delete form"
-        user=get_object_or_404(User,id=id)
-        user.delete()
+        # print "post delete form"
+        arbitro=Arbitro.objects.get(usuario=user_asovac,Sistema_asovac=sistema_asovac)
+        arbitro.Sistema_asovac.remove(sistema_asovac)
+
         data['status']= 200
-        message="eliminado"
         context={
-            'user':user,
+            'arbitro':arbitro,
             'tipo':"deleted",
-            'message':message,
         }
-        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
 
     else:
         # print "get delete form"
-        user=get_object_or_404(User,id=id)
         data['status']= 200
-        data['title']=user.username
-        form= PerfilForm(instance=user)
-        message="eliminar"
         context={
+            'arbitro':arbitro,
             'user':user,
+            'arbitro':arbitro,
             'tipo':"delete",
-            'arbitraje_id':arbitraje_id,
-            'form':form,
-            'permiso':permiso,
-            'message':message,
         }
-        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
 #---------------------------------------------------------------------------------#
