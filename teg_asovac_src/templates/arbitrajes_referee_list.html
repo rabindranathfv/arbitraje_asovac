@@ -8,81 +8,65 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<h2 class="text-left">Lista de Árbitros</h2>
+				<div class="col-sm-6">
+					<h2 class="text-left">Lista de Árbitros</h2>
+				</div>
 
-				<!-- data table -->
-				<input type="hidden" id="listReferees" name="list" data-url="{% url 'main_app:list_usuarios' %}">
+				<!-- Bootstrap table -->
+				<div class="row">
 
-
-				<div id="toolbar">
-					<div class="btn-group">
-						<button class="btn btn-block btn-primary dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-						<ul class="dropdown-menu">
-							<li>
-								<a class="showAreasForm" href="#" data-url="{% url 'main_app:load_areas' %}" type="button" data-toggle="modal" data-target="#ModalArbitrosExcel" style="color:black">
-									<i class="fa fa-file-excel"></i> Carga Excel
-								</a>
-							</li>
-						</ul>
+					<div class="col-md-8">
+					</div>
+					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
+								class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
+									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 
-				<table id="table"
-						data-toggle="table"
-						data-side-pagination="server"
-						data-show-export="true"
-						data-toolbar="#toolbar"
-						data-toolbar-align="right"
-						data-pagination="true"
-						data-page-size="5"
-						data-page-list="[0,5,10,25,50,100, 200]"
-						data-search="true"
-						data-sort-name="nombres"
-						data-show-toggle="true"
-						data-show-columns="true">
-						{% if referee_data %}
-						<thead>
-							<tr>
-								<th data-field="nombres" data-sortable="true">Nombres</th>
-								<th data-field="apellido" data-sortable="true">Apellidos </th>
-								<th data-field="correo" data-sortable="true">Correo</th>
-								<th data-field="cedula_pasaporte" data-sortable="true">Cédula/Pasaporte</th>
-								<th data-switchable="false">Acciones</th>
-							</tr>
+				<input type="hidden" id="listArbitros" name="list" data-url="{% url 'arbitrajes:list_arbitros' %}">
+
+				<div id="toolbar">
+					<div class="form-inline" role="form">
+						<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+					</div>
+				</div>
+					<table id="table"
+							data-toggle="table"
+							data-ajax="ajaxArbitros"
+							data-side-pagination="server"
+							data-show-export="false"
+							data-toolbar="#toolbar"
+							data-pagination="true"
+							data-page-size="5"
+							data-page-list="[0,5,10,25,50,100, 200]"
+							data-show-refresh="true"
+							data-search="true"
+							data-sort-name="pk"
+							data-show-toggle="true"
+							data-show-columns="true"
+							data-detail-view="true"
+							data-detail-formatter="detailFormatter"
+							>
+							<thead>
+								<tr>
+									<th data-field="first_name" data-sortable="true">Nombres</th>
+									<th data-field="last_name" data-sortable="true">Apellidos </th>
+									<th data-field="genero" data-sortable="true">Género</th>
+									<th data-field="email" data-sortable="true">Correo</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
+								</tr>
 						</thead>
-						<tbody class="searchable">
-
-						{% for ref_data in referee_data %}
-						<tr>
-							<td class="text-center">{{ ref_data.nombres }}</td>
-							<td class="text-center">{{ ref_data.apellidos }}</td>
-							<td class="text-center">{{ ref_data.correo_electronico }}</td>
-							<td class="text-center">{{ ref_data.cedula_pasaporte }}</td>
-
-							<td class="text-center">
-								{% if usuario_asovac == ref_data.usuario_asovac %}
-									<a href="{% url 'eventos:organizer_edit' ref_data.id %}" role="button" title="Editar">
-										<i class="far fa-edit"></i>
-									</a>
-
-									<a class="show-form-delete" data-url="{% url 'eventos:organizer_delete' ref_data.id %}" title="Eliminar">
-										<i class="fas fa-times"></i>
-									</a>
-
-									<a class="show-form-observations" data-url="{% url 'eventos:add_observations_to_organizer' ref_data.id %}" title="Añadir observaciones"><i class="far fa-comment"></i></a>
-								{% endif %}
-
-								<a class="show-details" data-url="{% url 'eventos:organizer_detail' ref_data.id %}" title="Detalles">
-									<i class="far fa-eye"></i>
-								</a>
-							</td>
-						</tr>
-
-						{% endfor %}
-						</tbody>
-
-						{% endif %}
 					</table>
+				<!-- End Bootstrap table -->
+		
 			</div>
 		</div>
 	</div>
@@ -108,19 +92,24 @@
 		</div>
 	</div>
 </div>
+
 {% endblock %}
 
 
+{% endblock %}
 {% block js_extra %}
 {% load static %}
 	<!-- js extra -->
 	<script src="{% static 'js/grid.js' %}"></script>
 	<script>
+
+
 		var $table = $('#table');
 		// your custom ajax request here
+		
 
 		function ajaxArbitros(params) {
-			var route= $("#listReferees").attr("data-url");
+			var route= $("#listArbitros").attr("data-url");
 			// console.log (route);
 			//  console.log("llamada a ajax request");
 			console.log(params.data);
@@ -142,5 +131,38 @@
 				 }
 			 });
 		}
-	</script>
+		
+		function detailFormatter(index, row) {
+		
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+		var init=init+ '<th style="text-align: center;" >Cédula/Pasaporte</th>'; 
+		var init=init+ '<th style="text-align: center;" >Título</th>'; 
+		var init=init+ '<th style="text-align: center;" >Área</th>'; 
+		var init=init+ '<th style="text-align: center;" >Línea de investigación</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "linea_investigacion" || key == "cedula_pasaporte" || key == "nombre" || key == "titulo"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
+
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listArbitros").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
+		
+		
+
+	</script> 
+
 {% endblock %}

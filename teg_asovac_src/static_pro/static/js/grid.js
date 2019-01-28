@@ -1,6 +1,6 @@
-/*******************************************************************************************/
-/********************     Para incluir el CSRF token en el headers     *********************/
-/*******************************************************************************************/
+/*------------------------------------------------------------------------------------------*/
+/*                        Para incluir el CSRF token en el headers                          */
+/*------------------------------------------------------------------------------------------*/
 
 function getCookie(name) {
     var cookieValue = null;
@@ -49,9 +49,10 @@ $.ajaxSetup({
         }
     }
 });
-/*******************************************************************************************/
-/******************     Para dar formato a los botones de las tablas     *******************/
-/*******************************************************************************************/
+
+/*-----------------------------------------------------------------------------------------*/
+/*                      Para dar formato a los botones de las tablas                       */
+/*-----------------------------------------------------------------------------------------*/
 
     function operateAreas(value, row, index) {
         return [
@@ -100,23 +101,26 @@ $.ajaxSetup({
         ].join('');
     }
 
-    function operateReferees(value, row, index) {
+
+    function operateArbitros(value, row, index) {
         return [
-            '<a class="viewUsuario" href="javascript:void(0)" title="Ver">',
+            
+            '<a class="viewArbitro" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',
             '</a>  ',
-            '<a class="editUsuario" href="javascript:void(0)" title="Editar" >',
+            '<a class="editArbitro" href="javascript:void(0)" title="Editar" >',
             '<i class="far fa-edit"></i>',
             '</a>  ',
-            '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
+            '<a class="removeArbitro" href="javascript:void(0)" title="Eliminar">',
             '<i class="fa fa-trash"></i>',
             '</a>  ' ,
         ].join('');
     }
 
-/*******************************************************************************************/
-/**************     Para capturar el evento de los botones de las tablas     ***************/
-/*******************************************************************************************/
+/*-----------------------------------------------------------------------------------------*/
+/*                  Para capturar el evento de los botones de las tablas                   */
+/*-----------------------------------------------------------------------------------------*/
+
 
     window.operateEvents = {
         'click .viewArea': function (e, value, row, index) {
@@ -271,12 +275,6 @@ $.ajaxSetup({
                     $('#bootstrapTableModal .modal-content').html("No se puede procesar su solicitud el id "+row.id+" no existe");
                 }
             });
-
-
-
-
-
-
         },
         'click .removeUsuario': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
@@ -317,6 +315,57 @@ $.ajaxSetup({
                     //     field: 'id',
                     //     values: [row.id]
                     // });
+                }
+            });
+        },
+        'click .editArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .viewArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .removeArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
                 }
             });
         },

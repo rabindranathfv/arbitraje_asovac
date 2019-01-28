@@ -558,5 +558,8 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
-    
+    // CRUD Árbitros
+    $('#bootstrapTableModal').on('submit','.editarArbitro',bootstrapTableForm);
+    $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
+
 });

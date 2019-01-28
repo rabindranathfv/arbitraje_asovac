@@ -26,4 +26,16 @@ urlpatterns = [
     url(r'^arbitro/listar-arbitros/$',views.referee_list,name='referee_list'),
     url(r'^arbitro/editar-arbitro/$',views.referee_edit,name='referee_edit'),
     # url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+
+    #Carga de contenido 
+    url(r'^listArbitros$',views.list_arbitros,name='list_arbitros'),
+    
+    # CRUD Arbitros
+    url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
+    url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
+    url(r'^arbitro/listar-arbitros/removeArbitro/(?P<id>\d+)$',views.removeArbitro,name='eliminarArbitro'),
+
+    # Generar Reportes
+    url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
+    
 ]

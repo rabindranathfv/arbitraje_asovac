@@ -473,3 +473,21 @@ textarea {
 .vertical-middle-align {
     vertical-align: middle !important;
 }
+
+/*---- Estilos para ventanas modales ----*/
+
+.modal-header {
+    color: #ffff;
+    background: #337ab7;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+button.close {
+    color: #FFFFFF;
+}
+
+.modal-body { 
+    max-height:500px; 
+    overflow:auto; 
+} 
