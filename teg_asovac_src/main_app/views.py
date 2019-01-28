@@ -2142,7 +2142,8 @@ def list_usuarios(request):
         # query= query + " ORDER BY " + order_by
         
         data= User.objects.raw(query,[search,search,search,search])
-        data_count= User.objects.raw(query_count)
+        data_count= User.objects.raw(query,[search,search,search,search])
+        # data_count= User.objects.raw(query_count)
         total=0
         for item in data_count:
             total=total+1

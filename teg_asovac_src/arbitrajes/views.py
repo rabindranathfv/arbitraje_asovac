@@ -202,7 +202,7 @@ def list_arbitros(request):
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
 
-    print "El rol del usuario logueado es: ",rol_user
+    # print "El rol del usuario logueado es: ",rol_user
     response = {}
     response['query'] = []
 
@@ -252,7 +252,8 @@ def list_arbitros(request):
         query= query + " ORDER BY " + order_by
         if rol_user == 1 or rol_user ==2 :
             data= User.objects.raw(query,[search,search,search,search,search,search,search])
-            data_count= User.objects.raw(query_count)
+            data_count= User.objects.raw(query,[search,search,search,search,search,search,search])
+            # data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
                 area= str(user_area.id)
