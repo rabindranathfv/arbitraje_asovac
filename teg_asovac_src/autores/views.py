@@ -13,7 +13,7 @@ from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
-from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm
+from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm, ImportFromExcelForm
 
 from django.contrib import messages
 
@@ -617,4 +617,23 @@ def create_university_modal(request):
 		'form': form,
 	}
 	data['html_form'] = render_to_string('ajax/create_university.html', context, request=request)
+	return JsonResponse(data)
+
+
+def load_authors_modal(request):
+	data = dict()
+
+	if request.method == "POST":
+		if form.is_valid():
+			data['url'] = reverse('trabajos:trabajos')
+			data['form_is_valid'] = True
+		else:
+			data['form_is_valid'] = False		
+	else:
+		form = ImportFromExcelForm()
+
+	context ={
+		'form': form,
+	}
+	data['html_form'] = render_to_string('ajax/load_authors.html', context, request=request)
 	return JsonResponse(data)

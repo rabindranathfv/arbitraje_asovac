@@ -536,6 +536,10 @@ var SaveAñadirPagoForm= function(){
 
     // Modal para que los usuarios creen su instancia de autor en sistema
     $('.show-register-user-in-sistema-modal').click(ShowForm);
+
+
+    // Modal para carga de autores por excel
+    $('#import-excel').click(ShowForm);
     
 
 

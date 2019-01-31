@@ -554,4 +554,16 @@ class CreateUniversityForm(forms.ModelForm):
 		self.fields['facultad'].label = "Facultad"
 		self.fields['escuela'].label = "Escuela"
 		self.fields['instituto_investigacion'].label = "Instituto de investigación"
+
+
+class ImportFromExcelForm(forms.Form):
+	file = forms.FileField(label = "Archivo")
+
+	def __init__(self, *args, **kwargs):
+		super(ImportFromExcelForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.form_class =  'form-horizontal'
+		self.helper.label_class = 'col-sm-3'
+		self.helper.field_class = 'col-sm-8'
 		

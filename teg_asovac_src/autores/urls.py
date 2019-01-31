@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^listar-autores/$',views.authors_list,name='authors_list'),
     url(r'^editar-autor/(?P<autor_id>\d+)/$',views.author_edit,name='author_edit'),
     url(r'^detalles/(?P<autor_id>\d+)/$',views.author_details,name='author_details'),
+    url(r'^importar-excel/$',views.load_authors_modal,name='load_authors_modal'),
 
     url(r'^generar-certificado/$', views.generar_certificado, name = 'generar_certificado'),
     
@@ -39,6 +40,7 @@ urlpatterns = [
 
 
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
+
 
     #Carga de contenido 
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),
