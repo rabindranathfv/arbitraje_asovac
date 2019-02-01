@@ -540,7 +540,7 @@ var SaveAñadirPagoForm= function(){
 
     // Modal para carga de autores por excel
     $('#import-excel').click(ShowForm);
-    
+    $('#modal-user').on('submit', '.import-authors-form',saveFileFormAndRedirect);
 
 
     // Modal para que añadan alguna universidad que no ha sido creada

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import random, string,xlrd,os,sys,xlwt
+from openpyxl import Workbook
+
 from decouple import config
 from django.conf import settings
 from django.core import serializers
@@ -620,12 +623,57 @@ def create_university_modal(request):
 	return JsonResponse(data)
 
 
+
+#---------------------------------------------------------------------------------#
+#                Guarda el archivo en la carpeta del proyecto                     #
+#---------------------------------------------------------------------------------#
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('upload/'):
+        os.mkdir('upload/')
+
+    # print "Nombre del archivo a guardar: ",filename
+    with open('upload/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+# Para guardar el archivo recibido del formulario  
+def save_file(request,type_load):
+
+    name= str(request.FILES.get('file'))  
+    file_name=''
+
+    if type_load == "autores":           	
+        extension = name.split('.')
+        file_name= "cargaAutores."+extension[1]
+        # Permite guardar el archivo y asignarle un nombre
+        handle_uploaded_file(request.FILES['file'], file_name)
+        route= "upload/"+file_name
+    # print "Ruta del archivo: ",route
+    return route
+
+# Para obtener la extension del archivo
+def get_extension_file(filename):
+
+    extension = filename.split('.')
+    return extension[1] 
+
 def load_authors_modal(request):
 	data = dict()
 
 	if request.method == "POST":
+		form = ImportFromExcelForm(request.POST, request.FILES)
 		if form.is_valid():
-			data['url'] = reverse('trabajos:trabajos')
+			# Para guardar el archivo de forma local
+			file_name= save_file(request,"autores")
+			extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo 
+            #response= validate_load_users(file_name, extension,arbitraje_id,rol)
+            #print response
+
+
+			data['url'] = reverse('autores:authors_list')
 			data['form_is_valid'] = True
 		else:
 			data['form_is_valid'] = False		
@@ -637,3 +685,5 @@ def load_authors_modal(request):
 	}
 	data['html_form'] = render_to_string('ajax/load_authors.html', context, request=request)
 	return JsonResponse(data)
+
+
