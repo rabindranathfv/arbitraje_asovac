@@ -10,7 +10,7 @@ from django.core import serializers
 from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
-from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago
+from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago, Universidad
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
@@ -658,8 +658,223 @@ def get_extension_file(filename):
     extension = filename.split('.')
     return extension[1] 
 
+#---------------------------------------------------------------------------------#
+#                Valida el contenido del excel para cargar usuarios               #
+#---------------------------------------------------------------------------------#
+def validate_alpha(cadena):
+	valid_cadena = 1
+	for char in cadena:
+		if not char.isalpha() and char !=' ':
+			valid_cadena = 0
+	return valid_cadena
+
+def validate_load_users(filename,extension,arbitraje_id):
+	data= dict()
+	data['status']=400
+	data['message']="La estructura del archivo no es correcta"
+	if extension == "xlsx" or extension == "xls":
+		print "Formato xls/xlsx"
+        book = xlrd.open_workbook(filename)   
+
+        if book.nsheets > 0:
+         
+            print "El numero de hojas es mayor a 0 "
+            excel_file = book.sheet_by_index(0)
+
+            if excel_file.ncols == 17:
+                print "El archivo tiene 17 columnas"
+                data['status']=200
+                data['message']="Se cargaron los usuarios de manera exitosa"
+
+                # se validan los campos del documento
+                for fila in range(excel_file.nrows):
+                    # Para no buscar los titulos 
+                    if fila > 0: 
+						#Se verifica que el campo nombres no esté vacío
+                        if excel_file.cell_value(rowx=fila, colx=0) == '':
+							data['status']=400
+							data['message']="Error en la fila {0} el nombre es un campo obligatorio".format(fila)
+							break
+						
+                        else:
+							nombres_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=0)).strip())
+							if not nombres_is_valid:
+								data['status']=400
+								data['message']="Error en la fila {0} el campo de nombres, solo debe tener letras".format(fila)
+								break
+
+						# Se verifica que el campo apellidos no esté vacio
+                        if excel_file.cell_value(rowx=fila, colx=1) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el apellido es un campo obligatorio".format(fila)
+                            break
+                        else:
+							apellidos_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=1)).strip())
+							if not apellidos_is_valid:
+								data['status']=400
+								data['message']="Error en la fila {0} el campo de apellidos, solo debe tener letras".format(fila)
+								break
+
+						# Se verifica que el campo género no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=2) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el género es un campo obligatorio".format(fila)
+                            break
+                        elif excel_file.cell_value(rowx=fila, colx=2) != 'M' and excel_file.cell_value(rowx=fila, colx=2) != 'F':
+							data['status']=400
+							data['message']="Error en la fila {0} el género debe ser 'M' o 'F' (verifique que esté en mayúsculas).".format(fila)
+							break
+
+						# Se verifica que el campo cédula/pasaporte no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=3) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} la cédula/pasaporte es un campo obligatorio".format(fila)
+                            break
+                        else:
+							cedula_pasaporte = str(excel_file.cell_value(rowx=fila, colx=3))
+							if cedula_pasaporte[0] !='V' and cedula_pasaporte != 'P':
+								data['status'] = 400
+								data['message'] = "Error en la fila {0}, el campo cédula/pasaporte debe empezar por una letra V o P seguido del número.".format(fila)
+								break
+
+							elif not cedula_pasaporte[1:].isdigit():
+								data['status'] = 400
+								data['message'] = "Error en la fila {0} la cédula/pasaporte solamente debe tener números después de V o P.".format(fila)
+								break
+
+							elif Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
+								data['status'] = 400
+								data['message'] = "Error en la fila {0} ya existe un autor con esta cédula o pasaporte.".format(fila)
+								break
+
+						# Se verifica que el campo correo electrónico no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=4) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo electrónico es un campo obligatorio".format(fila)
+                            break
+
+                        else:
+							correo_electronico = str(excel_file.cell_value(rowx=fila, colx=4))
+							if Autor.objects.filter(correo_electronico = correo_electronico).exists():
+								data['status']=400
+								data['message']="Error en la fila {0}, ya hay un autor registrado con este correo electrónico.".format(fila)
+								break
+						# Se verifica que el campo telefono de oficina no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=5) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el teléfono de oficina es un campo obligatorio".format(fila)
+                            break
+                        else:
+							telefono_oficina = str(excel_file.cell_value(rowx=fila, colx=5)).split('.')
+							telefono_oficina = telefono_oficina[0]
+							telefono_oficina_length = len(telefono_oficina)
+							print telefono_oficina
+							if not telefono_oficina.isdigit():
+								data['status']=400
+								data['message']="Error en la fila {0}, el teléfono de oficina debe contener solamente dígitos.".format(fila)
+								break
+							elif telefono_oficina_length < 10 or 15 < telefono_oficina_length:
+								data['status']=400
+								data['message']="Error en la fila {0}, el teléfono de oficina debe tener de 10 a 15 dígitos.".format(fila)
+								break
+
+
+						# Se verifica que el campo teléfono de habitación/celular no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=6) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el teléfono de habitación/celular es un campo obligatorio".format(fila)
+                            break
+                        else:
+							telefono_habitacion_celular = str(excel_file.cell_value(rowx=fila, colx=6)).split('.')
+							telefono_habitacion_celular = telefono_habitacion_celular[0]
+							telefono_habitacion_celular_length = len(telefono_habitacion_celular)
+							if not telefono_habitacion_celular.isdigit():
+								data['status']=400
+								data['message']="Error en la fila {0}, el teléfono de habitación/celular debe contener solamente dígitos.".format(fila)
+								break
+							elif telefono_habitacion_celular_length < 10 or 15 < telefono_habitacion_celular_length:
+								data['status']=400
+								data['message']="Error en la fila {0}, el teléfono de habitación/celular debe tener de 10 a 15 dígitos.".format(fila)
+								break
+
+						# Se verifica que el campo es miembro asovac no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=8) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el '¿es miembro asovac?' es un campo obligatorio".format(fila)
+                            break
+                        elif excel_file.cell_value(rowx=fila, colx=8) != 'S' and excel_file.cell_value(rowx=fila, colx=8) != 'N':
+							data['status']=400
+							data['message']="Error en la fila {0}, el campo '¿es miembro asovac?' debe tener solo 'S' o 'N'".format(fila)
+							break
+
+						# Se verifica que el campo nivel de instrucción no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=10) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nivel de instrucción es un campo obligatorio".format(fila)
+                            break
+
+						# Se verifica que el campo área no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=12) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área es un campo obligatorio".format(fila)
+                            break
+                        elif not Area.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12))).exists():
+							data['status']=400
+							data['message']="Error en la fila {0}, no existe un área con este nombre.".format(fila)
+							break
+						# Se verifica que el campo subarea1 no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=13) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} el subárea1 es un campo obligatorio".format(fila)
+                            break
+                        else:
+							area = Area.objects.get(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12)))
+							subarea_name = str(excel_file.cell_value(rowx=fila, colx=13))
+							if not Sub_area.objects.filter(area = area, nombre__iexact = subarea_name).exists():
+								data['status']=400
+								data['message']="Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
+								break
+                        
+                        area = Area.objects.get(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12)))
+
+						# Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
+                        if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=14))).exists():
+							data['status']=400
+							data['message']="Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
+							break
+						
+						# Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
+                        if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=15))).exists():
+							data['status']=400
+							data['message']="Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
+							break
+
+						# Se verifica que el campo apellidos no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=16) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} la universidad es un campo obligatorio".format(fila)
+                            break
+                        elif not Universidad.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=16))).exists():
+							data['status']=400
+							data['message']="Error en la fila {0}, no hay universidad con el nombre indicado".format(fila)
+							break
+
+
+	return data 
+	# Inserta los registros una vez realizada la validación correspondiente
+	"""
+	if data['status'] == 200:
+		is_create=create_users(sh,arbitraje_id,rol)
+		print is_create
+		if is_create == 400:
+			data['status']=400
+			data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
+		print "Los datos del archivo son válidos"
+	"""
+
 def load_authors_modal(request):
 	data = dict()
+	arbitraje_id = request.session['arbitraje_id']
 
 	if request.method == "POST":
 		form = ImportFromExcelForm(request.POST, request.FILES)
@@ -669,8 +884,8 @@ def load_authors_modal(request):
 			extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo 
-            #response= validate_load_users(file_name, extension,arbitraje_id,rol)
-            #print response
+			response= validate_load_users(file_name, extension,arbitraje_id)
+			print response
 
 
 			data['url'] = reverse('autores:authors_list')
