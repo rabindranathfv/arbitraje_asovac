@@ -9,9 +9,10 @@
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
+        <p><strong>*</strong>Cuando le dé importar, esto tomará algunos segundos. Por favor, espere.</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Añadir</button>
+        <button type="submit" class="btn btn-success">Importar</button>
     </div>
 </form>
