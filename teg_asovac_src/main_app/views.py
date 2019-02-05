@@ -19,6 +19,7 @@ from django.urls import reverse
 import json
 from django.db.models import Q
 from django.db.models import Count
+from django.utils.crypto import get_random_string
 
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
@@ -354,6 +355,13 @@ def register(request):
         if form.is_valid():
             user= form.save()
             usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
+            # Para crear instancia de arbitro
+            arbitro =Arbitro()
+            arbitro.nombres=user.first_name
+            arbitro.apellidos=user.last_name
+            arbitro.correo_electronico=user.email
+            arbitro.usuario=usuario_asovac
+            arbitro.save()
 
             subarea= request.POST.getlist("subarea_select")
             for item in subarea:
@@ -1655,7 +1663,8 @@ def create_users(sh,arbitraje_id,rol):
                 user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
                 user.username=sh.cell_value(rowx=fila, colx=2).strip()
                 user.email=sh.cell_value(rowx=fila, colx=3).strip()
-                user.password=make_password(user.username+"12345")
+                clave= get_random_string(length=12)
+                user.password=make_password(clave)
                 user.save()
                 # print "Se crea el usuario: ", user.first_name
 
@@ -1717,11 +1726,43 @@ def create_users(sh,arbitraje_id,rol):
                 if sh.cell_value(rowx=fila, colx=15) != "":
                     arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
                 if(rol == "4"):
+                    # Coordinador de área
                     arbitro.save()
                     arbitro.Sistema_asovac.add(arbitraje)
                     arbitro.save()
+                    clave_arbitraje= arbitraje.clave_maestra_arbitro_subarea
+                    clave_arbitraje_rol="Árbitro de Subárea"
+                    print clave_arbitraje
+                    # Envío de correo
+                    context = {'clave_arbitraje_rol':clave_arbitraje_rol,'clave_arbitraje':clave_arbitraje,'username': user.username ,'password':clave,'nombre':user.first_name,'apellido':user.last_name}
+                    msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/create_user.html', context)
+
+                    send_mail(
+                        'Registro de usuario',              #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [user.email],                       #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
                 else:
+                    # Árbitro de Subárea
                     arbitro.save()
+                    clave_arbitraje= arbitraje.clave_maestra_coordinador_area
+                    clave_arbitraje_rol="Coordinador de Área"
+                    print clave_arbitraje
+                    # Envío de correo
+                    context = {'clave_arbitraje_rol':clave_arbitraje_rol,'clave_arbitraje':clave_arbitraje,'username': user.username ,'password':clave,'nombre':user.first_name,'apellido':user.last_name}
+                    msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/create_user.html', context)
+
+                    send_mail(
+                        'Registro de usuario',              #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [user.email],                       #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
             except:
                 print "Ha ocurrido un error con los parametros recibidos"   
                 return 400

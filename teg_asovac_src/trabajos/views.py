@@ -132,7 +132,8 @@ def jobs_list(request):
     # print "Area y Subarea enviadas por sesion"
     # print area
     # print subarea
-    trabajos=Trabajo.objects.all().filter( Q(subarea1=subarea) | Q(subarea2=subarea) | Q(subarea3=subarea) )
+    # trabajos=Trabajo.objects.all().filter( Q(subarea1=subarea) | Q(subarea2=subarea) | Q(subarea3=subarea) )
+    trabajos=Trabajo.objects.all().filter( )
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
