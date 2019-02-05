@@ -859,11 +859,11 @@ def validate_load_users(filename,extension,arbitraje_id):
 	if data['status'] == 200:
 		is_create = create_authors(excel_file,arbitraje_id)
 		print is_create
-		if is_create == 400:
-			data['status']=400
-			data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
-		else:
+		if is_create == 5000:
 			data['message'] = "Los datos del archivo son válidos"
+		else:
+			data['status'] = 400
+			data['message'] =  "Problemas en la fila {0} al momento de almacenar, porque ya hay un autor con esa cédula o correo electrónico. Se lograron importar los autores hasta la fila anterior, es decir, hasta la fila {1}.".format(is_create, is_create-1)
 	return data 
 
 #---------------------------------------------------------------------------------#
@@ -872,86 +872,106 @@ def validate_load_users(filename,extension,arbitraje_id):
 
 def create_authors(excel_file, arbitraje_id):
     
-	resultado = 200
+	resultado = 5000
 
 	for fila in range(excel_file.nrows):
 		if fila > 0: 
             # Guarda el usuario
 			try: 
-				user= User()
-				user.first_name = excel_file.cell_value(rowx=fila, colx=0).strip()
-				user.last_name = excel_file.cell_value(rowx=fila, colx=1).strip()
+				if not User.objects.filter(email = excel_file.cell_value(rowx=fila, colx=4).strip()).exists() or not Autor.objects.filter(cedula_pasaporte = excel_file.cell_value(rowx=fila, colx=3).strip()).exists():
+					user= User()
+					user.first_name = excel_file.cell_value(rowx=fila, colx=0).strip()
+					user.last_name = excel_file.cell_value(rowx=fila, colx=1).strip()
 
-				username_base = user.first_name.split(' ')[0].lower() + '.' + user.last_name.split(' ')[0].lower()
-				counter = 1
-				username = username_base
-				
-				while User.objects.filter(username=username):
-					username = username_base + str(counter)
-					counter += 1
+					username_base = user.first_name.split(' ')[0].lower() + '.' + user.last_name.split(' ')[0].lower()
+					counter = 1
+					username = username_base
+					
+					while User.objects.filter(username=username):
+						username = username_base + str(counter)
+						counter += 1
 
-				user.username = username
-				password = User.objects.make_random_password().lower()
-				user.set_password(password)
+					user.username = username
+					password = User.objects.make_random_password().lower()
+					user.set_password(password)
 
-				user.email = excel_file.cell_value(rowx=fila, colx=4).strip()
-				user.save()
+					user.email = excel_file.cell_value(rowx=fila, colx=4).strip()
+					user.save()
 
-				# Crear usuario_asovac
-				usuario_asovac= Usuario_asovac.objects.get(usuario=user)
-				arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
-				rol_author = Rol.objects.get(id=5)
+					# Crear usuario_asovac
+					usuario_asovac= Usuario_asovac.objects.get(usuario=user)
+					arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+					rol_author = Rol.objects.get(id=5)
 
-				usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_author, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
-				usuario_rol_in_sistema.save()
+					usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_author, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+					usuario_rol_in_sistema.save()
 
-				area = Area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).strip())
-				subarea1 = Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=13).strip())
+					area = Area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).strip())
+					subarea1 = Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=13).strip())
 
-				usuario_asovac.sub_area.add(subarea1)
-				if excel_file.cell_value(rowx=fila, colx=14) != "":
-					subarea2= Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).strip())
-					usuario_asovac.sub_area.add(subarea2)
+					usuario_asovac.sub_area.add(subarea1)
+					if excel_file.cell_value(rowx=fila, colx=14) != "":
+						subarea2= Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).strip())
+						usuario_asovac.sub_area.add(subarea2)
 
-				if excel_file.cell_value(rowx=fila, colx=15) != "":
-					subarea3= Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).strip())
-					usuario_asovac.sub_area.add(subarea3)
+					if excel_file.cell_value(rowx=fila, colx=15) != "":
+						subarea3= Sub_area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).strip())
+						usuario_asovac.sub_area.add(subarea3)
 
-				usuario_asovac.save()
+					usuario_asovac.save()
 
-				new_autor = Autor(usuario = usuario_asovac, nombres = user.first_name, apellidos = user.last_name, correo_electronico = user.email)
-				if excel_file.cell_value(rowx=fila, colx=2).strip().lower() == "m":
-					new_autor.genero = 0
+					new_autor = Autor(usuario = usuario_asovac, nombres = user.first_name, apellidos = user.last_name, correo_electronico = user.email)
+					if excel_file.cell_value(rowx=fila, colx=2).strip().lower() == "m":
+						new_autor.genero = 0
+					else:
+						new_autor.genero = 1
+
+					
+					new_autor.cedula_pasaporte = excel_file.cell_value(rowx=fila, colx=3).strip()
+					new_autor.telefono_oficina = str(excel_file.cell_value(rowx=fila, colx=5)).split('.')[0]
+					new_autor.telefono_habitacion_celular = str(excel_file.cell_value(rowx=fila, colx=6)).split('.')[0]
+					
+					if excel_file.cell_value(rowx=fila, colx=7).strip() != '':
+						new_autor.direccion_envio_correspondencia = excel_file.cell_value(rowx=fila, colx=7).strip()
+
+					if excel_file.cell_value(rowx=fila, colx=8).strip().lower() == "s":
+						new_autor.es_miembro_asovac = True
+					else:
+						new_autor.es_miembro_asovac = False
+					
+					if excel_file.cell_value(rowx=fila, colx=9).strip() != '':
+						new_autor.capitulo_perteneciente = excel_file.cell_value(rowx=fila, colx=9).strip()
+
+					new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10).strip()
+
+					if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
+						new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
+
+					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip())
+					new_autor.universidad = universidad
+					new_autor.save()
+
+					context = {
+					'username': username,
+					'sistema_asovac': arbitraje.nombre,
+					'password': password,
+					}
+					msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
+					msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
+					send_mail(
+							'Creación de usuario',         #titulo
+							msg_plain,                          #mensaje txt
+							config('EMAIL_HOST_USER'),          #email de envio
+							[user.email],               #destinatario
+							html_message=msg_html,              #mensaje en html
+							)
 				else:
-					new_autor.genero = 1
-
-				
-				new_autor.cedula_pasaporte = excel_file.cell_value(rowx=fila, colx=3).strip()
-				new_autor.telefono_oficina = str(excel_file.cell_value(rowx=fila, colx=5)).split('.')[0]
-				new_autor.telefono_habitacion_celular = str(excel_file.cell_value(rowx=fila, colx=6)).split('.')[0]
-				
-				if excel_file.cell_value(rowx=fila, colx=7).strip() != '':
-					new_autor.direccion_envio_correspondencia = excel_file.cell_value(rowx=fila, colx=7).strip()
-
-				if excel_file.cell_value(rowx=fila, colx=8).strip().lower() == "s":
-					new_autor.es_miembro_asovac = True
-				else:
-					new_autor.es_miembro_asovac = False
-				
-				if excel_file.cell_value(rowx=fila, colx=9).strip() != '':
-					new_autor.capitulo_perteneciente = excel_file.cell_value(rowx=fila, colx=9).strip()
-
-				new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10).strip()
-
-				if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
-					new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
-
-				universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip())
-				new_autor.universidad = universidad
-				new_autor.save()
-			
+					resultado = fila
+					break;
 			except:
-				resultado = 400
+				resultado = fila
+				break;
+			
 	
 	return resultado
 
@@ -970,9 +990,13 @@ def load_authors_modal(request):
 			extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo 
-			response= validate_load_users(file_name, extension,arbitraje_id)
+			response = validate_load_users(file_name, extension,arbitraje_id)
 			print response
 
+			if response['status'] == 200:
+				messages.success(request, "La importación de autores fue llevada a cabo con éxito.")
+			else:
+				messages.error(request, response['message']) 
 
 			data['url'] = reverse('autores:authors_list')
 			data['form_is_valid'] = True
