@@ -21,7 +21,7 @@ from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, Admin
 from django.contrib import messages
 
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 
 
@@ -1012,3 +1012,56 @@ def load_authors_modal(request):
 	return JsonResponse(data)
 
 
+#---------------------------------------------------------------------------------#
+#                               Exportar Autores                                  #
+#---------------------------------------------------------------------------------#
+def export_authors(request):
+	
+	data = Autor.objects.all()
+
+	# Para definir propiedades del documento de excel
+	response = HttpResponse(content_type='application/ms-excel')
+	response['Content-Disposition'] = 'attachment; filename=Autores.xls'
+	workbook = xlwt.Workbook()
+	worksheet = workbook.add_sheet("Autores")
+	# Para agregar los titulos de cada columna
+	row_num = 0
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)']
+	for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])     
+	
+	for item in data:
+		row_num += 1
+		counter = 0
+		user_subarea_list = item.usuario.sub_area.all()
+		subarea2 = ''
+		subarea3 = ''
+		for subarea in user_subarea_list:
+			if counter == 0:
+				area = subarea.area.nombre
+				subarea1 = subarea.nombre
+			elif counter == 1:
+				subarea2 = subarea.nombre
+			elif counter == 2:
+				subarea3 = subarea.nombre
+			else:
+				break
+			counter += 1
+			
+		if item.genero == 0:
+			genero = 'M'
+		else:
+			genero = 'F'
+		
+		if item.es_miembro_asovac == True:
+			es_miembro_asovac = 'S'
+		else:
+			es_miembro_asovac = 'N'
+
+		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre ]
+		for col_num in range(len(row)):
+			worksheet.write(row_num, col_num, row[col_num])
+	
+	workbook.save(response)
+
+	return response

@@ -42,6 +42,8 @@ urlpatterns = [
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
 
 
-    #Carga de contenido 
+    #Import de autores
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),
+    #Export de autores
+    url(r'^export-authors$',views.export_authors,name='export_authors'),
 ]
