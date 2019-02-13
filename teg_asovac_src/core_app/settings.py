@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     ## another apps,plugings and package
     'crispy_forms',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -180,3 +181,8 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+
+# DJANGO IMPORT-EXPORT CONFIGURATION
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
