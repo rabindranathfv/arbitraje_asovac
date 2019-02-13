@@ -2,9 +2,10 @@
 from __future__ import unicode_literals
 
 import datetime
+from tablib import Dataset
 
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -17,8 +18,9 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from eventos.forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
 
 #Import Models
-from eventos.models import Organizador,Organizador_evento,Evento,Locacion_evento
 from .models import Organizador,Organizador_evento,Evento,Locacion_evento
+from .resources import LocacionResource
+
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
 # Event's home
@@ -294,6 +296,7 @@ def event_place_create(request):
     }
     return render(request, 'eventos_locacion_create.html', context)
 
+
 def event_place_list(request):
     event_place_data = Locacion_evento.objects.all().order_by('id')
     context = {        
@@ -302,6 +305,7 @@ def event_place_list(request):
                 'events_app': True,
                 }
     return render(request, 'eventos_locacion_list.html', context)
+
 
 def event_place_edit(request, locacion_id):
     locacion = get_object_or_404(Locacion_evento,id = locacion_id)
@@ -319,6 +323,7 @@ def event_place_edit(request, locacion_id):
         'events_app': True,
         }
     return render(request, 'eventos_locacion_edit.html', context)
+
 
 def event_place_delete(request, locacion_id):
     data = dict()
@@ -345,6 +350,30 @@ def event_place_detail(request, locacion_id):
     }
     return render(request, 'eventos_locacion_details.html', context)
 
+
+def event_place_export_excel(request):
+    locacion_resource = LocacionResource()
+    dataset = locacion_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Lugares_eventos.xls"'
+    return response
+
+def event_place_import_excel(request):
+    if request.method == 'POST':
+        locacion_resource = LocacionResource()
+        dataset = Dataset()
+        new_places = request.FILES['myfile']
+
+        imported_data = dataset.load(new_places.read())
+        result = locacion_resource.import_data(dataset, dry_run=True)  # Test the data import
+
+        if not result.has_errors():
+            locacion_resource.import_data(dataset, dry_run=False)  # Actually import now
+
+    return redirect(reverse('eventos:event_place_list'))
+
+
+##################### Management Views ###########################
 
 def add_organizer_to_event(request, evento_id):
     data = dict()
