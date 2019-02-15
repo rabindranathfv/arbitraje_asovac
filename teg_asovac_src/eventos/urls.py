@@ -26,6 +26,8 @@ urlpatterns = [
 
     url(r'^crear-organizador/$',views.organizer_create,name='organizer_create'),
     url(r'^listar-organizadores/$',views.organizer_list,name='organizer_list'),
+    url(r'^exportar-organizadores/$',views.organizer_export_excel,name='organizer_export_excel'),
+    url(r'^importar-organizadores/$',views.organizer_import_excel,name='organizer_import_excel'),
     url(r'^editar-organizador/(?P<organizador_id>\d+)/$',views.organizer_edit,name='organizer_edit'),
     url(r'^eliminar-organizador/(?P<organizador_id>\d+)/$',views.organizer_delete,name='organizer_delete'),
     url(r'^detalles-organizador/(?P<organizador_id>\d+)/$',views.organizer_detail,name='organizer_detail'),

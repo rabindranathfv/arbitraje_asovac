@@ -19,7 +19,7 @@ from eventos.forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,
 
 #Import Models
 from .models import Organizador,Organizador_evento,Evento,Locacion_evento
-from .resources import LocacionResource
+from .resources import OrganizadorResource, LocacionResource
 
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
@@ -265,7 +265,6 @@ def organizer_delete(request, organizador_id):
     return JsonResponse(data)
 
 
-
 def organizer_detail(request, organizador_id):
     data = dict()
     organizador= get_object_or_404(Organizador, id = organizador_id)
@@ -274,6 +273,29 @@ def organizer_detail(request, organizador_id):
         }
     data['html_form'] = render_to_string('ajax/organizer_details.html',context,request=request)
     return JsonResponse(data)
+
+
+def organizer_export_excel(request):
+    organizer_resource = OrganizadorResource()
+    dataset = organizer_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Organizadores.xls"'
+    return response
+
+
+def organizer_import_excel(request):
+    if request.method == 'POST':
+        organizer_resource = OrganizadorResource()
+        dataset = Dataset()
+        new_places = request.FILES['myfile']
+
+        imported_data = dataset.load(new_places.read())
+        result = organizer_resource.import_data(dataset, dry_run=True)  # Test the data import
+
+        if not result.has_errors():
+            organizer_resource.import_data(dataset, dry_run=False)  # Actually import now
+
+    return redirect(reverse('eventos:organizer_list'))
 
 
 ##################### Locacion Views ###########################

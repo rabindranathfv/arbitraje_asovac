@@ -8,8 +8,8 @@ from django.core.validators import EmailValidator,URLValidator
 # Create your models here.
 
 CHOICES_GENERO = (   (0,'Masculino'),
-                        (1,'Femenino'),
-                        )
+                     (1,'Femenino'),
+                 )
 
 CHOICES_MIEMBRO_ASOVAC = (   (False,'No es miembro de AsoVAC'),
                         (True,'Es miembro de AsoVAC'),

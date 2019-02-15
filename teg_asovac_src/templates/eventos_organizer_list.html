@@ -1,4 +1,4 @@
-{% extends "content_wrapper_with_sidebar.html" %} {% load static %} {% block inner_content %}
+{% extends "content_wrapper.html" %} {% load static %} {% block inner_content %}
 <div class="container" id="content-wrapper">
     {% if messages %}
     <ul class="messages">
@@ -8,7 +8,7 @@
             </li>
             {% endfor %}
     </ul>
-    {% endif %} {% include "toggle_title.html" %}
+    {% endif %}
 
     <div class="row">
         <div class="col-sm-12">
@@ -17,16 +17,23 @@
                 <div id="toolbar">
                     <form>
                         <div class="btn-group pull-right">
-                            <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                            <button class="btn btn-primary btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel"></i> Exportar tabla</a>
+                                    <a href="{% url 'eventos:organizer_export_excel' %}" type="button" ><i class="fa fa-file-excel"></i> Exportar tabla</a>
                                 </li>
                                 <li>
                                     <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Importar datos</a>
                                 </li>
                             </ul>
                         </div>
+                    </form>
+                </div>
+                <div>
+                    <form method="post" action="{% url 'eventos:organizer_import_excel' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="myfile">
+                        <button type="submit">Upload</button>
                     </form>
                 </div>
                 <div class="table-responsive">
