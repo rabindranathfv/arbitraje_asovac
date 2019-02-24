@@ -487,11 +487,12 @@ var SaveAñadirPagoForm= function(){
             success: function(data){
                 // console.log(data);
                 if(data.status == 200 ){
-                    console.log('actualizacion exitosa')
-                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    // console.log('actualizacion exitosa')
+                    $('#bootstrapTableModal .modal-body').html("Se han asignado los arbitros para este trabajo de manera exitosa.");
+                    $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
                     $('#modal-user').modal('hide');
                 }else{
-                    console.log('error en la actualizacion')
+                    // console.log('error en la actualizacion')
                     $('#bootstrapTableModal .modal-body').html(data.body)
                 }
             }

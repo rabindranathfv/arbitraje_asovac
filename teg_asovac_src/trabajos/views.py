@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.urls import reverse
 
 import json
-from .models import Trabajo, Detalle_version_final
+from .models import Trabajo, Detalle_version_final,Trabajo_arbitro
 from autores.models import Autor, Autores_trabajos
 from arbitrajes.models import Arbitro
 from autores.forms import AddAuthorToJobForm
@@ -706,8 +706,43 @@ def list_trabajos(request):
 #                                CRUD de Trabajos                                 #
 #---------------------------------------------------------------------------------#
 
+def filterArbitro(data,trabajo_id):
+    arbitros= []
+
+    # print "<------------------------------------------------------------------------------------>"
+    for arb in data:
+    
+        caseNone=arb.trabajo_id == None
+        caseExist=str(trabajo_id) == str(arb.trabajo_id)
+
+        if not caseNone and not caseExist:
+            # print "No tiene registro asignado a este trabajo"
+            isAsig=0
+            for item in data:
+                if str(trabajo_id) == str(item.trabajo_id):
+                    isAsig=1
+
+            if isAsig == 0:
+                # print ("Datos del arbitro: {0} {1} {2} {3}".format(arb.nombres,arb.apellidos,arb.correo_electronico,arb.trabajo_id))
+                arbitros.append({'id':arb.id,'nombres': arb.nombres,'apellidos':arb.apellidos, 'correo_electronico':arb.correo_electronico, 'trabajo_id':arb.trabajo_id  })
+
+        else:
+            if caseNone:
+                # print "No existe registro"
+                # print ("Datos del arbitro: {0} {1} {2} {3}".format(arb.nombres,arb.apellidos,arb.correo_electronico,arb.trabajo_id))
+                arbitros.append({'id':arb.id,'nombres': arb.nombres,'apellidos':arb.apellidos, 'correo_electronico':arb.correo_electronico, 'trabajo_id':arb.trabajo_id  })
+            else:
+                if caseExist:
+                    # print "Ya esta asignado a este trabajo"
+                    # print ("Datos del arbitro: {0} {1} {2} {3}".format(arb.nombres,arb.apellidos,arb.correo_electronico,arb.trabajo_id))
+                    arbitros.append({'id':arb.id,'nombres': arb.nombres,'apellidos':arb.apellidos, 'correo_electronico':arb.correo_electronico, 'trabajo_id':arb.trabajo_id  })
+        
+    # print "Cantidad de arbitros ",len(arbitros)
+    # print "<------------------------------------------------------------------------------------>"
+    return arbitros
+
 def selectArbitro(request,id):
-    print "Trabajo id: ",id
+    # print "Trabajo id: ",id
 
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
@@ -737,46 +772,45 @@ def selectArbitro(request,id):
             area= str(user_area.id)
             data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
             data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
-
+    
     total=0
+    datafilter= filterArbitro(data,id)
+    
     for item in data_count:
         total=total+1
     
     response=dict()
     arbitros= []
-    for item in data:
-        # Caso arbitros sin asignar
-        if item.trabajo_id == None:
-            nombres= item.nombres 
-            apellidos= item.apellidos
-            correo_electronico= item.correo_electronico 
-            trabajo_id= item.trabajo_id
-            print ("Datos del arbitro: {0} {1} {2}".format(nombres,apellidos,correo_electronico))
-            arbitros.append({'id':item.id,'nombres': nombres,'apellidos':apellidos, 'correo_electronico':correo_electronico, 'trabajo_id':trabajo_id  })
-        else:
-            # Caso para arbitros asignados a este trabajo
-            if str(id) == str(item.trabajo_id):
-                nombres= item.nombres 
-                apellidos= item.apellidos
-                correo_electronico= item.correo_electronico 
-                trabajo_id= item.trabajo_id
-                print ("Datos del arbitro: {0} {1} {2}".format(nombres,apellidos,correo_electronico))
-                arbitros.append({'id':item.id,'nombres': nombres,'apellidos':apellidos, 'correo_electronico':correo_electronico, 'trabajo_id':trabajo_id  })
+    
+
 
     if request.method == 'POST':
-        print "El metodo es post"
+        # print "El metodo es post"
         form=request.POST
-        print form.values()
-        print "id de los arbitros ",form['id']
-        print "id del trabajos ",form['trabajo']
-        
+        # print form.values()
+        # print "id de los arbitros ",form['id']
+        # print "id del trabajos ",form['trabajo']
+        # trabajo= Trabajo.objects.get(id=id)
+
         if form['id'] == '':
-            print "el formulario viene vacio"
+            # print "el formulario viene vacio"
+            listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
         else:
-            print "el formulario no viene vacio"
-        
-        
-        
+            # print "el formulario no viene vacio"
+            list_arbitros= form['id'].split(",")
+            listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
+            for arb in list_arbitros:
+                # print listArbTrab
+                trabajo= Trabajo.objects.get(id=id)
+                arbitro= Arbitro.objects.get(id=arb)
+                # Se crea la instancia de arbitros y trabajos 
+                arbitroTrabajo= Trabajo_arbitro()
+                arbitroTrabajo.fin_arbitraje= False
+                arbitroTrabajo.invitacion= False
+                arbitroTrabajo.trabajo=trabajo
+                arbitroTrabajo.arbitro=arbitro
+                arbitroTrabajo.save()
+                # print "id arb: ",arb
         response['status']= 200
             # response['status']= 404
             
@@ -785,8 +819,8 @@ def selectArbitro(request,id):
         response['status']= 200
         context={
             'tipo':"select",
-            'arbitros':arbitros,
-            'trabajo_id':id,
+            'arbitros':datafilter,
+            'trabajo_id':int(id),
         }
         response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
     return JsonResponse(response)

@@ -55,7 +55,7 @@ class Trabajo(models.Model):
     		return self.titulo_espanol.encode('utf-8', errors='replace')
 
 class Trabajo_arbitro (models.Model):
-    	arbitro = models.ForeignKey('arbitrajes.Arbitro')
+	arbitro = models.ForeignKey('arbitrajes.Arbitro')
 	trabajo = models.ForeignKey('Trabajo')
 	fin_arbitraje= models.BooleanField()
 	invitacion= models.BooleanField()

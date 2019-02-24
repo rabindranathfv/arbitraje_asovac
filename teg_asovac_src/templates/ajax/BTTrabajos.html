@@ -20,10 +20,11 @@
             {% for arbitro in arbitros %}
             <tr>
                 <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
-                <td>{{arbitro.correo_electronico}}</td>
+                <td>{{arbitro.correo_electronico}} </td>
+                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
                 <td class="text-center">
                     <label class="contentCheck">
-                        {% if arbitro.trabajo_id != None %}
+                        {% if arbitro.trabajo_id == trabajo_id %}
                             <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
                         {% else %}
                             <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
