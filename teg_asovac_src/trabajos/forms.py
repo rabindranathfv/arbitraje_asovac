@@ -15,7 +15,7 @@ class TrabajoForm(forms.ModelForm):
 
 	class Meta:
 		model = Trabajo
-		fields = ['titulo_espanol', 'titulo_ingles', 'palabras_clave', 'forma_presentacion', 'resumen', 'documento_inscrito', 'observaciones', 'url_trabajo', 'version', 'archivo_trabajo']
+		fields = ['titulo_espanol', 'titulo_ingles', 'palabras_clave', 'forma_presentacion', 'resumen', 'documento_inscrito', 'observaciones', 'url_trabajo', 'version', 'archivo_trabajo','trabajo_version']
 
 	def __init__(self, *args, **kwargs):
 		super(TrabajoForm,self).__init__(*args, **kwargs)

@@ -406,7 +406,9 @@ var SaveAñadirPagoForm= function(){
     });
 
     //bootstrap-tables edit 
+
     var bootstrapTableForm= function(){
+        console.log("metodo para enviar");
         var form= $(this);
         $.ajax({
             url: form.attr('data-url'),
@@ -428,6 +430,77 @@ var SaveAñadirPagoForm= function(){
         });
     
     };
+
+    // Modal Form Process
+    var modalFormProcess= function(){
+        console.log("metodo para enviar");
+        var form= $(this).parent().parent();
+        console.log(form);
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                // console.log(data);
+                if(data.status == 200 ){
+                    console.log('actualizacion exitosa')
+                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    $('#modal-user').modal('hide');
+                }else{
+                    console.log('error en la actualizacion')
+                    $('#bootstrapTableModal .modal-body').html(data.body)
+                }
+            }
+        });
+    
+    };
+
+    // Para enviar el id de los arbitros seleccionados para un trabajo
+    var modalSelectArbitro= function(){
+        console.log("metodo para enviar");
+        var form= $(this).parent().parent();
+        var arbitros=[];
+        var datos=[];
+        $("input:checkbox:checked").each(function () {
+            if($(this).val() == "on"){
+                console.log("Arbitro ID: "+$(this).attr("id"));
+                // arbitros.push({"name": "id", "value": $(this).attr("id")});
+                arbitros.push($(this).attr("id"));
+            }
+        });
+
+        console.log(arbitros);
+        datos.push({"name": "id", "value": arbitros});
+        datos.push({"name": "trabajo", "value": $("#trabajo").val()});
+        var testarray= [{"name": "id", "value": 21},{"name": "nombre", "value": 22}];
+        // pasar como un arreglo y picar en la vista
+        var testarray= [{"name": "id", "value" : ["10","15"]}];
+        // console.log(testarray);
+        $.ajax({
+            url: form.attr('data-url'),
+            data:datos,
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                // console.log(data);
+                if(data.status == 200 ){
+                    console.log('actualizacion exitosa')
+                    $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
+                    $('#modal-user').modal('hide');
+                }else{
+                    console.log('error en la actualizacion')
+                    $('#bootstrapTableModal .modal-body').html(data.body)
+                }
+            }
+        });
+    
+    };
+
+
+
     var saveFileFormAndRedirect = function () {
         var form = $(this);
         var formData = new FormData(form[0]);
@@ -561,5 +634,8 @@ var SaveAñadirPagoForm= function(){
     // CRUD Árbitros
     $('#bootstrapTableModal').on('submit','.editarArbitro',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
+    // CRUD Trabajos
+    $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
+    
 
 });

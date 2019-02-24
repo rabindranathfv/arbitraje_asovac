@@ -24,10 +24,10 @@
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
 								class="caret"></span></button>
 							<ul class="dropdown-menu">
-								<li>
+								<!-- <li>
 									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
 									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
-								</li>
+								</li> -->
 							</ul>
 						</div>
 					</div>
@@ -64,10 +64,11 @@
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
 									<th data-field="observaciones" data-sortable="true">Observaciones</th>
-									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateTrabajos" data-align="center">Acciones</th>
 								</tr>
 						</thead>
 					</table>
+					  
 				<!-- End Bootstrap table -->
 		
 			</div>
@@ -75,26 +76,6 @@
 	</div>
 </div>
 
-<!-- Modal Carga Excel-->
-<div class="modal fade" id="ModalArbitrosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h3>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body text-center content-modal">
-				¿Está seguro que desea cargar arbitros por el excel?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-				<button type="submit" class="btn btn-primary btn-success">Cargar</button>
-			</div>
-		</div>
-	</div>
-</div>
 
 {% endblock %}
 
@@ -134,26 +115,6 @@
 			 });
 		}
 		
-		function detailFormatter(index, row) {
-		
-		var html = [];
-		var init= '<table class="table-bordered"><thead><tr>';
-		var init=init+ '<th style="text-align: center;" >Cédula/Pasaporte</th>'; 
-		var init=init+ '<th style="text-align: center;" >Título</th>'; 
-		var init=init+ '<th style="text-align: center;" >Área</th>'; 
-		var init=init+ '<th style="text-align: center;" >Línea de investigación</th>'; 
-		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
-		html.push(init);
-		$.each(row, function (key, value) {
-			if(key == "linea_investigacion" || key == "cedula_pasaporte" || key == "nombre" || key == "titulo"){
-			html.push('<td >'+ value + '</td>');
-			}
-		});
-		var fin= '</tr></table>';
-		html.push(fin);
-		return html.join('');
-		}
-
 		$("#export").click(function(){
         console.log("Descargar excel");
 		var route= $("#listTrabajos").attr("data-url");

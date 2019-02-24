@@ -1732,7 +1732,7 @@ def create_users(sh,arbitraje_id,rol):
                     arbitro.save()
                     clave_arbitraje= arbitraje.clave_maestra_arbitro_subarea
                     clave_arbitraje_rol="Árbitro de Subárea"
-                    print clave_arbitraje
+                    # print clave_arbitraje
                     # Envío de correo
                     context = {'clave_arbitraje_rol':clave_arbitraje_rol,'clave_arbitraje':clave_arbitraje,'username': user.username ,'password':clave,'nombre':user.first_name,'apellido':user.last_name}
                     msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)

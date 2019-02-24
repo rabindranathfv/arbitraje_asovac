@@ -17,6 +17,12 @@ urlpatterns = [
     #Carga de contenido 
     url(r'^listTrabajos$',views.list_trabajos,name='list_trabajos'),
 
+    # CRUD Trabajos
+    # url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
+    # url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
+    # url(r'^arbitro/listar-arbitros/removeArbitro/(?P<id>\d+)$',views.removeArbitro,name='eliminarArbitro'),
+    url(r'^listar-trabajos/selectArbitro/(?P<id>\d+)$',views.selectArbitro,name='selectArbitro'),
+
     # Ajax
     url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),
     url(r'^resultados/observaciones/(?P<trabajo_version_final_id>\d+)/$',views.show_job_observations , name='show_job_observations'),

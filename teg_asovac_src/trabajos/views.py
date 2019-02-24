@@ -13,9 +13,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.urls import reverse
 
+import json
 from .models import Trabajo, Detalle_version_final
 from autores.models import Autor, Autores_trabajos
+from arbitrajes.models import Arbitro
 from autores.forms import AddAuthorToJobForm
+from django.contrib.auth.models import User
 
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
@@ -605,31 +608,29 @@ def list_trabajos(request):
             query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query
             search= search+'%'
-            where=' WHERE trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s '
-            # where=' WHERE au.first_name LIKE %s' 
+            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s '
             query= query+where
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"          
-                search= search+'%'
-                where=' WHERE (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) and a.id= %s '
-                # where=' WHERE au.first_name LIKE %s' 
-                query= query+where
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
+                search= search+'%'
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s '
+                query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         else:
             order_by="trab."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         query= query + " ORDER BY " + order_by
         if rol_user == 1 or rol_user ==2 :
-            data= User.objects.raw(query,[search,search,search,search,search])
-            data_count= User.objects.raw(query,[search,search,search,search,search])
+            data= User.objects.raw(query,[search,search,search,search,search,event_id])
+            data_count= User.objects.raw(query,[search,search,search,search,search,event_id])
             # data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
                 area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,search,search,area])
-                data_count= User.objects.raw(query_count,[search,search,search,search,search,search,search,area])
+                data= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+                data_count= User.objects.raw(query,[search,search,search,search,search,event_id,area])
 
         total=0
 
@@ -643,7 +644,6 @@ def list_trabajos(request):
 
         else:
             print "Consulta Normal"
-            arbitraje_id = request.session['arbitraje_id']
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
             # data=User.objects.all().order_by('pk')[init:limit].query
@@ -651,10 +651,12 @@ def list_trabajos(request):
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s '
+                query= query+where
             else:
                 if rol_user == 3:
                     query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                    where=' WHERE main_a.id= %s '
+                    where=' WHERE sis_aso.id= %s AND main_a.id = %s '
                     query= query+where
             
             if sort=="nombre":
@@ -665,15 +667,14 @@ def list_trabajos(request):
             query= query + " ORDER BY " + order_by
             
             if rol_user == 1 or rol_user ==2 :
-                data= User.objects.raw(query)
-                data_count= User.objects.raw(query_count)
+                data= User.objects.raw(query,event_id)
+                data_count= User.objects.raw(query_count,event_id)
             else:
                 if rol_user == 3:
                     area= str(user_area.id)
-                    data= User.objects.raw(query,area)
-                    data_count= User.objects.raw(query_count,area)
-
-            # print data
+                    data= User.objects.raw(query,[event_id,area])
+                    data_count= User.objects.raw(query_count,[event_id,area])
+           
             total=0
             for item in data_count:
                 total=total+1
@@ -699,4 +700,93 @@ def list_trabajos(request):
         'query': response,
     }
    
+    return JsonResponse(response)
+
+#---------------------------------------------------------------------------------#
+#                                CRUD de Trabajos                                 #
+#---------------------------------------------------------------------------------#
+
+def selectArbitro(request,id):
+    print "Trabajo id: ",id
+
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    user_area=get_area(request.user.id)
+    subAreaTrabajo= Trabajo.objects.get(id=id).subareas.get().id
+    
+    if rol_user == 1 or rol_user == 2:
+        query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+        where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '      
+        query= query+where
+    else:
+        if rol_user == 3:
+            query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+            where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '
+            query= query+where
+
+    
+    order_by="arb.nombres " 
+    query_count=query
+    query= query + " ORDER BY " + order_by
+    
+    if rol_user == 1 or rol_user ==2 :
+        data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
+        data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+    else:
+        if rol_user == 3:
+            area= str(user_area.id)
+            data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
+            data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+    
+    response=dict()
+    arbitros= []
+    for item in data:
+        # Caso arbitros sin asignar
+        if item.trabajo_id == None:
+            nombres= item.nombres 
+            apellidos= item.apellidos
+            correo_electronico= item.correo_electronico 
+            trabajo_id= item.trabajo_id
+            print ("Datos del arbitro: {0} {1} {2}".format(nombres,apellidos,correo_electronico))
+            arbitros.append({'id':item.id,'nombres': nombres,'apellidos':apellidos, 'correo_electronico':correo_electronico, 'trabajo_id':trabajo_id  })
+        else:
+            # Caso para arbitros asignados a este trabajo
+            if str(id) == str(item.trabajo_id):
+                nombres= item.nombres 
+                apellidos= item.apellidos
+                correo_electronico= item.correo_electronico 
+                trabajo_id= item.trabajo_id
+                print ("Datos del arbitro: {0} {1} {2}".format(nombres,apellidos,correo_electronico))
+                arbitros.append({'id':item.id,'nombres': nombres,'apellidos':apellidos, 'correo_electronico':correo_electronico, 'trabajo_id':trabajo_id  })
+
+    if request.method == 'POST':
+        print "El metodo es post"
+        form=request.POST
+        print form.values()
+        print "id de los arbitros ",form['id']
+        print "id del trabajos ",form['trabajo']
+        
+        if form['id'] == '':
+            print "el formulario viene vacio"
+        else:
+            print "el formulario no viene vacio"
+        
+        
+        
+        response['status']= 200
+            # response['status']= 404
+            
+    else:
+       
+        response['status']= 200
+        context={
+            'tipo':"select",
+            'arbitros':arbitros,
+            'trabajo_id':id,
+        }
+        response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
     return JsonResponse(response)

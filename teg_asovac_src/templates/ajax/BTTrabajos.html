@@ -1,0 +1,78 @@
+
+{% load crispy_forms_tags %}
+{% if tipo == "select" %}
+<form method="post" class="asignarArbitro" data-url="{% url 'trabajos:selectArbitro' trabajo_id %}">
+    {% csrf_token %}
+    <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Asignar Árbitro</h3>
+    </div>
+    
+    <div class="modal-body">
+
+        <table class="table table-hover">
+            <thead>
+                <td>Nombre</td>
+                <td>Correo electrónico</td>
+                <td>Asignar</td>
+            </thead>
+            {% for arbitro in arbitros %}
+            <tr>
+                <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
+                <td>{{arbitro.correo_electronico}}</td>
+                <td class="text-center">
+                    <label class="contentCheck">
+                        {% if arbitro.trabajo_id != None %}
+                            <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
+                        {% else %}
+                            <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
+                        {% endif %}
+                        <span class="checkmark"></span>
+                    </label>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="sendForm btn btn-primary btn-lg">Guardar</button>
+    </div>
+</form>
+<script>
+    $('input[type=checkbox]').each(function () {
+        
+        // console.log("No seleccionados");
+        console.log($(this).val() );
+        // console.log("Estatus del item "+$(this).attr('data-status')+ " con id: "+$(this).attr('id'));
+        var status=$(this).attr('data-status');
+        if(status == "on" ){
+            $(this).prop("checked",true);
+            // console.log("seleccionado"+" Estatus "+estatus );
+        }else{
+            // console.log("No seleccionado");
+        }
+
+    }); 
+
+</script>
+{% else %}
+    {% if tipo == "edit" %}
+    {% load crispy_forms_tags %}
+    {% include "errors_form.html" %}
+        
+    {% else %}
+        {% if tipo == "delete" %}
+        
+        {% else %}
+            {% if tipo == "deleted" %}
+            
+    
+                
+            {% endif %}
+
+        {% endif %}
+    {% endif %}
+{% endif %}

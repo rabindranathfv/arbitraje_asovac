@@ -35,8 +35,9 @@ class Trabajo(models.Model):
 
 	# autor_id = models.ManyToManyField('autores.Autor',through='Autores_trabajos')
 	# autor_id = models.ManyToManyField('autores.Autor')
-	arbitro_id = models.ManyToManyField('arbitrajes.Arbitro',blank=True)
+	arbitro = models.ManyToManyField('arbitrajes.Arbitro',through='Trabajo_arbitro')
 	subareas = models.ManyToManyField(Sub_area) #Se permiten hasta 3 subareas
+	trabajo_version= models.ForeignKey('self', null=True, blank=True)
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=100)
@@ -49,8 +50,20 @@ class Trabajo(models.Model):
 	url_trabajo = models.URLField(max_length=255,blank=True)
 	version = models.CharField(max_length=20,blank=True)
 	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
+	requiere_arbitraje= models.BooleanField(default=False)
 	def __str__(self):
     		return self.titulo_espanol.encode('utf-8', errors='replace')
+
+class Trabajo_arbitro (models.Model):
+    	arbitro = models.ForeignKey('arbitrajes.Arbitro')
+	trabajo = models.ForeignKey('Trabajo')
+	fin_arbitraje= models.BooleanField()
+	invitacion= models.BooleanField()
+	comentario_autor= models.TextField(blank=True)
+	arbitraje_resultado = models.CharField(max_length=50,blank=True)
+
+	def __str__(self):
+    		return "{} {}".format(self.arbitro.nombres,self.arbitro.apellidos).encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
