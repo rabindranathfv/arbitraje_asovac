@@ -688,7 +688,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
             if excel_file.ncols == 18:
                 data['status']=200
-                data['message']="Se cargaron los usuarios de manera exitosa"
+                data['message']=""
 
                 # se validan los campos del documento
                 for fila in range(excel_file.nrows):
@@ -697,176 +697,154 @@ def validate_load_users(filename,extension,arbitraje_id):
 						#Se verifica que el campo nombres no esté vacío
                         if excel_file.cell_value(rowx=fila, colx=0) == '':
 							data['status']=400
-							data['message']="Error en la fila {0} el nombre es un campo obligatorio".format(fila)
-							break
+							data['message'] = data['message'] + "Error en la fila {0} el nombre es un campo obligatorio \n".format(fila)
 						
                         else:
 							nombres_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=0)).strip())
 							if not nombres_is_valid:
 								data['status']=400
-								data['message']="Error en la fila {0} el campo de nombres, solo debe tener letras".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0} el campo de nombres, solo debe tener letras \n".format(fila)
 
 						# Se verifica que el campo apellidos no esté vacio
                         if excel_file.cell_value(rowx=fila, colx=1) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} el apellido es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} el apellido es un campo obligatorio \n".format(fila)
+
                         else:
 							apellidos_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=1)).strip())
 							if not apellidos_is_valid:
 								data['status']=400
-								data['message']="Error en la fila {0} el campo de apellidos, solo debe tener letras".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0} el campo de apellidos, solo debe tener letras \n".format(fila)
 
 						# Se verifica que el campo género no este vacio
                         if excel_file.cell_value(rowx=fila, colx=2) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} el género es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} el género es un campo obligatorio \n".format(fila)
+
                         elif excel_file.cell_value(rowx=fila, colx=2) != 'M' and excel_file.cell_value(rowx=fila, colx=2) != 'F':
 							data['status']=400
-							data['message']="Error en la fila {0} el género debe ser 'M' o 'F' (verifique que esté en mayúsculas).".format(fila)
-							break
+							data['message'] = data['message'] + "Error en la fila {0} el género debe ser 'M' o 'F' (verifique que esté en mayúsculas) \n".format(fila)
 
 						# Se verifica que el campo cédula/pasaporte no este vacio
                         if excel_file.cell_value(rowx=fila, colx=3) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} la cédula/pasaporte es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} la cédula/pasaporte es un campo obligatorio \n".format(fila)
                         else:
 							cedula_pasaporte = str(excel_file.cell_value(rowx=fila, colx=3))
 							if cedula_pasaporte[0] !='V' and cedula_pasaporte != 'P':
 								data['status'] = 400
-								data['message'] = "Error en la fila {0}, el campo cédula/pasaporte debe empezar por una letra V o P seguido del número.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0}, el campo cédula/pasaporte debe empezar por una letra V o P seguido del número \n".format(fila)
 
 							elif not cedula_pasaporte[1:].isdigit():
 								data['status'] = 400
-								data['message'] = "Error en la fila {0} la cédula/pasaporte solamente debe tener números después de V o P.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0} la cédula/pasaporte solamente debe tener números después de V o P \n".format(fila)
 
 							elif Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
 								data['status'] = 400
-								data['message'] = "Error en la fila {0} ya existe un autor con esta cédula o pasaporte.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0} ya existe un autor con esta cédula o pasaporte \n".format(fila)
 
 						# Se verifica que el campo correo electrónico no este vacio
                         if excel_file.cell_value(rowx=fila, colx=4) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} el correo electrónico es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} el correo electrónico es un campo obligatorio \n".format(fila)
 
                         else:
 							correo_electronico = str(excel_file.cell_value(rowx=fila, colx=4))
 							if User.objects.filter(email = correo_electronico).exists():
 								data['status']=400
-								data['message']="Error en la fila {0}, ya hay un autor registrado con este correo electrónico.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0}, ya hay un autor registrado con este correo electrónico \n".format(fila)
 						# Se verifica que el campo telefono de oficina no este vacio
                         if excel_file.cell_value(rowx=fila, colx=5) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} el teléfono de oficina es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} el teléfono de oficina es un campo obligatorio \n".format(fila)
+
                         else:
 							telefono_oficina = str(excel_file.cell_value(rowx=fila, colx=5)).split('.')
 							telefono_oficina = telefono_oficina[0]
 							telefono_oficina_length = len(telefono_oficina)
 							if not telefono_oficina.isdigit():
 								data['status']=400
-								data['message']="Error en la fila {0}, el teléfono de oficina debe contener solamente dígitos.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0}, el teléfono de oficina debe contener solamente dígitos \n".format(fila)
+
 							elif telefono_oficina_length < 10 or 15 < telefono_oficina_length:
 								data['status']=400
-								data['message']="Error en la fila {0}, el teléfono de oficina debe tener de 10 a 15 dígitos.".format(fila)
-								break
-
+								data['message'] = data['message'] + "Error en la fila {0}, el teléfono de oficina debe tener de 10 a 15 dígitos \n".format(fila)
 
 						# Se verifica que el campo teléfono de habitación/celular no este vacio
                         if excel_file.cell_value(rowx=fila, colx=6) == '':
                             data['status']=400
-                            data['message']="Error en la fila {0} el teléfono de habitación/celular es un campo obligatorio".format(fila)
-                            break
+                            data['message'] = data['message'] + "Error en la fila {0} el teléfono de habitación/celular es un campo obligatorio \n".format(fila)
+
                         else:
 							telefono_habitacion_celular = str(excel_file.cell_value(rowx=fila, colx=6)).split('.')
 							telefono_habitacion_celular = telefono_habitacion_celular[0]
 							telefono_habitacion_celular_length = len(telefono_habitacion_celular)
 							if not telefono_habitacion_celular.isdigit():
 								data['status']=400
-								data['message']="Error en la fila {0}, el teléfono de habitación/celular debe contener solamente dígitos.".format(fila)
-								break
+								data['message'] = data['message'] + "Error en la fila {0}, el teléfono de habitación/celular debe contener solamente dígitos \n".format(fila)
+
 							elif telefono_habitacion_celular_length < 10 or 15 < telefono_habitacion_celular_length:
-								data['status']=400
-								data['message']="Error en la fila {0}, el teléfono de habitación/celular debe tener de 10 a 15 dígitos.".format(fila)
-								break
+								data['status']=400								
+								data['message'] = data['message'] + "Error en la fila {0}, el teléfono de habitación/celular debe tener de 10 a 15 dígitos \n".format(fila)
 
 						# Se verifica que el campo es miembro asovac no este vacio
                         if excel_file.cell_value(rowx=fila, colx=8) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} el '¿es miembro asovac?' es un campo obligatorio".format(fila)
-                            break
+                            data['status']=400								
+                            data['message'] = data['message'] + "Error en la fila {0} el '¿es miembro asovac?' es un campo obligatorio \n".format(fila)
+
                         elif excel_file.cell_value(rowx=fila, colx=8) != 'S' and excel_file.cell_value(rowx=fila, colx=8) != 'N':
-							data['status']=400
-							data['message']="Error en la fila {0}, el campo '¿es miembro asovac?' debe tener solo 'S' o 'N'".format(fila)
-							break
+							data['status']=400                            
+							data['message'] = data['message'] + "Error en la fila {0}, el campo '¿es miembro asovac?' debe tener solo 'S' o 'N' \n".format(fila)
 
 						# Se verifica que el campo nivel de instrucción no este vacio
                         if excel_file.cell_value(rowx=fila, colx=10) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} el nivel de instrucción es un campo obligatorio".format(fila)
-                            break
+                            data['status']=400							
+                            data['message'] = data['message'] + "Error en la fila {0} el nivel de instrucción es un campo obligatorio \n".format(fila)
 
 						# Se verifica que el campo área no este vacio
                         if excel_file.cell_value(rowx=fila, colx=12) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} el área es un campo obligatorio".format(fila)
-                            break
+                            data['status']=400                            
+                            data['message'] = data['message'] + "Error en la fila {0} el área es un campo obligatorio \n".format(fila)
+
                         elif not Area.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12))).exists():
-							data['status']=400
-							data['message']="Error en la fila {0}, no existe un área con este nombre.".format(fila)
-							break
+							data['status']=400                            
+							data['message'] = data['message'] + "Error en la fila {0}, no existe un área con este nombre \n".format(fila)
+
 						# Se verifica que el campo subarea1 no este vacio
                         if excel_file.cell_value(rowx=fila, colx=13) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} el subárea1 es un campo obligatorio".format(fila)
-                            break
+                            data['status']=400							
+                            data['message'] = data['message'] + "Error en la fila {0} el subárea1 es un campo obligatorio \n".format(fila)
+
                         else:
 							area = Area.objects.get(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12)))
 							subarea_name = str(excel_file.cell_value(rowx=fila, colx=13))
 							if not Sub_area.objects.filter(area = area, nombre__iexact = subarea_name).exists():
-								data['status']=400
-								data['message']="Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
-								break
-                        
-                        area = Area.objects.get(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12)))
+								data['status']=400                            
+								data['message'] = data['message'] + "Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 
 						# Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
                         if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=14))).exists():
-							data['status']=400
-							data['message']="Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
-							break
+							data['status']=400								
+							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 						
 						# Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
                         if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=15))).exists():
-							data['status']=400
-							data['message']="Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
-							break
+							data['status']=400							
+							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea3 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 
 						# Se verifica que el campo universidad no este vacio
                         if excel_file.cell_value(rowx=fila, colx=16) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} la universidad es un campo obligatorio".format(fila)
-                            break
-                        elif not Universidad.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=16))).exists():
-							data['status']=400
-							data['message']="Error en la fila {0}, no hay universidad con el nombre indicado".format(fila)
-							break
+                            data['status']=400							
+                            data['message'] = data['message'] + "Error en la fila {0} la universidad es un campo obligatorio \n".format(fila)
 
-						# Se verifica que el campo universidad no este vacio
+                        elif not Universidad.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=16))).exists():
+							data['status']=400                            
+							data['message'] = data['message'] + "Error en la fila {0}, no hay universidad con el nombre indicado \n".format(fila)
+
+						# Se verifica que el campo linea de investigación no este vacio
                         if excel_file.cell_value(rowx=fila, colx=17) == '':
-                            data['status']=400
-                            data['message']="Error en la fila {0} la línea de investigación es un campo obligatorio".format(fila)
-                            break
+                            data['status']=400							
+                            data['message'] = data['message'] + "Error en la fila {0} la línea de investigación es un campo obligatorio \n".format(fila)
 
 	# Inserta los registros una vez realizada la validación correspondiente
 	if data['status'] == 200:
