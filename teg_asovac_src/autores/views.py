@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago, Universidad
+from arbitrajes.models import Arbitro
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
 from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
@@ -64,6 +65,10 @@ def admin_create_author(request):
 					usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
 				usuario_asovac.save()
 
+				#Creación de instancia de arbitro
+				new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, linea_investigacion = form.cleaned_data['linea_investigacion'], telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
+				new_arbitro.save()
+
 				context = {
 				'username': username,
 				'sistema_asovac': sistema_asovac.nombre,
@@ -78,6 +83,7 @@ def admin_create_author(request):
 				        [usuario.email],               #destinatario
 				        html_message=msg_html,              #mensaje en html
 				        )
+				print("Todo ok")
 				return redirect('autores:authors_list')
 			except:
 				pass
@@ -680,7 +686,7 @@ def validate_load_users(filename,extension,arbitraje_id):
          
             excel_file = book.sheet_by_index(0)
 
-            if excel_file.ncols == 17:
+            if excel_file.ncols == 18:
                 data['status']=200
                 data['message']="Se cargaron los usuarios de manera exitosa"
 
@@ -846,7 +852,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 							data['message']="Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado.".format(fila, area.nombre)
 							break
 
-						# Se verifica que el campo apellidos no este vacio
+						# Se verifica que el campo universidad no este vacio
                         if excel_file.cell_value(rowx=fila, colx=16) == '':
                             data['status']=400
                             data['message']="Error en la fila {0} la universidad es un campo obligatorio".format(fila)
@@ -855,11 +861,18 @@ def validate_load_users(filename,extension,arbitraje_id):
 							data['status']=400
 							data['message']="Error en la fila {0}, no hay universidad con el nombre indicado".format(fila)
 							break
+
+						# Se verifica que el campo universidad no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=17) == '':
+                            data['status']=400
+                            data['message']="Error en la fila {0} la línea de investigación es un campo obligatorio".format(fila)
+                            break
+
 	# Inserta los registros una vez realizada la validación correspondiente
 	if data['status'] == 200:
 		is_create = create_authors(excel_file,arbitraje_id)
 		print is_create
-		if is_create == 5000:
+		if is_create == -1:
 			data['message'] = "Los datos del archivo son válidos"
 		else:
 			data['status'] = 400
@@ -872,7 +885,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
 def create_authors(excel_file, arbitraje_id):
     
-	resultado = 5000
+	resultado = -1
 
 	for fila in range(excel_file.nrows):
 		if fila > 0: 
@@ -951,6 +964,10 @@ def create_authors(excel_file, arbitraje_id):
 					new_autor.universidad = universidad
 					new_autor.save()
 
+					#Creación de instancia de arbitro
+					new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, linea_investigacion = excel_file.cell_value(rowx=fila, colx=17).strip(), telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
+					new_arbitro.save()
+					"""
 					context = {
 					'username': username,
 					'sistema_asovac': arbitraje.nombre,
@@ -965,6 +982,7 @@ def create_authors(excel_file, arbitraje_id):
 							[user.email],               #destinatario
 							html_message=msg_html,              #mensaje en html
 							)
+					"""
 				else:
 					resultado = fila
 					break;

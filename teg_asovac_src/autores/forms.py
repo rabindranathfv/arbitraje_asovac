@@ -322,6 +322,8 @@ class AdminCreateAutorForm(forms.ModelForm):
             														'rows':2 })
         }
 
+	linea_investigacion = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Introduzca la línea de investigación.'}))
+
 	def __init__(self, *args, **kwargs):
 		super(AdminCreateAutorForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
