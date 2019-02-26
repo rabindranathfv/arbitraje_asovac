@@ -290,7 +290,7 @@ def trabajos_evaluados(request):
 
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
-    rol_id=get_roles(request.user.id,arbitraje_id)
+    rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, event_id)

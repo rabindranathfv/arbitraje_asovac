@@ -488,7 +488,7 @@ var SaveAñadirPagoForm= function(){
                 // console.log(data);
                 if(data.status == 200 ){
                     // console.log('actualizacion exitosa')
-                    $('#bootstrapTableModal .modal-body').html("Se han asignado los arbitros para este trabajo de manera exitosa.");
+                    $('#bootstrapTableModal .modal-body').html("La asignación de arbitros para este trabajo se ha completado de manera exitosa.");
                     $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
                     $('#modal-user').modal('hide');
                 }else{
