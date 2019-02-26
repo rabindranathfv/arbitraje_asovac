@@ -66,9 +66,9 @@ def admin_create_author(request):
 				usuario_asovac.save()
 
 				#Creación de instancia de arbitro
-				new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, linea_investigacion = form.cleaned_data['linea_investigacion'], telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
+				new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
 				new_arbitro.save()
-
+				"""
 				context = {
 				'username': username,
 				'sistema_asovac': sistema_asovac.nombre,
@@ -83,6 +83,7 @@ def admin_create_author(request):
 				        [usuario.email],               #destinatario
 				        html_message=msg_html,              #mensaje en html
 				        )
+				"""
 				print("Todo ok")
 				return redirect('autores:authors_list')
 			except:
@@ -841,11 +842,6 @@ def validate_load_users(filename,extension,arbitraje_id):
 							data['status']=400                            
 							data['message'] = data['message'] + "Error en la fila {0}, no hay universidad con el nombre indicado \n".format(fila)
 
-						# Se verifica que el campo linea de investigación no este vacio
-                        if excel_file.cell_value(rowx=fila, colx=17) == '':
-                            data['status']=400							
-                            data['message'] = data['message'] + "Error en la fila {0} la línea de investigación es un campo obligatorio \n".format(fila)
-
 	# Inserta los registros una vez realizada la validación correspondiente
 	if data['status'] == 200:
 		is_create = create_authors(excel_file,arbitraje_id)
@@ -943,7 +939,7 @@ def create_authors(excel_file, arbitraje_id):
 					new_autor.save()
 
 					#Creación de instancia de arbitro
-					new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, linea_investigacion = excel_file.cell_value(rowx=fila, colx=17).strip(), telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
+					new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
 					new_arbitro.save()
 					"""
 					context = {
@@ -992,6 +988,7 @@ def load_authors_modal(request):
 			if response['status'] == 200:
 				messages.success(request, "La importación de autores fue llevada a cabo con éxito.")
 			else:
+				print(response['message'])
 				messages.error(request, response['message']) 
 
 			data['url'] = reverse('autores:authors_list')
