@@ -67,7 +67,6 @@ def admin_create_author(request):
 				#Creación de instancia de arbitro
 				new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
 				new_arbitro.save()
-				"""
 				context = {
 				'username': username,
 				'sistema_asovac': sistema_asovac.nombre,
@@ -82,8 +81,6 @@ def admin_create_author(request):
 				        [usuario.email],               #destinatario
 				        html_message=msg_html,              #mensaje en html
 				        )
-				"""
-				print("Todo ok")
 				return redirect('autores:authors_list')
 			except:
 				pass
