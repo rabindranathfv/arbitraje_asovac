@@ -14,6 +14,9 @@ urlpatterns = [
     url(r'^trabajos-evaluados/$', views.trabajos_evaluados, name = 'trabajos_evaluados'),
     url(r'^resultados/$', views.trabajos_resultados_autor, name = 'trabajos_resultados_autor'),
 
+    #Carga de contenido 
+    url(r'^listTrabajos$',views.list_trabajos,name='list_trabajos'),
+
     # Ajax
     url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),
     url(r'^resultados/observaciones/(?P<trabajo_version_final_id>\d+)/$',views.show_job_observations , name='show_job_observations'),

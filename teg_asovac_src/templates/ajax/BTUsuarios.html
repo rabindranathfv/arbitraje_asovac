@@ -5,7 +5,7 @@
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" >Usuario {{user.username}}</h4>
+        <h3 class="modal-title" >Detalle de Usuario</h3>
     </div>
 
     <div class="modal-body">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-danger btn-lg" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
     </div>
 
 {% else %}
@@ -47,7 +47,7 @@
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >{{user.username}}</h4>
+                <h3 class="modal-title" >Editar Usuario</h3>
             </div>
             
             <div class="modal-body">
@@ -55,8 +55,8 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" id="tableButtonSave">Guardar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="tableButtonSave">Guardar</button>
             </div>
         </form>
     {% else %}
@@ -65,7 +65,7 @@
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Eliminar Usuario</h4>
+                <h3 class="modal-title" >Eliminar Usuario</h3>
             </div>
         
             <div class="modal-body">
@@ -76,8 +76,8 @@
             </div>
         
             <div class="modal-footer">
-                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger" >Eliminar</button>
+                <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger btn-lg" >Eliminar</button>
             </div>
         </form>
         {% else %}
@@ -85,7 +85,7 @@
             
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Eliminar Usuario</h4>
+                <h3 class="modal-title" >Eliminar Usuario</h3>
             </div>
             
             <div class="modal-body">
@@ -93,8 +93,8 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger" >Eliminar</button>
+                <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-danger btn-lg" >Eliminar</button>
             </div>
             {% else %}
     
@@ -105,7 +105,7 @@
                         {% csrf_token %}
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" > Roles para el usuario: {{user.first_name}} {{user.last_name}}</h4>
+                            <h3 class="modal-title" > Roles para el usuario: {{user.first_name}} {{user.last_name}}</h3>
                         </div>
                         
                         <div class="modal-body">
@@ -129,8 +129,8 @@
                         </div>
                         
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" id="Buttonsave">Guardar</button>
+                            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary btn-lg" id="Buttonsave">Guardar</button>
                         </div>
                     </form>
 
@@ -167,7 +167,7 @@
                     {% if permiso == "rol-no-permitido" %}
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Usuario {{user.username}}</h4>
+                        <h3 class="modal-title">Usuario {{user.username}}</h3>
                     </div>
                     
                     <div class="modal-body">
@@ -175,7 +175,7 @@
                     </div>
                     
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-default btn-lg" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
                     </div>
                     {% endif %}
                 {% endif %}

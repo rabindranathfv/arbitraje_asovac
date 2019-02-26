@@ -1,3 +1,5 @@
+
+
 {% extends "content_wrapper_with_sidebar.html" %}
 
 {% block inner_content %}
@@ -8,74 +10,161 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="row middle-content">
-					<div class="col-sm-6">
-						<h2 class="text-left">Lista de trabajos</h2>
+				<div class="col-sm-6">
+					<h2 class="text-left">Lista de Trabajos</h2>
+				</div>
+
+				<!-- Bootstrap table -->
+				<div class="row">
+
+					<div class="col-md-8">
 					</div>
-					<div class="col-sm-4">
-						<form class="form-inline text-right">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Buscar..." aria-label="Buscar">
-								<span class="input-group-btn">
-									<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-								</span>
-							</div>
-						</form>
-					</div>
-					<div class="col-sm-2 btn-lg">
+					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
 						<div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
+								class="caret"></span></button>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Importar Trabajos</a>
+									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
+									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
 								</li>
 							</ul>
 						</div>
 					</div>
 				</div>
-				<br>
-				 <!-- El id show_users se usa para referenciar el contenido a actualizar usando ajax -->
-				<table class="table table-bordered" id="show_users">
-					<thead>
-						<tr>
-							<th>Autor principal</th>
-							<th>Título</th>
-							<th>Forma de presentación</th>
-							<th>Área</th>
-							<th>Subárea</th>
-							<th >Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Se carga contenido de forma dinamica con ajax para filtrar areas -->
-						{% include 'ajax/dinamic_jobs_list.html' %}  
-					</tbody>
-				</table>
+
+				<input type="hidden" id="listTrabajos" name="list" data-url="{% url 'trabajos:list_trabajos' %}">
+
+				<div id="toolbar">
+					<div class="form-inline" role="form">
+						<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+					</div>
+				</div>
+					<table id="table"
+							data-toggle="table"
+							data-ajax="ajaxTrabajos"
+							data-side-pagination="server"
+							data-show-export="false"
+							data-toolbar="#toolbar"
+							data-pagination="true"
+							data-page-size="5"
+							data-page-list="[0,5,10,25,50,100, 200]"
+							data-show-refresh="true"
+							data-search="true"
+							data-sort-name="pk"
+							data-show-toggle="true"
+							data-show-columns="true"
+							data-detail-view="false"
+							data-detail-formatter="detailFormatter"
+							>
+							<thead>
+								<tr>
+									<th data-field="estatus" data-sortable="true">Estatus</th>
+									<th data-field="nombre" data-sortable="true">Área</th>
+									<th data-field="titulo_espanol" data-sortable="true">Título </th>
+									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
+									<th data-field="observaciones" data-sortable="true">Observaciones</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
+								</tr>
+						</thead>
+					</table>
+				<!-- End Bootstrap table -->
+		
 			</div>
 		</div>
 	</div>
 </div>
 
 <!-- Modal Carga Excel-->
-<div class="modal fade" id="ModalTrabajosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="ModalArbitrosExcel" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body text-center content-modal">
-					¿Está seguro que desea cargar trabajos por el excel?
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-					<button type="submit" class="btn btn-primary btn-success">Cargar</button>
-				</div>
+				<h3 class="modal-title" id="ModalLongTitle">Cargar arbitros por excel</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-center content-modal">
+				¿Está seguro que desea cargar arbitros por el excel?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+				<button type="submit" class="btn btn-primary btn-success">Cargar</button>
 			</div>
 		</div>
 	</div>
+</div>
+
 {% endblock %}
 
 
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}"></script>
+	<script>
+
+		var $table = $('#table');
+		// your custom ajax request here
+		
+
+		function ajaxTrabajos(params) {
+			var route= $("#listTrabajos").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+		
+		function detailFormatter(index, row) {
+		
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+		var init=init+ '<th style="text-align: center;" >Cédula/Pasaporte</th>'; 
+		var init=init+ '<th style="text-align: center;" >Título</th>'; 
+		var init=init+ '<th style="text-align: center;" >Área</th>'; 
+		var init=init+ '<th style="text-align: center;" >Línea de investigación</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "linea_investigacion" || key == "cedula_pasaporte" || key == "nombre" || key == "titulo"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
+
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listTrabajos").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
+		
+		
+
+	</script> 
+
+{% endblock %}
