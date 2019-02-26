@@ -1,4 +1,4 @@
-# -*- coding: utf-8 necessary for django string usage -*-
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
@@ -28,7 +28,7 @@ class Rol(models.Model):
 
 	nombre = models.CharField(max_length=80)
 	descripcion = models.TextField(max_length=255)
-	
+
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
 
@@ -39,7 +39,7 @@ class Area(models.Model):
 
 	nombre = models.CharField(max_length=100)
 	descripcion = models.TextField(max_length=150, blank = True)
-	
+
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
 
@@ -75,7 +75,7 @@ class Sistema_asovac(models.Model):
 	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	porcentaje_iva = models.SmallIntegerField()
 	monto_pagar_trabajo = models.IntegerField()
-	
+
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
 
@@ -97,7 +97,7 @@ class Usuario_asovac(models.Model):
 Usuario_rol_in_sistema Model
 """""""""""""""""""""""""""
 class Usuario_rol_in_sistema(models.Model):
-	
+
 	rol = models.ForeignKey(Rol)
 	sistema_asovac = models.ForeignKey(Sistema_asovac,blank=True,null=True)
 	usuario_asovac = models.ForeignKey(Usuario_asovac)
@@ -119,7 +119,7 @@ class Usuario_rol_in_sistema(models.Model):
 				biggest_role = role
 		return biggest_role
 """
-	
+
 
 
 
@@ -138,7 +138,7 @@ def crear_usuario_asovac(sender, **kwargs):
 		first_usuario_asovac = Usuario_asovac.objects.count()
 		roles = Rol.objects.count()
 		list_areas= Area.objects.count()
-		
+
 
 		if list_areas == 0:
     		# Para cargar contenido para el area 1
@@ -244,13 +244,13 @@ def crear_usuario_asovac(sender, **kwargs):
 
 			sub_area= Sub_area(nombre="Física de los Materiales",descripcion="-",area_id=5)
 			sub_area.save()
-			
+
 			sub_area= Sub_area(nombre="Física del Espacio",descripcion="-",area_id=5)
 			sub_area.save()
 
 
 		#Esto asegura la creación de roles al momento de crear el primer usuario
-		if first_usuario_asovac == 1 and roles == 0: 
+		if first_usuario_asovac == 1 and roles == 0:
 			rol = Rol(nombre="Admin", descripcion="Administrador")
 			rol.save()
 
@@ -278,6 +278,3 @@ def crear_usuario_asovac(sender, **kwargs):
 				usuario_asovac.save()
 
 post_save.connect(crear_usuario_asovac, sender=User)
-
-
-
