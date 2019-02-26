@@ -63,7 +63,7 @@ class Arbitro(models.Model):
 	apellidos = models.CharField(max_length=100)
 	genero = models.CharField(max_length=10)
 	cedula_pasaporte = models.CharField(max_length=20)
-	titulo = models.CharField(max_length=50)
+	titulo = models.CharField(max_length=50, blank = True)
 	correo_electronico = models.EmailField(max_length=150)
 	linea_investigacion = models.CharField(max_length=254)
 	telefono_oficina = models.CharField(max_length=20,blank=True)
