@@ -8,12 +8,13 @@ from django.db.models import Q
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.urls import reverse
 
 import json
+import random, string,xlrd,os,sys,xlwt
 from .models import Trabajo, Detalle_version_final,Trabajo_arbitro
 from autores.models import Autor, Autores_trabajos
 from arbitrajes.models import Arbitro
@@ -869,3 +870,66 @@ def viewTrabajo(request, id):
         'trabajo':trabajo,
     }
     return render(request,"trabajos_trabajo_info.html",context)
+
+
+#---------------------------------------------------------------------------------#
+#                               Exportar Arbitro                                 #
+#---------------------------------------------------------------------------------#
+def generate_report(request,tipo):
+    print "Excel para arbitros"
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    user_area=get_area(request.user.id)
+    # Para exportar información de Arbitro 
+    if tipo == '1':
+        
+        # consulta mas completa
+        if rol_user == 1 or rol_user == 2:
+            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+            where=' WHERE sis_aso.id= %s '
+            query= query+where
+        else:
+            if rol_user == 3:
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s AND main_a.id = %s '
+                query= query+where
+        
+    
+        order_by="trab.estatus"
+        query_count=query
+        query= query + " ORDER BY " + order_by
+        
+        if rol_user == 1 or rol_user ==2 :
+            data= User.objects.raw(query,event_id)
+            data_count= User.objects.raw(query_count,event_id)
+        else:
+            if rol_user == 3:
+                area= str(user_area.id)
+                data= User.objects.raw(query,[event_id,area])
+                data_count= User.objects.raw(query_count,[event_id,area])
+        
+        total=0
+        for item in data_count:
+            total=total+1
+
+        # Para definir propiedades del documento de excel
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Trabajos.xls'
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet("Usuarios")
+        # Para agregar los titulos de cada columna
+        row_num = 0
+        columns = ['Estatus', 'Área', 'Título','Presentación','Observaciones']
+        for col_num in range(len(columns)):
+            worksheet.write(row_num, col_num, columns[col_num])     
+        
+        for item in data:
+            row_num += 1
+            row = [item.estatus ,item.nombre ,item.titulo_espanol ,item.forma_presentacion,item.observaciones]
+            for col_num in range(len(row)):
+                worksheet.write(row_num, col_num, row[col_num])
+        
+        workbook.save(response)
+
+    return response
+

@@ -21,6 +21,9 @@ urlpatterns = [
     url(r'^listar-trabajos/selectArbitro/(?P<id>\d+)$',views.selectArbitro,name='selectArbitro'),
     url(r'^listar-trabajos/viewTrabajo/(?P<id>\d+)$',views.viewTrabajo,name='verTrabajo'),
 
+    # Generar Reportes
+    url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
+
     # Ajax
     url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),
     url(r'^resultados/observaciones/(?P<trabajo_version_final_id>\d+)/$',views.show_job_observations , name='show_job_observations'),
