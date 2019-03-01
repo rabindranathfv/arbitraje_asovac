@@ -709,7 +709,6 @@ def list_trabajos(request):
 def filterArbitro(data,trabajo_id):
     arbitros= []
 
-    # print "<------------------------------------------------------------------------------------>"
     for arb in data:
     
         caseNone=arb.trabajo_id == None
@@ -736,9 +735,7 @@ def filterArbitro(data,trabajo_id):
                     # print "Ya esta asignado a este trabajo"
                     # print ("Datos del arbitro: {0} {1} {2} {3}".format(arb.nombres,arb.apellidos,arb.correo_electronico,arb.trabajo_id))
                     arbitros.append({'id':arb.id,'nombres': arb.nombres,'apellidos':arb.apellidos, 'correo_electronico':arb.correo_electronico, 'trabajo_id':arb.trabajo_id  })
-        
-    # print "Cantidad de arbitros ",len(arbitros)
-    # print "<------------------------------------------------------------------------------------>"
+ 
     return arbitros
 
 def selectArbitro(request,id):
@@ -824,3 +821,51 @@ def selectArbitro(request,id):
         }
         response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
     return JsonResponse(response)
+
+
+
+def viewTrabajo(request, id):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    autor = Autor.objects.get(usuario = usuario_asovac)
+    trabajo = Trabajo.objects.get( id = id)
+    area=trabajo.subareas.all()[0].area.nombre
+    subarea=trabajo.subareas.all()[0].nombre
+    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
+
+    context = {
+        'nombre_vista' : 'Detalle Trabajo',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'autor_trabajo':autor_trabajo,
+        'area':area,
+        'subarea':subarea,
+        'trabajo':trabajo,
+    }
+    return render(request,"trabajos_trabajo_info.html",context)

@@ -18,10 +18,8 @@ urlpatterns = [
     url(r'^listTrabajos$',views.list_trabajos,name='list_trabajos'),
 
     # CRUD Trabajos
-    # url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
-    # url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
-    # url(r'^arbitro/listar-arbitros/removeArbitro/(?P<id>\d+)$',views.removeArbitro,name='eliminarArbitro'),
     url(r'^listar-trabajos/selectArbitro/(?P<id>\d+)$',views.selectArbitro,name='selectArbitro'),
+    url(r'^listar-trabajos/viewTrabajo/(?P<id>\d+)$',views.viewTrabajo,name='verTrabajo'),
 
     # Ajax
     url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),

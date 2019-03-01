@@ -122,9 +122,6 @@ $.ajaxSetup({
             '<a class="viewTrabajo" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',
             '</a>  ',
-            '<a class="editTrabajo" href="javascript:void(0)" title="Editar" >',
-            '<i class="far fa-edit"></i>',
-            '</a>  ',
             '<a class="selectArbitro" href="javascript:void(0)" title="Asignar Árbitro">',
             '<i class="fas fa-user-plus"></i>',
             '</a>  ' ,
@@ -398,6 +395,25 @@ $.ajaxSetup({
                     $('#bootstrapTableModal .modal-content').html(data.content);
                 }
             });
+        },
+
+        'click .viewTrabajo': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            location.href=route;
+            // $.ajax({
+            //     url: route,
+            //     type: 'get',
+            //     data: row.id,
+            //     dataType: 'json',
+            //     beforeSend: function(){
+            //         $('#bootstrapTableModal').modal('show');  
+            //     },
+            //     success: function (data){
+            //         // console.log(data);
+            //         $('#bootstrapTableModal .modal-content').html(data.content);
+            //     }
+            // });
         },
 
     };
