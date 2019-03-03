@@ -20,6 +20,7 @@ urlpatterns = [
     # CRUD Trabajos
     url(r'^listar-trabajos/selectArbitro/(?P<id>\d+)$',views.selectArbitro,name='selectArbitro'),
     url(r'^listar-trabajos/viewTrabajo/(?P<id>\d+)$',views.viewTrabajo,name='verTrabajo'),
+    url(r'^listar-trabajos/statusArbitro/(?P<id>\d+)$',views.viewEstatus,name='verEstatus'),
 
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),

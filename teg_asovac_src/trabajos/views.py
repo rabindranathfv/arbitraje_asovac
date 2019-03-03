@@ -871,6 +871,38 @@ def viewTrabajo(request, id):
     }
     return render(request,"trabajos_trabajo_info.html",context)
 
+def viewEstatus(request,id):
+    # print "Trabajo id: ",id
+
+    response= dict()
+    
+    # Consulta
+    query= "SELECT trab_arb.*, arb.* FROM trabajos_trabajo_arbitro AS trab_arb INNER JOIN arbitrajes_arbitro AS arb ON trab_arb.arbitro_id = arb.id"
+    where=' WHERE trabajo_id= %s '
+    query= query+where
+
+    
+    order_by="arb.nombres " 
+    query_count=query
+    query= query + " ORDER BY " + order_by
+    
+    arbitros= Arbitro.objects.raw(query,[str(id)])
+
+    if request.method == 'POST':
+      
+        response['status']= 200
+        # response['status']= 404
+            
+    else:
+       
+        response['status']= 200
+        context={
+            'tipo':"status",
+            'arbitros':arbitros,
+        }
+        response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
+    return JsonResponse(response)
+
 
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                 #
