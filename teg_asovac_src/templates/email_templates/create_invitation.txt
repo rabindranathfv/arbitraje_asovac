@@ -1,0 +1,6 @@
+Sistema ASOVAC: Creación de usuario
+
+
+Bienvenido(a) {{nombre}} {{apellido}}. Se ha registrado de manera exitosa en nuestro sistema, a continuación le mostramos la información de su cuenta:
+Su usuario es: {{ username }}
+Su contraseña es: {{ password }}
