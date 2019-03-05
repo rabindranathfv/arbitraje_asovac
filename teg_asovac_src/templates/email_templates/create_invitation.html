@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Sistema ASOVAC: Creación de usuario
+Sistema ASOVAC: Asignación de Trabajos
 {% endblock %}
 
 
@@ -11,22 +11,15 @@ Sistema ASOVAC: Creación de usuario
     <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
         <!-- Email text goes here-->
         <p style="text-align: justify;">
-            Bienvenido(a) {{nombre}} {{apellido}}. Se ha registrado de manera exitosa en nuestro sistema, a continuación le mostramos la información de su cuenta:
+            Bienvenido(a) <b>{{arbitro.nombres}} {{arbitro.apellidos}}</b>. Ha sido asignado para realizar 
+            la revisión del resumen <b>{{trabajo}}</b> pulse el boton para aceptar la invitación.
         </p>
     </td>
 </tr>
 <tr>
-    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;text-align: center;">
         <!-- Email text goes here-->
-        <p style="text-align: justify;">
-            Su usuario es: <strong>{{ username }}</strong>
-            <br>
-            Su contraseña es: <strong>{{ password }}</strong>
-            <br>
-            Se le ha asignado el rol de <strong>{{clave_arbitraje_rol}}</strong>
-            <br>
-            Su clave para realizar arbitrajes es: <strong>{{clave_arbitraje}}</strong>
-        </p>
+        <a style="border-radius: 10px; background-color: #454BBE;color: white; padding: 15px 25px;text-align: center;text-decoration: none;display: inline-block;" href="http://{{ url_site }}{% url 'trabajos:invitacion' uidb64=invitacion token=token %}"> Aceptar</a>
     </td>
 </tr>
 {% endblock %}
