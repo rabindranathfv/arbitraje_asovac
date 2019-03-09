@@ -1,0 +1,13 @@
+<div class="subareas-content">
+    <label class="control-label col-sm-3 requiredField" for="area_select"> 
+        Subarea <span class="asteriskField\">*<span>
+    </label>	
+    <div class="controls was-validated" name="subarea" >
+        <select title = "Seleccione el subarea" multiple = "simple" name="subarea_select" class="form-control" id="subarea_select" required>
+            <option value="\">Seleccione un subárea</option>
+            {% for subarea in subareas %}
+                <option data-area="{{subarea.area.id}}" value="{{subarea.id}}">{{ subarea.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

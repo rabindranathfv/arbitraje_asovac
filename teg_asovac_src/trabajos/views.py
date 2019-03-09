@@ -55,14 +55,11 @@ def trabajos(request):
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
-        subarea_list = request.POST.getlist("subarea_select")
-        if form.is_valid() and len(subarea_list) <= 3:
+        new_subarea = request.POST.get("subarea_select")
+        if form.is_valid() and new_subarea != "":
             new_trabajo = form.save()
-            counter = 0
-            for subarea in subarea_list:
-                area_to_assign = Sub_area.objects.get(id = subarea)
-                new_trabajo.subareas.add(area_to_assign)
-
+            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            new_trabajo.subareas.add(subarea_to_assign)
             new_trabajo.save()
 
             #Código para crear una instancia de Autores_trabajos
@@ -70,8 +67,8 @@ def trabajos(request):
             autor_trabajo.save()
             form = TrabajoForm()
         else:
-            if(3 < len(subarea_list)):
-                messages.error(request,"Solo puede elegir hasta 3 subareas al momento de crear un trabajo.")
+            if(new_subarea == ""):
+                messages.error(request,"Debe elegir un Área - Subárea para el trabajo.")
     else:
         form = TrabajoForm()
 
@@ -93,8 +90,17 @@ def trabajos(request):
 
 
     autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
-    areas= Area.objects.all()
-    subareas= Sub_area.objects.all()
+    
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+    
+    for subarea in subarea_list:
+        print subarea.area.nombre + ' - ' + subarea.nombre
+    
     context = {
         "nombre_vista": 'Autores',
         "form": form,
@@ -112,7 +118,7 @@ def trabajos(request):
         'trabajos': trabajos,
         'autores_trabajos_list': autores_trabajos_list,
         'areas':areas,
-        'subareas':subareas
+        'subarea_list':subarea_list
     }
     return render(request,"trabajos.html",context)
 
@@ -233,34 +239,27 @@ def edit_trabajo(request, trabajo_id):
       
     if request.method == 'POST':
         form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
-        subarea_list = request.POST.getlist("subarea_select")
-        area= request.POST.get("area_select")
-        if (form.is_valid() and (not area or (subarea_list and len(subarea_list) <= 3))):
+        if form.is_valid():
             trabajo_edit = form.save()
-            if(area): 
-                new_area = Area.objects.get(id = area)
-                trabajo_edit.area = new_area
-                trabajo_edit.subareas.clear()
-                
-                for subarea in subarea_list:
-                    new_subarea = Sub_area.objects.get(id = subarea)
-                    trabajo_edit.subareas.add(new_subarea)
-
-                
-                trabajo_edit.save()
-
-
+            trabajo_edit.subareas.clear()
+            new_subarea = Sub_area.objects.get(id = request.POST.get("subarea_select"))
+            trabajo_edit.subareas.add(new_subarea)
+            trabajo_edit.save()
             messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
             return redirect('trabajos:trabajos')
-        else:
-            if (3 < len(subarea_list)):
-                messages.error(request, 'Solo puede elegir hasta 3 subáreas.')
                 
     else: 
         form = EditTrabajoForm(instance = autor_trabajo.trabajo)
 
-    areas= Area.objects.all()
-    subareas= Sub_area.objects.all()
+
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+
+    subarea_selected = trabajo.subareas.all()[0]
     context = {
         'nombre_vista' : 'Editar Trabajo',
         'main_navbar_options' : main_navbar_options,
@@ -277,7 +276,8 @@ def edit_trabajo(request, trabajo_id):
         'form':form,
         'trabajo': trabajo,
         'areas': areas,
-        'subareas':subareas
+        'subarea_list':subarea_list,
+        'subarea_selected': subarea_selected
     }
     return render(request,"trabajos_edit_trabajo.html",context)
 

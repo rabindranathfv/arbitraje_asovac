@@ -369,30 +369,28 @@ var SaveAñadirPagoForm= function(){
     
             });
     
+            // Obtener subareas
+            var route= $(this).attr('data-url');
+            // Se reemplaza el valor por defeto de la ruta por el id del area
+            route=route.replace("0",area);
+            id=area;
+            // console.log("La ruta es "+route+ " y el area es: "+ area);
+
+            $.ajax({
+                type: "post",
+                url: route,
+                data: id,
+                dataType: "json",
+                success: function (data) {
+                    //    console.log(data.html_select);
+                    $('#content_subarea .subareas-content').html(data.html_select);
+                    $('.selectpicker').selectpicker();
+                }
+            });
         }else{
             $('#content_subarea').css("display", "none");
         }
 
-        // Obtener subareas
-        var route= $(this).attr('data-url');
-        // Se reemplaza el valor por defeto de la ruta por el id del area
-        route=route.replace("0",area);
-        id=area;
-        // console.log("La ruta es "+route+ " y el area es: "+ area);
-
-       $.ajax({
-           type: "post",
-           url: route,
-           data: id,
-           dataType: "json",
-           success: function (data) {
-            //    console.log(data.html_select);
-               $('#content_subarea .subareas-content').html(data.html_select);
-               $('.selectpicker').selectpicker();
-           }
-       });
-
-    
     });
 
      //Para habilitar boton de cambio de área y subarea 
