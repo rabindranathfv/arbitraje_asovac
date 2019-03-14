@@ -1,0 +1,101 @@
+{% extends "content_wrapper.html" %} 
+{% load static %} 
+{% block inner_content %}
+<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
+    {% include "success_messages.html" %}
+	{% include "errors_form.html" %}
+    {% include "toggle_title.html" %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                <h2 class="text-left">Lista de Trabajos</h2>
+
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="job-list" 
+                        data-toggle="table" 
+                        data-search="true" 
+                        data-sort-name="titulo_espanol"  
+                        data-pagination="true" 
+                        data-page-size="10" 
+                        data-page-list="[5,10,25,50,100, 200]"
+                        data-show-toggle="true" 
+                        data-show-columns="true">
+                        <!-- if event_place_data   -->
+                        
+                        <thead>
+                            <tr>
+                                <th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
+                                <th class="col-sm-2" data-sortable="true">Área</th>
+                                <th class="col-sm-2" data-sortable="true">Subárea</th>
+                                <th class="col-sm-2">Autor(es)</th>
+                                <th class="col-sm-1" data-switchable="false">Estatus</th>
+                                <th class="col-sm-2" data-switchable="false">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="searchable">
+
+                            <!--  for place_data in event_place_data  -->
+                            {% for trabajo, autor_list, trabajo_last_version in job_data %}
+                            <tr>
+                                <td class="text-center">{{trabajo_last_version.titulo_espanol}}</td>
+                                <td class="text-center">{{trabajo_last_version.subareas.all.first.area}}</td>
+                                <td class="text-center">{{trabajo_last_version.subareas.all.first.nombre}}</td>
+                                <td class="text-center">
+                                    {% for autor in autor_list %}
+                                        {{autor.autor.nombres}} {{autor.autor.apellidos}}
+                                        </br>
+                                    {% endfor %}
+                                </td>
+                                <td class="text-center">
+                                    {% if trabajo_last_version.estatus == "Pendiente" %}
+										<span class="label label-warning lb-md center-block">Pendiente</span>
+									{% elif trabajo_last_version.estatus == "Aprobado" %}
+										<span class="label label-success lb-md center-block">Aprobado</span>
+									{% elif trabajo_last_version.estatus == "Rechazado" %}
+										<span class="label label-danger lb-md center-block">Rechazado</span>
+									{% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="" class="btn btn-info" role="button" title="Editar Organizador">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <button class="btn btn-info show-form-delete" data-url="" title="Eliminar Evento">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+
+                                    <a href="" class="btn btn-info" role="button" title="Ver Detalles Organizador">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+
+                                    <button class="btn btn-info show-form-observations" data-url="" title="Añadir observaciones">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                            <!--  endfor   -->
+                            {% endfor %}
+                        </tbody>
+                         <!--    else   -->
+                       
+
+                        <!-- <div class="well well-lg">
+                                <img src="{% static 'images/ico.info.png' %}" class="img-responsive center-block" alt="Info">
+                                <strong><h2 class="text-center">No Hay Informacion Disponible</h2></strong>
+                            </div>                                                                
+                        -->
+                         <!--   endif    -->
+                        
+                    </table>
+                    <!-- End table  -->
+                </div>
+                <!--end jumbotrom -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
