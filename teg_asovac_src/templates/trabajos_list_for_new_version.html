@@ -69,10 +69,9 @@
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-info show-form-observations" data-url="" title="Añadir observaciones">
-                                        <i class="fas fa-comment"></i>
-                                    </button>
-
+                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
+										<i class="fas fa-eye"></i>
+									</a>
                                 </td>
                             </tr>
                             <!--  endfor   -->

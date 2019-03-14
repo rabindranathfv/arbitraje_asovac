@@ -338,12 +338,7 @@ def detalles_trabajo(request, trabajo_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-    autor = Autor.objects.get(usuario = usuario_asovac)
     trabajo = Trabajo.objects.get( id = trabajo_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
-
-    print(autor_trabajo.trabajo.archivo_trabajo.url)
 
     context = {
         'nombre_vista' : 'Editar Trabajo',
@@ -358,7 +353,7 @@ def detalles_trabajo(request, trabajo_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'autor_trabajo':autor_trabajo,
+        'trabajo':trabajo,
     }
     return render(request,"trabajos_detalles.html",context)
 
