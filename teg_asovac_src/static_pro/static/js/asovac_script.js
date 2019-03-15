@@ -584,6 +584,10 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
 
 
+    // Add new version to job
+    $('#job-list').on('click','.show-form-add-new-version-to-job',ShowForm);
+    $('#modal-user').on('submit','.job-create-new-version',saveFileFormAndRedirect);
+
      // Add observations to event
     $('#event-list').on('click','.show-form-observations',ShowForm);
 

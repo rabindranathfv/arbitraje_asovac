@@ -15,8 +15,15 @@ class TrabajoForm(forms.ModelForm):
 
 	class Meta:
 		model = Trabajo
-		fields = ['titulo_espanol', 'titulo_ingles', 'palabras_clave', 'forma_presentacion', 'resumen', 'documento_inscrito', 'url_trabajo', 'archivo_trabajo','trabajo_version']
-
+		fields = ['titulo_espanol', 'titulo_ingles', 'palabras_clave', 'forma_presentacion', 'resumen', 'documento_inscrito', 'url_trabajo', 'archivo_trabajo']
+		widgets = {
+			'titulo_espanol': forms.TextInput(attrs={'placeholder': 'Ejemplo: Trabajo de prueba'}),
+			'titulo_ingles': forms.TextInput(attrs={'placeholder': 'Ejemplo: Test Job'}),
+			'palabras_clave': forms.TextInput(attrs={'placeholder': 'Introduzca sus palabras clave'}),
+            'resumen': forms.Textarea(attrs={'placeholder': 'Introduzca su resumen aquí',
+            														'rows':2 }),
+            'url_trabajo': forms.TextInput(attrs={'placeholder': 'Ejemplo: www.google.com'}),
+        }
 	def __init__(self, *args, **kwargs):
 		super(TrabajoForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()

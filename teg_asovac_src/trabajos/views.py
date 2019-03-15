@@ -988,3 +988,42 @@ def trabajos_state_five_list(request):
         'job_data': job_data,
     }
     return render(request,"trabajos_list_for_new_version.html",context)
+
+
+def add_new_version_to_job(request, last_version_trabajo_id):
+    data = dict()
+    trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
+    if request.method == "POST":
+        form = TrabajoForm(request.POST, request.FILES)
+        new_subarea = request.POST.get("subarea_select")
+        if form.is_valid():
+            #Se almacena la nueva versión del trabajo
+            job_new_version = form.save()
+            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            job_new_version.subareas.add(subarea_to_assign)
+            job_new_version.save()
+            
+            #Se conecta la nueva versión del trabajo con su "padre"
+            trabajo.trabajo_version = job_new_version
+            trabajo.save()
+
+            messages.success(request,"Se ha creado la nueva versión del trabajo con éxito.")
+            data['form_is_valid'] = True
+            data['url'] = reverse('trabajos:trabajos_state_five_list')
+    else:
+        form = TrabajoForm()
+    
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+
+    context = {
+        'last_version_trabajo': trabajo,
+        'form':form,
+        'subarea_list': subarea_list
+    }
+    data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
+    return JsonResponse(data)
