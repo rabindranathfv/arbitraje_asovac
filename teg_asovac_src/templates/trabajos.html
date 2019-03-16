@@ -105,20 +105,20 @@
 
 				{% if sistema_asovac.estado_arbitraje == 3 %}
 					<div class="panel panel-default">
-							<div class="panel-heading">
-								<a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>
-							</div>
-							<div id="accordion" class="panel-body collapse">
-								<div class="container-fluid">
-									<div class="row middle-content">
-										<div class="col-sm-12">
-											<form method="POST" id="create-job-form" enctype="multipart/form-data" action="{% url 'trabajos:trabajos' %}">
-												{% crispy form %}
-											</form>
-										</div>
-									</div>
-								</div>
-							</div>
+                        <div class="panel-heading">
+                            <a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>
+                        </div>
+                        <div id="accordion" class="panel-body collapse">
+                            <div class="container-fluid">
+                                <div class="row middle-content">
+                                    <div class="col-sm-12">
+                                        <form method="POST" id="create-job-form" enctype="multipart/form-data" action="{% url 'trabajos:trabajos' %}">
+                                            {% crispy form %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 				{% endif %}
                 <!--end jumbotrom -->
