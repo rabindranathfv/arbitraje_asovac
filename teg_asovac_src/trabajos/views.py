@@ -74,23 +74,19 @@ def trabajos(request):
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
-#   for trabajo in trabajos:
-#       print(trabajo.trabajo.titulo_espanol)
-    paginator = Paginator(trabajos_list, 10) #Muestra 10 trabajos por página
+    trabajo_last_version_list = [] 
+    autores_trabajo_list = []
 
-    page = request.GET.get('page')
+    for autor_trabajo in trabajos_list:
+        autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
+        trabajo = autor_trabajo.trabajo
+        while trabajo.trabajo_version:
+            trabajo = trabajo.trabajo_version
+        trabajo_last_version_list.append(trabajo)
 
-    try:
-        trabajos = paginator.page(page)
-    except PageNotAnInteger:
-        #Si la página no es un entero, retorna la primera página
-        trabajos = paginator.page(1)
-    except EmptyPage:
-        trabajos = paginator.page(paginator.num_pages)
-
-
-    autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
     
+    job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
+    print job_data
     areas= Area.objects.all().order_by('nombre')
     subarea_list = []
     for area in areas:
@@ -113,9 +109,10 @@ def trabajos(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajos': trabajos,
-        'autores_trabajos_list': autores_trabajos_list,
         'areas':areas,
-        'subarea_list':subarea_list
+        'subarea_list':subarea_list,
+        'job_data': job_data,
+        'sistema_asovac': sistema_asovac
     }
     return render(request,"trabajos.html",context)
 
@@ -968,7 +965,7 @@ def trabajos_state_five_list(request):
 
     
     job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
-
+    form = TrabajoForm()
     context = {
         "nombre_vista": 'Autores',
         'main_navbar_options' : main_navbar_options,
@@ -983,6 +980,7 @@ def trabajos_state_five_list(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'job_data': job_data,
+        'form': form
     }
     return render(request,"trabajos_list_for_new_version.html",context)
 
