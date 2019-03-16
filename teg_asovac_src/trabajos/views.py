@@ -923,68 +923,6 @@ def generate_report(request,tipo):
     return response
 
 
-#Vista donde están la lista de trabajos del autor y dónde se le permite ver los resultados del arbitraje y subir nuevas versiones en los casos que es necesario
-def trabajos_state_five_list(request):
-    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-   
-    # print (rol_id)
-    
-    estado = request.session['estado']
-    arbitraje_id = request.session['arbitraje_id']
-
-    rol_id=get_roles(request.user.id,arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-   
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-
-    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-    autor = Autor.objects.get(usuario = usuario_asovac)
-    sistema_asovac = Sistema_asovac.objects.get(id = arbitraje_id)
-
-    trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
-
-    trabajo_last_version_list = [] 
-    autores_trabajo_list = []
-
-    for autor_trabajo in trabajos_list:
-        autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
-        trabajo = autor_trabajo.trabajo
-        while trabajo.trabajo_version:
-            trabajo = trabajo.trabajo_version
-        trabajo_last_version_list.append(trabajo)
-
-    
-    job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
-    form = TrabajoForm()
-    context = {
-        "nombre_vista": 'Autores',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-        'job_data': job_data,
-        'form': form
-    }
-    return render(request,"trabajos_list_for_new_version.html",context)
-
-
 def add_new_version_to_job(request, last_version_trabajo_id):
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
@@ -1004,7 +942,7 @@ def add_new_version_to_job(request, last_version_trabajo_id):
 
             messages.success(request,"Se ha creado la nueva versión del trabajo con éxito.")
             data['form_is_valid'] = True
-            data['url'] = reverse('trabajos:trabajos_state_five_list')
+            data['url'] = reverse('trabajos:trabajos')
     else:
         form = TrabajoForm()
     
