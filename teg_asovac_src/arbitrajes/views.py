@@ -75,11 +75,39 @@ def listado_trabajos(request):
     }
     return render(request, 'arbitrajes_trabajos_list.html', context)
 
-def detalles_resumen(request):
+def detalles_resumen(request, id_trabajo):
+    estado = request.session['estado']
+    event_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,event_id)
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, event_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, event_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, event_id)
+
+    trabajo = Trabajo.objects.get(id = id_trabajo)
+    
     context = {
-        'nombre_vista' : 'Detalles de Resumen',
+        'nombre_vista' : 'Detalles Resumen',
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'event_id' : event_id,
+        'arbitraje_id' : event_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'trabajo': trabajo,
+        'arbitro_review': True, #Booleano para mostrar botones para calificar trabajo
     }
-    return render(request, 'arbitrajes_detalle_resumen.html', context)
+    return render(request, 'trabajos_detalles.html', context)
 
 def referee_list(request):
 

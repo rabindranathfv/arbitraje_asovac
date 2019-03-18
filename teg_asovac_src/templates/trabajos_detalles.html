@@ -11,7 +11,11 @@
                     <div class="col-sm-2 col-sm-offset-5">
                         <div class="row middle-content">
                             <div class="col-sm-10">
-                                <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                {% if arbitro_review %}
+                                    <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                {% else %}
+                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

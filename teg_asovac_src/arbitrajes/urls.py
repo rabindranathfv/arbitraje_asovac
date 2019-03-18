@@ -20,7 +20,7 @@ from . import views
 
 urlpatterns = [
     url(r'^listado-trabajos/$',views.listado_trabajos, name='listado'),
-    url(r'^listado-trabajos/detalles/$',views.detalles_resumen, name='detalles_resumen'),
+    url(r'^listado-trabajos/detalles/(?P<id_trabajo>\d+)$',views.detalles_resumen, name='detalles_resumen'),
     url(r'^$', views.arbitrajes_pag, name= 'arbitrajes'),
     url(r'^asignar-sesion/$',views.asignacion_de_sesion, name='asignacion_de_sesion'),
     url(r'^arbitro/listar-arbitros/$',views.referee_list,name='referee_list'),

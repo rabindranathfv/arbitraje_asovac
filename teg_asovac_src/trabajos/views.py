@@ -351,6 +351,7 @@ def detalles_trabajo(request, trabajo_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo':trabajo,
+        'arbitro_review': False, #Esto es para ocultar los botones para calificar el trabajo 
     }
     return render(request,"trabajos_detalles.html",context)
 
