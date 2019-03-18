@@ -359,6 +359,12 @@ incluso cuando el contenido de la página es muy corto */
     align-items: center;
 }
 
+/*================= Bootrstrap align bottom rows =================*/
+
+.row.bottom-content {
+    display: flex;
+    align-items: bottom;
+}
 
 /*================= Typography styling =================*/
 

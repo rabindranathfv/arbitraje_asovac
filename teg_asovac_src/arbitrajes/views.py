@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from datetime import datetime, date
 from django.conf import settings
 from django.conf.urls import include, url
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core.mail import send_mail
 from django.shortcuts import render
 
@@ -29,7 +29,6 @@ def arbitrajes_pag(request):
 
 
 def listado_trabajos(request):
-
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,event_id)
@@ -538,3 +537,23 @@ def generate_report(request,tipo):
 
     return response
 
+
+def aprobe_job(request, trabajo_id):
+    
+    data = dict()
+    trabajo = Trabajo.objects.get(id = trabajo_id)
+    if request.method == "POST":
+        trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo)
+        trabajo_arbitro.fin_arbitraje = True
+        trabajo_arbitro.arbitraje_resultado = "Aprobado"
+        trabajo_arbitro.save()
+        trabajo.estatus = "Aprobado"
+        trabajo.save()
+        messages.success(request,"El trabajo fue aprobado con éxito.")
+        return redirect('arbitrajes:listado') 
+    else:
+        context = {
+            'trabajo': trabajo,
+        }
+        data['html_form'] = render_to_string('ajax/aprobe_job.html',context,request=request)
+    return JsonResponse(data)

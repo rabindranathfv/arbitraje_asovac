@@ -307,6 +307,12 @@ body {
    align-items: center;
 }
 
+/*================= Bootrstrap align bottom rows =================*/
+.row.bottom-content{
+    display: flex;
+    align-items: bottom;
+ }
+
 /*================= Typography styling =================*/
 .lb-md {
   font-size: 18px;

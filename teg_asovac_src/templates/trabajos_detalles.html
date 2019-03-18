@@ -1,6 +1,8 @@
-{% extends "content_wrapper.html" %}
+{% extends "content_wrapper.html" %} 
+{% load static %} 
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
+    {% include "success_messages.html" %}
      <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
@@ -12,9 +14,9 @@
                         <div class="row middle-content">
                             <div class="col-sm-10">
                                 {% if arbitro_review %}
-                                    <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                    <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                                 {% else %}
-                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                                 {% endif %}
                             </div>
                         </div>
@@ -90,6 +92,12 @@
                                 <p class="p-md">
                                     <strong>Observaciones:</strong> {{ trabajo.observaciones }}
                                 </p>
+                            {% endif %}
+                            {% if arbitro_review %}
+                                <div class= "row">
+                                    <a data-url="{% url 'arbitrajes:aprobe_job' trabajo.id %}" class="btn btn-success btn-lg col-sm-6" id="aprobe_job"><i class="fas fa-arrow-alt-circle-left"></i>Aprobar</a>
+                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-danger btn-lg col-sm-6"><i class="fas fa-arrow-alt-circle-left"></i>Reprobar</a>
+                                </div>
                             {% endif %}
                         </div>
                         <div class="col-sm-7">

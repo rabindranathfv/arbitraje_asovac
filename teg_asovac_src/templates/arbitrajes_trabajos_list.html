@@ -28,7 +28,7 @@
 								<th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
 								<th class="col-sm-2" data-sortable="true">Área</th>
 								<th class="col-sm-2" data-sortable="true">Subárea</th>
-								<th class="col-sm-2">Autor(es)</th>
+								<th class="col-sm-2" data-sortable="true">Autor(es)</th>
 								<th class="col-sm-1" data-sortable="true">Estatus</th>
 								<th class="col-sm-2" data-switchable="false">Acciones</th>
 							</tr>
@@ -66,15 +66,10 @@
 										</a>
 
 
-										<!-- Esto es lo que hay que verificar -->
-										<button class="btn btn-info show-form-delete" data-url="" title="Borrar">
-											<i class="fas fa-times"></i>
-										</button>
-										
-										<button class="btn btn-info show-form-add-new-version-to-job" data-url="" title="Crear nueva versión del trabajo">
-											<i class="fas fa-book"></i>
-										</button>
-									
+									<!-- Esto es lo que hay que verificar -->
+									<a class="btn btn-info aprobe-job" data-url="{% url 'arbitrajes:aprobe_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
+										<i class="fas fa-times"></i>
+									</a>
 
 									<a href="{% url 'arbitrajes:detalles_resumen' trabajos_arbitro.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
 										<i class="fas fa-eye"></i>

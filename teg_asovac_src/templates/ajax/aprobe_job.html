@@ -1,0 +1,27 @@
+{% load crispy_forms_tags %}
+<form method="post" action="{% url 'arbitrajes:aprobe_job' trabajo.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Aprobar trabajo</h4>
+    </div>
+    <div class="modal-body text-center">
+        <p>Una vez le dé click en aprobar, no podrá cambiar su decisión.</p>
+        <strong><p>¿Está seguro que desea aprobar el siguiente trabajo?</p></strong>
+
+        <strong>Título:</strong> <p>{{ trabajo.titulo_espanol }} </p>
+        <strong>Área:</strong> <p> {{ trabajo.subareas.first.area }} </p>
+        <strong>Subárea:</strong> <p> {{ trabajo.subareas.first }}</p>
+        <strong>Resumen:</strong> <p>  {{trabajo.resumen}}</p>
+        {% if trabajo.url_trabajo %}
+            <strong>URL del trabajo:</strong> <p> {{ trabajo.url_trabajo }} </p>
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Aprobar</button>
+    </div>
+</form>
