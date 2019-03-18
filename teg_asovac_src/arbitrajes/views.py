@@ -8,7 +8,9 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 
 import random, string,xlrd,os,sys,xlwt
+from autores.models import Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
@@ -41,10 +43,23 @@ def listado_trabajos(request):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, event_id)
 
-    # print items
+    user = request.user
+    usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+    arbitro = Arbitro.objects.get(usuario = usuario_asovac)
 
+    trabajos_arbitro_list = Trabajo_arbitro.objects.filter(arbitro = arbitro, fin_arbitraje = False, invitacion = True)
+    autores_trabajo_list = []
+    for trabajo_arbitro in trabajos_arbitro_list:
+        trabajo = trabajo_arbitro.trabajo
+        #Con las siguientes líneas de código buscaremos el trabajo que tiene ligado a las instancias de autores_trabajos para tener la lista de autores del trabajo en cuestión
+        while Trabajo.objects.filter(trabajo_version = trabajo):
+            trabajo = Trabajo.objects.get(trabajo_version = trabajo)
+
+        autores_trabajo_list.append(Autores_trabajos.objects.filter(trabajo = trabajo))
+    
+    job_data = zip(trabajos_arbitro_list, autores_trabajo_list)
     context = {
-        'nombre_vista' : 'Listado de Trabajos',
+        'nombre_vista' : 'Listado de Trabajos por arbitrar',
         'estado' : estado,
         'rol_id' : rol_id,
         'event_id' : event_id,
@@ -56,6 +71,7 @@ def listado_trabajos(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'job_data': job_data
     }
     return render(request, 'arbitrajes_trabajos_list.html', context)
 

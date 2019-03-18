@@ -1,65 +1,99 @@
-{% extends "content_wrapper_with_sidebar.html" %}
-
+{% extends "content_wrapper_with_sidebar.html" %} 
+{% load crispy_forms_tags %}
+{% load static %} 
 {% block inner_content %}
-<div class="container-fluid" id="content-wrapper">
+<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
+    {% include "success_messages.html" %}
+	{% include "errors_form.html" %}
+    {% include "toggle_title.html" %}
 
-	{% include "toggle_title.html" %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                <h2 class="text-left">Lista de Trabajos</h2>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
-				<div class="row">
-					<div class="col-sm-12">
-						<h2>Listado de trabajos</h2>
-					</div>
+                <div class="table-responsive">
+					<table class="table table-bordered" id="job-list-to-review" 
+						data-toggle="table" 
+						data-search="true" 
+						data-sort-name="titulo_espanol"  
+						data-pagination="true" 
+						data-page-size="10" 
+						data-page-list="[5,10,25,50,100, 200]"
+						data-show-toggle="true" 
+						data-show-columns="true">
+						
+						<thead>
+							<tr>
+								<th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
+								<th class="col-sm-2" data-sortable="true">Área</th>
+								<th class="col-sm-2" data-sortable="true">Subárea</th>
+								<th class="col-sm-2">Autor(es)</th>
+								<th class="col-sm-1" data-sortable="true">Estatus</th>
+								<th class="col-sm-2" data-switchable="false">Acciones</th>
+							</tr>
+						</thead>
+						<tbody class="searchable">
+
+							{% for trabajos_arbitro, autores_trabajo_list in job_data %}
+							<tr>
+								<td class="text-center">{{trabajos_arbitro.trabajo.titulo_espanol}}</td>
+								<td class="text-center">{{trabajos_arbitro.trabajo.subareas.first.area}}</td>
+								<td class="text-center">{{trabajos_arbitro.trabajo.subareas.first.nombre}}</td>
+								<td class="text-center">
+									{% for autor_trabajo in autores_trabajo_list %}
+										{{autor_trabajo.autor.nombres}} {{autor_trabajo.autor.apellidos}}
+										</br>
+									{% endfor %}
+								</td>
+								<td class="text-center">
+									{% if trabajos_arbitro.trabajo.estatus == "Pendiente" %}
+										<span class="label label-warning lb-md center-block">Pendiente</span>
+									{% elif trabajos_arbitro.trabajo.estatus == "Aprobado" %}
+										<span class="label label-success lb-md center-block">Aprobado</span>
+									{% elif trabajos_arbitro.trabajo.estatus == "Rechazado" %}
+										<span class="label label-danger lb-md center-block">Rechazado</span>
+									{% endif %}
+								</td>
+								<td class="text-center">
+										<button class="btn btn-info show-form-add-author" data-url="" title="Añadir autor">
+											<i class="fas fa-user"></i>
+										</button>
+
+
+										<a href="" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+											<i class="fas fa-edit"></i>
+										</a>
+
+
+										<!-- Esto es lo que hay que verificar -->
+										<button class="btn btn-info show-form-delete" data-url="" title="Borrar">
+											<i class="fas fa-times"></i>
+										</button>
+										
+										<button class="btn btn-info show-form-add-new-version-to-job" data-url="" title="Crear nueva versión del trabajo">
+											<i class="fas fa-book"></i>
+										</button>
+									
+
+									<a href="{% url 'trabajos:details_job' " class="btn btn-info" role="button" title="Ver trabajo">
+										<i class="fas fa-eye"></i>
+									</a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						
+					</table>
+					<!-- End table  -->
 				</div>
-				<div class="container-fluid">
-					<div class="row middle-content">
-						<div class="col-sm-12">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>Título</th>
-										<th>Área</th>
-										<th>Subárea</th>
-										<th>Autor(es)</th>
-										<th>Estado</th>
-										<th class="col-sm-1">Ver.</th>
-										<th class="col-sm-2">Acciones</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Este es un T&iacute;tulo</td>
-										<td>Computaci&oacute;n</td>
-										<td>Computaci&oacute;n001</td>
-										<td>
-											Rabindranath Ferreira
-										</td>
-										<td><span class="label label-success lb-md center-block">Aprobado</span></td>
-										<td>2.0</td>
-										<td>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-												<i class="fas fa-edit"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
-												<i class="fas fa-times"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Enviar">
-												<i class="fas fa-envelope"></i>
-											</a>
-											<a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
-												<i class="fas fa-door-open"></i>
-											</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+		
+                <!--end jumbotrom -->
+            </div>
+        </div>
+    </div>
 </div>
+
+
 {% endblock %}
+

@@ -57,7 +57,7 @@ class Trabajo(models.Model):
 class Trabajo_arbitro (models.Model):
 	arbitro = models.ForeignKey('arbitrajes.Arbitro')
 	trabajo = models.ForeignKey('Trabajo')
-	fin_arbitraje= models.BooleanField()
+	fin_arbitraje= models.BooleanField(default = False)
 	invitacion= models.BooleanField()
 	comentario_autor= models.TextField(blank=True)
 	arbitraje_resultado = models.CharField(max_length=50,blank=True)

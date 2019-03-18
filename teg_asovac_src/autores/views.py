@@ -422,9 +422,6 @@ def postular_trabajo(request):
 
 	context = {
 		"nombre_vista": 'Postular Trabajo',
-	#	"pagadorform": pagadorform,
-	#	"pagoform": pagoform,
-	#	"facturaform": facturaform,
 		'main_navbar_options' : main_navbar_options,
 		'estado' : estado,
 		'rol_id' : rol_id,

@@ -86,7 +86,7 @@ def trabajos(request):
 
     
     job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
-    print job_data
+ 
     areas= Area.objects.all().order_by('nombre')
     subarea_list = []
     for area in areas:
