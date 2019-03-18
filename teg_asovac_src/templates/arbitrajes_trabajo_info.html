@@ -1,0 +1,70 @@
+{% extends "content_wrapper_with_sidebar.html" %} {% block inner_content %}
+<div class="container" id="content-wrapper">
+
+    {% include "toggle_title.html" %}
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-lg btn-block"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a href="{% url 'trabajos:trabajos' %}">
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="text-center">Detalle del resumen</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-left" style="    font-size: 16px;">
+                                <span>
+                                    <b>Titulo:</b> {{trabajo.titulo_espanol}}   
+                                </span>
+                                <br>
+                                <span>
+                                    <b>Forma de presentación:</b>  {{trabajo.forma_presentacion}}   
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Área:</strong> {{area }}
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Subárea:</strong> {{subarea}}
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Estatus:</strong> {{trabajo.estatus}}
+                                </span>
+                                <br>
+                                <span >
+                                    <strong>Resumen:</strong> {{trabajo.resumen}}
+                                </span>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- <embed src="{{autor_trabajo.trabajo.archivo_trabajo.url }}" width="500" height="610" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+                        <embed style="min-height: 600px;" src="{{trabajo.archivo_trabajo.url }}" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                    </div>
+                </div>
+
+                
+
+               
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

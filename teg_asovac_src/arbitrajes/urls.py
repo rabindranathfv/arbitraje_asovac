@@ -19,7 +19,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    url(r'^listado-trabajos/$',views.listado_trabajos, name='listado'),
+    url(r'^estatus-trabajos/$',views.estatus_trabajos, name='listado'),
     url(r'^listado-trabajos/detalles/$',views.detalles_resumen, name='detalles_resumen'),
     url(r'^$', views.arbitrajes_pag, name= 'arbitrajes'),
     url(r'^asignar-sesion/$',views.asignacion_de_sesion, name='asignacion_de_sesion'),
@@ -29,11 +29,17 @@ urlpatterns = [
 
     #Carga de contenido 
     url(r'^listArbitros$',views.list_arbitros,name='list_arbitros'),
+    url(r'^listArbitrajes$',views.list_arbitrajes,name='list_arbitrajes'),
+
     
     # CRUD Arbitros
     url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
     url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
     url(r'^arbitro/listar-arbitros/removeArbitro/(?P<id>\d+)$',views.removeArbitro,name='eliminarArbitro'),
+
+    # CRUD Arbitraje
+    url(r'^estatus-trabajos/viewArbitraje/(?P<id>\d+)$',views.viewArbitraje,name='verArbitraje'),
+    url(r'^estatus-trabajos/changeStatus/(?P<id>\d+)$',views.changeStatus,name='cambiarEstatus'),
 
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
