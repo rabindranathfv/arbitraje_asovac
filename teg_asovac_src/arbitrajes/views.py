@@ -544,11 +544,10 @@ def aprobe_job(request, trabajo_id):
     trabajo = Trabajo.objects.get(id = trabajo_id)
     if request.method == "POST":
         trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo)
+        trabajo_arbitro.fecha_arbitraje = date.today().isoformat()
         trabajo_arbitro.fin_arbitraje = True
         trabajo_arbitro.arbitraje_resultado = "Aprobado"
         trabajo_arbitro.save()
-        trabajo.estatus = "Aprobado"
-        trabajo.save()
         messages.success(request,"El trabajo fue aprobado con éxito.")
         return redirect('arbitrajes:listado') 
     else:
