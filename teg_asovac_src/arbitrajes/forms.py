@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from .models import Arbitro
 from trabajos.models import Trabajo_arbitro
@@ -22,5 +23,6 @@ class RefereeCommentForm(forms.ModelForm):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-3'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['comentario_autor'].label = "comentario_autor"
+		self.fields['comentario_autor'].required = True
+		self.fields['comentario_autor'].label = "Comentario al autor"
 		self.fields['comentario_autor'].widget.attrs['rows'] = 4

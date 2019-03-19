@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^arbitro/listar-arbitros/$',views.referee_list,name='referee_list'),
     url(r'^arbitro/editar-arbitro/$',views.referee_edit,name='referee_edit'),
     url(r'^aprobar-trabajo/(?P<trabajo_id>\d+)$',views.aprobe_job, name='aprobe_job'),
+    url(r'^reprobar-trabajo/(?P<trabajo_id>\d+)$',views.reprobe_job, name='reprobe_job'),
     # url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
 
     #Carga de contenido 

@@ -56,24 +56,19 @@
 									{% endif %}
 								</td>
 								<td class="text-center">
-										<button class="btn btn-info show-form-add-author" data-url="" title="Añadir autor">
-											<i class="fas fa-user"></i>
-										</button>
 
+									<a href="{% url 'arbitrajes:detalles_resumen' trabajos_arbitro.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo" data-toggle="tooltip" data-placement="top" >
+										<i class="fas fa-eye"></i>
+									</a>
 
-										<a href="" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-											<i class="fas fa-edit"></i>
-										</a>
-
-
-									<!-- Esto es lo que hay que verificar -->
 									<a class="btn btn-info aprobe-job" data-url="{% url 'arbitrajes:aprobe_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
 										<i class="fas fa-times"></i>
 									</a>
 
-									<a href="{% url 'arbitrajes:detalles_resumen' trabajos_arbitro.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
-										<i class="fas fa-eye"></i>
+									<a class="btn btn-info reprobe-job" data-url="{% url 'arbitrajes:reprobe_job' trabajos_arbitro.trabajo.id %}" title="Reprobar trabajo" role="button">
+										<i class="fas fa-edit"></i>
 									</a>
+
 								</td>
 							</tr>
 							{% endfor %}
