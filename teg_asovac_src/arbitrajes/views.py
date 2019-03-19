@@ -560,7 +560,7 @@ def approve_job(request, trabajo_id):
     return JsonResponse(data)
 
 
-def reprobe_job(request, trabajo_id):
+def reprobate_job(request, trabajo_id):
 
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
@@ -584,5 +584,5 @@ def reprobe_job(request, trabajo_id):
         'trabajo': trabajo,
         'form': form,
     }
-    data['html_form'] = render_to_string('ajax/reprobe_job.html',context,request=request)
+    data['html_form'] = render_to_string('ajax/reprobate_job.html',context,request=request)
     return JsonResponse(data)

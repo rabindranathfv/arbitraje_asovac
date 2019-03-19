@@ -602,8 +602,8 @@ var SaveAñadirPagoForm= function(){
     $('.approve_job').click(ShowForm);
 
     // Reprobe job
-    $('#job-list-to-review').on('click','.reprobe-job',ShowForm);
-    $('.reprobe_job').click(ShowForm);
+    $('#job-list-to-review').on('click','.reprobate-job',ShowForm);
+    $('.reprobate_job').click(ShowForm);
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);

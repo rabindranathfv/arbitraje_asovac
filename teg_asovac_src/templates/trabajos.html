@@ -1,6 +1,6 @@
-{% extends "content_wrapper.html" %} 
+{% extends "content_wrapper.html" %}
 {% load crispy_forms_tags %}
-{% load static %} 
+{% load static %}
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
     {% include "success_messages.html" %}
@@ -13,16 +13,16 @@
                 <h2 class="text-left">Lista de Trabajos</h2>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="job-list" 
-                        data-toggle="table" 
-                        data-search="true" 
-                        data-sort-name="titulo_espanol"  
-                        data-pagination="true" 
-                        data-page-size="10" 
+                    <table class="table table-bordered" id="job-list"
+                        data-toggle="table"
+                        data-search="true"
+                        data-sort-name="titulo_espanol"
+                        data-pagination="true"
+                        data-page-size="10"
                         data-page-list="[5,10,25,50,100, 200]"
-                        data-show-toggle="true" 
+                        data-show-toggle="true"
                         data-show-columns="true">
-                        
+
                         <thead>
                             <tr>
                                 <th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
@@ -48,12 +48,12 @@
                                 </td>
                                 <td class="text-center">
                                     {% if trabajo_last_version.estatus == "Pendiente" %}
-										<span class="label label-warning lb-md center-block">Pendiente</span>
-									{% elif trabajo_last_version.estatus == "Aprobado" %}
-										<span class="label label-success lb-md center-block">Aprobado</span>
-									{% elif trabajo_last_version.estatus == "Rechazado" %}
-										<span class="label label-danger lb-md center-block">Rechazado</span>
-									{% endif %}
+                  										<span class="label label-warning lb-md center-block">Pendiente</span>
+                  									{% elif trabajo_last_version.estatus == "Aprobado" %}
+                  										<span class="label label-success lb-md center-block">Aprobado</span>
+                  									{% elif trabajo_last_version.estatus == "Rechazado" %}
+                  										<span class="label label-danger lb-md center-block">Rechazado</span>
+                  									{% endif %}
                                 </td>
                                 <td class="text-center">
                                     {% if trabajo.monto_total > 0 and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
@@ -71,12 +71,12 @@
 										<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
 											<i class="fas fa-times"></i>
 										</button>
-									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo_last_version.requiere_arbitraje %}	
-                                        
+									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo_last_version.requiere_arbitraje %}
+
                                         <button class="btn btn-info show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo_last_version.id %}" title="Crear nueva versión del trabajo">
                                             <i class="fas fa-book"></i>
                                         </button>
-                                    
+
                                     {% endif %}
 
                                     <a href="{% url 'trabajos:detalles_trabajo' trabajo_last_version.id %}" class="btn btn-info" role="button" title="Ver trabajo">
@@ -86,7 +86,7 @@
                             </tr>
                             {% endfor %}
                         </tbody>
-                        
+
                     </table>
                     <!-- End table  -->
                 </div>

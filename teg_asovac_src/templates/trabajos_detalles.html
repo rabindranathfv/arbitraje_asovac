@@ -83,12 +83,12 @@
                                     <a class="btn btn-success btn-lg approve_job col-sm-6" data-url="{% url 'arbitrajes:approve_job' trabajo.id %}" title="Aprobar trabajo" role="button">
                                         Aprobar
                                     </a>
-                                    <a class="btn btn-danger btn-lg reprobe_job col-sm-6" data-url="{% url 'arbitrajes:reprobe_job' trabajo.id %}" title="Reprobar trabajo" role="button">
-                                        <i class="fas fa-arrow-alt-circle-left"></i> Reprobar
+                                    <a class="btn btn-danger btn-lg reprobate_job col-sm-6" data-url="{% url 'arbitrajes:reprobate_job' trabajo.id %}" title="Reprobar trabajo" role="button">
+                                        Reprobar
                                     </a>
                                 </div>
                             {% endif %}
-                        </div>
+                      </div>
                         <div class="col-sm-7">
                             <div class="preview-pdf">
                                 <object data="{{ trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="600px">
