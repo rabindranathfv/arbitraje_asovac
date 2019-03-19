@@ -50,16 +50,6 @@
                             <p class="p-md">
                                 <strong>Subáreas:</strong> {{ trabajo.subareas.first.nombre}}
                             </p>
-                            {% if trabajo.subarea2 %}
-                                <p class="p-md">
-                                    <strong>Subarea 2:</strong> {{ trabajo.subarea2 }}
-                                </p>
-                            {% endif %}
-                            {% if trabajo.subarea3 %}
-                                <p class="p-md">
-                                    <strong>Subarea 3:</strong> {{ trabajo.subarea3 }}
-                                </p>
-                            {% endif %}
                             {% if trabajo.documento_inscrito %}
                                 <p class="p-md">
                                     <strong>Documento Inscrito:</strong> {{ trabajo.documento_inscrito }}
@@ -68,11 +58,6 @@
                             {% if trabajo.url_trabajo %}
                                 <p class="p-md">
                                     <strong>URL del trabajo:</strong> {{ trabajo.url_trabajo }}
-                                </p>
-                            {% endif %}
-                            {% if trabajo.version %}
-                                <p class="p-md">
-                                    <strong>Versión:</strong> {{ trabajo.version }}
                                 </p>
                             {% endif %}
                             <p class="p-md">
@@ -95,8 +80,12 @@
                             {% endif %}
                             {% if arbitro_review %}
                                 <div class= "row">
-                                    <a data-url="{% url 'arbitrajes:aprobe_job' trabajo.id %}" class="btn btn-success btn-lg col-sm-6" id="aprobe_job"><i class="fas fa-arrow-alt-circle-left"></i>Aprobar</a>
-                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-danger btn-lg col-sm-6"><i class="fas fa-arrow-alt-circle-left"></i>Reprobar</a>
+                                    <a class="btn btn-success btn-lg aprobe_job col-sm-6" data-url="{% url 'arbitrajes:aprobe_job' trabajo.id %}" title="Aprobar trabajo" role="button">
+                                        <i class="fas fa-arrow-alt-circle-left"></i> Aprobar
+                                    </a>
+                                    <a class="btn btn-danger btn-lg reprobe_job col-sm-6" data-url="{% url 'arbitrajes:reprobe_job' trabajo.id %}" title="Reprobar trabajo" role="button">
+                                        <i class="fas fa-arrow-alt-circle-left"></i> Reprobar
+                                    </a>
                                 </div>
                             {% endif %}
                         </div>
