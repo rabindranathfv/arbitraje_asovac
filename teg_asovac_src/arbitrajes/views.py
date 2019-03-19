@@ -543,7 +543,9 @@ def aprobe_job(request, trabajo_id):
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
     if request.method == "POST":
-        trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo)
+        usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+        arbitro = Arbitro.objects.get(usuario = usuario_asovac)
+        trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo, arbitro = arbitro)
         trabajo_arbitro.fecha_arbitraje = date.today().isoformat()
         trabajo_arbitro.fin_arbitraje = True
         trabajo_arbitro.arbitraje_resultado = "Aprobado"
