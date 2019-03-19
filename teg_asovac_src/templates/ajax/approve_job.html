@@ -1,7 +1,7 @@
 {% load crispy_forms_tags %}
-<form method="post" action="{% url 'arbitrajes:aprobe_job' trabajo.id %}">
+<form method="post" action="{% url 'arbitrajes:approve_job' trabajo.id %}">
     {% csrf_token %}
-    
+
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>

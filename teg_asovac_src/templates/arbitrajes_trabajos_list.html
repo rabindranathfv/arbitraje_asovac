@@ -1,6 +1,6 @@
-{% extends "content_wrapper_with_sidebar.html" %} 
+{% extends "content_wrapper_with_sidebar.html" %}
 {% load crispy_forms_tags %}
-{% load static %} 
+{% load static %}
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
     {% include "success_messages.html" %}
@@ -13,16 +13,16 @@
                 <h2 class="text-left">Lista de Trabajos</h2>
 
                 <div class="table-responsive">
-					<table class="table table-bordered" id="job-list-to-review" 
-						data-toggle="table" 
-						data-search="true" 
-						data-sort-name="titulo_espanol"  
-						data-pagination="true" 
-						data-page-size="10" 
+					<table class="table table-bordered" id="job-list-to-review"
+						data-toggle="table"
+						data-search="true"
+						data-sort-name="titulo_espanol"
+						data-pagination="true"
+						data-page-size="10"
 						data-page-list="[5,10,25,50,100, 200]"
-						data-show-toggle="true" 
+						data-show-toggle="true"
 						data-show-columns="true">
-						
+
 						<thead>
 							<tr>
 								<th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
@@ -61,23 +61,23 @@
 										<i class="fas fa-eye"></i>
 									</a>
 
-									<a class="btn btn-info aprobe-job" data-url="{% url 'arbitrajes:aprobe_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
-										<i class="fas fa-times"></i>
+									<a class="btn btn-info approve-job" data-url="{% url 'arbitrajes:approve_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
+										<i class="fas fa-check"></i>
 									</a>
 
 									<a class="btn btn-info reprobe-job" data-url="{% url 'arbitrajes:reprobe_job' trabajos_arbitro.trabajo.id %}" title="Reprobar trabajo" role="button">
-										<i class="fas fa-edit"></i>
+										<i class="fas fa-times"></i>
 									</a>
 
 								</td>
 							</tr>
 							{% endfor %}
 						</tbody>
-						
+
 					</table>
 					<!-- End table  -->
 				</div>
-		
+
                 <!--end jumbotrom -->
             </div>
         </div>
@@ -86,4 +86,3 @@
 
 
 {% endblock %}
-

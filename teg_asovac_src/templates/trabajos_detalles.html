@@ -1,5 +1,5 @@
-{% extends "content_wrapper.html" %} 
-{% load static %} 
+{% extends "content_wrapper.html" %}
+{% load static %}
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
     {% include "success_messages.html" %}
@@ -8,7 +8,7 @@
             <div class="jumbotron RLcard">
                 <div class="row">
                     <div class="col-sm-5">
-                        <h2 class="text-center"><strong>Datos del resumen</strong></h2> 
+                        <h2 class="text-center"><strong>Datos del resumen</strong></h2>
                     </div>
                     <div class="col-sm-2 col-sm-offset-5">
                         <div class="row middle-content">
@@ -61,14 +61,14 @@
                                 </p>
                             {% endif %}
                             <p class="p-md">
-                                <strong>Estatus:</strong>   
+                                <strong>Estatus:</strong>
                                 {% if trabajo.estatus == "Pendiente" %}
                                   <span class="label label-warning lb-md">Pendiente</span>
                                 {% elif trabajo.estatus == "Aprobado" %}
                                   <span class="label label-success lb-md">Aprobado</span>
                                 {% elif trabajo.estatus == "Rechazado" %}
                                   <span class="label label-danger lb-md">Rechazado</span>
-                                {% endif %} 
+                                {% endif %}
                             </p>
                             <p class="p-md">
                                 <strong>Resumen:</strong> {{ trabajo.resumen }}
@@ -80,8 +80,8 @@
                             {% endif %}
                             {% if arbitro_review %}
                                 <div class= "row">
-                                    <a class="btn btn-success btn-lg aprobe_job col-sm-6" data-url="{% url 'arbitrajes:aprobe_job' trabajo.id %}" title="Aprobar trabajo" role="button">
-                                        <i class="fas fa-arrow-alt-circle-left"></i> Aprobar
+                                    <a class="btn btn-success btn-lg approve_job col-sm-6" data-url="{% url 'arbitrajes:approve_job' trabajo.id %}" title="Aprobar trabajo" role="button">
+                                        Aprobar
                                     </a>
                                     <a class="btn btn-danger btn-lg reprobe_job col-sm-6" data-url="{% url 'arbitrajes:reprobe_job' trabajo.id %}" title="Reprobar trabajo" role="button">
                                         <i class="fas fa-arrow-alt-circle-left"></i> Reprobar
