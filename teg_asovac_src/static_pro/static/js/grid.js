@@ -125,6 +125,9 @@ $.ajaxSetup({
             '<a class="selectArbitro" href="javascript:void(0)" title="Asignar Árbitro">',
             '<i class="fas fa-user-plus"></i>',
             '</a>  ' ,
+            '<a class="statusArbitro" href="javascript:void(0)" title="Estatus Árbitros">',
+            '<i class="fas fa-history"></i>',
+            '</a>  ' ,
         ].join('');
     }
 
@@ -401,20 +404,26 @@ $.ajaxSetup({
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
             location.href=route;
-            // $.ajax({
-            //     url: route,
-            //     type: 'get',
-            //     data: row.id,
-            //     dataType: 'json',
-            //     beforeSend: function(){
-            //         $('#bootstrapTableModal').modal('show');  
-            //     },
-            //     success: function (data){
-            //         // console.log(data);
-            //         $('#bootstrapTableModal .modal-content').html(data.content);
-            //     }
-            // });
         },
+
+        'click .statusArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+
 
     };
 

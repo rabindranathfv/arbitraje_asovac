@@ -13,6 +13,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.urls import reverse
 
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .tokens import account_activation_token
+from django.contrib.sites.shortcuts import get_current_site
+from decouple import config
+from django.core.mail import EmailMessage
+
 import json
 import random, string,xlrd,os,sys,xlwt
 from .models import Trabajo, Detalle_version_final,Trabajo_arbitro
@@ -798,7 +805,28 @@ def selectArbitro(request,id):
                 arbitroTrabajo.trabajo=trabajo
                 arbitroTrabajo.arbitro=arbitro
                 arbitroTrabajo.save()
-                # print "id arb: ",arb
+
+                # Se crean parametros para el correo 
+                url_site = get_current_site(request)
+                arb_id=urlsafe_base64_encode(force_bytes(arbitro.pk))
+                token= account_activation_token.make_token(arbitro)
+                inv_id=urlsafe_base64_encode(force_bytes(arbitroTrabajo.pk))
+
+                # print ("Datos Correo: {0} {1} {2} {3} {4} {5}".format(url_site,arbitro.apellidos,arbitro.nombres,arbitro.correo_electronico,arb_id,token))
+
+                # Correo de asignacion a trabajos con token de confirmacion
+                context = {'invitacion':inv_id,'url_site':url_site,'arbitro':arbitro,'arb_id':arb_id ,'token':token, "trabajo":trabajo.titulo_espanol}
+                msg_plain = render_to_string('../templates/email_templates/create_invitation.txt', context)
+                msg_html = render_to_string('../templates/email_templates/create_invitation.html', context)
+
+                send_mail(
+                    'Asignación de trabajo para revisión',              #titulo
+                    msg_plain,                                          #mensaje txt
+                    config('EMAIL_HOST_USER'),                          #email de envio
+                    [arbitro.correo_electronico],                       #destinatario
+                    html_message=msg_html,                              #mensaje en html
+                    )
+
         response['status']= 200
             # response['status']= 404
             
@@ -861,9 +889,65 @@ def viewTrabajo(request, id):
     }
     return render(request,"trabajos_trabajo_info.html",context)
 
+def invitacion(request, uidb64, token):
+    try:
+        invitacion_id = force_text(urlsafe_base64_decode(uidb64))
+        invitacion = Trabajo_arbitro.objects.get(pk=invitacion_id)
+        arbitro= Arbitro.objects.get(id=invitacion.arbitro.id)
+    except(TypeError, ValueError, OverflowError, Trabajo_arbitro.DoesNotExist):
+        invitacion = None
+
+    if invitacion is not None and account_activation_token.check_token(arbitro, token):
+        invitacion.invitacion=True
+        invitacion.save()
+        status=200
+        msj= "Su invitación ha sido confirmada de manera exitosa"
+    else:
+        status=404
+        msj= "Ha ocurrido un problema y no se ha podido confirman su invitación"
+
+    context={
+            'msj':msj,
+            'status':status,
+        }
+    # print "Invitacion: {0} {1}".format (invitacion.id,invitacion.arbitro.id)
+    return render(request,"trabajos_invitation.html",context)
+
+def viewEstatus(request,id):
+    # print "Trabajo id: ",id
+
+    response= dict()
+    
+    # Consulta
+    query= "SELECT trab_arb.*, arb.* FROM trabajos_trabajo_arbitro AS trab_arb INNER JOIN arbitrajes_arbitro AS arb ON trab_arb.arbitro_id = arb.id"
+    where=' WHERE trabajo_id= %s '
+    query= query+where
+
+    
+    order_by="arb.nombres " 
+    query_count=query
+    query= query + " ORDER BY " + order_by
+    
+    arbitros= Arbitro.objects.raw(query,[str(id)])
+
+    if request.method == 'POST':
+      
+        response['status']= 200
+        # response['status']= 404
+            
+    else:
+       
+        response['status']= 200
+        context={
+            'tipo':"status",
+            'arbitros':arbitros,
+        }
+        response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
+    return JsonResponse(response)
+
 
 #---------------------------------------------------------------------------------#
-#                               Exportar Arbitro                                 #
+#                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
 def generate_report(request,tipo):
     print "Excel para arbitros"

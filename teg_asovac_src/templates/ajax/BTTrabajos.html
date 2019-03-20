@@ -60,9 +60,56 @@
 
 </script>
 {% else %}
-    {% if tipo == "edit" %}
-    {% load crispy_forms_tags %}
-    {% include "errors_form.html" %}
+    {% if tipo == "status" %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Estatus</h3>
+    </div>
+
+    <div class="modal-body">
+		
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <!-- <th>Arbitraje</th> -->
+                    <th>Invitación</th>
+                    <!-- <th>Comentario</th> -->
+                </tr>
+            </thead>
+    
+            <tbody>
+                {% for item in arbitros %}
+                    <tr>
+                        <td>{{item.nombres}} {{item.apellidos}}</td>
+                        <td>{{item.correo_electronico}}</td>
+                        
+                        {% if item.fin_arbitraje == False %}
+                            <!-- <td>Pendiente</td> -->
+                        {% else %}
+                            <!-- <td>{{item.arbitraje_resultado}}</td> -->
+                        {% endif%}
+                        {% if item.invitacion == False %}
+                            <td>Pendiente</td>
+                        {% else %}
+                            <td>Aceptada</td>
+                        {% endif%}
+
+                        <!-- <td>{{item.comentario_autor}}</td> -->
+            
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+    </div>
         
     {% else %}
         {% if tipo == "delete" %}

@@ -20,6 +20,9 @@ urlpatterns = [
     # CRUD Trabajos
     url(r'^listar-trabajos/selectArbitro/(?P<id>\d+)$',views.selectArbitro,name='selectArbitro'),
     url(r'^listar-trabajos/viewTrabajo/(?P<id>\d+)$',views.viewTrabajo,name='verTrabajo'),
+    url(r'^listar-trabajos/statusArbitro/(?P<id>\d+)$',views.viewEstatus,name='verEstatus'),
+    url(r'^invitacion/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.invitacion, name='invitacion'),
 
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
