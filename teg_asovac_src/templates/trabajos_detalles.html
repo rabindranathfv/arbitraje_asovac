@@ -90,8 +90,8 @@
                             {% endif %}
                       </div>
                         <div class="col-sm-7">
-                            <div class="preview-pdf">
-                                <object data="{{ trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="600px">
+                            <div class="preview-resumen">
+                                <object data="{{ trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="100%">
                                     <iframe src="{{trabajo.archivo_trabajo.url }}" width="100%" height="100%" style="border: none;">
                                     Este navegador no soporta PDFs. Por favor descarga el PDF para verlo:<a href="{{trabajo.archivo_trabajo.url}}">Descargar PDF</a>
                                     </iframe>
