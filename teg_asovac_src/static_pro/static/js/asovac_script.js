@@ -541,10 +541,10 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
     // Delete Job
-    $('#show-job').on('click','.show-form-delete',ShowForm);
+    $('#job-list').on('click','.show-form-delete',ShowForm);
 
     // Añadir coautores al trabajo
-    $('#show-job').on('click','.show-form-add-author',ShowForm);
+    $('#job-list').on('click','.show-form-add-author',ShowForm);
     $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);
 
     //Mostrar observaciones de la versión final del trabajo
