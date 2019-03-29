@@ -57,15 +57,15 @@
 								</td>
 								<td class="text-center">
 
-									<a href="{% url 'arbitrajes:detalles_resumen' trabajos_arbitro.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo" data-toggle="tooltip" data-placement="top" >
+									<a href="{% url 'arbitrajes:detalles_resumen' trabajos_arbitro.trabajo.id %}" role="button" title="Ver trabajo" data-toggle="tooltip" data-placement="top" >
 										<i class="fas fa-eye"></i>
 									</a>
 
-									<a class="btn btn-info approve-job" data-url="{% url 'arbitrajes:approve_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
+									<a class="approve-job" data-url="{% url 'arbitrajes:approve_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
 										<i class="fas fa-check"></i>
 									</a>
 
-									<a class="btn btn-info reprobate-job" data-url="{% url 'arbitrajes:reprobate_job' trabajos_arbitro.trabajo.id %}" title="Reprobar trabajo" role="button">
+									<a class="reprobate-job" data-url="{% url 'arbitrajes:reprobate_job' trabajos_arbitro.trabajo.id %}" title="Reprobar trabajo" role="button">
 										<i class="fas fa-times"></i>
 									</a>
 

@@ -410,7 +410,7 @@ incluso cuando el contenido de la página es muy corto */
     line-height: 440px;
 }
 
-#detalles-trabajo{
+.display-flex{
     display: flex;
 }
 

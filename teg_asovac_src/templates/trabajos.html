@@ -57,29 +57,29 @@
                                 </td>
                                 <td class="text-center">
                                     {% if trabajo.monto_total > 0 and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
-										<button class="btn btn-info show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor">
+										<a class="show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
 											<i class="fas fa-user"></i>
-										</button>
+                                        </a>
 
 
-										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
 
 
 										<!-- Esto es lo que hay que verificar -->
-										<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
+										<a class="show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
-										</button>
+                                        </a>
 									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo_last_version.requiere_arbitraje %}
 
-                                        <button class="btn btn-info show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo_last_version.id %}" title="Crear nueva versión del trabajo">
+                                        <a class="show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo_last_version.id %}" title="Crear nueva versión del trabajo" role="button">
                                             <i class="fas fa-book"></i>
-                                        </button>
+                                        </a>
 
                                     {% endif %}
 
-                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo_last_version.id %}" class="btn btn-info" role="button" title="Ver trabajo">
+                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo_last_version.id %}" role="button" title="Ver trabajo">
 										<i class="fas fa-eye"></i>
 									</a>
                                 </td>
