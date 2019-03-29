@@ -406,15 +406,12 @@ incluso cuando el contenido de la página es muy corto */
 /*================= Filler spaces =================*/
 
 .preview-resumen {
-    height: 450px;
     border: 1px solid #DDDDDD;
     line-height: 440px;
 }
 
-@media screen and (min-height: 1080px) {
-    .preview-resumen {
-        height: 600px;
-    }
+#detalles-trabajo{
+    display: flex;
 }
 
 .observations-space {
