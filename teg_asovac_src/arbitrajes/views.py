@@ -538,51 +538,29 @@ def generate_report(request,tipo):
     return response
 
 
-def approve_job(request, trabajo_id):
+def review_job(request, trabajo_id):
 
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
     if request.method == "POST":
+        status = request.POST.get("status")
+        observation = request.POST.get("comment")
+        print observation
         usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
         arbitro = Arbitro.objects.get(usuario = usuario_asovac)
         trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo, arbitro = arbitro)
         trabajo_arbitro.fecha_arbitraje = date.today().isoformat()
         trabajo_arbitro.fin_arbitraje = True
-        trabajo_arbitro.arbitraje_resultado = "Aprobado"
+        trabajo_arbitro.arbitraje_resultado = status
+        if status == "Rechazado":
+            trabajo_arbitro.comentario_autor = observation
         trabajo_arbitro.save()
-        messages.success(request,"El trabajo fue aprobado con éxito.")
+        messages.success(request,"El trabajo fue arbitrado con éxito.")
         return redirect('arbitrajes:listado')
     else:
         context = {
             'trabajo': trabajo,
         }
-        data['html_form'] = render_to_string('ajax/approve_job.html',context,request=request)
+        data['html_form'] = render_to_string('ajax/review_job.html',context,request=request)
     return JsonResponse(data)
 
-
-def reprobate_job(request, trabajo_id):
-
-    data = dict()
-    trabajo = Trabajo.objects.get(id = trabajo_id)
-    if request.method == "POST":
-        form = RefereeCommentForm(request.POST)
-        if form.is_valid():
-            usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-            arbitro = Arbitro.objects.get(usuario = usuario_asovac)
-            trabajo_arbitro = Trabajo_arbitro.objects.get(trabajo = trabajo, arbitro = arbitro)
-            trabajo_arbitro.fecha_arbitraje = date.today().isoformat()
-            trabajo_arbitro.comentario_autor = form.cleaned_data['comentario_autor']
-            trabajo_arbitro.fin_arbitraje = True
-            trabajo_arbitro.arbitraje_resultado = "Reprobado"
-            trabajo_arbitro.save()
-            messages.success(request,"El trabajo fue reprobado con éxito.")
-            return redirect('arbitrajes:listado')
-    else:
-        form = RefereeCommentForm()
-
-    context = {
-        'trabajo': trabajo,
-        'form': form,
-    }
-    data['html_form'] = render_to_string('ajax/reprobate_job.html',context,request=request)
-    return JsonResponse(data)

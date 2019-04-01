@@ -61,12 +61,8 @@
 										<i class="fas fa-eye"></i>
 									</a>
 
-									<a class="approve-job" data-url="{% url 'arbitrajes:approve_job' trabajos_arbitro.trabajo.id %}" title="Aprobar trabajo" role="button">
-										<i class="fas fa-check"></i>
-									</a>
-
-									<a class="reprobate-job" data-url="{% url 'arbitrajes:reprobate_job' trabajos_arbitro.trabajo.id %}" title="Reprobar trabajo" role="button">
-										<i class="fas fa-times"></i>
+									<a class="approve-job" data-url="{% url 'arbitrajes:review_job' trabajos_arbitro.trabajo.id %}" title="Arbitrar trabajo" role="button">
+										<i class="fa fa-gavel"></i>
 									</a>
 
 								</td>
