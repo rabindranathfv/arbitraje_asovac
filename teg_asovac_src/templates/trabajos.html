@@ -56,7 +56,7 @@
                   									{% endif %}
                                 </td>
                                 <td class="text-center">
-                                    {% if trabajo.monto_total > 0 and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
+                                    {% if trabajo.pagado == False and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
 										<a class="show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
 											<i class="fas fa-user"></i>
                                         </a>

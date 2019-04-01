@@ -10,7 +10,7 @@
                     <div class="row-eq-height middle-content display-flex">
                         <div class="col-sm-5">
                             {% if arbitro_review %}
-                                <a href="{% url 'arbitrajes:listado' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                <a href="{% url 'arbitrajes:jobs_for_review' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                             {% else %}
                                 <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                             {% endif %}

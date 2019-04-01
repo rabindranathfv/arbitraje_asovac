@@ -28,7 +28,7 @@ def arbitrajes_pag(request):
     return render(request,"test_views.html",context)
 
 
-def listado_trabajos(request):
+def jobs_for_review(request):
     estado = request.session['estado']
     event_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,event_id)
@@ -556,7 +556,7 @@ def review_job(request, trabajo_id):
             trabajo_arbitro.comentario_autor = observation
         trabajo_arbitro.save()
         messages.success(request,"El trabajo fue arbitrado con éxito.")
-        return redirect('arbitrajes:listado')
+        return redirect('arbitrajes:jobs_for_review')
     else:
         context = {
             'trabajo': trabajo,
