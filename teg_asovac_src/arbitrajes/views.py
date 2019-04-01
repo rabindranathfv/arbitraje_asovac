@@ -72,7 +72,7 @@ def jobs_for_review(request):
         'route_resultados': route_resultados,
         'job_data': job_data
     }
-    return render(request, 'arbitrajes_trabajos_list.html', context)
+    return render(request, 'arbitrajes_jobs_for_review.html', context)
 
 def detalles_resumen(request, id_trabajo):
     estado = request.session['estado']
