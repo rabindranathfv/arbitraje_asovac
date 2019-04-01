@@ -557,7 +557,7 @@ input:checked + .slider:before {
   /*---- Estilos para checkbox ----*/
 
   .contentCheck {
-    display: block;
+    /* display: block; */
     position: relative;
     padding-left: 35px;
     margin-bottom: 12px;

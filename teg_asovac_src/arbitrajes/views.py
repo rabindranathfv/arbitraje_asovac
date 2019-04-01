@@ -680,6 +680,29 @@ def changeStatus(request, id):
     
     return JsonResponse(response)
 
+def statusArbitraje(request, id):
+
+    response= dict()
+    # print "Estatus del arbitraje por parte de los arbitros"
+    query= "SELECT t.id,a.correo_electronico, a.nombres, a.apellidos, ta.arbitraje_resultado, ta.comentario_autor FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
+    where=' WHERE t.id= %s '
+    query= query+where
+
+    resultados=[]
+
+    data= Trabajo.objects.raw(query,[id])
+    for arbitraje in data:
+        resultados.append({'id':arbitraje.id,'nombres': arbitraje.nombres,'apellidos':arbitraje.apellidos, 'correo_electronico':arbitraje.correo_electronico, 'evaluacion':arbitraje.arbitraje_resultado, 'comentario':arbitraje.comentario_autor  })
+       
+    response['status']= 200
+    context={
+        'tipo':"statusArbitraje",
+        'arbitrajes':resultados,
+    }
+    response['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    
+    return JsonResponse(response)
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                 #
 #---------------------------------------------------------------------------------#

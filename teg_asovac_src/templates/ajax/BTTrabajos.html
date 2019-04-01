@@ -11,18 +11,18 @@
     
     <div class="modal-body">
 
-        <table class="table table-hover">
+        <table class="table table-bordered">
             <thead>
-                <td>Nombre</td>
-                <td>Correo electrónico</td>
-                <td>Asignar</td>
+                <th>Nombre</th>
+                <th>Correo electrónico</th>
+                <th style="text-align: center" >Asignar</th>
             </thead>
             {% for arbitro in arbitros %}
             <tr>
                 <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
                 <td>{{arbitro.correo_electronico}} </td>
                 <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
-                <td class="text-center">
+                <td class="text-center" style="text-align: center">
                     <label class="contentCheck">
                         {% if arbitro.trabajo_id == trabajo_id %}
                             <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
@@ -75,7 +75,7 @@
                     <th>Nombre</th>
                     <th>Correo electrónico</th>
                     <!-- <th>Arbitraje</th> -->
-                    <th>Invitación</th>
+                    <th style="text-align: center">Invitación</th>
                     <!-- <th>Comentario</th> -->
                 </tr>
             </thead>
@@ -92,9 +92,9 @@
                             <!-- <td>{{item.arbitraje_resultado}}</td> -->
                         {% endif%}
                         {% if item.invitacion == False %}
-                            <td>Pendiente</td>
+                            <td style="text-align: center">Pendiente</td>
                         {% else %}
-                            <td>Aceptada</td>
+                            <td style="text-align: center">Aceptada</td>
                         {% endif%}
 
                         <!-- <td>{{item.comentario_autor}}</td> -->

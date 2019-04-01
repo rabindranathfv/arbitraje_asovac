@@ -140,6 +140,9 @@ $.ajaxSetup({
             '<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus">',
             '<i class="fas fa-file-signature"></i>',
             '</a>  ',
+            '<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje">',
+            '<i class="fas fa-history"></i>',
+            '</a>  ' ,
             
         ].join('');
     }
@@ -443,6 +446,23 @@ $.ajaxSetup({
         },
 
         'click .changeStatus': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .statusArbitraje': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({
