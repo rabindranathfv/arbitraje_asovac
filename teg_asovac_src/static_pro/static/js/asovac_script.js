@@ -1,5 +1,5 @@
 
-//Sidebar Toggle Script 
+//Sidebar Toggle Script
 $("#menu-toggle").click(function(e) {
     e.preventDefault();
     $("#wrapper").toggleClass("toggled");
@@ -17,7 +17,7 @@ $(".submenu-toggle").click(function(e) {
 $(document).ready(function(){
     // To style only selects with the selectpicker class
     $('.selectpicker').selectpicker();
-    
+
     $('[data-toggle="tooltip"]').tooltip();
 
     $( function(){
@@ -114,7 +114,7 @@ $(document).ready(function(){
             type: 'get',
             dataType: 'json',
             beforeSend: function(){
-              $('#modal-user').modal('show');  
+              $('#modal-user').modal('show');
             },
             success: function (data){
                 // console.log(data.html_form);
@@ -202,7 +202,7 @@ $(document).ready(function(){
                             success: function (data){
                                 // console.log(data.html_form);
                                 $('#modal-user .modal-content').html(data.html_form);
-                                
+
                             }
                         });
                     }
@@ -225,10 +225,10 @@ var loadAreas= function(){
     var inputFile = document.getElementById("id_file");
     var file = inputFile.files[0];
     var formData = new FormData();
-    
+
     formData.append('archivo', file);
     console.log(file);
-    
+
     var data = new FormData();
     jQuery.each($('input[type=file]')[0].files, function(i, file) {
         data.append('file-'+i, file);
@@ -237,7 +237,7 @@ var loadAreas= function(){
     $.each(other_data,function(key,input){
         data.append(input.name,input.value);
     });
-   
+
     $.ajax({
         url: form.attr('data-url'),
         // data: form.serialize(),
@@ -260,7 +260,7 @@ var loadAreas= function(){
     });
     return false;
 };
-// Se valida el acceso al evento segun el rol y su clave 
+// Se valida el acceso al evento segun el rol y su clave
 var ValidateAccess= function(){
     var form= $(this);
     // alert('ValidateAccess');
@@ -270,7 +270,7 @@ var ValidateAccess= function(){
         type: form.attr('method'),
         dataType: 'json',
         beforeSend: function(){
-            $('#rol_validate').modal('show');  
+            $('#rol_validate').modal('show');
           },
         success: function(data){
 
@@ -309,19 +309,19 @@ var SaveAñadirPagoForm= function(){
                 //
                 //alert(data.message)
                 if(data.form_is_valid)
-                {    
+                {
                     $.ajax({
                         url: data.url,
                         type: 'get',
                         dataType: 'json',
 
                         beforeSend: function(){
-                          $('#modal-user' ).modal('show');  
+                          $('#modal-user' ).modal('show');
                         },
                         success: function (data){
                             // console.log(data.html_form);
                             $('#modal-user .modal-content').html(data.html_form);
-                            
+
                         }
                     });
                 }
@@ -349,55 +349,53 @@ var SaveAñadirPagoForm= function(){
         $("#subarea_select option").each(function(){
                  $(this).css('display','block');
          });
-        
+
         if(area != ""){
             $('#content_subarea').css("display", "block");
-            
+
             $("#subarea_select option").each(function(){
-            
+
                if( $(this).attr('data-area') != area){
                    if($(this).val() != "" ){
                     //$(this).val("0");
                     //$(this).remove();
                     $(this).css('display','none');
-                    $(this).attr("selected",false); 
+                    $(this).attr("selected",false);
                    }
-                  
+
                 }else{
                     $(this).attr("selected",false);
                 }
-    
+
             });
-    
+
+            // Obtener subareas
+            var route= $(this).attr('data-url');
+            // Se reemplaza el valor por defeto de la ruta por el id del area
+            route=route.replace("0",area);
+            id=area;
+            // console.log("La ruta es "+route+ " y el area es: "+ area);
+
+            $.ajax({
+                type: "post",
+                url: route,
+                data: id,
+                dataType: "json",
+                success: function (data) {
+                    //    console.log(data.html_select);
+                    $('#content_subarea .subareas-content').html(data.html_select);
+                    $('.selectpicker').selectpicker();
+                }
+            });
         }else{
             $('#content_subarea').css("display", "none");
         }
 
-        // Obtener subareas
-        var route= $(this).attr('data-url');
-        // Se reemplaza el valor por defeto de la ruta por el id del area
-        route=route.replace("0",area);
-        id=area;
-        // console.log("La ruta es "+route+ " y el area es: "+ area);
-
-       $.ajax({
-           type: "post",
-           url: route,
-           data: id,
-           dataType: "json",
-           success: function (data) {
-            //    console.log(data.html_select);
-               $('#content_subarea .subareas-content').html(data.html_select);
-               $('.selectpicker').selectpicker();
-           }
-       });
-
-    
     });
 
-     //Para habilitar boton de cambio de área y subarea 
+     //Para habilitar boton de cambio de área y subarea
      $('#subarea_select').change(function(){
-        
+
         if($(this).val() != ""){
             $('#enviar').removeAttr("disabled");
         }else{
@@ -405,7 +403,7 @@ var SaveAñadirPagoForm= function(){
         }
     });
 
-    //bootstrap-tables edit 
+    //bootstrap-tables edit
 
     var bootstrapTableForm= function(){
         console.log("metodo para enviar");
@@ -428,7 +426,7 @@ var SaveAñadirPagoForm= function(){
                 }
             }
         });
-    
+
     };
 
     // Para procesar formularios genericos
@@ -485,7 +483,7 @@ var SaveAñadirPagoForm= function(){
                 }
             }
         });
-    
+
     };
 
     // Para enviar el id de los arbitros seleccionados para un trabajo
@@ -528,7 +526,7 @@ var SaveAñadirPagoForm= function(){
                 }
             }
         });
-    
+
     };
 
 
@@ -574,10 +572,10 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
     // Delete Job
-    $('#show-job').on('click','.show-form-delete',ShowForm);
+    $('#job-list').on('click','.show-form-delete',ShowForm);
 
     // Añadir coautores al trabajo
-    $('#show-job').on('click','.show-form-add-author',ShowForm);
+    $('#job-list').on('click','.show-form-add-author',ShowForm);
     $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);
 
     //Mostrar observaciones de la versión final del trabajo
@@ -592,10 +590,10 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
     $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
 
-    //show areas 
+    //show areas
     $('.show_areas').click(ShowForm);
     $('#modal-user').on('submit','.change_area',SaveForm);
-   
+
     // validate ValidateAccess
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
@@ -617,6 +615,10 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
 
 
+    // Add new version to job
+    $('#job-list').on('click','.show-form-add-new-version-to-job',ShowForm);
+    $('#modal-user').on('submit','.job-create-new-version',saveFileFormAndRedirect);
+
      // Add observations to event
     $('#event-list').on('click','.show-form-observations',ShowForm);
 
@@ -625,7 +627,10 @@ var SaveAñadirPagoForm= function(){
 
     // Add observations to organizer
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
-    
+
+    // Aprobe job
+    $('#job-list-to-review').on('click','.review-job',ShowForm);
+    $('.review_job').click(ShowForm);
 
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
@@ -672,8 +677,9 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
+
     // CRUD Arbitraje
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
-    
+
 
 });

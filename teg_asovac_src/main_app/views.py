@@ -63,7 +63,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if ((estado == 3 and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
         top_nav_options.append('jobs')
     # verify trabajo_options
-    if(estado == 3 and 5 >= rol_id):
+    if((estado == 3 or estado == 5 )and 5 >= rol_id):
         top_nav_options.append('job_options')
 
     items['top_nav_options'] = top_nav_options
@@ -162,11 +162,10 @@ def get_route_trabajos_sidebar(estado,rol_id,item_active):
 
 
 def get_route_trabajos_navbar(estado,rol_id):
-    if(estado == 3 and 5 == rol_id):
+    if((estado == 3 or estado == 5)and 5 == rol_id):
         return reverse('trabajos:trabajos')
-    if(estado == 5 and 4 == rol_id):
-        return reverse('trabajos:trabajos_evaluados')
-    return None 
+    else:
+        return None 
 
 def get_route_resultados(estado,rol_id, arbitraje_id):
     if(estado== 6 and 5 == rol_id):

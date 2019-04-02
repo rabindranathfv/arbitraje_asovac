@@ -359,6 +359,12 @@ incluso cuando el contenido de la página es muy corto */
     align-items: center;
 }
 
+/*================= Bootrstrap align bottom rows =================*/
+
+.row.bottom-content {
+    display: flex;
+    align-items: bottom;
+}
 
 /*================= Typography styling =================*/
 
@@ -400,10 +406,12 @@ incluso cuando el contenido de la página es muy corto */
 /*================= Filler spaces =================*/
 
 .preview-resumen {
-    height: 400px;
-    width: 300px;
     border: 1px solid #DDDDDD;
     line-height: 440px;
+}
+
+.display-flex{
+    display: flex;
 }
 
 .observations-space {
@@ -487,10 +495,10 @@ button.close {
     color: #FFFFFF;
 }
 
-.modal-body { 
-    max-height:500px; 
-    overflow:auto; 
-} 
+.modal-body {
+    max-height:500px;
+    overflow:auto;
+}
 
 .switch {
     position: relative;
@@ -498,10 +506,10 @@ button.close {
     width: 60px;
     height: 34px;
   }
-  
+
   /*---- Estilos para switches ----*/
-  
-  .switch input { 
+
+  .switch input {
       opacity: 0;
     width: 0;
     height: 0;
@@ -534,7 +542,7 @@ button.close {
   input:checked + .slider {
       background-color: #2196F3;
     }
-  
+
     input:focus + .slider {
     box-shadow: 0 0 1px #2196F3;
 }
@@ -544,16 +552,16 @@ input:checked + .slider:before {
     -ms-transform: translateX(26px);
     transform: translateX(26px);
   }
-  
+
   /* Rounded sliders */
   .slider.round {
       border-radius: 34px;
   }
-  
+
   .slider.round:before {
       border-radius: 50%;
   }
-  
+
   /*---- Estilos para checkbox ----*/
 
   .contentCheck {
@@ -568,7 +576,7 @@ input:checked + .slider:before {
     -ms-user-select: none;
     user-select: none;
   }
-  
+
   /* Hide the browser's default checkbox */
   .contentCheck input {
     position: absolute;
@@ -577,7 +585,7 @@ input:checked + .slider:before {
     height: 0;
     width: 0;
   }
-  
+
   /* Create a custom checkbox */
   .checkmark {
     position: absolute;
@@ -587,29 +595,29 @@ input:checked + .slider:before {
     width: 25px;
     background-color: #eee;
   }
-  
+
   /* On mouse-over, add a grey background color */
   .contentCheck:hover input ~ .checkmark {
     background-color: #ccc;
   }
-  
+
   /* When the checkbox is checked, add a blue background */
   .contentCheck input:checked ~ .checkmark {
     background-color: #2196F3;
   }
-  
+
   /* Create the checkmark/indicator (hidden when not checked) */
   .checkmark:after {
     content: "";
     position: absolute;
     display: none;
   }
-  
+
   /* Show the checkmark when checked */
   .contentCheck input:checked ~ .checkmark:after {
     display: block;
   }
-  
+
   /* Style the checkmark/indicator */
   .contentCheck .checkmark:after {
     left: 9px;

@@ -62,14 +62,11 @@ def trabajos(request):
     # print items
     if request.method =='POST':
         form = TrabajoForm(request.POST, request.FILES)
-        subarea_list = request.POST.getlist("subarea_select")
-        if form.is_valid() and len(subarea_list) <= 3:
+        new_subarea = request.POST.get("subarea_select")
+        if form.is_valid() and new_subarea != "":
             new_trabajo = form.save()
-            counter = 0
-            for subarea in subarea_list:
-                area_to_assign = Sub_area.objects.get(id = subarea)
-                new_trabajo.subareas.add(area_to_assign)
-
+            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            new_trabajo.subareas.add(subarea_to_assign)
             new_trabajo.save()
 
             #Código para crear una instancia de Autores_trabajos
@@ -77,31 +74,33 @@ def trabajos(request):
             autor_trabajo.save()
             form = TrabajoForm()
         else:
-            if(3 < len(subarea_list)):
-                messages.error(request,"Solo puede elegir hasta 3 subareas al momento de crear un trabajo.")
+            if(new_subarea == ""):
+                messages.error(request,"Debe elegir un Área - Subárea para el trabajo.")
     else:
         form = TrabajoForm()
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
 
-#   for trabajo in trabajos:
-#       print(trabajo.trabajo.titulo_espanol)
-    paginator = Paginator(trabajos_list, 10) #Muestra 10 trabajos por página
+    trabajo_last_version_list = [] 
+    autores_trabajo_list = []
 
-    page = request.GET.get('page')
+    for autor_trabajo in trabajos_list:
+        autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
+        trabajo = autor_trabajo.trabajo
+        while trabajo.trabajo_version:
+            trabajo = trabajo.trabajo_version
+        trabajo_last_version_list.append(trabajo)
 
-    try:
-        trabajos = paginator.page(page)
-    except PageNotAnInteger:
-        #Si la página no es un entero, retorna la primera página
-        trabajos = paginator.page(1)
-    except EmptyPage:
-        trabajos = paginator.page(paginator.num_pages)
-
-
-    autores_trabajos_list = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac)
-    areas= Area.objects.all()
-    subareas= Sub_area.objects.all()
+    
+    job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
+ 
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+    
     context = {
         "nombre_vista": 'Autores',
         "form": form,
@@ -117,9 +116,10 @@ def trabajos(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajos': trabajos,
-        'autores_trabajos_list': autores_trabajos_list,
         'areas':areas,
-        'subareas':subareas
+        'subarea_list':subarea_list,
+        'job_data': job_data,
+        'sistema_asovac': sistema_asovac
     }
     return render(request,"trabajos.html",context)
 
@@ -240,34 +240,27 @@ def edit_trabajo(request, trabajo_id):
       
     if request.method == 'POST':
         form = EditTrabajoForm(request.POST, request.FILES, instance = autor_trabajo.trabajo)
-        subarea_list = request.POST.getlist("subarea_select")
-        area= request.POST.get("area_select")
-        if (form.is_valid() and (not area or (subarea_list and len(subarea_list) <= 3))):
+        if form.is_valid():
             trabajo_edit = form.save()
-            if(area): 
-                new_area = Area.objects.get(id = area)
-                trabajo_edit.area = new_area
-                trabajo_edit.subareas.clear()
-                
-                for subarea in subarea_list:
-                    new_subarea = Sub_area.objects.get(id = subarea)
-                    trabajo_edit.subareas.add(new_subarea)
-
-                
-                trabajo_edit.save()
-
-
+            trabajo_edit.subareas.clear()
+            new_subarea = Sub_area.objects.get(id = request.POST.get("subarea_select"))
+            trabajo_edit.subareas.add(new_subarea)
+            trabajo_edit.save()
             messages.success(request, 'Sus cambios al trabajo han sido guardados con éxito.')
             return redirect('trabajos:trabajos')
-        else:
-            if (3 < len(subarea_list)):
-                messages.error(request, 'Solo puede elegir hasta 3 subáreas.')
                 
     else: 
         form = EditTrabajoForm(instance = autor_trabajo.trabajo)
 
-    areas= Area.objects.all()
-    subareas= Sub_area.objects.all()
+
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+
+    subarea_selected = trabajo.subareas.all()[0]
     context = {
         'nombre_vista' : 'Editar Trabajo',
         'main_navbar_options' : main_navbar_options,
@@ -284,7 +277,8 @@ def edit_trabajo(request, trabajo_id):
         'form':form,
         'trabajo': trabajo,
         'areas': areas,
-        'subareas':subareas
+        'subarea_list':subarea_list,
+        'subarea_selected': subarea_selected
     }
     return render(request,"trabajos_edit_trabajo.html",context)
 
@@ -348,12 +342,7 @@ def detalles_trabajo(request, trabajo_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-    autor = Autor.objects.get(usuario = usuario_asovac)
     trabajo = Trabajo.objects.get( id = trabajo_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
-
-    print(autor_trabajo.trabajo.archivo_trabajo.url)
 
     context = {
         'nombre_vista' : 'Editar Trabajo',
@@ -368,7 +357,8 @@ def detalles_trabajo(request, trabajo_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'autor_trabajo':autor_trabajo,
+        'trabajo':trabajo,
+        'arbitro_review': False, #Esto es para ocultar los botones para calificar el trabajo 
     }
     return render(request,"trabajos_detalles.html",context)
 
@@ -1017,3 +1007,41 @@ def generate_report(request,tipo):
 
     return response
 
+
+def add_new_version_to_job(request, last_version_trabajo_id):
+    data = dict()
+    trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
+    if request.method == "POST":
+        form = TrabajoForm(request.POST, request.FILES)
+        new_subarea = request.POST.get("subarea_select")
+        if form.is_valid():
+            #Se almacena la nueva versión del trabajo
+            job_new_version = form.save()
+            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            job_new_version.subareas.add(subarea_to_assign)
+            job_new_version.save()
+            
+            #Se conecta la nueva versión del trabajo con su "padre"
+            trabajo.trabajo_version = job_new_version
+            trabajo.save()
+
+            messages.success(request,"Se ha creado la nueva versión del trabajo con éxito.")
+            data['form_is_valid'] = True
+            data['url'] = reverse('trabajos:trabajos')
+    else:
+        form = TrabajoForm()
+    
+    areas= Area.objects.all().order_by('nombre')
+    subarea_list = []
+    for area in areas:
+        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
+        for subarea in subareas:
+            subarea_list.append(subarea)
+
+    context = {
+        'last_version_trabajo': trabajo,
+        'form':form,
+        'subarea_list': subarea_list
+    }
+    data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
+    return JsonResponse(data)
