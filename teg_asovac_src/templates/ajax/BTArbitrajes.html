@@ -94,9 +94,34 @@
 </script>
 
 {% else %}
-    {% if tipo == "test" %}
-    
-        
+    {% if tipo == "statusArbitraje" %}
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Estatus Arbitraje</h3>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 text-left" style="font-size: 16px;">
+            <table class="table table-bordered">
+                <thead>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Resultado</th>
+                        <th>Comentario</th>
+                </thead>
+                    {% for resultado in arbitrajes %}
+                        <tr>
+                            <td>{{resultado.nombres}} {{resultado.apellidos}}</td>
+                            <td>{{resultado.correo_electronico}}</td>
+                            <td>{{resultado.evaluacion}}</td>
+                            <td>{{resultado.comentario}}</td>
+                        </tr>
+                    {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+    </div>
     {% else %}
         {% if tipo == "delete" %}
       

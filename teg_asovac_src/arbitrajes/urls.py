@@ -42,6 +42,7 @@ urlpatterns = [
     # CRUD Arbitraje
     url(r'^estatus-trabajos/viewArbitraje/(?P<id>\d+)$',views.viewArbitraje,name='verArbitraje'),
     url(r'^estatus-trabajos/changeStatus/(?P<id>\d+)$',views.changeStatus,name='cambiarEstatus'),
+    url(r'^estatus-trabajos/statusArbitraje/(?P<id>\d+)$',views.statusArbitraje,name='estatusArbitraje'),
 
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
