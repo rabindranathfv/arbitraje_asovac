@@ -1,94 +1,72 @@
-{% extends "content_wrapper.html" %}
-{% load static %}
+{% extends "content_wrapper.html" %} 
 {% block inner_content %}
-<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
-    {% include "success_messages.html" %}
-     <div class="row">
+<div class="container" id="content-wrapper">
+    {% include "toggle_title.html" %}
+    <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
-                <div class="container-fluid top-margin-18">
-                    <div class="row-eq-height middle-content display-flex">
-                        <div class="col-sm-5">
-                            {% if arbitro_review %}
-                                <a href="{% url 'arbitrajes:jobs_for_review' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
-                            {% else %}
-                                <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
-                            {% endif %}
-                            <h2 class="text-center"><strong>Datos del resumen</strong></h2>
-                            <p class="p-md">
-                                <strong>Título Español:</strong> {{ trabajo.titulo_espanol }}
-                            </p>
-                            {% if trabajo.titulo_ingles %}
-                                <p class="p-md">
-                                    <strong>Título Inglés:</strong> {{ trabajo.titulo_ingles }}
-                                </p>
-                            {% endif %}
-                            {% if trabajo.palabras_clave %}
-                                <p class="p-md">
-                                    <strong>Palabras Clave:</strong> {{ trabajo.palabras_clave }}
-                                </p>
-                            {% endif %}
-                            <p class="p-md">
-                                <strong>Forma de Presentación:</strong> {{ trabajo.get_forma_presentacion_display }}
-                            </p>
-                            <p class="p-md">
-                                <strong>Área:</strong> {{ trabajo.subareas.first.area }}
-                            </p>
-                            <p class="p-md">
-                                <strong>Subáreas:</strong> {{ trabajo.subareas.first.nombre}}
-                            </p>
-                            {% if trabajo.documento_inscrito %}
-                                <p class="p-md">
-                                    <strong>Documento Inscrito:</strong> {{ trabajo.documento_inscrito }}
-                                </p>
-                            {% endif %}
-                            {% if trabajo.url_trabajo %}
-                                <p class="p-md">
-                                    <strong>URL del trabajo:</strong> {{ trabajo.url_trabajo }}
-                                </p>
-                            {% endif %}
-                            <p class="p-md">
-                                <strong>Estatus:</strong>
-                                {% if trabajo.estatus == "Pendiente" %}
-                                  <span class="label label-warning lb-md">Pendiente</span>
-                                {% elif trabajo.estatus == "Aprobado" %}
-                                  <span class="label label-success lb-md">Aprobado</span>
-                                {% elif trabajo.estatus == "Rechazado" %}
-                                  <span class="label label-danger lb-md">Rechazado</span>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% if arbitro_review %}
+                                    <a href="{% url 'arbitrajes:jobs_for_review' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
+                                {% else %}
+                                    <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                                 {% endif %}
-                            </p>
-                            <p class="p-md">
-                                <strong>Resumen:</strong> {{ trabajo.resumen }}
-                            </p>
-                            {% if trabajo.observaciones %}
-                                <p class="p-md">
-                                    <strong>Observaciones:</strong> {{ trabajo.observaciones }}
-                                </p>
-                            {% endif %}
-                            {% if arbitro_review %}
-                                <div class= "row">
-                                    <a class="btn btn-primary btn-lg review_job col-sm-12" data-url="{% url 'arbitrajes:review_job' trabajo.id %}" title="Arbitrar trabajo" role="button">
-                                        Arbitrar
+                                {% if arbitro_review %}
+                                    <a class="btn btn-primary btn-block btn-lg review_job" data-url="{% url 'arbitrajes:review_job' trabajo.id %}" title="Arbitrar trabajo" role="button">
+                                        <i class="fa fa-gavel"></i>Arbitrar
                                     </a>
-                                </div>
-                            {% endif %}
-                      </div>
-                        <div class="col-sm-7">
-                            <object data="{{ trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="100%">
-                                <iframe src="{{trabajo.archivo_trabajo.url }}" style="border: none;" width="100%" height="100%">
-                                Este navegador no soporta PDFs. Por favor descarga el PDF para verlo:<a href="{{trabajo.archivo_trabajo.url}}">Descargar PDF</a>
-                                </iframe>
-                            </object>
+                                {% endif %}                            
+                            </div>
                         </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p class="text-center">Detalle del resumen</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-left" style="    font-size: 16px;">
+                                <span>
+                                    <b>Titulo:</b> {{trabajo.titulo_espanol}}   
+                                </span>
+                                <br>
+                                <span>
+                                    <b>Forma de presentación:</b>  {{trabajo.get_forma_presentacion_display}}   
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Área:</strong> {{trabajo.subareas.first.area }}
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Subárea:</strong> {{trabajo.subareas.first.nombre}}
+                                </span>
+                                <br>
+                                <span>
+                                    <strong>Estatus:</strong> {{trabajo.estatus}}
+                                </span>
+                                <br>
+                                <span >
+                                    <strong>Resumen:</strong> {{trabajo.resumen}}
+                                </span>
+
+                            </div>
+                        </div>
+                        <hr>
                     </div>
-                </div>
-
-
+                    <div class="col-md-8">
+                        <!-- <embed src="{{autor_trabajo.trabajo.archivo_trabajo.url }}" width="500" height="610" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+                        <embed style="min-height: 600px;" src="{{trabajo.archivo_trabajo.url }}" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html">
+                    </div>
+                </div>        
             </div>
         </div>
     </div>
-    <!-- EndFirst Row -->
-
 </div>
-
 {% endblock %}
+

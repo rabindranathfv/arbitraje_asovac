@@ -9,24 +9,32 @@
         <h4 class="modal-title" >Arbitrar trabajo</h4>
     </div>
     <div class="modal-body text-center">
-        <strong>Título:</strong> <p>{{ trabajo.titulo_espanol }} </p>
-        <strong>Área:</strong> <p> {{ trabajo.subareas.first.area }} </p>
-        <strong>Subárea:</strong> <p> {{ trabajo.subareas.first }}</p>
-        <strong>Resumen:</strong> <p>  {{trabajo.resumen}}</p>
-        {% if trabajo.url_trabajo %}
-            <strong>URL del trabajo:</strong> <p> {{ trabajo.url_trabajo }} </p>
-        {% endif %}
-        <strong>Forma de Presentación:</strong> <p>{{ trabajo.get_forma_presentacion_display }}</p>
-        <div class="preview-pdf">
-            <object data="{{ trabajo.archivo_trabajo.url }}" type="application/pdf" width="100%" height="600px">
-                <iframe src="{{trabajo.archivo_trabajo.url }}" width="100%" height="100%" style="border: none;">
-                Este navegador no soporta PDFs. Por favor descarga el PDF para verlo:<a href="{{trabajo.archivo_trabajo.url}}">Descargar PDF</a>
-                </iframe>
-            </object>
+
+        <div class="col-md-12 text-left" style="font-size: 16px;">
+            <span>
+                <b>Titulo:</b> {{trabajo.titulo_espanol}}   
+            </span>
+            <br>
+            <span>
+                <b>Forma de presentación:</b>  {{trabajo.get_forma_presentacion_display }}   
+            </span>
+            <br>
+            <span>
+                <strong>Área:</strong> {{ trabajo.subareas.first.area }}
+            </span>
+            <br>
+            <span>
+                <strong>Subárea:</strong> {{trabajo.subareas.first}}
+            </span>
+            <br>
+            <span>
+                <strong>Estatus:</strong> {{trabajo.estatus}}
+            </span>
+            <br>
+            <span >
+                <strong>Resumen:</strong> {{trabajo.resumen}}
+            </span>
         </div>
-    </div>
-    <div class="modal-footer">
-        <p class="text-center btn-danger" >Una vez le dé click en arbitrar, no podrá cambiar su decisión.</p>
         <div class="col-md-12">
             <br>
             <select name="status" id="status" class=" form-control" required>
@@ -39,7 +47,9 @@
         <div class="col-md-12">
             <textarea name="comment" id="comment" rows="4" class="form-control" onkeyup="check(this);" style="display:none;"></textarea>
         </div>
-        <br>
+    </div>
+    <div class="modal-footer">
+        <p class="text-center btn-danger" >Una vez le dé click en arbitrar, no podrá cambiar su decisión.</p>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
         <button disabled="true" type="submit" class="sendGenericForm btn btn-success">Arbitrar</button>
     </div>
