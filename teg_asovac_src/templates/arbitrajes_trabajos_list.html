@@ -1,0 +1,131 @@
+
+
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				<div class="col-sm-6">
+					<h2 class="text-left">Estatus de Trabajos</h2>
+				</div>
+
+				<!-- Bootstrap table -->
+				<div class="row">
+
+					<div class="col-md-8">
+					</div>
+					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
+								class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<!-- <li>
+									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
+									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
+								</li> -->
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<input type="hidden" id="listArbitrajes" name="list" data-url="{% url 'arbitrajes:list_arbitrajes' %}">
+
+				<div id="toolbar">
+					<div class="form-inline" role="form">
+						<a href="{% url 'trabajos:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+					</div>
+				</div>
+					<table id="table"
+							data-toggle="table"
+							data-ajax="ajaxArbitrajes"
+							data-side-pagination="server"
+							data-show-export="false"
+							data-toolbar="#toolbar"
+							data-pagination="true"
+							data-page-size="5"
+							data-page-list="[0,5,10,25,50,100, 200]"
+							data-show-refresh="true"
+							data-search="true"
+							data-sort-name="pk"
+							data-show-toggle="true"
+							data-show-columns="true"
+							data-detail-view="false"
+							data-detail-formatter="detailFormatter"
+							>
+							<thead>
+								<tr>
+									<th data-field="estatus" data-sortable="true">Estatus</th>
+									<th data-field="nombre" data-sortable="true">Área</th>
+									<th data-field="titulo_espanol" data-sortable="true">Título </th>
+									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
+									<th data-field="observaciones" data-sortable="true">Observaciones</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitraje" data-align="center">Acciones</th>
+								</tr>
+						</thead>
+					</table>
+					  
+				<!-- End Bootstrap table -->
+		
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}"></script>
+	<script>
+
+		var $table = $('#table');
+		// your custom ajax request here
+		
+
+		function ajaxArbitrajes(params) {
+			var route= $("#listArbitrajes").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+		
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listArbitrajes").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
+		
+		
+
+	</script> 
+
+{% endblock %}

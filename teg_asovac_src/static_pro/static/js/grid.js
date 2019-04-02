@@ -131,6 +131,18 @@ $.ajaxSetup({
         ].join('');
     }
 
+    function operateArbitraje(value, row, index) {
+        return [
+            
+            '<a class="viewArbitraje" href="javascript:void(0)" title="Ver">',
+            '<i class="far fa-eye"></i>',
+            '</a>  ',
+            '<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus">',
+            '<i class="fas fa-file-signature"></i>',
+            '</a>  ',
+            
+        ].join('');
+    }
 /*-----------------------------------------------------------------------------------------*/
 /*                  Para capturar el evento de los botones de las tablas                   */
 /*-----------------------------------------------------------------------------------------*/
@@ -424,6 +436,29 @@ $.ajaxSetup({
             });
         },
 
+        'click .viewArbitraje': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            location.href=route;
+        },
+
+        'click .changeStatus': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
 
     };
 

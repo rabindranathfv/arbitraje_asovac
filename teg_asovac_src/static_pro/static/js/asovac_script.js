@@ -429,6 +429,37 @@ var SaveAñadirPagoForm= function(){
 
     };
 
+    // Para procesar formularios genericos
+    var processGenericForm = function(){
+        console.log("metodo para enviar");
+        var form= $(this).parent().parent();
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+
+            success: function(data){
+                // console.log(data);
+                if(data.status == 200 ){
+                    console.log('actualizacion exitosa')
+                    $('#bootstrapTableModal .modal-body').html(data.message);
+                    $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                    $('#modal-user').modal('hide');
+                    $('#table').bootstrapTable('refresh');
+                }else{
+                    console.log('error en la actualizacion')
+                    $('#bootstrapTableModal .modal-body').html(data.message);
+                    $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                    $('#modal-user').modal('hide');
+                }
+            }
+        });
+    
+    };
+
+
+
     // Modal Form Process
     var modalFormProcess= function(){
         console.log("metodo para enviar");
@@ -646,6 +677,9 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
+
+    // CRUD Arbitraje
+    $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
 
 
 });

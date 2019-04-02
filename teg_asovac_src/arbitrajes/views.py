@@ -12,6 +12,8 @@ from autores.models import Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
+from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
+from autores.models import Autor, Autores_trabajos
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
@@ -27,6 +29,54 @@ def arbitrajes_pag(request):
     }
     return render(request,"test_views.html",context)
 
+def estatus_trabajos(request):
+
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    # request.session para almacenar el item seleccionado del sidebar
+    request.session['sidebar_item'] = "Trabajos"
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    # Seción para obtener área y subarea enviada por sesión y filtrar consulta
+    area=request.session['area']
+    subarea=request.session['subarea']
+    # print "Area y Subarea enviadas por sesion"
+    # print area
+    # print subarea
+    # trabajos=Trabajo.objects.all().filter( Q(subarea1=subarea) | Q(subarea2=subarea) | Q(subarea3=subarea) )
+    trabajos=Trabajo.objects.all().filter( )
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    context = {
+        'nombre_vista' : 'Arbitrajes',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'trabajos': trabajos,
+    }
+    return render(request, 'arbitrajes_trabajos_list.html', context)
 
 def jobs_for_review(request):
     estado = request.session['estado']
@@ -474,6 +524,236 @@ def removeArbitro(request,id):
         }
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
+
+#---------------------------------------------------------------------------------#
+#                  Carga el contenido de la tabla de arbitraje                     #
+#---------------------------------------------------------------------------------#
+
+def list_arbitrajes(request):
+    
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    user_area=get_area(request.user.id)
+
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    search= request.POST['search']
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+    
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+    if sort == 'pk':
+        sort='id'
+
+
+    if search != "" and export == "":
+        print "Consulta Search"
+        # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
+        # total= len(data)
+        # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
+        if rol_user == 1 or rol_user == 2:
+            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+            query_count=query
+            search= search+'%'
+            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s '
+            query= query+where
+        else:
+            if rol_user == 3:
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                query_count=query
+                search= search+'%'
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s '
+                query= query+where
+        if sort == "nombre":
+            order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+        else:
+            order_by="trab."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+        query= query + " ORDER BY " + order_by
+        if rol_user == 1 or rol_user ==2 :
+            data= User.objects.raw(query,[search,search,search,search,search,event_id])
+            data_count= User.objects.raw(query,[search,search,search,search,search,event_id])
+            # data_count= User.objects.raw(query_count)
+        else:
+            if rol_user == 3:
+                area= str(user_area.id)
+                data= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+                data_count= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+
+        total=0
+
+        for item in data_count:
+            total=total+1
+    else:
+        # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+        if export !=  "":
+    
+            print "Consulta para Exportar Todo"
+
+        else:
+            print "Consulta Normal"
+            # consulta basica
+            # data=User.objects.all().order_by(order)[init:limit].query
+            # data=User.objects.all().order_by('pk')[init:limit].query
+
+            # consulta mas completa
+            if rol_user == 1 or rol_user == 2:
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s '
+                query= query+where
+            else:
+                if rol_user == 3:
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    where=' WHERE sis_aso.id= %s AND main_a.id = %s '
+                    query= query+where
+            
+            if sort=="nombre":
+                order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+            else:
+                order_by="trab."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+            query_count=query
+            query= query + " ORDER BY " + order_by
+            
+            if rol_user == 1 or rol_user ==2 :
+                data= User.objects.raw(query,event_id)
+                data_count= User.objects.raw(query_count,event_id)
+            else:
+                if rol_user == 3:
+                    area= str(user_area.id)
+                    data= User.objects.raw(query,[event_id,area])
+                    data_count= User.objects.raw(query_count,[event_id,area])
+           
+            total=0
+            for item in data_count:
+                total=total+1
+  
+            # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
+            # total= len(data)
+
+    # for item in data:
+        # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
+        # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
+    
+    for item in data:
+        estatus= item.estatus 
+        titulo= item.titulo_espanol
+        presentacion= item.forma_presentacion 
+        observaciones = item.observaciones
+        area = item.nombre
+        response['query'].append({'id':item.id,'estatus': estatus ,'nombre':area,'titulo_espanol':titulo ,'forma_presentacion':presentacion, 'observaciones':observaciones  })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+   
+    return JsonResponse(response)
+
+#---------------------------------------------------------------------------------#
+#                                CRUD de Arbitrajes                                 #
+#---------------------------------------------------------------------------------#
+def viewArbitraje(request, id):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    trabajo = Trabajo.objects.get( id = id)
+    area=trabajo.subareas.all()[0].area.nombre
+    subarea=trabajo.subareas.all()[0].nombre
+
+    context = {
+        'nombre_vista' : 'Detalle Trabajo',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'area':area,
+        'subarea':subarea,
+        'trabajo':trabajo,
+    }
+    return render(request,"arbitrajes_trabajo_info.html",context)
+
+
+def changeStatus(request, id):
+    
+    response= dict()
+    print "Cambio de estatus del trabajo"
+    # Detalle del trabajo
+    trabajo = Trabajo.objects.get( id = id)
+    area=trabajo.subareas.all()[0].area.nombre
+    subarea=trabajo.subareas.all()[0].nombre
+    
+
+    if request.method == 'POST':
+        
+        print "El metodo es post"
+        print "Parametros enviados"
+
+        try:
+            
+            if request.POST.get("status") == "Rechazado":
+                trabajo.estatus=request.POST.get("status")
+                trabajo.observaciones=request.POST.get("comment").strip()
+
+            else:
+                trabajo.estatus=request.POST.get("status")
+                trabajo.observaciones=""
+
+            trabajo.save()
+            response['status']= 200
+            response['message']= "El estatus se ha cambiado de manera exitosa."
+        except:
+            response['status']= 400
+            response['message']= "No se ha podido cambiar el estatus del trabajo."
+            
+    else:
+       
+        response['status']= 200
+        context={
+            'tipo':"changeStatus",
+            'area':area,
+            'subarea':subarea,
+            'trabajo':trabajo,
+            'trabajo_id':id,
+        }
+        response['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    
+    return JsonResponse(response)
 
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                 #
