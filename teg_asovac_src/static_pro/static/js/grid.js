@@ -495,6 +495,8 @@ $.ajaxSetup({
                 },
                 success: function (data){
                     // console.log(data);
+                    $tabla = $("table");
+                    $tabla.bootstrapTable("refresh");
                     $('#bootstrapTableModal .modal-content').html(data.content);
                 }
             });

@@ -815,6 +815,10 @@ def statusArbitraje(request, id):
 
 def newArbitraje(request, id):
 
+    trabajo= Trabajo.objects.get(id = id)
+    trabajo.requiere_arbitraje=True
+    trabajo.save()
+    
     response= dict()
     response['status']= 200
     context={
