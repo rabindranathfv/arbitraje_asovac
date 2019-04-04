@@ -1025,6 +1025,13 @@ def add_new_version_to_job(request, last_version_trabajo_id):
             trabajo.trabajo_version = job_new_version
             trabajo.save()
 
+            #Se generan automáticamente las invitaciones a los arbitros que llevaron a cabo su arbitraje en la versión anterior.
+            trabajo_arbitros = Trabajo_arbitro.objects.filter(trabajo = trabajo, invitacion = True)
+
+            for trabajo_arbitro in trabajo_arbitros:
+                new_invitation = Trabajo_arbitro(arbitro = trabajo_arbitro.arbitro, trabajo = job_new_version, invitacion = True)
+                new_invitation.save()
+                
             messages.success(request,"Se ha creado la nueva versión del trabajo con éxito.")
             data['form_is_valid'] = True
             data['url'] = reverse('trabajos:trabajos')

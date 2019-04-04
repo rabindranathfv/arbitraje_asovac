@@ -64,7 +64,7 @@ class Trabajo_arbitro (models.Model):
 	fecha_arbitraje = models.DateField(blank=True, null=True)
 
 	def __str__(self):
-    		return "{} {}".format(self.arbitro.nombres,self.arbitro.apellidos).encode('utf-8', errors='replace')
+    		return "{} {} - {}".format(self.arbitro.nombres,self.arbitro.apellidos, self.trabajo.titulo_espanol).encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
