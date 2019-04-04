@@ -41,7 +41,17 @@
                                 </span>
                                 <br>
                                 <span>
-                                    <strong>Estatus:</strong> {{trabajo.estatus}}
+                                    <strong>Estatus:</strong> 
+                                    {% if trabajo.estatus == "Aceptado"%}
+                                        <span class="label label-success">{{trabajo.estatus}}</span>
+                                    {% else %}
+                                        {% if trabajo.estatus == "Rechazado"%}
+                                            <span class="label label-danger">{{trabajo.estatus}}</span>
+                                        {% else %}
+                                            <span class="label label-warning">{{trabajo.estatus}}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                    
                                 </span>
                                 <br>
                                 <span >

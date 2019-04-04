@@ -132,18 +132,21 @@ $.ajaxSetup({
     }
 
     function operateArbitraje(value, row, index) {
+        var estatus=row.estatus.indexOf("Aceptado");
+      
+        if(estatus > 0 ){
+            var actions='<a class="viewArbitraje" href="javascript:void(0)" title="Ver"><i class="far fa-eye"></i></a>  ';
+            actions= actions+'<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus"><i class="fas fa-file-signature"></i></a>  ';
+            actions= actions+'<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje"><i class="fas fa-history"></i></a>  ';
+            actions= actions+'<a class="newArbitraje" href="javascript:void(0)" title="Asignar nueva revisión"><i class="fas fa-exchange-alt"></i></a>  ';
+
+        }else{
+            var actions='<a class="viewArbitraje" href="javascript:void(0)" title="Ver"><i class="far fa-eye"></i></a>  ';
+            actions= actions+'<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus"><i class="fas fa-file-signature"></i></a>  ';
+            actions= actions+'<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje"><i class="fas fa-history"></i></a>  ';
+        }
         return [
-            
-            '<a class="viewArbitraje" href="javascript:void(0)" title="Ver">',
-            '<i class="far fa-eye"></i>',
-            '</a>  ',
-            '<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus">',
-            '<i class="fas fa-file-signature"></i>',
-            '</a>  ',
-            '<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje">',
-            '<i class="fas fa-history"></i>',
-            '</a>  ' ,
-            
+            actions
         ].join('');
     }
 /*-----------------------------------------------------------------------------------------*/
@@ -463,6 +466,23 @@ $.ajaxSetup({
             });
         },
         'click .statusArbitraje': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .newArbitraje': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({

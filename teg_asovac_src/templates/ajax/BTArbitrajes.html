@@ -38,7 +38,7 @@
         <div class="col-md-12">
              <br>
             <select name="status" id="status" class=" form-control" >
-                <option selected value="Pendiente">Pendiente</option>
+                <option selected value="">Seleccione</option>
                 <option value="Aceptado">Aceptado</option>
                 <option value="Rechazado">Rechazado</option>
             </select>
@@ -112,7 +112,11 @@
                         <tr>
                             <td>{{resultado.nombres}} {{resultado.apellidos}}</td>
                             <td>{{resultado.correo_electronico}}</td>
-                            <td>{{resultado.evaluacion}}</td>
+                            {% if resultado.evaluacion == "Aceptado"%}
+                                <td><span class="label label-success">{{resultado.evaluacion}}</span></td>
+                            {% else %}
+                                <td><span class="label label-danger">{{resultado.evaluacion}}</span></td>
+                            {% endif %}
                             <td>{{resultado.comentario}}</td>
                         </tr>
                     {% endfor %}
@@ -123,8 +127,17 @@
         <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
     </div>
     {% else %}
-        {% if tipo == "delete" %}
-      
+        {% if tipo == "newArbitraje" %}
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 class="modal-title" >Nuevo proceso de Arbitraje</h3>
+        </div>
+        <div class="modal-body">
+            <p>El trabajo fué asignado a un nuevo proceso de revisión</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        </div>
         {% endif %}
     {% endif %}
 {% endif %}

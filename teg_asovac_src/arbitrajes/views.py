@@ -569,14 +569,14 @@ def list_arbitrajes(request):
             query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query
             search= search+'%'
-            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s '
+            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND trab.requiere_arbitraje=false'
             query= query+where
         else:
             if rol_user == 3:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
-                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s '
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s AND trab.requiere_arbitraje=false '
                 query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -612,12 +612,12 @@ def list_arbitrajes(request):
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                where=' WHERE sis_aso.id= %s '
+                where=' WHERE sis_aso.id= %s AND trab.requiere_arbitraje=false'
                 query= query+where
             else:
                 if rol_user == 3:
                     query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                    where=' WHERE sis_aso.id= %s AND main_a.id = %s '
+                    where=' WHERE sis_aso.id= %s AND main_a.id = %s AND trab.requiere_arbitraje=false'
                     query= query+where
             
             if sort=="nombre":
@@ -646,9 +646,16 @@ def list_arbitrajes(request):
     # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
         # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
-    
+
     for item in data:
-        estatus= item.estatus 
+        if item.estatus == "Aceptado":
+            estatus= '<span class="label label-success">'+item.estatus +'</span>'
+        else:
+            if item.estatus == "Rechazado":
+                estatus= '<span class="label label-danger">'+item.estatus +'</span>'
+            else:
+                estatus= '<span class="label label-warning">'+item.estatus +'</span>'
+
         titulo= item.titulo_espanol
         presentacion= item.forma_presentacion 
         observaciones = item.observaciones
@@ -727,10 +734,38 @@ def changeStatus(request, id):
         try:
             
             if request.POST.get("status") == "Rechazado":
+                # Para obtener el resultado de las evaluaciones
+                query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
+                where=' WHERE t.id= %s '
+                query= query+where
+
+                data= Trabajo.objects.raw(query,[id])
+
+                for arbitraje in data:
+                    arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
+                    if arbitraje.fin_arbitraje == False:
+                        arbitraje_result.fin_arbitraje= True
+                        arbitraje_result.save()
+
                 trabajo.estatus=request.POST.get("status")
                 trabajo.observaciones=request.POST.get("comment").strip()
 
             else:
+                status=request.POST.get("status")
+                if status == "Aceptado":
+                    # Para obtener el resultado de las evaluaciones
+                    query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
+                    where=' WHERE t.id= %s '
+                    query= query+where
+
+                    data= Trabajo.objects.raw(query,[id])
+
+                    for arbitraje in data:
+                        arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
+                        if arbitraje.fin_arbitraje == False:
+                            arbitraje_result.fin_arbitraje= True
+                            arbitraje_result.save()
+
                 trabajo.estatus=request.POST.get("status")
                 trabajo.observaciones=""
 
@@ -756,7 +791,7 @@ def changeStatus(request, id):
     return JsonResponse(response)
 
 def statusArbitraje(request, id):
-
+    
     response= dict()
     # print "Estatus del arbitraje por parte de los arbitros"
     query= "SELECT t.id,a.correo_electronico, a.nombres, a.apellidos, ta.arbitraje_resultado, ta.comentario_autor FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
@@ -773,6 +808,17 @@ def statusArbitraje(request, id):
     context={
         'tipo':"statusArbitraje",
         'arbitrajes':resultados,
+    }
+    response['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    
+    return JsonResponse(response)
+
+def newArbitraje(request, id):
+
+    response= dict()
+    response['status']= 200
+    context={
+        'tipo':"newArbitraje",
     }
     response['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
     
