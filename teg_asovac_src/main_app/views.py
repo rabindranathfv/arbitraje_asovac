@@ -308,11 +308,11 @@ def create_params_validations(request,status):
 # Para guardar el archivo recibido del formulario  
 def save_file(request,type_load):
 
-    name= str(request.FILES.get('file'))  
+    name= str(request.FILES.get('file')).decode('UTF-8')
     file_name=''
 
-    if type_load == "usuarios":           	
-        extension = name.split('.')
+    if type_load == "usuarios":   
+        extension = name.split('.')        	
         file_name= "cargaUsuarios."+extension[1]
         # Permite guardar el archivo y asignarle un nombre
         handle_uploaded_file(request.FILES['file'], file_name)
