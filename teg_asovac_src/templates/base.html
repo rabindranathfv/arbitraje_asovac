@@ -67,7 +67,7 @@
                                     <a class="dropdown-item" href="{% url 'autores:postular_trabajo' %}">Postular Trabajo</a>
                                 </li>
                             {% endif %}
-                            {% if rol_id < 5 %}
+                            {% if rol_id < 5  and rol_id != 1 %}
                                 <li>
                                     <a class="dropdown-item" href="{% url 'arbitrajes:jobs_for_review' %}">Lista de trabajos por arbitrar</a>
                                 </li>
