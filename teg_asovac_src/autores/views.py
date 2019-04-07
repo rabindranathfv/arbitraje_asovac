@@ -1023,8 +1023,11 @@ def export_authors(request):
 		row_num += 1
 		counter = 0
 		user_subarea_list = item.usuario.sub_area.all()
+		subarea1=''
 		subarea2 = ''
 		subarea3 = ''
+		area = ''
+		
 		for subarea in user_subarea_list:
 			if counter == 0:
 				area = subarea.area.nombre
@@ -1046,7 +1049,6 @@ def export_authors(request):
 			es_miembro_asovac = 'S'
 		else:
 			es_miembro_asovac = 'N'
-
 		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
