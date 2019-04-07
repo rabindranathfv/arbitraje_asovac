@@ -685,7 +685,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                 for fila in range(excel_file.nrows):
                     # Para no buscar los titulos
                     if fila > 0:
-						#Se verifica que el campo nombres no esté vacío
+                        print(fila)
                         if excel_file.cell_value(rowx=fila, colx=0) == '':
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0} el nombre es un campo obligatorio \n".format(fila)
@@ -797,7 +797,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['status']=400
                             data['message'] = data['message'] + "Error en la fila {0} el área es un campo obligatorio \n".format(fila)
 
-                        elif not Area.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12))).exists():
+                        elif not Area.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()).exists():
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0}, no existe un área con este nombre \n".format(fila)
 
@@ -807,19 +807,19 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['message'] = data['message'] + "Error en la fila {0} el subárea1 es un campo obligatorio \n".format(fila)
 
                         else:
-							area = Area.objects.get(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=12)))
-							subarea_name = str(excel_file.cell_value(rowx=fila, colx=13))
+							area = Area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip())
+							subarea_name = excel_file.cell_value(rowx=fila, colx=13).encode('utf-8').strip()
 							if not Sub_area.objects.filter(area = area, nombre__iexact = subarea_name).exists():
 								data['status']=400
 								data['message'] = data['message'] + "Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 
 						# Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
-                        if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=14))).exists():
+                        if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).encode('utf-8').strip()).exists():
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 
 						# Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
-                        if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=15))).exists():
+                        if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).encode('utf-8').strip()).exists():
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea3 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
 
@@ -828,7 +828,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['status']=400
                             data['message'] = data['message'] + "Error en la fila {0} la universidad es un campo obligatorio \n".format(fila)
 
-                        elif not Universidad.objects.filter(nombre__iexact = str(excel_file.cell_value(rowx=fila, colx=16))).exists():
+                        elif not Universidad.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).encode('utf-8').strip()).exists():
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0}, no hay universidad con el nombre indicado \n".format(fila)
 
