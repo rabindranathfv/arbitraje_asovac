@@ -1,17 +1,11 @@
-{% extends "content_wrapper_with_sidebar.html" %} {% load static %} {% block inner_content %}
-<div class="container" id="content-wrapper">
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
-            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %} {{ message }}
-            </li>
-            {% endfor %}
-    </ul>
-    {% endif %} {% include "toggle_title.html" %}
-
+{% extends "content_wrapper.html" %} 
+{% load static %} 
+{% block inner_content %}
+<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
     <div class="row">
         <div class="col-sm-12">
+            {% include "success_messages.html" %}
+            {% include "toggle_title.html" %}
             <div class="jumbotron RLcard">
                 <h2 class="text-left">Lista de Organizadores</h2>
                 <div id="toolbar">

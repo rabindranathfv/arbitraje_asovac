@@ -52,7 +52,7 @@
                 <li>
                     {% if not request.session.is_author_created %}
                         
-                        <a id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >Trabajos</a>
+                        <a id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" ><i class="fas fa-book"></i> Trabajos</a>
                     {% else %}
                     
                         <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
@@ -124,8 +124,30 @@
                     </ul>
                 </li>
                 {% endif %}
-            </ul>
 
+                {% if rol_id == 1 or rol_id == 2 or rol_id == 3 %}
+                <li>
+                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                        <i class="fas fa-calendar"></i> Eventos
+                    </a>
+                    <ul class="dropdown-menu" style="z-index:2">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'eventos:arbitraje_events_list' %}">Lista de eventos</a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="{% url 'eventos:arbitraje_places_list' %}">Lista de locaciones</a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="{% url 'eventos:arbitraje_organizers_list' %}">Lista de organizadores</a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+
+            </ul>
 
 			{% if user.username %}
 			<!-- Desplegar aqui el nombre del usuario si está autenticado -->
