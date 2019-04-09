@@ -81,19 +81,14 @@ def trabajos(request):
         form = TrabajoForm()
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
-
-    trabajo_last_version_list = [] 
+ 
     autores_trabajo_list = []
 
     for autor_trabajo in trabajos_list:
         autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
-        trabajo = autor_trabajo.trabajo
-        while trabajo.trabajo_version:
-            trabajo = trabajo.trabajo_version
-        trabajo_last_version_list.append(trabajo)
 
     
-    job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
+    job_data = zip(trabajos_list, autores_trabajo_list)
  
     areas= Area.objects.all().order_by('nombre')
     subarea_list = []
@@ -1023,17 +1018,25 @@ def add_new_version_to_job(request, last_version_trabajo_id):
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
     if request.method == "POST":
         form = TrabajoForm(request.POST, request.FILES)
-        new_subarea = request.POST.get("subarea_select")
         if form.is_valid():
             #Se almacena la nueva versión del trabajo
             job_new_version = form.save()
-            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            subarea_to_assign = trabajo.subareas.first().id
             job_new_version.subareas.add(subarea_to_assign)
+            
+            #Se coloca el padre a la nueva versión
+            job_new_version.padre = trabajo.id
             job_new_version.save()
             
             #Se conecta la nueva versión del trabajo con su "padre"
             trabajo.trabajo_version = job_new_version
             trabajo.save()
+
+            #Se actualiza la tabla autores_trabajos con la última versión del trabajo
+            autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = trabajo)
+            for autores_trabajo in autores_trabajo_list:
+                autores_trabajo.trabajo = job_new_version
+                autores_trabajo.save()
 
             #Se generan automáticamente las invitaciones a los arbitros que llevaron a cabo su arbitraje en la versión anterior.
             trabajo_arbitros = Trabajo_arbitro.objects.filter(trabajo = trabajo, invitacion = True)
@@ -1048,17 +1051,9 @@ def add_new_version_to_job(request, last_version_trabajo_id):
     else:
         form = TrabajoForm()
     
-    areas= Area.objects.all().order_by('nombre')
-    subarea_list = []
-    for area in areas:
-        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
-        for subarea in subareas:
-            subarea_list.append(subarea)
-
     context = {
         'last_version_trabajo': trabajo,
         'form':form,
-        'subarea_list': subarea_list
     }
     data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
     return JsonResponse(data)
