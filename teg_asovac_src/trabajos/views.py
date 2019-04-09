@@ -74,6 +74,8 @@ def trabajos(request):
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
             form = TrabajoForm()
+            messages.success(request,"Trabajo creado con éxito.")
+            return redirect('trabajos:trabajos')
         else:
             if(new_subarea == ""):
                 messages.error(request,"Debe elegir un Área - Subárea para el trabajo.")
