@@ -862,12 +862,14 @@ def viewTrabajo(request, id):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-    autor = Autor.objects.get(usuario = usuario_asovac)
+    # print request.user
+    # usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    # autor = Autor.objects.get(usuario = usuario_asovac)
     trabajo = Trabajo.objects.get( id = id)
     area=trabajo.subareas.all()[0].area.nombre
     subarea=trabajo.subareas.all()[0].nombre
-    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, sistema_asovac = arbitraje_id)
+    # autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
 
     context = {
         'nombre_vista' : 'Detalle Trabajo',
