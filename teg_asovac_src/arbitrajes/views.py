@@ -101,12 +101,7 @@ def jobs_for_review(request):
     trabajos_arbitro_list = Trabajo_arbitro.objects.filter(arbitro = arbitro, fin_arbitraje = False, invitacion = True)
     autores_trabajo_list = []
     for trabajo_arbitro in trabajos_arbitro_list:
-        trabajo = trabajo_arbitro.trabajo
-        #Con las siguientes líneas de código buscaremos el trabajo que tiene ligado a las instancias de autores_trabajos para tener la lista de autores del trabajo en cuestión
-        while Trabajo.objects.filter(trabajo_version = trabajo):
-            trabajo = Trabajo.objects.get(trabajo_version = trabajo)
-
-        autores_trabajo_list.append(Autores_trabajos.objects.filter(trabajo = trabajo))
+        autores_trabajo_list.append(Autores_trabajos.objects.filter(trabajo = trabajo_arbitro.trabajo))
 
     job_data = zip(trabajos_arbitro_list, autores_trabajo_list)
     context = {
