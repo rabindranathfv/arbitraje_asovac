@@ -95,8 +95,9 @@ def admin_create_author(request):
 
 
 	# print (rol_id)
-	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=event_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , event_id)
 
 	item_active = 0
@@ -151,8 +152,9 @@ def authors_list(request):
 
 	# print (rol_id)
 
-	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , arbitraje_id)
 
 	item_active = 2
@@ -277,8 +279,9 @@ def author_edit(request, autor_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , arbitraje_id)
 
 	item_active = 2
@@ -317,8 +320,9 @@ def author_details(request, autor_id):
 
 
 	# print (rol_id)
-	estado = request.session['estado']
 	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id,arbitraje_id)
 
 	item_active = 2
@@ -394,8 +398,9 @@ def postular_trabajo(request):
 
 
 	# print (rol_id)
-	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=event_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , event_id)
 
 	item_active = 0
@@ -549,8 +554,9 @@ def detalles_pago(request, pagador_id):
 
 
 	# print (rol_id)
-	estado = request.session['estado']
 	event_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=event_id)
+	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , event_id)
 
 	item_active = 0

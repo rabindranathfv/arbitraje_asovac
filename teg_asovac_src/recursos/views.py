@@ -43,8 +43,9 @@ def resources_author(request):
 
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
@@ -81,8 +82,9 @@ def resources_referee(request):
 
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
@@ -119,8 +121,9 @@ def resources_event(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
         
     item_active = 1
@@ -157,8 +160,9 @@ def resources_sesion(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
@@ -195,8 +199,9 @@ def resources_asovac(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1
@@ -233,8 +238,9 @@ def resources_arbitration(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 1

@@ -40,8 +40,9 @@ def trabajos(request):
    
     # print (rol_id)
     
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id,arbitraje_id)
 
@@ -132,8 +133,9 @@ def jobs_list(request):
     # request.session para almacenar el item seleccionado del sidebar
     request.session['sidebar_item'] = "Trabajos"
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
@@ -179,8 +181,9 @@ def jobs_edit(request):
 
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -218,8 +221,9 @@ def edit_trabajo(request, trabajo_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -290,8 +294,9 @@ def trabajos_evaluados(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
@@ -328,8 +333,9 @@ def detalles_trabajo(request, trabajo_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -371,8 +377,9 @@ def trabajos_resultados_autor(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -849,8 +856,9 @@ def viewTrabajo(request, id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
