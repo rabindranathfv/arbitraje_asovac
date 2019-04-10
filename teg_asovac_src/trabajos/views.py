@@ -1027,7 +1027,10 @@ def add_new_version_to_job(request, last_version_trabajo_id):
             job_new_version.subareas.add(subarea_to_assign)
             
             #Se coloca el padre a la nueva versión
-            job_new_version.padre = trabajo.id
+            if(trabajo.padre == 0):    
+                job_new_version.padre = trabajo.id
+            else:
+                job_new_version.padre = trabajo.padre
             job_new_version.save()
             
             #Se conecta la nueva versión del trabajo con su "padre"
