@@ -35,11 +35,11 @@
                         </thead>
                         <tbody class="searchable">
 
-                            {% for trabajo, autor_list, trabajo_last_version in job_data %}
+                            {% for trabajo, autor_list in job_data %}
                             <tr>
-                                <td class="text-center">{{trabajo_last_version.titulo_espanol}}</td>
-                                <td class="text-center">{{trabajo_last_version.subareas.first.area}}</td>
-                                <td class="text-center">{{trabajo_last_version.subareas.first.nombre}}</td>
+                                <td class="text-center">{{trabajo.trabajo.titulo_espanol}}</td>
+                                <td class="text-center">{{trabajo.trabajo.subareas.first.area}}</td>
+                                <td class="text-center">{{trabajo.trabajo.subareas.first.nombre}}</td>
                                 <td class="text-center">
                                     {% for autor in autor_list %}
                                         {{autor.autor.nombres}} {{autor.autor.apellidos}}
@@ -47,11 +47,11 @@
                                     {% endfor %}
                                 </td>
                                 <td class="text-center">
-                                    {% if trabajo_last_version.estatus == "Pendiente" %}
+                                    {% if trabajo.trabajo.estatus == "Pendiente" %}
                   										<span class="label label-warning lb-md center-block">Pendiente</span>
-                  									{% elif trabajo_last_version.estatus == "Aprobado" %}
+                  									{% elif trabajo.trabajo.estatus == "Aprobado" %}
                   										<span class="label label-success lb-md center-block">Aprobado</span>
-                  									{% elif trabajo_last_version.estatus == "Rechazado" %}
+                  									{% elif trabajo.trabajo.estatus == "Rechazado" %}
                   										<span class="label label-danger lb-md center-block">Rechazado</span>
                   									{% endif %}
                                 </td>
@@ -71,15 +71,15 @@
 										<a class="show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
                                         </a>
-									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo_last_version.requiere_arbitraje %}
+									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
 
-                                        <a class="show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo_last_version.id %}" title="Crear nueva versión del trabajo" role="button">
+                                        <a class="show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
                                             <i class="fas fa-book"></i>
                                         </a>
 
                                     {% endif %}
 
-                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo_last_version.id %}" role="button" title="Ver trabajo">
+                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" role="button" title="Ver trabajo">
 										<i class="fas fa-eye"></i>
 									</a>
                                 </td>

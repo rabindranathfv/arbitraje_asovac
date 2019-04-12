@@ -9,22 +9,6 @@
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
-        <div class="form-group">
-            <div class="subareas-content">
-                <label class="control-label requiredField" for="area_select">
-                    Área - Subarea del trabajo<span class="asteriskField">*<span>
-                </label>
-                <div class="controls was-validated" name="subarea" >
-                    <select title = "Seleccione el subarea"  name="subarea_select" class="form-control" id="subarea_select" required>
-                        <option value="" >Seleccione un Área - Subárea</option>
-                        {% for subarea in subarea_list %}
-                            <option data-area="{{subarea.area.id}}"	value="{{subarea.id}}" >{{subarea.area.nombre}} - {{ subarea.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-        </div>			
-
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>

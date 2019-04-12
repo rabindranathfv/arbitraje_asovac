@@ -40,8 +40,9 @@ def trabajos(request):
    
     # print (rol_id)
     
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id,arbitraje_id)
 
@@ -73,6 +74,8 @@ def trabajos(request):
             autor_trabajo = Autores_trabajos(autor = autor, trabajo = new_trabajo, es_autor_principal = True, es_ponente = True, sistema_asovac = sistema_asovac, monto_total = sistema_asovac.monto_pagar_trabajo)
             autor_trabajo.save()
             form = TrabajoForm()
+            messages.success(request,"Trabajo creado con éxito.")
+            return redirect('trabajos:trabajos')
         else:
             if(new_subarea == ""):
                 messages.error(request,"Debe elegir un Área - Subárea para el trabajo.")
@@ -80,19 +83,14 @@ def trabajos(request):
         form = TrabajoForm()
 
     trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
-
-    trabajo_last_version_list = [] 
+ 
     autores_trabajo_list = []
 
     for autor_trabajo in trabajos_list:
         autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
-        trabajo = autor_trabajo.trabajo
-        while trabajo.trabajo_version:
-            trabajo = trabajo.trabajo_version
-        trabajo_last_version_list.append(trabajo)
 
     
-    job_data = zip(trabajos_list, autores_trabajo_list, trabajo_last_version_list)
+    job_data = zip(trabajos_list, autores_trabajo_list)
  
     areas= Area.objects.all().order_by('nombre')
     subarea_list = []
@@ -132,8 +130,9 @@ def jobs_list(request):
     # request.session para almacenar el item seleccionado del sidebar
     request.session['sidebar_item'] = "Trabajos"
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
@@ -179,8 +178,9 @@ def jobs_edit(request):
 
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -218,8 +218,9 @@ def edit_trabajo(request, trabajo_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -290,8 +291,9 @@ def trabajos_evaluados(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
@@ -328,8 +330,9 @@ def detalles_trabajo(request, trabajo_id):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -371,8 +374,9 @@ def trabajos_resultados_autor(request):
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -849,8 +853,9 @@ def viewTrabajo(request, id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -862,12 +867,14 @@ def viewTrabajo(request, id):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-    autor = Autor.objects.get(usuario = usuario_asovac)
+    # print request.user
+    # usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+    # autor = Autor.objects.get(usuario = usuario_asovac)
     trabajo = Trabajo.objects.get( id = id)
     area=trabajo.subareas.all()[0].area.nombre
     subarea=trabajo.subareas.all()[0].nombre
-    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, sistema_asovac = arbitraje_id)
+    # autor_trabajo = get_object_or_404(Autores_trabajos,  trabajo = trabajo, autor = autor, sistema_asovac = arbitraje_id)
 
     context = {
         'nombre_vista' : 'Detalle Trabajo',
@@ -1013,17 +1020,28 @@ def add_new_version_to_job(request, last_version_trabajo_id):
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
     if request.method == "POST":
         form = TrabajoForm(request.POST, request.FILES)
-        new_subarea = request.POST.get("subarea_select")
         if form.is_valid():
             #Se almacena la nueva versión del trabajo
             job_new_version = form.save()
-            subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            subarea_to_assign = trabajo.subareas.first().id
             job_new_version.subareas.add(subarea_to_assign)
+            
+            #Se coloca el padre a la nueva versión
+            if(trabajo.padre == 0):    
+                job_new_version.padre = trabajo.id
+            else:
+                job_new_version.padre = trabajo.padre
             job_new_version.save()
             
             #Se conecta la nueva versión del trabajo con su "padre"
             trabajo.trabajo_version = job_new_version
             trabajo.save()
+
+            #Se actualiza la tabla autores_trabajos con la última versión del trabajo
+            autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = trabajo)
+            for autores_trabajo in autores_trabajo_list:
+                autores_trabajo.trabajo = job_new_version
+                autores_trabajo.save()
 
             #Se generan automáticamente las invitaciones a los arbitros que llevaron a cabo su arbitraje en la versión anterior.
             trabajo_arbitros = Trabajo_arbitro.objects.filter(trabajo = trabajo, invitacion = True)
@@ -1038,17 +1056,9 @@ def add_new_version_to_job(request, last_version_trabajo_id):
     else:
         form = TrabajoForm()
     
-    areas= Area.objects.all().order_by('nombre')
-    subarea_list = []
-    for area in areas:
-        subareas = Sub_area.objects.filter(area = area).order_by('nombre')
-        for subarea in subareas:
-            subarea_list.append(subarea)
-
     context = {
         'last_version_trabajo': trabajo,
         'form':form,
-        'subarea_list': subarea_list
     }
     data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
     return JsonResponse(data)

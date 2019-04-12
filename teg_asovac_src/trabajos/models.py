@@ -51,6 +51,7 @@ class Trabajo(models.Model):
 	version = models.CharField(max_length=20,blank=True)
 	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
 	requiere_arbitraje= models.BooleanField(default=False)
+	padre =  models.IntegerField(default=0)
 	def __str__(self):
     		return self.titulo_espanol.encode('utf-8', errors='replace')
 

@@ -473,10 +473,9 @@ def dashboard(request, arbitraje_id):
 
     request.session['arbitraje_id'] = arbitraje_id
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    request.session['estado'] = arbitraje.estado_arbitraje
+    estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id, arbitraje.id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
 
     try:
@@ -579,8 +578,9 @@ def data_basic(request, arbitraje_id):
     # No: Se despliega un error 404
     #------------------------------------------------------------------------------------#
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id,arbitraje_id)
     # print (rol_id)
@@ -712,8 +712,9 @@ def data_basic(request, arbitraje_id):
 def state_arbitration(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     user_id = request.user.id
     rol_id=get_roles(request.user.id,arbitraje_id)
 
@@ -778,8 +779,9 @@ def users_list(request, arbitraje_id):
         #user.area_id.all()
         #print (query)
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     item_active = 1
     items = validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -814,8 +816,9 @@ def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -847,8 +850,9 @@ def user_edit(request, arbitraje_id):
 def user_roles(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -882,8 +886,9 @@ def user_roles(request, arbitraje_id):
 def coord_general(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -926,8 +931,9 @@ def coord_general(request, arbitraje_id):
 def coord_area(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -959,8 +965,9 @@ def coord_area(request, arbitraje_id):
 def total(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
     
     item_active = 3

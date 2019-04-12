@@ -39,8 +39,9 @@ def estatus_trabajos(request):
     # request.session para almacenar el item seleccionado del sidebar
     request.session['sidebar_item'] = "Trabajos"
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
@@ -79,8 +80,9 @@ def estatus_trabajos(request):
     return render(request, 'arbitrajes_trabajos_list.html', context)
 
 def jobs_for_review(request):
-    estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
@@ -99,12 +101,7 @@ def jobs_for_review(request):
     trabajos_arbitro_list = Trabajo_arbitro.objects.filter(arbitro = arbitro, fin_arbitraje = False, invitacion = True)
     autores_trabajo_list = []
     for trabajo_arbitro in trabajos_arbitro_list:
-        trabajo = trabajo_arbitro.trabajo
-        #Con las siguientes líneas de código buscaremos el trabajo que tiene ligado a las instancias de autores_trabajos para tener la lista de autores del trabajo en cuestión
-        while Trabajo.objects.filter(trabajo_version = trabajo):
-            trabajo = Trabajo.objects.get(trabajo_version = trabajo)
-
-        autores_trabajo_list.append(Autores_trabajos.objects.filter(trabajo = trabajo))
+        autores_trabajo_list.append(Autores_trabajos.objects.filter(trabajo = trabajo_arbitro.trabajo))
 
     job_data = zip(trabajos_arbitro_list, autores_trabajo_list)
     context = {
@@ -125,8 +122,9 @@ def jobs_for_review(request):
     return render(request, 'arbitrajes_jobs_for_review.html', context)
 
 def detalles_resumen(request, id_trabajo):
-    estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
@@ -160,8 +158,9 @@ def detalles_resumen(request, id_trabajo):
 
 def referee_list(request):
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -190,8 +189,9 @@ def referee_list(request):
 
 def referee_edit(request):
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
@@ -222,8 +222,9 @@ def referee_edit(request):
 
 def areas_subareas(request):
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -255,8 +256,9 @@ def areas_subareas(request):
 
 def asignacion_de_sesion(request):
 
-    estado = request.session['estado']
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
 
     item_active = 2
@@ -679,8 +681,9 @@ def viewArbitraje(request, id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 2
