@@ -60,7 +60,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 == rol_id) or ((estado != 6 and estado != 8) and 3 == rol_id) or ((estado != 8 and estado != 6) and 4 == rol_id) or (estado != 6 and 5 == rol_id)):
         top_nav_options.append('result')
     # verify job
-    if ((estado == 3 and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
+    if ((estado in [3,5] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
         top_nav_options.append('jobs')
     # verify trabajo_options
     if((estado == 3 or estado == 5 )and 5 >= rol_id):
@@ -435,7 +435,7 @@ def home(request):
             allow_entry_list.append(True)
         elif 4 >= rol_id and arb.estado_arbitraje in [5,6,8]:
             allow_entry_list.append(True)
-        elif 5 >= rol_id and arb.estado_arbitraje in [3,6]:
+        elif 5 >= rol_id and arb.estado_arbitraje in [3,5,6]:
             allow_entry_list.append(True)
         else:
             allow_entry_list.append(False)
