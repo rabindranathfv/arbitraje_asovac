@@ -92,9 +92,11 @@
                             <!-- <td>{{item.arbitraje_resultado}}</td> -->
                         {% endif%}
                         {% if item.invitacion == False %}
-                            <td style="text-align: center">Pendiente</td>
+                            <!-- <td style="text-align: center">Pendiente</td> -->
+                            <td style="text-align: center"><span class="label label-success">Pendiente</span></td> 
                         {% else %}
-                            <td style="text-align: center">Aceptada</td>
+                            <!-- <td style="text-align: center">Aceptada</td> -->
+                            <td style="text-align: center"><span class="label label-success">Aceptada</span></td> 
                         {% endif%}
 
                         <!-- <td>{{item.comentario_autor}}</td> -->
