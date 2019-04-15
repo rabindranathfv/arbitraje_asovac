@@ -56,12 +56,12 @@ Sesion Model
 """""""""""""""""""""""""""
 class Sesion(models.Model):
 	
-	arbitraje = models.ForeignKey('arbitrajes.Arbitraje')
 	espacio = models.OneToOneField('sesiones.Espacio')
 
-	Sesion = models.CharField(max_length=15)
+	sesion = models.CharField(max_length=15)
 	fecha_sesion = models.DateTimeField()
-	coordinadores = models.CharField(max_length=100)
+	coordinador = models.IntegerField()
+	co_coordinador = models.IntegerField()
 	nombre_sesion = models.CharField(max_length=50)
 	modalidad = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=100, blank = True)

@@ -6,6 +6,7 @@ from .validators import validate_file_extension
 from datetime import datetime
 
 from main_app.models import Area, Sub_area
+from sesiones.models import Sesion
 # Create your models here.
 
 
@@ -38,6 +39,7 @@ class Trabajo(models.Model):
 	arbitro = models.ManyToManyField('arbitrajes.Arbitro',through='Trabajo_arbitro')
 	subareas = models.ManyToManyField(Sub_area) #Se permiten hasta 3 subareas
 	trabajo_version= models.ForeignKey('self', null=True, blank=True)
+	sesion = models.name = models.ForeignKey('sesiones.Sesion', null=True, blank = True)
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=100)
