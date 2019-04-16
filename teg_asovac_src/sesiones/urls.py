@@ -24,4 +24,7 @@ urlpatterns = [
     url(r'^editar/$', views.sesions_edit, name= 'sesions_edit'),
     url(r'^espacio/lista/$', views.sesions_space_list, name= 'sesions_space_list'),
     url(r'^espacio/editar/$', views.sesions_space_edit, name= 'sesions_space_edit'),
+
+    #Bootstrap Table data
+    url(r'^load-sesions-data$',views.list_sesions,name='list_sesions'),
 ]

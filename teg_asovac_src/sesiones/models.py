@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from main_app.models import Sistema_asovac
 # Create your models here.
 
 """""""""""""""""""""""""""
@@ -49,26 +50,34 @@ class Espacio(models.Model):
 		return self.tipo_espacio#.encode('utf-8', errors='replace')
 
 
+"""""""""""""""""""""""""""
+Coordinadores_sesion
+"""""""""""""""""""""""""""
+class Coordinadores_sesion(models.Model):
+	autor = models.ForeignKey("autores.Autor")
+	sesion = models.ForeignKey("sesion")
+	coordinador = models.BooleanField(default = False)
+	co_coordinador = models.BooleanField(default=False)
 
-
+	def __str__(self):
+		return "{} {} - {}".format(self.autor.nombres, self.autor.apellidos , self.sesion.nombre_sesion)#.encode('utf-8', errors='replace')
 """""""""""""""""""""""""""
 Sesion Model
 """""""""""""""""""""""""""
 class Sesion(models.Model):
-	
-	espacio = models.OneToOneField('sesiones.Espacio')
+	sistema = models.ForeignKey('main_app.Sistema_asovac')
+	espacio = models.OneToOneField('Espacio')
+	coordinadores = models.ManyToManyField("autores.Autor", through='Coordinadores_sesion')
 
 	sesion = models.CharField(max_length=15)
 	fecha_sesion = models.DateTimeField()
-	coordinador = models.IntegerField()
-	co_coordinador = models.IntegerField()
 	nombre_sesion = models.CharField(max_length=50)
 	modalidad = models.CharField(max_length=50)
 	observaciones = models.TextField(max_length=100, blank = True)
 	fecha_presentacion = models.DateTimeField()
 
 	def __str__(self):
-		return self.Sesion#.encode('utf-8', errors='replace')
+		return self.nombre_sesion#.encode('utf-8', errors='replace')
 
 
 
