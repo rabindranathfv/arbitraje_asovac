@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
 
-from .models import Sesion
+from .models import Sesion, Coordinadores_sesion
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 
-import datetime
+import datetime, operator
 
 # Create your views here.
 def sesiones_pag(request):
@@ -65,8 +65,11 @@ def sesions_list(request):
 def list_sesions (request):
     response = {}
     response['query'] = []
+    arbitraje_id = request.session['arbitraje_id']
 
     sort= request.POST['sort']
+    if sort == "autor_2":
+        sort = "autor"
     search= request.POST['search']
     # Se verifica la existencia del parametro
     if request.POST.get('offset', False) != False:
@@ -81,38 +84,26 @@ def list_sesions (request):
     # print "init: ",init,"limit: ",limit
 
     if request.POST['order'] == 'asc':
-        if sort == 'fields.sesion':
-            order='sesion'
+        if sort == 'fields.sesion__nombre_sesion':
+            order='sesion__nombre_sesion'
         else:
-            if sort == 'fields.fecha_sesion':
-                order='fecha_sesion'
+            if sort == 'fields.sesion__fecha_sesion':
+                order='sesion__fecha_sesion'
             else:
                 order=sort
     else:
-        if sort == 'fields.sesion':
-            order='-sesion'
+        if sort == 'fields.sesion__nombre_sesion':
+            order='-sesion__nombre_sesion'
         else:
-            if sort == 'fields.fecha_sesion':
-                order='-fecha_sesion'
+            if sort == 'fields.sesion__fecha_sesion':
+                order='-sesion__fecha_sesion'
             else:
                 order='-'+sort
 
     if search != "":
-        #data=Sesion.objects.filter( Q(sesion__icontains=search) | Q(fecha_sesion__icontains=search) | Q(modalidad__icontains = search)).order_by(order)#[:limit]
-            
-        search = '%'+search+'%'
-        query = '''
-        '''
+        data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) | Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search)))).order_by(order)[init:limit]
+        total=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) |Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).distinct('sesion').count()
         
-        #SELECT * 
-        #FROM public.sesiones_sesion AS sesion  
-        #WHERE LOWER(sesion.nombre_sesion) LIKE LOWER(%s) 
-        #    OR LOWER(sesion.modalidad) LIKE LOWER(%s);
-        
-        data = Sesion.objects.raw(query, [search, search])
-        #data = list(data)
-        print data.query
-        total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
             print "consulta para exportar"
@@ -121,16 +112,30 @@ def list_sesions (request):
             total = Sesion.objects.all().count()
         else:
             print "consulta normal"
-            # print Area.objects.all().order_by(order)[init:limit].query
-            test = Sesion.objects.all().order_by(order)[init:limit]
-            data = Sesion.objects.all().order_by(order)[init:limit]
-            total = Sesion.objects.all().count()
-            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # response['total']=total
-    # print response
+            data = Coordinadores_sesion.objects.filter(sesion__sistema = arbitraje_id ).order_by(order)[init:limit]
+            total = Coordinadores_sesion.objects.filter(sesion__sistema = arbitraje_id ).distinct('sesion').count()
+    
+    listed = []
+    #total = 0
     for item in data:
-        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.id, 'nombre_sesion': item.nombre_sesion, 'modalidad': item.modalidad, 'fecha_sesion': item.fecha_sesion.strftime("%d-%m-%Y"), 'hora_sesion': item.fecha_sesion.strftime("%I:%M %p") })
+        if not item.sesion.id in listed:
+            coordinador = ''
+            co_coordinador = ''
+            #Query para obtener los coordinadores 
+            for autor in item.sesion.coordinadores.all():
+                coordinador_sesion = Coordinadores_sesion.objects.get(autor = autor, sesion = item.sesion)
+                if coordinador_sesion.coordinador == True:
+                    coordinador = autor.nombres + ' ' + autor.apellidos
+                if coordinador_sesion.co_coordinador == True:
+                    co_coordinador = autor.nombres + ' ' + autor.apellidos
+
+            #Condicional para obtener el lugar de presentación
+            if item.sesion.espacio.espacio_fisico:
+                lugar = item.sesion.espacio.espacio_fisico.nombre
+            else:
+                lugar = item.sesion.espacio.espacio_virtual.url_virtual
+            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__modalidad': item.sesion.modalidad, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_sesion': item.sesion.fecha_sesion.strftime("%I:%M %p"), 'autor': coordinador, 'autor_2': co_coordinador, 'lugar': lugar  })
+            listed.append(item.sesion.id)
 
     response={
         'total': total,

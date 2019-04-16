@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 
 from main_app.models import Sistema_asovac
+
 # Create your models here.
 
 """""""""""""""""""""""""""

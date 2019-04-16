@@ -13,6 +13,7 @@
 					<!-- data table -->
 					<input type="hidden" id="listSesions" name="list" data-url="{% url 'sesiones:list_sesions' %}">
 					
+					
 					<div id ="toolbar">
 						<div class="btn-group">
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
@@ -33,21 +34,24 @@
 					data-toolbar-align="right"
 					data-pagination="true"
 					data-page-size="5"
-					data-page-list="[0,5,10,25,50,100, 200]"
+					data-page-list="[1,5,10,25,50,100, 200]"
 					data-show-refresh="true"
 					data-search="true"
-					data-sort-name="nombre_sesion"
+					data-sort-name="sesion"
 					data-show-toggle="true"
 					data-show-columns="true"
 					>
 						<thead>
 							<tr>
-								<th data-field="id" data-visible="false" data-show-columns="false">ID</th>
-								<th data-field="nombre_sesion" data-sortable="true">Nombre</th>
-								<th data-field="modalidad" data-sortable="true">Modalidad</th>
-								<th data-field="fecha_sesion" data-sortable="true">Fecha Sesión</th>
-								<th data-field="hora_sesion">Hora</th>
-								<!--<th data-field="operate" data-events="operateEvents" data-formatter="operateAuthors" data-align="center">Acciones</th>-->
+								<th data-field="sesion" data-visible="false" data-show-columns="false">ID</th>
+								<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-2">Nombre</th>
+								<th data-field="sesion__modalidad" data-sortable="true" class="col-sm-1">Modalidad</th>
+								<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1">Fecha Sesión</th>
+								<th data-field="sesion__hora_sesion" class="col-sm-1">Hora</th>
+								<th data-field="lugar" class="col-sm-1">Lugar</th>
+								<th data-field="autor" class="col-sm-2">Coordinador</th>
+								<th data-field="autor_2" class="col-sm-2">Co-coordinador</th>
+								<th data-field="operate" data-events="operateEvents" data-formatter="" data-align="center" class="col-sm-2">Acciones</th>
 							</tr>
 						</thead>
 					</table>
