@@ -13,6 +13,9 @@ from django.contrib import messages
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.shortcuts import render,get_object_or_404, redirect
+
+from .forms import SesionForm, EspacioFisicoForm, EspacioVirtualForm
 
 import datetime, operator
 
@@ -260,3 +263,58 @@ def sesions_space_edit(request):
         'route_resultados': route_resultados,
     }
     return render(request, 'sesiones_space_edit.html', context)
+
+
+####################### Inclusión de eventos en arbitrajes########################
+def create_sesion(request):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    item_active = 5
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+
+    sesion_form = SesionForm()
+
+    context = {
+        'nombre_vista' : 'Sesiones de arbitraje',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'sesion_form': sesion_form
+    }
+    return render(request,"sesiones_create_sesion.html",context)
+
+def load_space_form(request, modalidad):
+    data = dict()
+    print modalidad
+    if modalidad == "1":
+        form = EspacioFisicoForm()
+    else:
+        form = EspacioVirtualForm()
+    context = {'form': form,}
+    data['html_select'] = render_to_string('ajax/form.html', context, request = request)
+    return JsonResponse(data)
+
+    

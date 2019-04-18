@@ -19,7 +19,7 @@
 							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								<li>
-									<a href="" type="button"><i class="fa fa-user" style="color:black"></i> Crear Sesión</a>
+									<a href="{% url 'sesiones:create_sesion' %}" type="button"><i class="fa fa-user" style="color:black"></i> Crear Sesión</a>
 								</li>				
 							</ul>
 						</div>
@@ -37,7 +37,7 @@
 					data-page-list="[1,5,10,25,50,100, 200]"
 					data-show-refresh="true"
 					data-search="true"
-					data-sort-name="sesion"
+					data-sort-name="sesion__nombre_sesion"
 					data-show-toggle="true"
 					data-show-columns="true"
 					>
