@@ -6,7 +6,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Cargar Areas</h4>
+        <h3 class="modal-title" >Cargar Áreas</h3>
     </div>
     <div class="modal-body">
         {% include "errors_form.html" %}
@@ -14,41 +14,40 @@
     </div>
     <div class="modal-footer">
       <!-- Default switch -->
-        <label class="bs-switch">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success" >Guardar</button>
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="cargarAreas btn btn-primary btn-lg" >Guardar</button>
     </div>
 </form>
 
 <script>
-     $('#loadAreasForm').submit(function(e){
-        e.preventDefault();
-        var input = document.getElementById('id_file');
-        //console.log("File Seleccionado : ", input.files[0]);
+    //  $('#loadAreasForm').submit(function(e){
+    //     e.preventDefault();
+    //     var input = document.getElementById('id_file');
+    //     //console.log("File Seleccionado : ", input.files[0]);
 
-        var form = $(this);
-        var formData = new FormData(form);
-        formData.append('file',input.files[0]);
+    //     var form = $(this);
+    //     var formData = new FormData(form);
+    //     formData.append('file',input.files[0]);
 
-        //console.log(formData);
-        $.ajax({
-            url: $('#loadAreasForm').attr("data-url"),
-            type: 'POST',
-            data: formData,
-            success: function (data) {
+    //     //console.log(formData);
+    //     $.ajax({
+    //         url: $('#loadAreasForm').attr("data-url"),
+    //         type: 'POST',
+    //         data: formData,
+    //         success: function (data) {
 
-                if(data.form_is_valid){
-                    //console.log('data is saved')
-                    $('#modal-user .modal-content').html(data.html_form);
-                }else{
-                    //console.log('data is invalid')
-                    $('#modal-user .modal-content').html(data.html_form)
-                }
+    //             if(data.form_is_valid){
+    //                 //console.log('data is saved')
+    //                 $('#modal-user .modal-content').html(data.html_form);
+    //             }else{
+    //                 //console.log('data is invalid')
+    //                 $('#modal-user .modal-content').html(data.html_form)
+    //             }
 
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    });
+    //         },
+    //         cache: false,
+    //         contentType: false,
+    //         processData: false
+    //     });
+    // });
 </script>

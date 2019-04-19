@@ -10,8 +10,8 @@ from main_app.models import Area, Sub_area
 
 
 
-CHOICES_TIPO_PRESENTACION_TRABAJO = (	('P', 'Presencial'),
-								('V', 'Virtual'),
+CHOICES_TIPO_PRESENTACION_TRABAJO = (	('Presencial', 'Presencial'),
+								('Virtual', 'Virtual'),
 	)
 
 

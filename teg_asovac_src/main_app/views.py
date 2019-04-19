@@ -1274,24 +1274,27 @@ def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
         # if form.is_valid():
-        status=0
+        status=200
+        print "Se envia el archivo en post"
         if request.FILES != {}:
             data['form_is_valid']= True
-            status=1
-            response="Las areas se han cargado de forma exitosa."
+            status=200
+            response="Las áreas se han cargado de forma exitosa."
+            data['message']= "Las áreas se han cargado de forma exitosa."
             try:
                 request.FILES['file'].save_to_database(
                 # name_columns_by_row=2,
                 model=Area,
-                mapdict=['nombre', 'descripcion'])
+                mapdict=['nombre', 'descripcion','codigo'])
             except:
                 print("Hay un error en los valores de entrada")
                 data['form_is_valid']= False
-                status=0
+                data['message']= "Ha ocurrido un error, verifique que los valores suministrados son validos."
+                status=500
                 response="Ha ocurrido un error, verifique que los valores suministrados son validos."
 
             context={
-                'title': "Cargar Areas",
+                'title': "Cargar Áreas",
                 'response': response,
                 'status': status,
             }
@@ -1318,21 +1321,23 @@ def process_subareas_modal(request,form,template_name):
         status=0
         if request.FILES != {}:
             data['form_is_valid']= True
+            data['message']= "Las subáreas se han cargado de forma exitosa."
             status=1
-            response="Las subareas se han cargado de forma exitosa."
+            response="Las subáreas se han cargado de forma exitosa."
             try:
                 request.FILES['file'].save_to_database(
                 # name_columns_by_row=2,
                 model=Sub_area,
-                mapdict=['nombre', 'descripcion','area_id'])
+                mapdict=['nombre', 'descripcion','area_id','codigo'])
             except:
                 print("Hay un error en los valores de entrada")
                 data['form_is_valid']= False
                 status=0
-                response="Ha ocurrido un error, verifique que las areas asignadas existen."
+                data['message']="Ha ocurrido un error, verifique que las áreas asignadas existen."
+                response="Ha ocurrido un error, verifique que las áreas asignadas existen."
             
             context={
-                'title': "Cargar Subareas",
+                'title': "Cargar Subáreas",
                 'response': response,
                 'status': status,
             }
@@ -1836,7 +1841,7 @@ def list (request):
                 order='-'+sort
 
     if search != "":
-        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) | Q(codigo__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -1855,7 +1860,7 @@ def list (request):
     # print response
     for item in data:
         # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,'codigo': item.codigo})
 
     response={
         'total': total,
@@ -1885,14 +1890,16 @@ def editArea(request,id):
     if request.method == 'POST':
         
         area=Area.objects.get(id=id)
-        print "edit post"
+        # print "edit post"
         form= AreaCreateForm(request.POST,instance=area)
         if form.is_valid():
-            print "Se guarda el valor del formulario"
+            # print "Se guarda el valor del formulario"
             form.save()
             data['status']= 200
+            data['message']= "Se ha actualizado el área de forma exitosa."
         else:
             data['status']= 404
+            data['message']= "Ha ocurrido un error, no se ha podido actualizar el área."
     else:
         area=Area.objects.get(id=id)
         data['status']= 200
@@ -1911,17 +1918,18 @@ def removeArea(request,id):
     data= dict()
 
     if request.method == 'POST':
-        # print "post delete form"
+        print "post delete form"
         area=Area.objects.get(id=id)
         area.delete()
         data['status']= 200
-        message="eliminado"
-        context={
-            'area':area,
-            'tipo':"deleted",
-            'message':message,
-        }
-        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+        message="Se ha eliminado el área de forma exitosa."
+        data['message']= message
+        # context={
+        #     'area':area,
+        #     'tipo':"deleted",
+        #     'message':message,
+        # }
+        # data['content']= render_to_string('ajax/BTArea.html',context,request=request)
 
     else:
         # print "get delete form"
@@ -1975,7 +1983,7 @@ def list_subareas(request):
                 order='-'+sort
 
     if search != "":
-        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) | Q(codigo__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -1994,7 +2002,7 @@ def list_subareas(request):
     # print response
     for item in data:
         # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,'codigo':item.codigo})
 
     response={
         'total': total,
@@ -2019,18 +2027,18 @@ def viewSubarea(request,id):
 
 def editSubarea(request,id):
     data= dict()
-
     if request.method == 'POST':
         
         subarea=Sub_area.objects.get(id=id)
-        print "edit post"
         form= AreaCreateForm(request.POST,instance=subarea)
         if form.is_valid():
             print "Se guarda el valor del formulario"
             form.save()
             data['status']= 200
+            data['message']= "Se ha actualizado la subárea de forma exitosa."
         else:
             data['status']= 404
+            data['message']= "Ha ocurrido un error, no se ha podido actualizar la subárea."
     else:
         subarea=Sub_area.objects.get(id=id)
         data['status']= 200
@@ -2053,6 +2061,7 @@ def removeSubarea(request,id):
         subarea=Sub_area.objects.get(id=id)
         subarea.delete()
         data['status']= 200
+        data['message']="Se ha eliminado la subárea de forma exitosa."
         message="eliminado"
         context={
             'subarea':subarea,

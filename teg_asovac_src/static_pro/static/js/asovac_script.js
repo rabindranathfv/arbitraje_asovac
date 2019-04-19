@@ -417,7 +417,7 @@ var SaveAñadirPagoForm= function(){
             success: function(data){
                 // console.log(data);
                 if(data.status == 200 ){
-                    // console.log('actualizacion exitosa')
+                    console.log('actualizacion exitosa');
                     // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
                     // $('#modal-user').modal('hide');
                 }else{
@@ -429,6 +429,44 @@ var SaveAñadirPagoForm= function(){
 
     };
 
+    //  Para procesar archivos genericos
+    var processGenericFile =function(e){
+        e.preventDefault();
+        var input = document.getElementById('id_file');
+        //console.log("File Seleccionado : ", input.files[0]);
+
+        var form= $(this).parent().parent();
+        var formData = new FormData(form);
+        formData.append('file',input.files[0]);
+
+        $.ajax({
+            url:  form.attr('data-url'),
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                console.log(data.message);
+                if(data.form_is_valid){
+                    // console.log('actualizacion exitosa')
+                    $('#modal-user .modal-body').html(data.message);
+                    $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                    // $('#modal-user').modal('hide');
+                    $('#table').bootstrapTable('refresh');
+                    if(data.message.search("subárea") > 0 ){
+                        $('#table2').bootstrapTable('refresh');
+                    }
+                }else{
+                    // console.log('error en la actualizacion')
+                    $('#modal-user .modal-body').html(data.message);
+                    $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                    // $('#modal-user').modal('hide');
+                }
+
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
     // Para procesar formularios genericos
     var processGenericForm = function(){
         console.log("metodo para enviar");
@@ -440,13 +478,16 @@ var SaveAñadirPagoForm= function(){
             dataType: 'json',
 
             success: function(data){
-                // console.log(data);
+                console.log(data);
                 if(data.status == 200 ){
                     console.log('actualizacion exitosa')
                     $('#bootstrapTableModal .modal-body').html(data.message);
                     $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
                     $('#modal-user').modal('hide');
                     $('#table').bootstrapTable('refresh');
+                    if(data.message.search("subárea") > 0 ){
+                        $('#table2').bootstrapTable('refresh');
+                    }
                 }else{
                     console.log('error en la actualizacion')
                     $('#bootstrapTableModal .modal-body').html(data.message);
@@ -634,7 +675,9 @@ var SaveAñadirPagoForm= function(){
 
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
-    // $('#modal-user').on('submit', '.loadAreasForm',loadAreas);
+    $('#modal-user').on('click','.cargarAreas',processGenericFile);
+    $('#modal-user').on('click','.cargarSubareas',processGenericFile);
+   
     $('.showSubAreasForm').click(ShowForm);
     $('.showUsersForm').click(ShowForm);
     // Modal para que los usuarios creen su instancia de autor
@@ -663,11 +706,15 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit', '.changepassword-modal-form',SaveFormAndStayInModal);
 
     // CRUD Areas
-    $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
-    $('#bootstrapTableModal').on('submit','.eliminarArea',bootstrapTableForm);
+    // $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
+    // $('#bootstrapTableModal').on('submit','.eliminarArea',bootstrapTableForm);
+    $('#bootstrapTableModal').on('click','.editarArea',processGenericForm);
+    $('#bootstrapTableModal').on('click','.eliminarArea',processGenericForm);
     // CRUD Subareas
-    $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
-    $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
+    // $('#bootstrapTableModal').on('submit','.editarSubarea',bootstrapTableForm);
+    // $('#bootstrapTableModal').on('submit','.eliminarSubarea',bootstrapTableForm);
+    $('#bootstrapTableModal').on('click','.editarSubarea',processGenericForm);
+    $('#bootstrapTableModal').on('click','.eliminarSubarea',processGenericForm);
     // CRUD Usuarios
     $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);

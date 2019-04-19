@@ -38,6 +38,7 @@ Area Model
 class Area(models.Model):
 
 	nombre = models.CharField(max_length=100)
+	codigo = models.CharField(max_length=10, blank=True)
 	descripcion = models.TextField(max_length=150, blank = True)
 
 	def __str__(self):
@@ -52,6 +53,7 @@ class Sub_area(models.Model):
 	area = models.ForeignKey(Area, on_delete = models.CASCADE)
 
 	nombre = models.CharField(max_length=80)
+	codigo = models.CharField(max_length=10, blank=True)
 	descripcion = models.TextField(max_length=150, blank = True)
 
 	def __str__(self):
