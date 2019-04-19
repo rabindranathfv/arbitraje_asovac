@@ -474,6 +474,7 @@ def dashboard(request, arbitraje_id):
     request.session['arbitraje_id'] = arbitraje_id
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
+    request.session['estado']=estado
 
     rol_id=get_roles(request.user.id, arbitraje.id)
     arbitraje_id = request.session['arbitraje_id']

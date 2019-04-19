@@ -144,110 +144,113 @@ def crear_usuario_asovac(sender, **kwargs):
 
 		if list_areas == 0:
     		# Para cargar contenido para el area 1
-			area= Area(id=1,nombre="Biociencias",descripcion="-")
+			area= Area(id=1,nombre="Biociencias",descripcion="-",codigo="BC")
 			area.save()
 
-			sub_area= Sub_area(nombre="Parasitología",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Parasitología",descripcion="-",area_id=1,codigo="PAR")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Biología Molecular",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Biología Molecular",descripcion="-",area_id=1,codigo="BMOL")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Bioquímica",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Bioquímica",descripcion="-",area_id=1,codigo="BQM")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Tecnología de Alimentos",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Tecnología de Alimentos",descripcion="-",area_id=1,codigo="TCA")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Ecología",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Ecología",descripcion="-",area_id=1,codigo="ECO")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Medicina",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Medicina",descripcion="-",area_id=1,codigo="MED")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Inmunología",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Inmunología",descripcion="-",area_id=1,codigo="INM")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Microbiología",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Microbiología",descripcion="-",area_id=1,codigo="MICB")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Farmacología",descripcion="-",area_id=1)
+			sub_area= Sub_area(nombre="Farmacología",descripcion="-",area_id=1,codigo="FMC")
 			sub_area.save()
 
     		# Para cargar contenido para el area 2
-			area= Area(id=2,nombre="Ciencias Exactas",descripcion="-")
+			area= Area(id=2,nombre="Ciencias Exactas",descripcion="-",codigo="CE")
 			area.save()
 
-			sub_area= Sub_area(nombre="Matemática",descripcion="-",area_id=2)
+			sub_area= Sub_area(nombre="Matemática",descripcion="-",area_id=2,codigo="MAT")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Química Organometálica",descripcion="-",area_id=2)
+			sub_area= Sub_area(nombre="Química Organometálica",descripcion="-",area_id=2,codigo="OM")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Productos Naturales",descripcion="-",area_id=2)
+			sub_area= Sub_area(nombre="Productos Naturales",descripcion="-",area_id=2,codigo="PN")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Farmacología",descripcion="-",area_id=2)
+			sub_area= Sub_area(nombre="Farmacología",descripcion="-",area_id=2,codigo="FMC")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Nanosistemas",descripcion="-",area_id=2)
+			sub_area= Sub_area(nombre="Nanosistemas",descripcion="-",area_id=2,codigo="NS")
 			sub_area.save()
 
     		# Para cargar contenido para el area 3
-			area= Area(id=3,nombre="Tecnología",descripcion="-")
+			area= Area(id=3,nombre="Tecnología",descripcion="-",codigo="TEC")
 			area.save()
 
-			sub_area= Sub_area(nombre="Computación",descripcion="-",area_id=3)
+			sub_area= Sub_area(nombre="Computación",descripcion="-",area_id=3,codigo="COMP")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Ingeniería Electrónica y Biomédica",descripcion="-",area_id=3)
+			sub_area= Sub_area(nombre="Ingeniería Electrónica y Biomédica",descripcion="-",area_id=3,codigo="IEB")
 			sub_area.save()
 
     		# Para cargar contenido para el area 4
-			area= Area(id=4,nombre="Ciencias Sociales",descripcion="-")
+			area= Area(id=4,nombre="Ciencias Sociales",descripcion="-",codigo="CS")
 			area.save()
 
-			sub_area= Sub_area(nombre="Ciencias Sociales",descripcion="-",area_id=4)
+			sub_area= Sub_area(nombre="Ciencias Sociales 1",descripcion="-",area_id=4,codigo="CS1")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Educación",descripcion="-",area_id=4)
+			sub_area= Sub_area(nombre="Educación 1",descripcion="-",area_id=4,codigo="EDU1")
 			sub_area.save()
 
 			# Para cargar contenido para el area 5
-			area= Area(id=5,nombre="Congreso de la Sociedad Venezolana de Física",descripcion="-")
+			area= Area(id=5,nombre="Congreso de la Sociedad Venezolana de Física",descripcion="-",codigo="CF")
 			area.save()
 
-			sub_area= Sub_area(nombre="Física General",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física General",descripcion="-",area_id=5,codigo="FGEN")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Óptica y Plasmas",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Óptica y Plasmas",descripcion="-",area_id=5,codigo="OPP")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Astronomía",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Astronomía",descripcion="-",area_id=5,codigo="AST")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Física de Partículas Virtual",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física de Partículas Virtual",descripcion="-",area_id=5,codigo="FPART-V")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Cosmología",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Cosmología",descripcion="-",area_id=5,codigo="COSM")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Materia Condensada Teórica",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Materia Condensada Teórica",descripcion="-",area_id=5,codigo="MCT")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Instrumentación",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Instrumentación",descripcion="-",area_id=5,codigo="INST")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Física Médica",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física Médica",descripcion="-",area_id=5,codigo="FMED")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Física Nuclear",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física Nuclear",descripcion="-",area_id=5,codigo="FNU")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Física de los Materiales",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física de los Materiales",descripcion="-",area_id=5,codigo="FMAT")
+			sub_area.save()
+			
+			sub_area= Sub_area(nombre="Física Teórica",descripcion="-",area_id=5,codigo="FTEO")
 			sub_area.save()
 
-			sub_area= Sub_area(nombre="Física del Espacio",descripcion="-",area_id=5)
+			sub_area= Sub_area(nombre="Física del Espacio",descripcion="-",area_id=5,codigo="FESP")
 			sub_area.save()
 
 
