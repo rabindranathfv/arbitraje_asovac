@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
 
-from .models import Sesion, Coordinadores_sesion
+from .models import Sesion, Coordinadores_sesion, Espacio
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
@@ -285,10 +285,58 @@ def create_sesion(request):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+   
+    virtual_selected = False
+    
+    if request.method == 'POST': 
+        modalidad = request.POST.get('modalidad_select')
+        if modalidad == "1":
+            sesion_form = SesionForm(request.POST)
+            espacio_form = EspacioFisicoForm(request.POST)
+            if sesion_form.is_valid() and espacio_form.is_valid():
+                espacio_fisico = espacio_form.save()
+                
+                espacio = Espacio(espacio_fisico = espacio_fisico, fecha_ocupacion = sesion_form.cleaned_data['fecha_ocupacion'], tipo_espacio = "Físico")
+                espacio.save()
+                
+                sesion = sesion_form.save(commit = False)
+                sesion.sistema = arbitraje
+                sesion.espacio = espacio
+                sesion.modalidad = "Presencial"
+                sesion.save()
 
+                coordinador_sesion = Coordinadores_sesion(sesion = sesion)
+                coordinador_sesion.save()
+                
+                messages.success(request, "Sesion con espacio físico creada con éxito.")
+                return redirect('sesiones:sesions_list')
+        else:
+            sesion_form = SesionForm(request.POST)
+            espacio_form = EspacioVirtualForm(request.POST)
+            if sesion_form.is_valid() and espacio_form.is_valid():
+                espacio_virtual = espacio_form.save()
 
-    sesion_form = SesionForm()
+                espacio = Espacio(espacio_virtual = espacio_virtual, fecha_ocupacion = sesion_form.cleaned_data['fecha_ocupacion'], tipo_espacio = "Virtual")
+                espacio.save()
 
+                sesion = sesion_form.save(commit = False)
+                sesion.sistema = arbitraje
+                sesion.espacio = espacio
+                sesion.modalidad = "Presencial"
+                sesion.save()
+
+                coordinador_sesion = Coordinadores_sesion(sesion = sesion)
+                coordinador_sesion.save()
+
+                messages.success(request, "Sesion con espacio virtual creada con éxito.")
+                return redirect('sesiones:sesions_list')
+            else:
+                virtual_selected = True
+        print modalidad
+    else:
+        sesion_form = SesionForm()
+        espacio_form = EspacioFisicoForm()
+    
     context = {
         'nombre_vista' : 'Sesiones de arbitraje',
         'main_navbar_options' : main_navbar_options,
@@ -302,7 +350,9 @@ def create_sesion(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'sesion_form': sesion_form
+        'sesion_form': sesion_form,
+        'espacio_form': espacio_form,
+        'virtual_selected': virtual_selected
     }
     return render(request,"sesiones_create_sesion.html",context)
 

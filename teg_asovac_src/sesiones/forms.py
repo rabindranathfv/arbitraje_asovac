@@ -15,6 +15,8 @@ class SesionForm(forms.ModelForm):
         model = Sesion
         fields = ['nombre_sesion', 'sesion', 'fecha_sesion', 'observaciones', 'fecha_presentacion']
 
+    fecha_ocupacion = forms.DateTimeField(input_formats = ['%d/%m/%Y %H:%M',],label ="Fecha de ocupación")
+
     def __init__(self, *args, **kwargs):
         super(SesionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -24,7 +26,8 @@ class SesionForm(forms.ModelForm):
         self.fields['nombre_sesion'].label = "Nombre de sesión"
         self.fields['fecha_sesion'].label = "Fecha de sesión"
         self.fields['fecha_presentacion'].label = "Fecha de presentación"   
-
+        self.fields['fecha_sesion'].input_formats = ('%d/%m/%Y %H:%M',)
+        self.fields['fecha_presentacion'].input_formats = ('%d/%m/%Y %H:%M',)
         self.helper.layout = Layout(
             Div(
                 Field('nombre_sesion', placeholder = "Introduzca el nombre de la sesión"),
@@ -32,6 +35,7 @@ class SesionForm(forms.ModelForm):
                 'fecha_sesion',
                 Field('observaciones', rows = "3", placeholder = "Introduzca sus observaciones"),
                 'fecha_presentacion',
+                'fecha_ocupacion',
                 css_class = "sesion_form col-sm-6"
             )
         ) 
@@ -49,6 +53,7 @@ class EspacioFisicoForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.form_class = "form-horizontal"
 
+        self.fields['ubicacion'].label = 'Ubicación'
         self.helper.layout = Layout(
             Div(
                 Field('nombre', placeholder = "Introduzca el nombre del espacio"),

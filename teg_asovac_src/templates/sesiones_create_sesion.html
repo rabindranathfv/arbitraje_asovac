@@ -20,21 +20,26 @@
                             <div class="col-sm-12">
                                 
                                 <form method="POST" id="create-sesion-form" enctype="multipart/form-data" action=".">    
-                                    {% crispy sesion_form %}								
-                                    <div class = "col-sm-6">
-                                        <div class="form-group">
-                                            <label class="control-label  requiredField" for="modalidad_select"> Modalidad <span class="asteriskField">*</span></label>
-                                            <div class="controls was-validated" name="modalidad" >
-                                                <select data-url="{% url 'sesiones:load_space_form' "1" %}" name="modalidad_select" class="form-control" id="modalidad_select" required>
-                                                    <option value="" id="opcion-inicial">Seleccione una opción</option>
-                                                    <option value="1">Presencial</option>
-                                                    <option value="0">Virtual</option>
-                                                </select>
+                                    <div class= "row">
+                                        {% crispy sesion_form %}								
+                                        <div class = "col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label  requiredField" for="modalidad_select"> Modalidad <span class="asteriskField">*</span></label>
+                                                <div class="controls was-validated" name="modalidad" >
+                                                    <select data-url="{% url 'sesiones:load_space_form' "1" %}" name="modalidad_select" class="form-control" id="modalidad_select" required>
+                                                        <option value="1">Presencial</option>
+                                                        <option value="0"{% if virtual_selected %}selected{% endif %}>Virtual</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group"  id="content_modalidad">
+                                                {% crispy espacio_form %}
                                             </div>
                                         </div>
-                                        <div class="form-group"  id="content_modalidad">
-                                            
-                                        </div>
+                                    </div>
+                                    <div class = "row">
+                                        <button class = "col-sm-offset-8 col-sm-2 btn btn-lg btn-success" type ="submit">Crear Sesión</button>
+                                        <a role = "button" class = "col-sm-2 btn btn-lg btn-danger" href="{% url 'sesiones:sesions_list' %}">Cancelar</a>
                                     </div>
                                 </form>
                             
@@ -67,7 +72,7 @@
                     //console.log(data.html_select);
                     $('#content_modalidad').html(data.html_select);
                     $('.selectpicker').selectpicker();
-                    $('#opcion-inicial').css("display", "none");
+                    //$('#opcion-inicial').css("display", "none");
                 }
             });
         });

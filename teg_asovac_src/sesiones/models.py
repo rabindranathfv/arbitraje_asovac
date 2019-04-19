@@ -20,7 +20,7 @@ class Espacio_fisico(models.Model):
 	turno = models.CharField(max_length=50)
 
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -48,20 +48,20 @@ class Espacio(models.Model):
 	tipo_espacio = models.CharField(max_length=50)
 
 	def __str__(self):
-		return self.tipo_espacio#.encode('utf-8', errors='replace')
+		return self.tipo_espacio.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
 Coordinadores_sesion
 """""""""""""""""""""""""""
 class Coordinadores_sesion(models.Model):
-	autor = models.ForeignKey("autores.Autor")
+	autor = models.ForeignKey("autores.Autor", blank = True, null = True)
 	sesion = models.ForeignKey("sesion")
 	coordinador = models.BooleanField(default = False)
 	co_coordinador = models.BooleanField(default=False)
 
 	def __str__(self):
-		return "{} {} - {}".format(self.autor.nombres, self.autor.apellidos , self.sesion.nombre_sesion)#.encode('utf-8', errors='replace')
+		return "{}".format(self.sesion.nombre_sesion)#.encode('utf-8', errors='replace')
 """""""""""""""""""""""""""
 Sesion Model
 """""""""""""""""""""""""""
@@ -78,7 +78,7 @@ class Sesion(models.Model):
 	fecha_presentacion = models.DateTimeField()
 
 	def __str__(self):
-		return self.nombre_sesion#.encode('utf-8', errors='replace')
+		return self.nombre_sesion.encode('utf-8', errors='replace')
 
 
 
