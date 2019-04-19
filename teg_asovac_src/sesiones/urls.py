@@ -31,5 +31,6 @@ urlpatterns = [
 
     #Ajax
     url(r'^cargar-espacio-form/(?P<modalidad>\d+)$', views.load_space_form, name= 'load_space_form'),
+    url(r'^eliminar/(?P<sesion_id>\d+)$', views.delete_sesion, name= 'delete_sesion'),
     
 ]

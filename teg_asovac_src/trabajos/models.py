@@ -39,7 +39,7 @@ class Trabajo(models.Model):
 	arbitro = models.ManyToManyField('arbitrajes.Arbitro',through='Trabajo_arbitro')
 	subareas = models.ManyToManyField(Sub_area) #Se permiten hasta 3 subareas
 	trabajo_version= models.ForeignKey('self', null=True, blank=True)
-	sesion = models.name = models.ForeignKey('sesiones.Sesion', null=True, blank = True)
+	sesion = models.ForeignKey('sesiones.Sesion', null=True, blank = True)
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
 	titulo_espanol = models.CharField(max_length=100)

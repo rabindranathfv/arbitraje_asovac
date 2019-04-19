@@ -25,7 +25,7 @@
 						</div>
 					</div>
 
-					<table id="table"
+					<table id="sesion-table"
 					data-toggle="table"
 					data-ajax="ajaxSesions"
 					data-side-pagination="server"
@@ -51,7 +51,7 @@
 								<th data-field="lugar" class="col-sm-1">Lugar</th>
 								<th data-field="autor" class="col-sm-2">Coordinador</th>
 								<th data-field="autor_2" class="col-sm-2">Co-coordinador</th>
-								<th data-field="operate" data-events="operateEvents" data-formatter="" data-align="center" class="col-sm-2">Acciones</th>
+								<th data-field="operate" data-events="operateEvents" data-formatter="operateSesions" data-align="center" class="col-sm-2">Acciones</th>
 							</tr>
 						</thead>
 					</table>
@@ -69,24 +69,21 @@
 	<script src="{% static 'js/grid.js' %}">
 	</script>
 	<script>
-		var $table = $('#table');
-		function operateAuthors(value, row, index) {
-	        var route_details="{% url 'autores:author_details' 1 %}".replace(1, row.id);
-	        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
-	        return [
-	            '<a class="editAuthors" href="',
-	            route_edit,
-	            ' "',
-	            'title="Editar" >',
-	            '<i class="far fa-edit"></i>',
-	            '</a>  ',
-	            '<a class="authorsDetails" href="',
-	            route_details,
-	            ' "',
-	            'title="Detalles del autor" >',
-	            '<i class="fa fa-user"></i>',
-	            '</a>  ',
-	        ].join('');
+		var $table = $('#sesion-table');
+		function operateSesions(value, row, index) {
+			if(row.eliminar)	
+			{
+				var route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
+				return [
+					'<a class="delete-sesion" data-url="',
+					route_delete,
+					' "',
+					'title="Eliminar" >',
+					'<i class="fa fa-trash"></i>',
+					'</a>'
+				].join('');
+			}
+			console.log(row.eliminar);
 	    }
 
 	    // your custom ajax request here

@@ -7,6 +7,8 @@ from django.shortcuts import render
 
 from .models import Sesion, Coordinadores_sesion, Espacio
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from trabajos.models import Trabajo
+
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from django.contrib import messages
@@ -137,7 +139,13 @@ def list_sesions (request):
                 lugar = item.sesion.espacio.espacio_fisico.nombre
             else:
                 lugar = item.sesion.espacio.espacio_virtual.url_virtual
-            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__modalidad': item.sesion.modalidad, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_sesion': item.sesion.fecha_sesion.strftime("%I:%M %p"), 'autor': coordinador, 'autor_2': co_coordinador, 'lugar': lugar  })
+
+            if Trabajo.objects.filter(sesion = item.sesion).exists():
+                eliminar = True
+            else:
+                eliminar = False
+            print eliminar
+            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__modalidad': item.sesion.modalidad, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_sesion': item.sesion.fecha_sesion.strftime("%I:%M %p"), 'autor': coordinador, 'autor_2': co_coordinador, 'lugar': lugar, 'eliminar': eliminar  })
             listed.append(item.sesion.id)
 
     response={
@@ -358,13 +366,36 @@ def create_sesion(request):
 
 def load_space_form(request, modalidad):
     data = dict()
-    print modalidad
+    #Modalidad = 1 es espacio físico, modalidad = 2 es espacio virtual
     if modalidad == "1":
         form = EspacioFisicoForm()
     else:
         form = EspacioVirtualForm()
     context = {'form': form,}
     data['html_select'] = render_to_string('ajax/form.html', context, request = request)
+    return JsonResponse(data)
+
+
+def delete_sesion(request, sesion_id):
+    
+    data = dict()
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+    if request.method == "POST":
+        espacio = sesion.espacio
+        if espacio.espacio_fisico:
+            lugar = espacio.espacio_fisico
+        else:
+            lugar = espacio.espacio_virtual
+        sesion.delete()
+        espacio.delete()
+        lugar.delete()
+        messages.success(request, "Sesión eliminada con éxito")
+        return redirect('sesiones:sesions_list') 
+    else:
+        context = {
+            'sesion':sesion,
+        }
+        data['html_form'] = render_to_string('ajax/sesion_delete.html',context,request=request)
     return JsonResponse(data)
 
     
