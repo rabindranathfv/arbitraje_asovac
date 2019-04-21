@@ -11,8 +11,8 @@ from sesiones.models import Sesion
 
 
 
-CHOICES_TIPO_PRESENTACION_TRABAJO = (	('P', 'Presencial'),
-								('V', 'Virtual'),
+CHOICES_TIPO_PRESENTACION_TRABAJO = (	('Presencial', 'Presencial'),
+								('Virtual', 'Virtual'),
 	)
 
 
@@ -45,7 +45,7 @@ class Trabajo(models.Model):
 	titulo_espanol = models.CharField(max_length=100)
 	titulo_ingles = models.CharField(max_length=100, blank = True)
 	palabras_clave = models.CharField(max_length=60, blank = True)
-	forma_presentacion = models.CharField(max_length=1,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
+	forma_presentacion = models.CharField(max_length=20,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
 	resumen = models.TextField(max_length=255)
 	documento_inscrito =  models.CharField(max_length=100,blank=True)
 	observaciones = models.TextField(max_length=255, blank = True)
