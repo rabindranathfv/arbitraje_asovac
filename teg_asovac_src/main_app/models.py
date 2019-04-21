@@ -18,7 +18,7 @@ estados_arbitraje = {	'0':'Desactivado',
 						'4':'En Asignación de Trabajos a las Áreas',
 						'5':'En Arbitraje',
 						'6':'En Cierre de Arbitraje',
-						'7':'En Asignación de Secciones',
+						'7':'En Asignación de Sesiones',
 						'8':'En Resumen'}
 
 """""""""""""""""""""""""""

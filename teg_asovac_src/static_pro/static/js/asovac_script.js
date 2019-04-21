@@ -724,7 +724,9 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
-
+    //CRUD Sesiones
+    $('#sesion-table').on('click','.delete-sesion',ShowForm);
+    
     // CRUD Arbitraje
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
 

@@ -1,0 +1,41 @@
+{% load crispy_forms_tags %}
+<form method="post" class="delete-sesion-form" action="{% url 'sesiones:delete_sesion' sesion.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" >Eliminar Sesion</h4>
+    </div>
+    <div class="modal-body text-center">
+        <p> Confirme si desea eliminar la siguiente sesión:</p>
+        <strong>Nombre de sesión:</strong> <p>{{ sesion.nombre_sesion }} </p>
+        <strong>Fecha de sesión:</strong> <p> {{ sesion.fecha_sesion | date:'d-m-Y' }} </p>
+        <strong>Modalidad:</strong> <p> {{ sesion.modalidad }}</p>
+        <strong>Fecha de presentación:</strong> <p> {{ sesion.fecha_presentacion | date:'d-m-Y' }}</p>
+        <strong>Fecha de ocupación:</strong> <p> {{ sesion.espacio.fecha_ocupacion| date:'d-m-Y'}}</p>
+        {% if sesion.espacio.espacio_fisico %}
+            <strong>Nombre del espacio:</strong> <p> {{ sesion.espacio.espacio_fisico.nombre }} </p>
+            <strong>Capacidad:</strong> <p> {{ sesion.espacio.espacio_fisico.espacio }} </p>
+            {% if sesion.espacio.espacio_fisico.ubicacion %}    
+                <strong>Ubicación:</strong> <p> {{ sesion.espacio.espacio_fisico.ubicacion }} </p>
+            {% endif %}
+            {% if sesion.espacio.espacio_fisico.video_beam %} 
+                <p><strong>Requiere video beam</strong></p>
+            {% endif %}
+            {% if sesion.espacio.espacio_fisico.portatil %} 
+                <p><strong>Requiere portátil</strong></p>
+            {% endif %}
+            <strong>Turno:</strong> <p> {{ sesion.espacio.espacio_fisico.turno }}</p>
+        {% else %}
+            <strong>URL:</strong> <p> {{ sesion.espacio.espacio_virtual.url_virtual }}</p>
+            <strong>Capacidad:</strong> <p> {{ sesion.espacio.espacio_virtual.capacidad_url }}</p>
+            <strong>Turno:</strong> <p> {{ sesion.espacio.espacio_virtual.turno }}</p>
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Eliminar</button>
+    </div>
+</form>

@@ -42,7 +42,6 @@ urlpatterns = [
     url(r'^organizador/agregar-observaciones/(?P<organizador_id>\d+)/$',views.add_observations_to_organizer, name='add_observations_to_organizer'),
     
     ##En arbitrajes
-    url(r'^arbitraje-eventos/$',views.arbitraje_events_list,name='arbitraje_events_list'),
     url(r'^arbitraje-locaciones/$',views.arbitraje_places_list,name='arbitraje_places_list'),
     url(r'^arbitraje-organizadores/$',views.arbitraje_organizers_list,name='arbitraje_organizers_list'),
 ]
