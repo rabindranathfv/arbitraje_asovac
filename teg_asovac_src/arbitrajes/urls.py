@@ -33,6 +33,7 @@ urlpatterns = [
     #Carga de contenido
     url(r'^listArbitros$',views.list_arbitros,name='list_arbitros'),
     url(r'^listArbitrajes$',views.list_arbitrajes,name='list_arbitrajes'),
+    url(r'^listTrabajosAceptados$',views.list_trabajos_aceptados,name='list_trabajos_aceptados'),
 
     # CRUD Arbitros
     url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
