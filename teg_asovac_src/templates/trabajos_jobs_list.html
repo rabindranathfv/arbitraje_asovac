@@ -54,16 +54,16 @@
 							data-sort-name="pk"
 							data-show-toggle="true"
 							data-show-columns="true"
-							data-detail-view="false"
+							data-detail-view="true"
 							data-detail-formatter="detailFormatter"
 							>
 							<thead>
 								<tr>
 									<th data-field="estatus" data-sortable="true">Estatus</th>
 									<th data-field="nombre" data-sortable="true">Área</th>
+									<th data-field="subarea" data-sortable="true">Subárea</th>
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
-									<th data-field="observaciones" data-sortable="true">Observaciones</th>
 									<th data-field="operate" data-events="operateEvents" data-formatter="operateTrabajos" data-align="center">Acciones</th>
 								</tr>
 						</thead>
@@ -114,6 +114,32 @@
 				 }
 			 });
 		}
+
+		function detailFormatter(index, row) {
+		
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+			var init=init+ '<th style="text-align: center;" >Observaciones</th>'; 
+			var init=init+ '<th style="text-align: center;" >Autor Principal</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "autor_principal" || key == "observaciones"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listArbitrajes").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
 		
 		$("#export").click(function(){
         console.log("Descargar excel");
