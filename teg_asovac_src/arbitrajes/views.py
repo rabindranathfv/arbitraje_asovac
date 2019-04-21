@@ -906,8 +906,8 @@ def list_trabajos_aceptados(request):
         else:
             if rol_user == 3:
                 area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,event_id,area])
-                data_count= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
+                data_count= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
 
         total=0
 
