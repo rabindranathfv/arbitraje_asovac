@@ -729,6 +729,9 @@ var SaveAñadirPagoForm= function(){
     
     // CRUD Arbitraje
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
-
+    
+    // CRUD Trabajos Aceptados
+    $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
+    
 
 });

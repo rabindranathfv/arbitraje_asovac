@@ -149,6 +149,19 @@ $.ajaxSetup({
             actions
         ].join('');
     }
+
+    function operateTrabajosAceptados(value, row, index) {
+        return [
+            
+            '<a class="editPresentacion" href="javascript:void(0)" title="Editar modo de presentación">',
+            '<i class="fas fa-edit"></i>',
+            '</a>  ' ,
+            '<a class="statusArbitro" href="javascript:void(0)" title="Estatus Árbitros">',
+            '<i class="fas fa-history"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
 /*-----------------------------------------------------------------------------------------*/
 /*                  Para capturar el evento de los botones de las tablas                   */
 /*-----------------------------------------------------------------------------------------*/
@@ -483,6 +496,26 @@ $.ajaxSetup({
             });
         },
         'click .newArbitraje': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $tabla = $("table");
+                    $tabla.bootstrapTable("refresh");
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+
+        'click .editPresentacion': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({

@@ -138,6 +138,51 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
         </div>
+        {% else %}
+            {% if tipo == "editPresentacion" %}
+            <form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:editarPresentacion' trabajo_id %}">
+                {% csrf_token %}
+                <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Forma de presentación</h3>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="col-md-12">
+                        <!-- <br> -->
+                        <label for="forma_presentacion">Forma de Presentación</label>
+                        <select name="forma_presentacion" id="forma_presentacion" class=" form-control">
+                            <option selected value="">Seleccione</option>
+                            <option value="Presencial">Presencial</option>
+                            <option value="Virtual">Virtual</option>
+                        </select>
+                        <br>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                    <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function () {
+                    $("#forma_presentacion").change(function (e) { 
+                        var format= $(this).val();
+                        if (format == "") {
+                            $(".sendGenericForm").prop('disabled', true);
+                        }else{
+                                $(".sendGenericForm").prop('disabled', false);
+                        }
+                        
+                    });
+            
+                });
+            </script>
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}

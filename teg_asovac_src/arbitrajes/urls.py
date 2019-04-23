@@ -46,6 +46,9 @@ urlpatterns = [
     url(r'^estatus-trabajos/statusArbitraje/(?P<id>\d+)$',views.statusArbitraje,name='estatusArbitraje'),
     url(r'^estatus-trabajos/newArbitraje/(?P<id>\d+)$',views.newArbitraje,name='nuevoArbitraje'),
 
+    # CRUD Trabajos Aceptados
+    url(r'^asignar-sesion/editPresentacion/(?P<id>\d+)$',views.editPresentacion,name='editarPresentacion'),
+
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
 

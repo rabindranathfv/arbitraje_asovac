@@ -1003,6 +1003,34 @@ def list_trabajos_aceptados(request):
    
     return JsonResponse(response)
     
+
+
+#---------------------------------------------------------------------------------#
+#                          CRUD Trabajos Aceptados                                #
+#---------------------------------------------------------------------------------#
+def editPresentacion(request,id):
+    print "Edit Presentacion"
+    data= dict()
+
+    if request.method == 'POST':
+
+        trabajo= Trabajo.objects.get(id = id)
+        trabajo.forma_presentacion=request.POST.get("forma_presentacion")
+        trabajo.save()
+        
+        data['status']= 200
+        data['message']="La forma de presentación se ha cambiado de manera exitosa."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"editPresentacion",
+            'trabajo_id':id,
+        }
+        data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    return JsonResponse(data)
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
