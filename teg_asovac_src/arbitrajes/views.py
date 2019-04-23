@@ -19,16 +19,21 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 from .forms import ArbitroForm, RefereeCommentForm
 
 # Create your views here.
+@login_required
 def arbitrajes_pag(request):
     context = {
         "nombre_vista": 'Arbitrajes'
     }
     return render(request,"test_views.html",context)
 
+
+
+@login_required
 def estatus_trabajos(request):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -79,6 +84,9 @@ def estatus_trabajos(request):
     }
     return render(request, 'arbitrajes_trabajos_list.html', context)
 
+
+
+@login_required
 def jobs_for_review(request):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -121,6 +129,9 @@ def jobs_for_review(request):
     }
     return render(request, 'arbitrajes_jobs_for_review.html', context)
 
+
+
+@login_required
 def detalles_resumen(request, id_trabajo):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -156,6 +167,9 @@ def detalles_resumen(request, id_trabajo):
     }
     return render(request, 'trabajos_detalles.html', context)
 
+
+
+@login_required
 def referee_list(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -187,6 +201,9 @@ def referee_list(request):
     }
     return render(request, 'arbitrajes_referee_list.html', context)
 
+
+
+@login_required
 def referee_edit(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -220,6 +237,9 @@ def referee_edit(request):
     }
     return render(request, 'main_app_referee_edit.html', context)
 
+
+
+@login_required
 def areas_subareas(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -254,6 +274,8 @@ def areas_subareas(request):
     return render(request, 'arbitrations_areas_subareas.html', context)
 
 
+
+@login_required
 def asignacion_de_sesion(request):
 
     event_id = request.session['arbitraje_id']
@@ -288,10 +310,12 @@ def asignacion_de_sesion(request):
     }
     return render(request, 'arbitrajes_asignacion_de_sesion.html', context)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_arbitros(request):
 
     event_id = request.session['arbitraje_id']
@@ -430,6 +454,7 @@ def list_arbitros(request):
 #---------------------------------------------------------------------------------#
 #                                 Crud Arbitros                                   #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewArbitro(request,id):
 
     data= dict()
@@ -445,6 +470,9 @@ def viewArbitro(request,id):
     data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editArbitro(request,id):
     print "Edit Arbitro"
     data= dict()
@@ -493,6 +521,9 @@ def editArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeArbitro(request,id):
 
     print "eliminar arbitro"
@@ -527,10 +558,12 @@ def removeArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitraje                    #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_arbitrajes(request):
     
     event_id = request.session['arbitraje_id']
@@ -683,9 +716,12 @@ def list_arbitrajes(request):
    
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #                                CRUD de Arbitrajes                               #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewArbitraje(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -730,6 +766,8 @@ def viewArbitraje(request, id):
     return render(request,"arbitrajes_trabajo_info.html",context)
 
 
+
+@login_required
 def changeStatus(request, id):
     
     response= dict()
@@ -804,6 +842,9 @@ def changeStatus(request, id):
     
     return JsonResponse(response)
 
+
+
+@login_required
 def statusArbitraje(request, id):
     
     response= dict()
@@ -827,6 +868,9 @@ def statusArbitraje(request, id):
     
     return JsonResponse(response)
 
+
+
+@login_required
 def newArbitraje(request, id):
 
     trabajo= Trabajo.objects.get(id = id)
@@ -842,9 +886,12 @@ def newArbitraje(request, id):
     
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #             Carga el contenido para asignar sesiones a los trabajos             #
 #---------------------------------------------------------------------------------#
+@login_required
 def list_trabajos_aceptados(request):
 
     event_id = request.session['arbitraje_id']
@@ -999,10 +1046,13 @@ def list_trabajos_aceptados(request):
     }
    
     return JsonResponse(response)
-    
+
+
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
+@login_required
 def generate_report(request,tipo):
     print "Excel para arbitros"
     event_id = request.session['arbitraje_id']
@@ -1063,8 +1113,9 @@ def generate_report(request,tipo):
     return response
 
 
-def review_job(request, trabajo_id):
 
+@login_required
+def review_job(request, trabajo_id):
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
     if request.method == "POST":
@@ -1088,4 +1139,3 @@ def review_job(request, trabajo_id):
         }
         data['html_form'] = render_to_string('ajax/review_job.html',context,request=request)
     return JsonResponse(data)
-
