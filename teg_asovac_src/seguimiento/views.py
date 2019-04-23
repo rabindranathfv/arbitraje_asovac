@@ -6,8 +6,10 @@ from django.shortcuts import render
 from django.conf import settings
 # import para envio de correo
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def seguimiento_pag(request):
     context = {
         "nombre_vista": 'seguimiento'

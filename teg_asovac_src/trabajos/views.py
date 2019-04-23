@@ -1,37 +1,36 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from decouple import config
+import json, random, string, xlrd, os, sys, xlwt
 
-from django.shortcuts import render,get_object_or_404, redirect
-
-#import settings
-from django.db.models import Q
 from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.http import JsonResponse,HttpResponse
+from django.core.mail import EmailMessage, send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Q
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
-
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from .tokens import account_activation_token
-from django.contrib.sites.shortcuts import get_current_site
-from decouple import config
-from django.core.mail import EmailMessage
 
-import json
-import random, string,xlrd,os,sys,xlwt
-from .models import Trabajo, Detalle_version_final,Trabajo_arbitro
-from autores.models import Autor, Autores_trabajos
 from arbitrajes.models import Arbitro
 from autores.forms import AddAuthorToJobForm
-from django.contrib.auth.models import User
-
+from autores.models import Autor, Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
-from .forms import TrabajoForm,EditTrabajoForm, AutorObservationsFinalVersionJobForm
+
+from .forms import TrabajoForm, EditTrabajoForm, AutorObservationsFinalVersionJobForm
+from .models import Trabajo, Detalle_version_final, Trabajo_arbitro
+from .tokens import account_activation_token
+
+
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
+@login_required
 def trabajos(request):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -121,6 +120,9 @@ def trabajos(request):
     }
     return render(request,"trabajos.html",context)
 
+
+
+@login_required
 def jobs_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -170,6 +172,9 @@ def jobs_list(request):
     }
     return render(request, 'trabajos_jobs_list.html', context)
 
+
+
+@login_required
 def jobs_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -208,8 +213,10 @@ def jobs_edit(request):
         'route_resultados': route_resultados,
     }
     return render(request, 'trabajos_jobs_edit.html', context)
-   
 
+
+
+@login_required
 # Vista para editar trabajos
 def edit_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -283,6 +290,9 @@ def edit_trabajo(request, trabajo_id):
     }
     return render(request,"trabajos_edit_trabajo.html",context)
 
+
+
+@login_required
 #Vista donde aparecen los trabajos evaluados
 def trabajos_evaluados(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -323,6 +333,9 @@ def trabajos_evaluados(request):
     }
     return render(request,"trabajos_trabajos_evaluados.html",context)
 
+
+
+@login_required
 def detalles_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -367,6 +380,7 @@ def detalles_trabajo(request, trabajo_id):
 
 
 
+@login_required
 def trabajos_resultados_autor(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -425,6 +439,8 @@ def trabajos_resultados_autor(request):
     return render(request,"trabajos_resultados_autor.html",context)
 
 
+
+@login_required
 def delete_job(request, trabajo_id):
     
     data = dict()
@@ -440,6 +456,8 @@ def delete_job(request, trabajo_id):
     return JsonResponse(data)
 
 
+
+@login_required
 def show_job_observations(request, trabajo_version_final_id):
     data = dict()
     trabajo_version_final = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
@@ -450,6 +468,8 @@ def show_job_observations(request, trabajo_version_final_id):
     return JsonResponse(data)
 
 
+
+@login_required
 def autor_add_observations_to_job(request, trabajo_version_final_id):
     data = dict()
     trabajo = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
@@ -468,6 +488,8 @@ def autor_add_observations_to_job(request, trabajo_version_final_id):
     return JsonResponse(data)
 
 
+
+@login_required
 #Vista de ajax para añadir autores a un trabajo
 def add_author_to_job(request, autor_trabajo_id):
     data = dict()
@@ -503,6 +525,8 @@ def add_author_to_job(request, autor_trabajo_id):
     return JsonResponse(data)
 
 
+
+
 # Ajax/para el uso de ventanas modales
 def query_filter(sidebar_item):
     list_elem=""
@@ -514,9 +538,11 @@ def query_filter(sidebar_item):
         list_elem="Autores"
         
     return list_elem
-
 # Se realiza el cambio de subarea y se pasan los parametros necesarios para filtrar contenido
 
+
+
+@login_required
 def show_areas_modal(request,id):
     # print "ID recibido",id 
     data= dict()
@@ -565,11 +591,10 @@ def show_areas_modal(request,id):
 
 
 
-
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_trabajos(request):
     
     event_id = request.session['arbitraje_id']
@@ -711,10 +736,11 @@ def list_trabajos(request):
    
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #                                CRUD de Trabajos                                 #
 #---------------------------------------------------------------------------------#
-
 def filterArbitro(data,trabajo_id):
     arbitros= []
 
@@ -747,6 +773,9 @@ def filterArbitro(data,trabajo_id):
  
     return arbitros
 
+
+
+@login_required
 def selectArbitro(request,id):
     # print "Trabajo id: ",id
 
@@ -854,6 +883,7 @@ def selectArbitro(request,id):
 
 
 
+@login_required
 def viewTrabajo(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -903,6 +933,9 @@ def viewTrabajo(request, id):
     }
     return render(request,"trabajos_trabajo_info.html",context)
 
+
+
+@login_required
 def invitacion(request, uidb64, token):
     try:
         invitacion_id = force_text(urlsafe_base64_decode(uidb64))
@@ -927,6 +960,9 @@ def invitacion(request, uidb64, token):
     # print "Invitacion: {0} {1}".format (invitacion.id,invitacion.arbitro.id)
     return render(request,"trabajos_invitation.html",context)
 
+
+
+@login_required
 def viewEstatus(request,id):
     # print "Trabajo id: ",id
 
@@ -960,9 +996,11 @@ def viewEstatus(request,id):
     return JsonResponse(response)
 
 
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
+@login_required
 def generate_report(request,tipo):
     print "Excel para arbitros"
     event_id = request.session['arbitraje_id']
@@ -1022,6 +1060,8 @@ def generate_report(request,tipo):
     return response
 
 
+
+@login_required
 def add_new_version_to_job(request, last_version_trabajo_id):
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)

@@ -181,3 +181,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+# Session time out settings
+SESSION_COOKIE_AGE = 60 * 60 ## Seconds before session timeout
