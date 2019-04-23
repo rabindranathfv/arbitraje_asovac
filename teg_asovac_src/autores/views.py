@@ -7,6 +7,7 @@ from decouple import config
 from django.conf import settings
 from django.core import serializers
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago, Universidad
@@ -26,7 +27,7 @@ from django.template.loader import render_to_string
 
 
 # Create your views here.
-
+@login_required
 def admin_create_author(request):
 	if request.method == "POST":
 		form = AdminCreateAutorForm(request.POST)
@@ -133,12 +134,17 @@ def admin_create_author(request):
 	return render(request,"autores_admin_create_author.html",context)
 
 
+
+@login_required
 def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
     }
     return render(request,"test_views.html",context)
 
+
+
+@login_required
 def authors_list(request):
 
 	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -185,6 +191,8 @@ def authors_list(request):
 	return render(request, 'autores_authors_list.html', context)
 
 
+
+@login_required
 def list_authors (request):
     response = {}
     response['query'] = []
@@ -251,6 +259,7 @@ def list_authors (request):
 
 
 
+@login_required
 def author_edit(request, autor_id):
 	autor = get_object_or_404(Autor, id = autor_id)
 	if request.method == 'POST':
@@ -312,6 +321,8 @@ def author_edit(request, autor_id):
 	return render(request, 'autores_author_edit.html', context)
 
 
+
+@login_required
 def author_details(request, autor_id):
 	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -355,6 +366,8 @@ def author_details(request, autor_id):
 	return render(request, 'autores_details.html', context)
 
 
+
+@login_required
 #Modal para editar datos de autor del usuario logueado
 def author_edit_modal(request, user_id):
 	data = dict()
@@ -381,6 +394,9 @@ def author_edit_modal(request, user_id):
 	data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
 	return JsonResponse(data)
 
+
+
+@login_required
 #Vista para generar certificado
 def generar_certificado(request):
 	context={
@@ -389,6 +405,8 @@ def generar_certificado(request):
 	return render(request,"autores_generar_certificado.html", context)
 
 
+
+@login_required
 #Vista donde el autor ve los pagadores de sus trabajos y tiene opción de añadir nuevos
 def postular_trabajo(request):
 	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -446,6 +464,8 @@ def postular_trabajo(request):
 	return render(request,"autores_postular_trabajo.html",context)
 
 
+
+@login_required
 #Modal para crear datos del pagador
 def postular_trabajo_pagador_modal(request, autor_trabajo_id):
 	data = dict()
@@ -471,6 +491,8 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id):
 	return JsonResponse(data)
 
 
+
+@login_required
 #Modal para crear datos de la factura
 def postular_trabajo_factura_modal(request, autor_trabajo_id):
 	data = dict()
@@ -503,6 +525,8 @@ def postular_trabajo_factura_modal(request, autor_trabajo_id):
 	return JsonResponse(data)
 
 
+
+@login_required
 #Modal para crear datos de la factura
 def postular_trabajo_pago_modal(request, autor_trabajo_id):
 	data = dict()
@@ -544,6 +568,7 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 
 
 
+@login_required
 #Detalles del pago
 def detalles_pago(request, pagador_id):
 
@@ -601,6 +626,8 @@ def detalles_pago(request, pagador_id):
 	return render(request,"autores_detalles_pago.html",context)
 
 
+
+@login_required
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def create_university_modal(request):
 	data = dict()
@@ -640,6 +667,8 @@ def handle_uploaded_file(file, filename):
             destination.write(chunk)
 
 
+
+@login_required
 # Para guardar el archivo recibido del formulario
 def save_file(request,type_load):
 
@@ -655,11 +684,15 @@ def save_file(request,type_load):
     # print "Ruta del archivo: ",route
     return route
 
+
+
 # Para obtener la extension del archivo
 def get_extension_file(filename):
 
     extension = filename.split('.')
     return extension[1]
+
+
 
 #---------------------------------------------------------------------------------#
 #                Valida el contenido del excel para cargar usuarios               #
@@ -670,6 +703,8 @@ def validate_alpha(cadena):
 		if not char.isalpha() and char !=' ':
 			valid_cadena = 0
 	return valid_cadena
+
+
 
 def validate_load_users(filename,extension,arbitraje_id):
 	data= dict()
@@ -849,10 +884,11 @@ def validate_load_users(filename,extension,arbitraje_id):
 			data['message'] =  "Problemas en la fila {0} al momento de almacenar, porque ya hay un autor con esa cédula o correo electrónico. Se lograron importar los autores hasta la fila anterior, es decir, hasta la fila {1}.".format(is_create, is_create-1)
 	return data
 
+
+
 #---------------------------------------------------------------------------------#
 #             Hecha la validación, se procede a la creación de los autores        #
 #---------------------------------------------------------------------------------#
-
 def create_authors(excel_file, arbitraje_id):
 
 	resultado = -1
@@ -965,7 +1001,7 @@ def create_authors(excel_file, arbitraje_id):
 
 
 
-
+@login_required
 def load_authors_modal(request):
 	data = dict()
 	arbitraje_id = request.session['arbitraje_id']
@@ -1007,9 +1043,11 @@ def load_authors_modal(request):
 	return JsonResponse(data)
 
 
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Autores                                  #
 #---------------------------------------------------------------------------------#
+@login_required
 def export_authors(request):
 
 	data = Autor.objects.all()
