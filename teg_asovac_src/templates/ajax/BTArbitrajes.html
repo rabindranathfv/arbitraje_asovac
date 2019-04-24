@@ -146,14 +146,14 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title">Forma de presentación</h3>
+                    <h3 class="modal-title">Modalidad de presentación</h3>
                 </div>
 
                 <div class="modal-body">
 
                     <div class="col-md-12">
                         <!-- <br> -->
-                        <label for="forma_presentacion">Forma de Presentación</label>
+                        <label for="forma_presentacion">Modalidad de Presentación</label>
                         <select name="forma_presentacion" id="forma_presentacion" class=" form-control">
                             <option selected value="">Seleccione</option>
                             <option value="Presencial">Presencial</option>
@@ -182,6 +182,59 @@
             
                 });
             </script>
+            {% else %}
+                {% if tipo == "asigSesion" %}
+                <form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:asignarSesion' trabajo_id %}">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" >Asignar Sesión</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12 text-left" style="font-size: 16px;">
+                            <table class="table table-bordered">
+                                <thead>
+                                        <th>Nombre</th>
+                                        <th>Codigo</th>
+                                        <th>Fecha presentación</th>
+                                        <th>Agregar</th>
+                                </thead>
+                                    {% for item in sesiones %}
+                                        <tr>
+                                            <td>{{item.nombre_sesion}}</td>
+                                            <td>{{item.sesion}}</td>
+                                            <td>{{item.fecha_presentacion}}</td>
+                                            <td class="text-center" >
+                                                <label class="contentCheck">
+                                                {% if item.id == asig %}
+                                                    <input name="sesion" type="radio" data-status="on" id="{{item.id}}" value="{{item.id}}">
+                                                {% else %}
+                                                    <input name="sesion" type="radio" data-status="off" id="{{item.id}}" value="{{item.id}}">
+                                                {% endif %}
+                                                <span class="checkmark"></span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                    </div>
+                </form>
+                <script>
+                        $('input[type=radio]').each(function () {
+                            
+                            var status=$(this).attr('data-status');
+                            if(status == "on" ){
+                                $(this).prop("checked",true);
+                            }
+                    
+                        }); 
+                    
+                    </script>
+                {% endif %}
             {% endif %}
         {% endif %}
     {% endif %}

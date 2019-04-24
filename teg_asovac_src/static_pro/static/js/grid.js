@@ -153,11 +153,11 @@ $.ajaxSetup({
     function operateTrabajosAceptados(value, row, index) {
         return [
             
-            '<a class="editPresentacion" href="javascript:void(0)" title="Editar modo de presentación">',
+            '<a class="editPresentacion" href="javascript:void(0)" title="Editar modalidad de presentación">',
             '<i class="fas fa-edit"></i>',
             '</a>  ' ,
-            '<a class="statusArbitro" href="javascript:void(0)" title="Estatus Árbitros">',
-            '<i class="fas fa-history"></i>',
+            '<a class="asignarSesion" href="javascript:void(0)" title="Asignar Sesión">',
+            '<i class="fas fa-hand-pointer"></i>',
             '</a>  ' ,
         ].join('');
     }
@@ -419,7 +419,8 @@ $.ajaxSetup({
             $.ajax({
                 url: route,
                 type: 'get',
-                data: row.id,
+                // data: row.id,
+                data: {"sesion":$("input[name=sesion]:checked").val()},
                 dataType: 'json',
                 beforeSend: function(){
                     $('#bootstrapTableModal').modal('show');  
@@ -516,6 +517,26 @@ $.ajaxSetup({
         },
 
         'click .editPresentacion': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $tabla = $("table");
+                    $tabla.bootstrapTable("refresh");
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+
+        'click .asignarSesion': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({

@@ -13,6 +13,8 @@ from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
+from sesiones.models import Sesion
+
 from autores.models import Autor, Autores_trabajos
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
@@ -1027,6 +1029,36 @@ def editPresentacion(request,id):
         context={
             'tipo':"editPresentacion",
             'trabajo_id':id,
+        }
+        data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    return JsonResponse(data)
+
+def asigSesion(request,id):
+    print "Asignar sesión"
+    data= dict()
+    arbitraje = request.session['arbitraje_id']
+    listSesion= Sesion.objects.filter(sistema=arbitraje)
+    trabajo= Trabajo.objects.get(id = id)
+    print trabajo.sesion_id
+
+    if request.method == 'POST':
+
+        sesion=Sesion.objects.get(id=request.POST.get("sesion")) 
+        # trabajo= Trabajo.objects.get(id = id)
+        trabajo.sesion= sesion
+        trabajo.save()
+        
+        data['status']= 200
+        data['message']="La forma de presentación se ha cambiado de manera exitosa."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"asigSesion",
+            'trabajo_id':id,
+            'asig': trabajo.sesion_id,
+            'sesiones': listSesion,
         }
         data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
     return JsonResponse(data)
