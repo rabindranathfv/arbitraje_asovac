@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
 from django import forms
 from .models import Arbitro
-from trabajos.models import Trabajo_arbitro
+from trabajos.models import Trabajo_arbitro,Trabajo
 class ArbitroForm(forms.ModelForm):
     class Meta:
         model= Arbitro
@@ -26,3 +26,5 @@ class RefereeCommentForm(forms.ModelForm):
 		self.fields['comentario_autor'].required = True
 		self.fields['comentario_autor'].label = "Comentario al autor"
 		self.fields['comentario_autor'].widget.attrs['rows'] = 4
+		
+
