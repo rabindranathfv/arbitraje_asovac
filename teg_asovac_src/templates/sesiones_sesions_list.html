@@ -43,12 +43,12 @@
 					>
 						<thead>
 							<tr>
-								<th data-field="sesion" data-visible="false" data-show-columns="false">ID</th>
+								<th data-field="sesion__id" data-visible="false" data-show-columns="false">ID</th>
 								<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-2">Nombre</th>
 								<th data-field="sesion__lugar" data-sortable="true" class="col-sm-1">Lugar</th>
 								<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1">Fecha Sesión</th>
-								<th data-field="sesion__hora_inicio" class="col-sm-1">Hora de inicio</th>
-								<th data-field="sesion__hora_fin" class="col-sm-1">Hora de fin</th>
+								<th data-field="sesion__hora_inicio" data-sortable="true" class="col-sm-1">Hora de inicio</th>
+								<th data-field="sesion__hora_fin" data-sortable="true" class="col-sm-1">Hora de fin</th>
 								<th data-field="autor" class="col-sm-2">Coordinador</th>
 								<th data-field="autor_2" class="col-sm-2">Co-coordinador</th>
 								<th data-field="operate" data-events="operateEvents" data-formatter="operateSesions" data-align="center" class="col-sm-2">Acciones</th>
@@ -71,19 +71,41 @@
 	<script>
 		var $table = $('#sesion-table');
 		function operateSesions(value, row, index) {
+			let eliminar = ""
 			if(row.eliminar)	
 			{
-				var route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
-				return [
+				let route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
+				eliminar = [
 					'<a class="delete-sesion" data-url="',
 					route_delete,
 					' "',
 					'title="Eliminar" >',
 					'<i class="fa fa-trash"></i>',
-					'</a>'
+					'</a> '
 				].join('');
 			}
-			console.log(row.eliminar);
+			
+			let route_edit = "{% url 'sesiones:edit_sesion' 1 %}".replace(1, row.sesion__id);
+			let editar = [
+					'<a class="edit-sesion" href="',
+					route_edit,
+					'"',
+					'title="Editar" >',
+					'<i class="fas fa-edit"></i>',
+					'</a> '
+				].join('');
+
+			let route_details = "{% url 'sesiones:details_sesion' 1 %}".replace(1, row.sesion__id);
+			let detalles = [
+					'<a class="detail-sesion" data-url="',
+					route_details,
+					'"',
+					'title="Detalles" >',
+					'<i class="fas fa-eye"></i>',
+					'</a> '
+				].join('');
+				
+			return [detalles, editar, eliminar].join('');
 	    }
 
 	    // your custom ajax request here

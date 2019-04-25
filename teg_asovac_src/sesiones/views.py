@@ -134,7 +134,7 @@ def list_sesions (request):
                     coordinador = autor.nombres + ' ' + autor.apellidos
                 if coordinador_sesion.co_coordinador == True:
                     co_coordinador = autor.nombres + ' ' + autor.apellidos
-
+            
             #Condicional para obtener el lugar de presentación
             """
             if item.sesion.espacio.espacio_fisico:
@@ -146,7 +146,6 @@ def list_sesions (request):
                 eliminar = False
             else:
                 eliminar = True
-            print eliminar
             response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%H:%M"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%H:%M") , 'autor': coordinador, 'autor_2': co_coordinador, 'eliminar': eliminar  })
             listed.append(item.sesion.id)
 
@@ -355,7 +354,6 @@ def create_sesion(request):
             
             messages.success(request, "Sesion creada con éxito.")
             return redirect('sesiones:sesions_list')
-        print modalidad
     else:
         sesion_form = SesionForm()
     
@@ -404,7 +402,32 @@ def delete_sesion(request, sesion_id):
         data['html_form'] = render_to_string('ajax/sesion_delete.html',context,request=request)
     return JsonResponse(data)
 
+
+def details_sesion(request, sesion_id):
     
+    data = dict()
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+    
+    coordinador = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = True).first()
+    co_coordinador = Coordinadores_sesion.objects.filter(sesion = sesion, co_coordinador = True).first()
+    if coordinador:
+        coordinador = coordinador.autor.nombres + ' ' + coordinador.autor.apellidos
+    else:
+        coordinador = ''
+    
+    if co_coordinador:
+        co_coordinador = co_coordinador.autor.nombres + ' ' + co_coordinador.autor.apellidos
+    else:
+        co_coordinador = ''
+
+    context = {
+        'sesion':sesion,
+        'coordinador': coordinador,
+        'co_coordinador': co_coordinador
+    }
+    data['html_form'] = render_to_string('ajax/sesion_details.html',context,request=request)
+    return JsonResponse(data)
+ 
 
 def edit_sesion(request, sesion_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -427,19 +450,18 @@ def edit_sesion(request, sesion_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
    
     sesion = get_object_or_404(Sesion, id = sesion_id)
-    if sesion.espacio.espacio_fisico:    
-        virtual_selected = False
-    else:
-        virtual_selected = True
-    print sesion
+    modo_edicion = True
     if request.method == 'POST': 
-        pass
+        sesion_form = SesionForm(request.POST, instance = sesion)
+        if sesion_form.is_valid():
+            sesion = sesion_form.save()
+            
+            messages.success(request, 'Sesión editada con éxito')
+            return redirect('sesiones:sesions_list')
     else:
-        sesion_form = SesionForm(instance = sesion, initial = {'fecha_ocupacion': sesion.espacio.fecha_ocupacion})
-        espacio_form = EspacioFisicoForm(instance = sesion.espacio.espacio_fisico )
-    
+        sesion_form = SesionForm(instance = sesion)
     context = {
-        'nombre_vista' : 'Sesiones de arbitraje',
+        'nombre_vista' : 'Editar sesión',
         'main_navbar_options' : main_navbar_options,
         'estado' : estado,
         'rol_id' : rol_id,
@@ -452,7 +474,7 @@ def edit_sesion(request, sesion_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'sesion_form': sesion_form,
-        'espacio_form': espacio_form,
-        'virtual_selected': virtual_selected
+        'sesion': sesion,
+        'modo_edicion': modo_edicion
     }
     return render(request,"sesiones_create_sesion.html",context)

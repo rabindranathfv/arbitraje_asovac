@@ -42,6 +42,13 @@ class SesionForm(forms.ModelForm):
             )
         ) 
 
+    def clean_hora_fin(self):
+        hora_inicio = self.cleaned_data['hora_inicio']
+        hora_fin = self.cleaned_data['hora_fin']
+        if hora_inicio > hora_fin:
+			raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
+        return hora_fin
+
 
 class EspacioFisicoForm(forms.ModelForm):
     
@@ -66,7 +73,6 @@ class EspacioFisicoForm(forms.ModelForm):
                 'turno'
             )
         )
-
 
 class EspacioVirtualForm(forms.ModelForm):
 

@@ -10,16 +10,22 @@
                     {% include "errors_form.html" %}
                 </div>
             </div>
-            <div class="panel panel-default">
+            <div class="panel panel-default">  
                 <div class="panel-heading">
-                    <h4>Crear sesión</h4>
+                    <h4>
+                        {% if not modo_edicion %}  
+                            Crear sesión
+                        {% else %}
+                            Editar sesión
+                        {% endif %}
+                    </h4>
                 </div>
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
                             <div class="col-sm-12">
                                 
-                                <form method="POST" id="create-sesion-form" enctype="multipart/form-data" action=".">    
+                                <form method="POST" id="create-sesion-form" enctype="multipart/form-data" action="{% if not modo_edicion %}.{% else %}{% url 'sesiones:edit_sesion' sesion.id %}{% endif %}">    
                                     <div class= "row">
                                         {% crispy sesion_form %}	
                                         <!--							
@@ -40,7 +46,13 @@
                                         -->
                                     </div>
                                     <div class = "row">
-                                        <button class = "col-sm-offset-8 col-sm-2 btn btn-lg btn-success" type ="submit">Crear Sesión</button>
+                                        <button class = "col-sm-offset-8 col-sm-2 btn btn-lg btn-success" type ="submit">
+                                            {% if not modo_edicion %}  
+                                                Crear Sesión
+                                            {% else %}
+                                                Editar Sesión
+                                            {% endif %}
+                                        </button>
                                         <a role = "button" class = "col-sm-2 btn btn-lg btn-danger" href="{% url 'sesiones:sesions_list' %}">Cancelar</a>
                                     </div>
                                 </form>
