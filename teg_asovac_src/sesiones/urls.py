@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^sesiones/$', views.sesiones_pag, name= 'sesiones'),
     url(r'^crear/$', views.create_sesion, name= 'create_sesion'),
     url(r'^lista/$', views.sesions_list, name= 'sesions_list'),
-    url(r'^editar/$', views.sesions_edit, name= 'sesions_edit'),
+    url(r'^editar/(?P<sesion_id>\d+)$', views.edit_sesion, name= 'edit_sesion'),
     url(r'^espacio/lista/$', views.sesions_space_list, name= 'sesions_space_list'),
     url(r'^espacio/editar/$', views.sesions_space_edit, name= 'sesions_space_edit'),
 

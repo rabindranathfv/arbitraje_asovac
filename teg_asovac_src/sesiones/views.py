@@ -141,9 +141,9 @@ def list_sesions (request):
                 lugar = item.sesion.espacio.espacio_virtual.url_virtual
 
             if Trabajo.objects.filter(sesion = item.sesion).exists():
-                eliminar = True
-            else:
                 eliminar = False
+            else:
+                eliminar = True
             print eliminar
             response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__modalidad': item.sesion.modalidad, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_sesion': item.sesion.fecha_sesion.strftime("%I:%M %p"), 'autor': coordinador, 'autor_2': co_coordinador, 'lugar': lugar, 'eliminar': eliminar  })
             listed.append(item.sesion.id)
@@ -297,6 +297,7 @@ def create_sesion(request):
     virtual_selected = False
     
     if request.method == 'POST': 
+        """
         modalidad = request.POST.get('modalidad_select')
         if modalidad == "1":
             sesion_form = SesionForm(request.POST)
@@ -340,10 +341,21 @@ def create_sesion(request):
                 return redirect('sesiones:sesions_list')
             else:
                 virtual_selected = True
+        """
+        sesion_form = SesionForm(request.POST)
+        if sesion_form.is_valid():
+            sesion = sesion_form.save(commit = False)
+            sesion.sistema = arbitraje
+            sesion.save()
+
+            coordinador_sesion = Coordinadores_sesion(sesion = sesion)
+            coordinador_sesion.save()
+            
+            messages.success(request, "Sesion creada con éxito.")
+            return redirect('sesiones:sesions_list')
         print modalidad
     else:
         sesion_form = SesionForm()
-        espacio_form = EspacioFisicoForm()
     
     context = {
         'nombre_vista' : 'Sesiones de arbitraje',
@@ -359,7 +371,6 @@ def create_sesion(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'sesion_form': sesion_form,
-        'espacio_form': espacio_form,
         'virtual_selected': virtual_selected
     }
     return render(request,"sesiones_create_sesion.html",context)
@@ -399,3 +410,54 @@ def delete_sesion(request, sesion_id):
     return JsonResponse(data)
 
     
+
+def edit_sesion(request, sesion_id):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    item_active = 5
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+   
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+    if sesion.espacio.espacio_fisico:    
+        virtual_selected = False
+    else:
+        virtual_selected = True
+    print sesion
+    if request.method == 'POST': 
+        pass
+    else:
+        sesion_form = SesionForm(instance = sesion, initial = {'fecha_ocupacion': sesion.espacio.fecha_ocupacion})
+        espacio_form = EspacioFisicoForm(instance = sesion.espacio.espacio_fisico )
+    
+    context = {
+        'nombre_vista' : 'Sesiones de arbitraje',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'sesion_form': sesion_form,
+        'espacio_form': espacio_form,
+        'virtual_selected': virtual_selected
+    }
+    return render(request,"sesiones_create_sesion.html",context)
