@@ -183,4 +183,4 @@ MESSAGE_TAGS = {
 }
 
 # Session time out settings
-SESSION_COOKIE_AGE = 60 * 60 ## Seconds before session timeout
+SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)
