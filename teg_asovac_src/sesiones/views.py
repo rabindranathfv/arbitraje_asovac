@@ -106,8 +106,9 @@ def list_sesions (request):
                 order='-'+sort
 
     if search != "":
-        data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) | Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search)))).order_by(order)[init:limit]
-        total=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) |Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).distinct('sesion').count()
+        #data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) | Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search)))).order_by(order)[init:limit]
+        data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = search) | Q(sesion__hora_fin__icontains = search)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).order_by(order)[init:limit]
+        total=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = search) | Q(sesion__hora_fin__icontains = search)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).distinct('sesion').count()
         
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -135,17 +136,18 @@ def list_sesions (request):
                     co_coordinador = autor.nombres + ' ' + autor.apellidos
 
             #Condicional para obtener el lugar de presentación
+            """
             if item.sesion.espacio.espacio_fisico:
                 lugar = item.sesion.espacio.espacio_fisico.nombre
             else:
                 lugar = item.sesion.espacio.espacio_virtual.url_virtual
-
+            """
             if Trabajo.objects.filter(sesion = item.sesion).exists():
                 eliminar = False
             else:
                 eliminar = True
             print eliminar
-            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__modalidad': item.sesion.modalidad, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_sesion': item.sesion.fecha_sesion.strftime("%I:%M %p"), 'autor': coordinador, 'autor_2': co_coordinador, 'lugar': lugar, 'eliminar': eliminar  })
+            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%H:%M"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%H:%M") , 'autor': coordinador, 'autor_2': co_coordinador, 'eliminar': eliminar  })
             listed.append(item.sesion.id)
 
     response={
