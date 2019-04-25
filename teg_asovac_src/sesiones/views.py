@@ -394,14 +394,7 @@ def delete_sesion(request, sesion_id):
     data = dict()
     sesion = get_object_or_404(Sesion, id = sesion_id)
     if request.method == "POST":
-        espacio = sesion.espacio
-        if espacio.espacio_fisico:
-            lugar = espacio.espacio_fisico
-        else:
-            lugar = espacio.espacio_virtual
         sesion.delete()
-        espacio.delete()
-        lugar.delete()
         messages.success(request, "Sesión eliminada con éxito")
         return redirect('sesiones:sesions_list') 
     else:

@@ -11,27 +11,17 @@
     <div class="modal-body text-center">
         <p> Confirme si desea eliminar la siguiente sesión:</p>
         <strong>Nombre de sesión:</strong> <p>{{ sesion.nombre_sesion }} </p>
+        <strong>Lugar:</strong> <p>{{ sesion.lugar }} </p>
         <strong>Fecha de sesión:</strong> <p> {{ sesion.fecha_sesion | date:'d-m-Y' }} </p>
-        <strong>Modalidad:</strong> <p> {{ sesion.modalidad }}</p>
-        <strong>Fecha de presentación:</strong> <p> {{ sesion.fecha_presentacion | date:'d-m-Y' }}</p>
-        <strong>Fecha de ocupación:</strong> <p> {{ sesion.espacio.fecha_ocupacion| date:'d-m-Y'}}</p>
-        {% if sesion.espacio.espacio_fisico %}
-            <strong>Nombre del espacio:</strong> <p> {{ sesion.espacio.espacio_fisico.nombre }} </p>
-            <strong>Capacidad:</strong> <p> {{ sesion.espacio.espacio_fisico.espacio }} </p>
-            {% if sesion.espacio.espacio_fisico.ubicacion %}    
-                <strong>Ubicación:</strong> <p> {{ sesion.espacio.espacio_fisico.ubicacion }} </p>
-            {% endif %}
-            {% if sesion.espacio.espacio_fisico.video_beam %} 
-                <p><strong>Requiere video beam</strong></p>
-            {% endif %}
-            {% if sesion.espacio.espacio_fisico.portatil %} 
-                <p><strong>Requiere portátil</strong></p>
-            {% endif %}
-            <strong>Turno:</strong> <p> {{ sesion.espacio.espacio_fisico.turno }}</p>
-        {% else %}
-            <strong>URL:</strong> <p> {{ sesion.espacio.espacio_virtual.url_virtual }}</p>
-            <strong>Capacidad:</strong> <p> {{ sesion.espacio.espacio_virtual.capacidad_url }}</p>
-            <strong>Turno:</strong> <p> {{ sesion.espacio.espacio_virtual.turno }}</p>
+        <strong>Hora de inicio:</strong> <p> {{ sesion.hora_inicio | time:'H-M'}}</p>
+        <strong>Hora de fin:</strong> <p> {{ sesion.hora_fin | time:'H-M' }}</p>
+        <strong>Capacidad:</strong> <p> {{ sesion.capacidad }} </p>
+        <strong>Observaciones:</strong> <p> {{ sesion.observaciones }}</p>
+        {% if sesion.video_beam %}
+            <p><strong>Requiere video beam</strong></p>
+        {% endif %}
+        {% if sesion.portatil %}
+            <p><strong>Requiere portatil</strong></p>
         {% endif %}
     </div>
     <div class="modal-footer">
