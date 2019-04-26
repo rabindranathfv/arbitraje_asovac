@@ -20,6 +20,15 @@ CHOICES_TIPO_PAGO = (('T','Transferencia'),
                  ('C','Cheque'),
                  )
 
+# Create your models here.
+CHOICES_NIVELES_ESTUDIO = (('Educación Basica Primaria','Educación Basica Primaria'),
+                 ('Educación Básica Secundaria','Educación Básica Secundaria'),
+								 ('Bachillerato/Educación Media','Bachillerato/Educación Media'),
+								 ('Educación Técnico/Profesional','Educación Técnico/Profesional'),
+								 ('Universidad','Universidad'),
+								 ('Postgrado','Postgrado'),
+                 )
+
 
 """""""""""""""""""""""""""
 Universidad Model
@@ -56,7 +65,7 @@ class Autor(models.Model):
 	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
 	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
-	nivel_instruccion = models.CharField(max_length=50)
+	nivel_instruccion = models.CharField(max_length=50, choices = CHOICES_NIVELES_ESTUDIO)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
