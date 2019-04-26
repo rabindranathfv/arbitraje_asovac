@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render
 
 from .models import Sesion, Coordinadores_sesion, Espacio
+from autores.models import Autores_trabajos, Autor
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from trabajos.models import Trabajo
 
@@ -478,3 +479,46 @@ def edit_sesion(request, sesion_id):
         'modo_edicion': modo_edicion
     }
     return render(request,"sesiones_create_sesion.html",context)
+
+
+def sesion_job_list(request, sesion_id):
+    
+    data = dict()
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    
+    ponente_trabajo_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_ponente = True, trabajo__sesion = sesion)
+    context = {
+        'sesion':sesion,
+        'ponente_trabajo_list': ponente_trabajo_list
+    }
+    data['html_form'] = render_to_string('ajax/sesion_job_list_modal.html',context,request=request)
+    return JsonResponse(data)
+
+def assign_coordinator(request, sesion_id, autor_id):
+    data = dict()
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+
+    autor = get_object_or_404(Autor, id = autor_id)
+
+    if request.method == "POST":
+        coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = True).first()
+        if coordinador_sesion:
+            coordinador_sesion.autor = autor
+        else:
+            coordinador_sesion = Coordinadores_sesion.objects.get(sesion = sesion, coordinador = False, co_coordinador = False)
+        
+        coordinador_sesion.save()
+
+        messages.success(request, "El coordinador fue asignado con éxito")
+
+        return redirect('sesiones:sesions_list')
+
+    context = {
+        'sesion': sesion,
+        'autor': autor
+    }
+    data['html_form'] = render_to_string('ajax/sesiones_assign_coordinator.html',context,request=request)
+    return JsonResponse(data)

@@ -72,6 +72,7 @@
 		var $table = $('#sesion-table');
 		function operateSesions(value, row, index) {
 			let eliminar = ""
+			let asignar_coordinadores = ""
 			if(row.eliminar)	
 			{
 				let route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
@@ -83,6 +84,18 @@
 					'<i class="fa fa-trash"></i>',
 					'</a> '
 				].join('');
+			}
+			else
+			{
+				let route_coordinators = "{% url 'sesiones:sesion_job_list' 1 %}".replace(1, row.sesion__id);
+				asignar_coordinadores = [
+					'<a class="sesion-coordinators" data-url="',
+					route_coordinators,
+					'"',
+					'title="Asignar coordinadores" >',
+					'<i class="fas fa-user"></i>',
+					'</a> '
+				].join(''); 
 			}
 			
 			let route_edit = "{% url 'sesiones:edit_sesion' 1 %}".replace(1, row.sesion__id);
@@ -105,7 +118,7 @@
 					'</a> '
 				].join('');
 				
-			return [detalles, editar, eliminar].join('');
+			return [detalles, editar, asignar_coordinadores, eliminar].join('');
 	    }
 
 	    // your custom ajax request here

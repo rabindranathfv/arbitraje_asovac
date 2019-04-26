@@ -32,6 +32,8 @@ urlpatterns = [
     #Ajax
     url(r'^cargar-espacio-form/(?P<modalidad>\d+)$', views.load_space_form, name= 'load_space_form'),
     url(r'^eliminar/(?P<sesion_id>\d+)$', views.delete_sesion, name= 'delete_sesion'),
-     url(r'^detalles/(?P<sesion_id>\d+)$', views.details_sesion, name= 'details_sesion'),
+    url(r'^detalles/(?P<sesion_id>\d+)$', views.details_sesion, name= 'details_sesion'),
+    url(r'^lista-trabajos/(?P<sesion_id>\d+)$', views.sesion_job_list, name= 'sesion_job_list'),
+    url(r'^(?P<sesion_id>\d+)/asignar-coordinador/(?P<autor_id>\d+)$', views.assign_coordinator, name= 'assign_coordinator'),
     
 ]
