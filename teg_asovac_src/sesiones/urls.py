@@ -35,5 +35,6 @@ urlpatterns = [
     url(r'^detalles/(?P<sesion_id>\d+)$', views.details_sesion, name= 'details_sesion'),
     url(r'^lista-trabajos/(?P<sesion_id>\d+)$', views.sesion_job_list, name= 'sesion_job_list'),
     url(r'^(?P<sesion_id>\d+)/asignar-coordinador/(?P<autor_id>\d+)$', views.assign_coordinator, name= 'assign_coordinator'),
+    url(r'^(?P<sesion_id>\d+)/asignar-co-coordinador/(?P<autor_id>\d+)$', views.assign_co_coordinator, name= 'assign_co_coordinator'),
     
 ]

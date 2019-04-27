@@ -33,11 +33,12 @@
                 <td class="text-center">{{ ponente_trabajo.trabajo.titulo_espanol }}</td>
                 <td class="text-center">{{ ponente_trabajo.autor.nivel_instruccion }}</td>
                 <td class="text-center">
-                    <a class="assign-coordinator" data-url="{% url 'sesiones:assign_coordinator' sesion.id ponente_trabajo.autor.id %}" title="Asignar Coordinador">
-                        <i class="fa fa-user"></i>
-                    </a>
-
-                    <a data-url="" title="Asignar Co-coordinador">
+                    {% if ponente_trabajo.autor.nivel_instruccion == "Universidad" or ponente_trabajo.autor.nivel_instruccion == "Postgrado" %}
+                        <a class="assign-coordinator" data-url="{% url 'sesiones:assign_coordinator' sesion.id ponente_trabajo.autor.id %}" title="Asignar Coordinador">
+                            <i class="fa fa-user"></i>
+                        </a>
+                    {% endif %}
+                    <a class="assign-co-coordinator" data-url="{% url 'sesiones:assign_co_coordinator' sesion.id ponente_trabajo.autor.id %}" title="Asignar Co-coordinador">
                         <i class="far fa-user"></i>
                     </a>
                 </td>

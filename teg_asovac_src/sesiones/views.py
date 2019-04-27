@@ -490,6 +490,7 @@ def sesion_job_list(request, sesion_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     
     ponente_trabajo_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_ponente = True, trabajo__sesion = sesion)
+
     context = {
         'sesion':sesion,
         'ponente_trabajo_list': ponente_trabajo_list
@@ -508,9 +509,18 @@ def assign_coordinator(request, sesion_id, autor_id):
         if coordinador_sesion:
             coordinador_sesion.autor = autor
         else:
-            coordinador_sesion = Coordinadores_sesion.objects.get(sesion = sesion, coordinador = False, co_coordinador = False)
+            coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = False, co_coordinador = False).first()
+            if coordinador_sesion:
+                coordinador_sesion.autor = autor 
+                coordinador_sesion.coordinador = True
+            else:
+                coordinador_sesion = Coordinadores_sesion(sesion = sesion, autor = autor, coordinador = True)
         
         coordinador_sesion.save()
+
+        coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, autor = autor, co_coordinador = True).first()
+        if coordinador_sesion:
+            coordinador_sesion.delete()
 
         messages.success(request, "El coordinador fue asignado con éxito")
 
@@ -521,4 +531,38 @@ def assign_coordinator(request, sesion_id, autor_id):
         'autor': autor
     }
     data['html_form'] = render_to_string('ajax/sesiones_assign_coordinator.html',context,request=request)
+    return JsonResponse(data)
+
+def assign_co_coordinator(request, sesion_id, autor_id):
+    data = dict()
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+
+    autor = get_object_or_404(Autor, id = autor_id)
+
+    if request.method == "POST":
+        co_coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, co_coordinador = True).first()
+        if co_coordinador_sesion:
+            co_coordinador_sesion.autor = autor
+        else:
+            co_coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = False, co_coordinador = False).first()
+            if co_coordinador_sesion:
+                co_coordinador_sesion.autor = autor 
+                co_coordinador_sesion.co_coordinador = True
+            else:
+                co_coordinador_sesion = Coordinadores_sesion(sesion = sesion, autor = autor, co_coordinador = True)
+        
+        co_coordinador_sesion.save()
+
+        coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, autor = autor, coordinador = True).first()
+        if coordinador_sesion:    
+            coordinador_sesion.delete()
+        messages.success(request, "El co-coordinador fue asignado con éxito")
+
+        return redirect('sesiones:sesions_list')
+
+    context = {
+        'sesion': sesion,
+        'autor': autor
+    }
+    data['html_form'] = render_to_string('ajax/sesiones_assign_co_coordinator.html',context,request=request)
     return JsonResponse(data)
