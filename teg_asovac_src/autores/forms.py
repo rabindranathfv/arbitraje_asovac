@@ -26,7 +26,6 @@ class AuthorCreateAutorForm(forms.ModelForm):
             'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
             'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
-            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
         }
 
         
@@ -352,7 +351,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 				Field('direccion_envio_correspondencia',rows='2', placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
-				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
+				Field('nivel_instruccion'),
 				Field('observaciones',rows='2', placeholder="Introduzca sus observaciones aquí"),
 				Div(
 	                Div(
@@ -431,7 +430,6 @@ class EditAutorForm(forms.ModelForm):
             'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
             'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
-            'nivel_instruccion': forms.TextInput(attrs={'placeholder': 'Ejemplo:bachiller'}),
             'observaciones': forms.Textarea(attrs={'placeholder': 'Introduzca su observación aquí',
             														'rows':2 })
         }
@@ -466,7 +464,7 @@ class EditAutorForm(forms.ModelForm):
 				Field('direccion_envio_correspondencia',placeholder="Ejemplo: Sabana grande, CC El Recreo"),
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
-				Field('nivel_instruccion',placeholder="Ejemplo: Bachiller"),
+				Field('nivel_instruccion'),
 				Field('observaciones',placeholder="Introduzca sus observaciones aquí", rows="2"),
 				Div(
 	                Div(
