@@ -41,7 +41,7 @@ def sesions_list(request):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
-    item_active = 5
+    item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
     route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
@@ -460,7 +460,7 @@ def edit_sesion(request, sesion_id):
             messages.success(request, 'Sesión editada con éxito')
             return redirect('sesiones:sesions_list')
     else:
-        sesion_form = SesionForm(instance = sesion)
+        sesion_form = SesionForm(instance = sesion, initial = { 'hora_inicio': sesion.hora_inicio.strftime("%H:%M"), 'hora_fin': sesion.hora_fin.strftime("%H:%M")})
     context = {
         'nombre_vista' : 'Editar sesión',
         'main_navbar_options' : main_navbar_options,
@@ -482,21 +482,123 @@ def edit_sesion(request, sesion_id):
 
 
 def sesion_job_list(request, sesion_id):
-    
-    data = dict()
-    sesion = get_object_or_404(Sesion, id = sesion_id)
-    
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    
-    ponente_trabajo_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_ponente = True, trabajo__sesion = sesion)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
 
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    sesion = get_object_or_404(Sesion, id = sesion_id)
+    
     context = {
-        'sesion':sesion,
-        'ponente_trabajo_list': ponente_trabajo_list
+        'nombre_vista' : 'Sesiones de arbitraje',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'sesion': sesion
     }
-    data['html_form'] = render_to_string('ajax/sesion_job_list_modal.html',context,request=request)
-    return JsonResponse(data)
+    return render(request,"sesiones_sesion_job_list.html",context)
+
+def list_job_sesion (request, sesion_id):
+    response = {}
+    response['query'] = []
+    arbitraje_id = request.session['arbitraje_id']
+    sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    sesion = get_object_or_404(Sesion, id = sesion_id, sistema = sistema_asovac)
+    
+    sort= request.POST['sort']
+
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.trabajo__titulo_espanol':
+            order='trabajo__titulo_espanol'
+        else:
+            if sort == 'fields.autor__cedula_pasaporte':
+                order='autor__cedula_pasaporte'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.trabajo__titulo_espanol':
+            order='-trabajo__titulo_espanol'
+        else:
+            if sort == 'fields.autor__cedula_pasaporte':
+                order='-autor__cedula_pasaporte'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data = Autores_trabajos.objects.filter(Q(sistema_asovac = sistema_asovac) & Q(es_ponente = True) & Q(trabajo__sesion = sesion) & (Q(trabajo__titulo_espanol__icontains = search) | Q(autor__cedula_pasaporte__icontains = search) | Q(autor__correo_electronico__icontains = search) | Q(autor__nivel_instruccion__icontains = search))).order_by(order)[init:limit]
+        total= Autores_trabajos.objects.filter(Q(sistema_asovac = sistema_asovac) & Q(es_ponente = True) & Q(trabajo__sesion = sesion) & (Q(trabajo__titulo_espanol__icontains = search) | Q(autor__cedula_pasaporte__icontains = search) | Q(autor__correo_electronico__icontains = search) | Q(autor__nivel_instruccion__icontains = search))).count()
+        
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            data = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, es_ponente = True, trabajo__sesion = sesion).order_by(order)
+            total = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, es_ponente = True, trabajo__sesion = sesion).count()
+        else:
+            print "consulta normal"
+            data = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, es_ponente = True, trabajo__sesion = sesion).order_by(order)[init:limit]
+            total = Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, es_ponente = True, trabajo__sesion = sesion).count()
+    
+    listed = []
+    #total = 0
+    for item in data:
+        if item.autor.nivel_instruccion == "Universidad" or item.autor.nivel_instruccion == "Postgrado":
+            posible_coordinador = True
+        else:
+            posible_coordinador = False
+        
+        response['query'].append({'trabajo__id': item.trabajo.id, 
+                                'autor__id': item.autor.id,
+                                'trabajo__titulo_espanol': item.trabajo.titulo_espanol,
+                                'autor__cedula_pasaporte': item.autor.cedula_pasaporte,
+                                'autor__correo_electronico': item.autor.correo_electronico,
+                                'autor__nivel_instruccion': item.autor.nivel_instruccion,
+                                'posible_coordinador': posible_coordinador })
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+
+
+
+
 
 def assign_coordinator(request, sesion_id, autor_id):
     data = dict()

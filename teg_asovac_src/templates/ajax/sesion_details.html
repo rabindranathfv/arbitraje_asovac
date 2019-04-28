@@ -5,25 +5,61 @@
     <h4 class="modal-title" >Detalles de sesión</h4>
 </div>
 <div class="modal-body text-center">
-    <strong>Nombre de sesión:</strong> <p>{{ sesion.nombre_sesion }} </p>
-    <strong>Lugar:</strong> <p>{{ sesion.lugar }} </p>
-    <strong>Fecha de sesión:</strong> <p> {{ sesion.fecha_sesion | date:'d-m-Y' }} </p>
-    <strong>Hora de inicio:</strong> <p> {{ sesion.hora_inicio | time:'H-M'}}</p>
-    <strong>Hora de fin:</strong> <p> {{ sesion.hora_fin | time:'H-M' }}</p>
-    <strong>Capacidad:</strong> <p> {{ sesion.capacidad }} </p>
-    <strong>Observaciones:</strong> <p> {{ sesion.observaciones }}</p>
-    {% if sesion.video_beam %}
-        <p><strong>Requiere video beam</strong></p>
-    {% endif %}
-    {% if sesion.portatil %}
-        <p><strong>Requiere portatil</strong></p>
-    {% endif %}
-    {% if coordinador %}
-        <strong>Coordinador:</strong> <p> {{ coordinador }}</p>
-    {% endif %}
-    {% if co_coordinador %}
-        <strong>Co-coordinador:</strong> <p> {{ co_coordinador }}</p>
-    {% endif %}
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ sesion.nombre_sesion }}</td>
+            </tr>
+            <tr>
+                <th>Lugar</th>
+                <td>{{ sesion.lugar }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ sesion.fecha_sesion | date:'d-m-Y' }}</td>
+            </tr>
+            <tr>
+                <th>Hora de inicio</th>
+                <td>{{ sesion.hora_inicio }}</td>
+            </tr>
+            <tr>
+                <th>Hora de fin</th>
+                <td>{{ sesion.hora_fin }}</td>
+            </tr>
+            <tr>
+                <th>Capacidad</th>
+                <td>{{ sesion.capacidad }}</td>
+            </tr>
+            <tr>
+                <th>Video Beam</th>
+                <td>
+                    {% if sesion.video_beam %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Portatil</th>
+                <td>
+                    {% if sesion.portatil %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{{ sesion.observaciones }}</td>
+            </tr>
+
+        </tbody>
+    </table>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>

@@ -21,7 +21,7 @@ CHOICES_TIPO_PAGO = (('T','Transferencia'),
                  )
 
 # Create your models here.
-CHOICES_NIVELES_ESTUDIO = (('Educación Basica Primaria','Educación Basica Primaria'),
+CHOICES_NIVELES_ESTUDIO = (('Educación Básica Primaria','Educación Básica Primaria'),
                  ('Educación Básica Secundaria','Educación Básica Secundaria'),
 								 ('Bachillerato/Educación Media','Bachillerato/Educación Media'),
 								 ('Educación Técnico/Profesional','Educación Técnico/Profesional'),

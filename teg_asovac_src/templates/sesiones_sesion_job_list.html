@@ -1,0 +1,118 @@
+{% extends "content_wrapper.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+	{% include "success_messages.html" %}
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard container">
+				<h2 class="text-left">Lista de trabajos de la sesión: {{ sesion.nombre_sesion }}</h2>
+				<div class = "col-sm-12">
+					<!-- data table -->
+					<input type="hidden" id="listJobsSesion" name="list" data-url="{% url 'sesiones:list_job_sesion' sesion.id %}">
+					
+					
+					<div id ="toolbar">
+					</div>
+
+					<table id="sesion-job-table"
+					data-toggle="table"
+					data-ajax="ajaxJobSesion"
+					data-side-pagination="server"
+					data-show-export="true"
+					data-toolbar="#toolbar"
+					data-toolbar-align="right"
+					data-pagination="true"
+					data-page-size="5"
+					data-page-list="[1,5,10,25,50,100, 200]"
+					data-show-refresh="true"
+					data-search="true"
+					data-sort-name="trabajo__titulo_espanol"
+					data-show-toggle="true"
+					data-show-columns="true"
+					>
+						<thead>
+							<tr>
+								<th data-field="trabajo__id" data-visible="false" data-show-columns="false">ID</th>
+								<th data-field="trabajo__titulo_espanol" data-sortable="true" class="col-sm-3">Título del trabajo</th>
+								<th data-field="autor__cedula_pasaporte" data-sortable="true" class="col-sm-2">Cédula/Pasaporte</th>
+								<th data-field="autor__correo_electronico" data-sortable="true" class="col-sm-2">Correo Electrónico</th>
+								<th data-field="autor__nivel_instruccion" data-sortable="true" class="col-sm-3">Nivel de instrucción</th>
+								<th data-field="operate" data-events="operateEvents" data-formatter="operateJobSesion" data-align="center" class="col-sm-2">Acciones</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}">
+	</script>
+	<script>
+		var $table = $('#sesion-job-table');
+		function operateJobSesion(value, row, index) {
+			let asignar_coordinador = ""
+			if(row.posible_coordinador)	
+			{   let route_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-coordinador/${ row.autor__id }`
+				//let route_coordinador="{% url 'sesiones:assign_coordinator' 0 0 %}".replace(1, row.sesion__id);
+				asignar_coordinador = [
+					'<a class="assign-coordinator" data-url="',
+					route_coordinador,
+					' "',
+					'title="Asignar coordinador" >',
+					'<i class="fa fa-user"></i>',
+					'</a> '
+				].join('');
+			}
+            let route_co_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-co-coordinador/${ row.autor__id }`
+			let asignar_co_coordinador = [
+                '<a class="assign-co-coordinator" data-url="',
+					route_co_coordinador,
+					' "',
+					'title="Asignar co-coordinador" >',
+					'<i class="far fa-user"></i>',
+					'</a> '
+				].join('');
+
+			return [asignar_coordinador, asignar_co_coordinador].join('');
+	    }
+
+	    // your custom ajax request here
+		function ajaxJobSesion(params) {
+			var route= $("#listJobsSesion").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(route);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					console.log("Listando trabajos de sesion")
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+
+
+	</script> 
+
+{% endblock %}

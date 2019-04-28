@@ -6,26 +6,12 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Asignar coordinador</h4>
+        <h3 class="modal-title" >Asignar coordinador</h3>
     </div>
     <div class="modal-body text-center">
-        <strong>Nombre: </strong> <p>{{ autor.nombres }} {{ autor.apellidos }}</p>
-        <strong>Universidad:</strong> <p> {{ autor.universidad.nombre }}</p>
-        <strong>Género:</strong> <p> {{ autor.get_genero_display }} </p>
-        <strong>Cédula/Pasaporte:</strong> <p> {{ autor.cedula_pasaporte }}</p>
-        <strong>Correo Electrónico:</strong> <p> {{ autor.correo_electronico }}</p>
-        <strong>Teléfono de oficina:</strong> <p> {{ autor.telefono_oficina }}</p>
-        <strong>Teléfono de habitación/celular:</strong> <p> {{ autor.telefono_habitacion_celular }}</p>
-        {% if autor.es_miembro_asovac %}
-             <p><strong>Es miembro AsoVAC</strong></p>
-        {% endif %}
-        <strong>Nivel de instrucción:</strong> <p>  {{ autor.nivel_instruccion }}</p>
-        {% if autor.observaciones %}    
-            <strong>Observaciones:</strong> <p> {{ autor.observaciones }}</p>
-        {% endif %}
+         <p class="text-center"><strong>¿Desea asignar a {{autor.nombres}} {{autor.apellidos}} como coordinador en la sesión '{{sesion.nombre_sesion}}'?</strong></p>
     </div>
     <div class="modal-footer">
-        <p class="text-center"><strong>¿Desea asignar a este autor como coordinador en la sesión '{{sesion.nombre_sesion}}'?</strong></p>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-success">Confirmar selección</button>
     </div>

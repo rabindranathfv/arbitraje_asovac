@@ -728,8 +728,8 @@ var SaveAñadirPagoForm= function(){
     $('#sesion-table').on('click','.delete-sesion',ShowForm);
     $('#sesion-table').on('click','.detail-sesion',ShowForm);
     $('#sesion-table').on('click','.sesion-coordinators',ShowForm);
-    $('#modal-user').on('click','.assign-coordinator',ReloadModal);
-    $('#modal-user').on('click','.assign-co-coordinator',ReloadModal);
+    $('#sesion-job-table').on('click','.assign-coordinator',ShowForm);
+    $('#sesion-job-table').on('click','.assign-co-coordinator',ShowForm);
     // CRUD Arbitraje
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
 

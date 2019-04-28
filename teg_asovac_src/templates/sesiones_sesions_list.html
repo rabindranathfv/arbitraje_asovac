@@ -1,4 +1,4 @@
-{% extends "content_wrapper.html" %}
+{% extends "content_wrapper_with_sidebar.html" %}
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
@@ -89,7 +89,7 @@
 			{
 				let route_coordinators = "{% url 'sesiones:sesion_job_list' 1 %}".replace(1, row.sesion__id);
 				asignar_coordinadores = [
-					'<a class="sesion-coordinators" data-url="',
+					'<a class="sesion-coordinators" href="',
 					route_coordinators,
 					'"',
 					'title="Asignar coordinadores" >',

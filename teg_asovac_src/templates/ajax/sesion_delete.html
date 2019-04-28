@@ -9,20 +9,7 @@
         <h4 class="modal-title" >Eliminar Sesion</h4>
     </div>
     <div class="modal-body text-center">
-        <p> Confirme si desea eliminar la siguiente sesión:</p>
-        <strong>Nombre de sesión:</strong> <p>{{ sesion.nombre_sesion }} </p>
-        <strong>Lugar:</strong> <p>{{ sesion.lugar }} </p>
-        <strong>Fecha de sesión:</strong> <p> {{ sesion.fecha_sesion | date:'d-m-Y' }} </p>
-        <strong>Hora de inicio:</strong> <p> {{ sesion.hora_inicio | time:'H-M'}}</p>
-        <strong>Hora de fin:</strong> <p> {{ sesion.hora_fin | time:'H-M' }}</p>
-        <strong>Capacidad:</strong> <p> {{ sesion.capacidad }} </p>
-        <strong>Observaciones:</strong> <p> {{ sesion.observaciones }}</p>
-        {% if sesion.video_beam %}
-            <p><strong>Requiere video beam</strong></p>
-        {% endif %}
-        {% if sesion.portatil %}
-            <p><strong>Requiere portatil</strong></p>
-        {% endif %}
+        <p> <strong>¿Está seguro que desea eliminar la sesión '{{ sesion.nombre_sesion }}'?</strong></p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
