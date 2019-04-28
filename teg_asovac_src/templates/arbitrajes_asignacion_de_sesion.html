@@ -21,8 +21,8 @@
 					</div>
 					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
 						<div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
-								class="caret"></span></button>
+							<!-- <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones
+								<span class="caret"></span></button> -->
 							<ul class="dropdown-menu">
 								<!-- <li>
 									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
@@ -65,7 +65,7 @@
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
 									<th data-field="revision" data-sortable="true">Versión</th>
-									<th data-width="11%"  data-field="operate" data-events="" data-formatter="" data-align="center">Acciones</th>
+									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operateTrabajosAceptados" data-align="center">Acciones</th>
 								</tr>
 						</thead>
 					</table>

@@ -9,6 +9,7 @@ from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
@@ -335,8 +336,6 @@ def compute_progress_bar(state):
 #---------------------------------------------------------------------------------#
 #                            VIEWS BACKEND                                        #
 #---------------------------------------------------------------------------------#
-
-
 def login(request):
     form = MyLoginForm()
     context = {
@@ -398,6 +397,7 @@ def register(request):
 
 
 
+@login_required
 def home(request):
     # Queryset
     arbitraje_data = Sistema_asovac.objects.all()
@@ -454,13 +454,14 @@ def home(request):
 
 
 
+@login_required
 def dashboard(request, arbitraje_id):
     #-----------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
     #-----------------------------------------------------------------------------------#
-    
+
     user_id= request.user.id
     user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
     # para enviar area a la cual pertenece el usuari por sesion 
@@ -497,7 +498,6 @@ def dashboard(request, arbitraje_id):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-
     # for item,val in items.items():
         # print item, ":", val[0]
 
@@ -519,6 +519,9 @@ def dashboard(request, arbitraje_id):
     }
     return render(request, 'main_app_dashboard.html', context)
 
+
+
+@login_required
 def create_arbitraje(request):
     form = CreateArbitrajeForm()
     context = {
@@ -553,7 +556,7 @@ def email_test(request):
     return render(request, 'resumen_rejected_email.html', context)
 
 
-
+@login_required
 def listado_trabajos(request):
     context = {
         'nombre_vista' : 'Listado de Trabajos',
@@ -563,6 +566,7 @@ def listado_trabajos(request):
 
 
 
+@login_required
 def detalles_resumen(request):
     context = {
         'nombre_vista' : 'Detalles de Trabajo',
@@ -570,6 +574,9 @@ def detalles_resumen(request):
     }
     return render(request, 'main_app_detalle_resumen.html', context)
 
+
+
+@login_required
 def data_basic(request, arbitraje_id):
     form= DataBasicForm()
 
@@ -609,7 +616,7 @@ def data_basic(request, arbitraje_id):
             }
             msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
             msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
+
             for item in usuario_rol_in_sistema:
                 
                 send_mail(
@@ -620,7 +627,6 @@ def data_basic(request, arbitraje_id):
                         html_message=msg_html,              #mensaje en html
                         )
 
-        
         elif opcion == '2':#Caso de generar clave para coordinador de area
             random_password += 'COA'
             arbitraje.clave_maestra_coordinador_area = random_password
@@ -677,11 +683,7 @@ def data_basic(request, arbitraje_id):
                         [item.usuario_asovac.usuario.email],               #destinatario
                         html_message=msg_html,              #mensaje en html
                         )
-        
-
-        print("The password is:"+random_password)
-
-
+        #print("The password is:"+random_password)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
@@ -710,8 +712,10 @@ def data_basic(request, arbitraje_id):
     }
     return render(request, 'main_app_data_basic.html', context)
 
-def state_arbitration(request, arbitraje_id):
 
+
+@login_required
+def state_arbitration(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -765,6 +769,9 @@ def state_arbitration(request, arbitraje_id):
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
+
+
+@login_required
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     users = User.objects.all()
@@ -813,6 +820,7 @@ def users_list(request, arbitraje_id):
 
 
 
+@login_required
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
 
@@ -848,8 +856,8 @@ def user_edit(request, arbitraje_id):
 
 
 
+@login_required
 def user_roles(request, arbitraje_id):
-
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -884,8 +892,8 @@ def user_roles(request, arbitraje_id):
 
 
 
+@login_required
 def coord_general(request, arbitraje_id):
-
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -928,7 +936,7 @@ def coord_general(request, arbitraje_id):
 
 
 
-
+@login_required
 def coord_area(request, arbitraje_id):
 
     # print (rol_id)
@@ -963,6 +971,9 @@ def coord_area(request, arbitraje_id):
     }
     return render(request, 'main_app_coord_area.html', context)
 
+
+
+@login_required
 def total(request, arbitraje_id):
 
     # print (rol_id)
@@ -997,12 +1008,13 @@ def total(request, arbitraje_id):
     }
     return render(request, 'main_app_totales.html', context)
 
+
+
+@login_required
 def apps_selection(request):
-    
     user_id= request.user.id
     data= dict()
     user= get_object_or_404(User,id=user_id)
-    
     user= Usuario_asovac.objects.get(usuario_id=user_id)
     #user_role = user.biggest_role()
 
@@ -1020,7 +1032,10 @@ def apps_selection(request):
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
 
+
+
 # Ajax/para el uso de ventanas modales
+@login_required
 def create_autor_instance_modal(request, user_id):
     data = dict()
     form = AuthorCreateAutorForm()
@@ -1057,6 +1072,8 @@ def create_autor_instance_modal(request, user_id):
     return JsonResponse(data)
 
 
+
+@login_required
 def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1075,6 +1092,9 @@ def process_modal(request,form,template_name):
     data['html_form']= render_to_string(template_name,context, request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def create_user_modal(request):
     if request.method == 'POST':
         form= RegisterForm(request.POST)
@@ -1083,6 +1103,9 @@ def create_user_modal(request):
 
     return process_modal(request,form,'ajax/users-create.html')
 
+
+
+@login_required
 def update_user_modal(request,id):
     print "update_user_modal"
     user=  get_object_or_404(User,id=id)
@@ -1093,7 +1116,10 @@ def update_user_modal(request,id):
         # form= RegisterForm(instance=user)
         form= PerfilForm(instance=user)
     return process_modal(request,form,'ajax/user_update.html')
-    
+
+
+
+@login_required
 def delete_user_modal(request,id):
     data= dict()
     user= get_object_or_404(User,id=id)
@@ -1110,6 +1136,9 @@ def delete_user_modal(request,id):
 
     return JsonResponse(data)
 
+
+
+@login_required
 def update_rol_modal(request,id):
     #print "update_rol_modal"
     data= dict()
@@ -1151,6 +1180,9 @@ def update_rol_modal(request,id):
 
     return JsonResponse(data)
 
+
+
+@login_required
 def validate_access_modal(request,id):
     data= dict()
     user_id= request.user.id
@@ -1210,9 +1242,12 @@ def validate_access_modal(request,id):
 
     return JsonResponse(data)
 
+
+
 #---------------------------------------------------------------------------------#
 #                 Obtener lista de subareas asociadas a un area                   #
 #---------------------------------------------------------------------------------#
+@login_required
 def get_subareas(request,id):
     data= dict()
 
@@ -1221,6 +1256,8 @@ def get_subareas(request,id):
     data['html_select']= render_to_string('ajax/show_subareas.html',context, request=request)
     
     return JsonResponse(data)
+
+
 
 #---------------------------------------------------------------------------------#
 #                   Obtener Área asociada a un usuario                            #
@@ -1233,9 +1270,12 @@ def get_area(user_id):
     # print area
     return area
 
+
+
 #---------------------------------------------------------------------------------#
 #                              Vista areas subareas                               #
 #---------------------------------------------------------------------------------#
+@login_required
 def areas_subareas(request):
 
     estado = request.session['estado']
@@ -1268,9 +1308,12 @@ def areas_subareas(request):
     }
     return render(request, 'main_app_areas_subareas.html', context)
 
+
+
 #---------------------------------------------------------------------------------#
 #                            Procesar carga de areas                              #
 #---------------------------------------------------------------------------------#
+@login_required
 def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1312,9 +1355,11 @@ def process_areas_modal(request,form,template_name):
     return JsonResponse(data) 
 
 
+
 #---------------------------------------------------------------------------------#
 #                          Procesar carga de subareas                             #
 #---------------------------------------------------------------------------------#
+@login_required
 def process_subareas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1359,7 +1404,7 @@ def process_subareas_modal(request,form,template_name):
 #---------------------------------------------------------------------------------#
 #                            Carga de areas via files                             #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def load_areas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1377,10 +1422,11 @@ def load_areas_modal(request):
     return process_areas_modal(request,form,'ajax/load_areas.html')
 
 
+
 #---------------------------------------------------------------------------------#
 #                          Carga de subareas via files                            #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def load_subareas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1397,10 +1443,12 @@ def load_subareas_modal(request):
 
     return process_subareas_modal(request,form,'ajax/load_subareas.html')
 
+
+
 #---------------------------------------------------------------------------------#
 #                            Carga de usuarios via files                          #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def load_users_modal(request,arbitraje_id,rol):
     data=dict()
 
@@ -1446,10 +1494,11 @@ def load_users_modal(request,arbitraje_id,rol):
         data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
         return JsonResponse(data) 
 
+
+
 #---------------------------------------------------------------------------------#
 #                Valida el contenido del excel para cargar usuarios               #
 #---------------------------------------------------------------------------------#
-
 def validate_load_users(filename,extension,arbitraje_id,rol):
     data= dict()
     data['status']=400
@@ -1626,21 +1675,28 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
 
     return data 
 
+
+
 #---------------------------------------------------------------------------------#
 #             Verifica si existe el correo o el nombre de usuario                 #
 #---------------------------------------------------------------------------------#
-
 def exist_email(email):
     exist= User.objects.filter(email=email).exists()
     return exist
+
+
 
 def exist_username(user):
     exist= User.objects.filter(username=user).exists()
     return exist
 
+
+
 def exist_area(area):
     exist= Area.objects.filter(nombre=area).exists()
     return exist
+
+
 
 def exist_subarea(area, subarea):
     # print subarea
@@ -1649,12 +1705,16 @@ def exist_subarea(area, subarea):
     
     return exist
 
+
+
 def count_email(sh,email):
     cont=0
     for fila in range(sh.nrows):
         if email== sh.cell_value(rowx=fila, colx=3):
             cont=cont+1
     return cont
+
+
 
 def count_username(sh,username):
     cont=0
@@ -1663,6 +1723,8 @@ def count_username(sh,username):
             cont=cont+1
         # print "El contador vale: ",cont
     return cont
+
+
 
 def create_users(sh,arbitraje_id,rol):
     
@@ -1780,19 +1842,21 @@ def create_users(sh,arbitraje_id,rol):
                 return 400
     return 200 
 
+
+
 #---------------------------------------------------------------------------------#
 #                 Para obtener el id de la subarea importada                      #
 #---------------------------------------------------------------------------------#
-
 def get_subarea(name):
     # print "Area a crear: ",name
     subarea=Sub_area.objects.get(nombre=name)
     return subarea.id
 
+
+
 #---------------------------------------------------------------------------------#
 #                Guarda el archivo en la carpeta del proyecto                     #
 #---------------------------------------------------------------------------------#
-
 def handle_uploaded_file(file, filename):
     if not os.path.exists('upload/'):
         os.mkdir('upload/')
@@ -1802,10 +1866,12 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
+
+
 #---------------------------------------------------------------------------------#
 #                   Carga el contenido de la tabla de areas                       #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list (request):
     response = {}
     response['query'] = []
@@ -1871,9 +1937,11 @@ def list (request):
     return JsonResponse(response)
 
 
+
 #---------------------------------------------------------------------------------#
 #                                   Crud Areas                                    #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewArea(request,id):
     data= dict()
     area=Area.objects.get(id=id)
@@ -1885,6 +1953,9 @@ def viewArea(request,id):
     data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editArea(request,id):
     data= dict()
 
@@ -1914,6 +1985,9 @@ def editArea(request,id):
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeArea(request,id):
     
     data= dict()
@@ -1948,10 +2022,12 @@ def removeArea(request,id):
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de Subareas                     #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_subareas(request):
     response = {}
     response['query'] = []
@@ -2012,9 +2088,12 @@ def list_subareas(request):
    
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #                                 Crud Subareas                                   #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewSubarea(request,id):
     data= dict()
     subarea=Sub_area.objects.get(id=id)
@@ -2026,6 +2105,9 @@ def viewSubarea(request,id):
     data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editSubarea(request,id):
     data= dict()
     if request.method == 'POST':
@@ -2053,6 +2135,9 @@ def editSubarea(request,id):
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeSubarea(request,id):
     
     data= dict()
@@ -2088,6 +2173,8 @@ def removeSubarea(request,id):
     return JsonResponse(data)
 
 
+
+@login_required
 def register_user_in_sistema(request, arbitraje_id):
     data = dict()
     if request.method == 'POST':
@@ -2114,6 +2201,7 @@ def register_user_in_sistema(request, arbitraje_id):
 
 
 
+@login_required
 def changepassword_modal(request):
     data = dict()
     if request.method == 'POST':
@@ -2154,10 +2242,12 @@ def changepassword_modal(request):
     
     return JsonResponse(data)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de usuarios                     #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_usuarios(request):
     
     response = {}
@@ -2255,9 +2345,12 @@ def list_usuarios(request):
    
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Usuarios                                 #
 #---------------------------------------------------------------------------------#
+@login_required
 def generate_report(request,tipo):
 
     # Para exportar información de usuarios 
@@ -2294,9 +2387,12 @@ def generate_report(request,tipo):
 
     return response
 
+
+
 #---------------------------------------------------------------------------------#
 #                                 Crud Usuarios                                   #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewUsuario(request,id,arbitraje_id):
     data= dict()
     user=User.objects.get(id=id)
@@ -2308,6 +2404,9 @@ def viewUsuario(request,id,arbitraje_id):
     data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editUsuario(request,id,arbitraje_id):
     data= dict()
     user=  get_object_or_404(User,id=id)
@@ -2355,6 +2454,9 @@ def editUsuario(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeUsuario(request,id,arbitraje_id):
 
     data= dict()
@@ -2405,6 +2507,9 @@ def removeUsuario(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def changeRol(request,id,arbitraje_id):
     
     # Lista de roles
@@ -2503,4 +2608,3 @@ def changeRol(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     
     return JsonResponse(data)
-

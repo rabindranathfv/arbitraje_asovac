@@ -13,22 +13,29 @@ from main_app.models import Rol,Sistema_asovac,Usuario_asovac
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
+from sesiones.models import Sesion
+
 from autores.models import Autor, Autores_trabajos
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 from django.contrib.auth.models import User
 from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 from .forms import ArbitroForm, RefereeCommentForm
 
 # Create your views here.
+@login_required
 def arbitrajes_pag(request):
     context = {
         "nombre_vista": 'Arbitrajes'
     }
     return render(request,"test_views.html",context)
 
+
+
+@login_required
 def estatus_trabajos(request):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -79,6 +86,9 @@ def estatus_trabajos(request):
     }
     return render(request, 'arbitrajes_trabajos_list.html', context)
 
+
+
+@login_required
 def jobs_for_review(request):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -121,6 +131,9 @@ def jobs_for_review(request):
     }
     return render(request, 'arbitrajes_jobs_for_review.html', context)
 
+
+
+@login_required
 def detalles_resumen(request, id_trabajo):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -156,6 +169,9 @@ def detalles_resumen(request, id_trabajo):
     }
     return render(request, 'trabajos_detalles.html', context)
 
+
+
+@login_required
 def referee_list(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -187,6 +203,9 @@ def referee_list(request):
     }
     return render(request, 'arbitrajes_referee_list.html', context)
 
+
+
+@login_required
 def referee_edit(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -220,6 +239,9 @@ def referee_edit(request):
     }
     return render(request, 'main_app_referee_edit.html', context)
 
+
+
+@login_required
 def areas_subareas(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -254,6 +276,8 @@ def areas_subareas(request):
     return render(request, 'arbitrations_areas_subareas.html', context)
 
 
+
+@login_required
 def asignacion_de_sesion(request):
 
     event_id = request.session['arbitraje_id']
@@ -288,10 +312,12 @@ def asignacion_de_sesion(request):
     }
     return render(request, 'arbitrajes_asignacion_de_sesion.html', context)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_arbitros(request):
 
     event_id = request.session['arbitraje_id']
@@ -430,6 +456,7 @@ def list_arbitros(request):
 #---------------------------------------------------------------------------------#
 #                                 Crud Arbitros                                   #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewArbitro(request,id):
 
     data= dict()
@@ -445,6 +472,9 @@ def viewArbitro(request,id):
     data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editArbitro(request,id):
     print "Edit Arbitro"
     data= dict()
@@ -493,6 +523,9 @@ def editArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeArbitro(request,id):
 
     print "eliminar arbitro"
@@ -527,10 +560,12 @@ def removeArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitraje                    #
 #---------------------------------------------------------------------------------#
-
+@login_required
 def list_arbitrajes(request):
     
     event_id = request.session['arbitraje_id']
@@ -568,17 +603,17 @@ def list_arbitrajes(request):
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query
             search= search+'%'
-            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true'
+            where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true'
             query= query+where
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
-                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true '
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND main_a.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true '
                 query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -586,14 +621,14 @@ def list_arbitrajes(request):
             order_by="trab."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         query= query + " ORDER BY " + order_by
         if rol_user == 1 or rol_user ==2 :
-            data= User.objects.raw(query,[search,search,search,search,search,event_id])
-            data_count= User.objects.raw(query,[search,search,search,search,search,event_id])
+            data= User.objects.raw(query,[search,search,search,search,search,search,event_id])
+            data_count= User.objects.raw(query,[search,search,search,search,search,search,event_id])
             # data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
                 area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,event_id,area])
-                data_count= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
+                data_count= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
 
         total=0
 
@@ -613,12 +648,12 @@ def list_arbitrajes(request):
 
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 where=' WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true '
                 query= query+where
             else:
                 if rol_user == 3:
-                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                     where=' WHERE sis_aso.id= %s AND main_a.id = %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true '
                     query= query+where
             
@@ -661,7 +696,10 @@ def list_arbitrajes(request):
         titulo= item.titulo_espanol
         presentacion= item.forma_presentacion 
         observaciones = item.observaciones
+        autor_principal=item.nombres+' '+item.apellidos
         area = item.nombre
+        subarea=item.subarea
+
         if item.requiere_arbitraje == False and item.estatus == "Aceptado":
             revision="Final"
         else:
@@ -673,7 +711,7 @@ def list_arbitrajes(request):
                 else:
                     revision="Con correcciones"
     
-        response['query'].append({'id':item.id,'estatus': estatus ,'nombre':area,'titulo_espanol':titulo ,'forma_presentacion':presentacion, 'observaciones':observaciones,'revision':revision })
+        response['query'].append({'id':item.id,'estatus': estatus ,'nombre':area,'titulo_espanol':titulo ,'forma_presentacion':presentacion, 'observaciones':observaciones,'revision':revision, 'autor_principal':autor_principal,'subarea':subarea })
 
 
     response={
@@ -683,9 +721,12 @@ def list_arbitrajes(request):
    
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #                                CRUD de Arbitrajes                               #
 #---------------------------------------------------------------------------------#
+@login_required
 def viewArbitraje(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -730,6 +771,8 @@ def viewArbitraje(request, id):
     return render(request,"arbitrajes_trabajo_info.html",context)
 
 
+
+@login_required
 def changeStatus(request, id):
     
     response= dict()
@@ -804,6 +847,9 @@ def changeStatus(request, id):
     
     return JsonResponse(response)
 
+
+
+@login_required
 def statusArbitraje(request, id):
     
     response= dict()
@@ -827,6 +873,9 @@ def statusArbitraje(request, id):
     
     return JsonResponse(response)
 
+
+
+@login_required
 def newArbitraje(request, id):
 
     trabajo= Trabajo.objects.get(id = id)
@@ -842,9 +891,12 @@ def newArbitraje(request, id):
     
     return JsonResponse(response)
 
+
+
 #---------------------------------------------------------------------------------#
 #             Carga el contenido para asignar sesiones a los trabajos             #
 #---------------------------------------------------------------------------------#
+@login_required
 def list_trabajos_aceptados(request):
 
     event_id = request.session['arbitraje_id']
@@ -906,8 +958,8 @@ def list_trabajos_aceptados(request):
         else:
             if rol_user == 3:
                 area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,event_id,area])
-                data_count= User.objects.raw(query,[search,search,search,search,search,event_id,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
+                data_count= User.objects.raw(query,[search,search,search,search,search,search,event_id,area])
 
         total=0
 
@@ -1000,9 +1052,70 @@ def list_trabajos_aceptados(request):
    
     return JsonResponse(response)
     
+
+
+#---------------------------------------------------------------------------------#
+#                          CRUD Trabajos Aceptados                                #
+#---------------------------------------------------------------------------------#
+@login_required
+def editPresentacion(request,id):
+    print "Edit Presentacion"
+    data= dict()
+
+    if request.method == 'POST':
+
+        trabajo= Trabajo.objects.get(id = id)
+        trabajo.forma_presentacion=request.POST.get("forma_presentacion")
+        trabajo.save()
+        
+        data['status']= 200
+        data['message']="La forma de presentación se ha cambiado de manera exitosa."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"editPresentacion",
+            'trabajo_id':id,
+        }
+        data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def asigSesion(request,id):
+    print "Asignar sesión"
+    data= dict()
+    arbitraje = request.session['arbitraje_id']
+    listSesion= Sesion.objects.filter(sistema=arbitraje)
+    trabajo= Trabajo.objects.get(id = id)
+    print trabajo.sesion_id
+
+    if request.method == 'POST':
+
+        sesion=Sesion.objects.get(id=request.POST.get("sesion")) 
+        # trabajo= Trabajo.objects.get(id = id)
+        trabajo.sesion= sesion
+        trabajo.save()
+        
+        data['status']= 200
+        data['message']="La forma de presentación se ha cambiado de manera exitosa."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"asigSesion",
+            'trabajo_id':id,
+            'asig': trabajo.sesion_id,
+            'sesiones': listSesion,
+        }
+        data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
+    return JsonResponse(data)
+
 #---------------------------------------------------------------------------------#
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
+@login_required
 def generate_report(request,tipo):
     print "Excel para arbitros"
     event_id = request.session['arbitraje_id']
@@ -1063,8 +1176,9 @@ def generate_report(request,tipo):
     return response
 
 
-def review_job(request, trabajo_id):
 
+@login_required
+def review_job(request, trabajo_id):
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
     if request.method == "POST":
@@ -1088,4 +1202,3 @@ def review_job(request, trabajo_id):
         }
         data['html_form'] = render_to_string('ajax/review_job.html',context,request=request)
     return JsonResponse(data)
-

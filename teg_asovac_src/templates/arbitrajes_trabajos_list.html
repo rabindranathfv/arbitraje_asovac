@@ -21,9 +21,9 @@
 					</div>
 					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
 						<div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
+							<!-- <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
 								class="caret"></span></button>
-							<ul class="dropdown-menu">
+							<ul class="dropdown-menu"> -->
 								<!-- <li>
 									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
 									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
@@ -54,17 +54,17 @@
 							data-sort-name="pk"
 							data-show-toggle="true"
 							data-show-columns="true"
-							data-detail-view="false"
+							data-detail-view="true"
 							data-detail-formatter="detailFormatter"
 							>
 							<thead>
 								<tr>
 									<th data-field="estatus" data-sortable="true">Estatus</th>
 									<th data-field="nombre" data-sortable="true">Área</th>
+									<th data-field="subarea" data-sortable="true">Subárea</th>
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
 									<th data-field="revision" data-sortable="true">Versión</th>
-									<th data-field="observaciones" data-sortable="true">Observaciones</th>
 									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operateArbitraje" data-align="center">Acciones</th>
 								</tr>
 						</thead>
@@ -115,7 +115,23 @@
 				 }
 			 });
 		}
+		function detailFormatter(index, row) {
 		
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+			var init=init+ '<th style="text-align: center;" >Observaciones</th>'; 
+			var init=init+ '<th style="text-align: center;" >Autor Principal</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "autor_principal" || key == "observaciones"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
 		$("#export").click(function(){
         console.log("Descargar excel");
 		var route= $("#listArbitrajes").attr("data-url");

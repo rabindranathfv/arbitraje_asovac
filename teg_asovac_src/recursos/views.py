@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.template.loader import get_template
@@ -13,12 +14,16 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from .utils import render_to_pdf
 
 # Create your views here.
+@login_required
 def recursos_pag(request):
     context = {
         "nombre_vista": 'recursos'
     }
     return render(request,"test_views.html",context)
 
+
+
+@login_required
 def generate_pdf(request,*args , **kwargs):
     #obtener el template
     template = get_template('pdf/modelo_pdf.html')
@@ -35,6 +40,9 @@ def generate_pdf(request,*args , **kwargs):
         return HttpResponse(pdf, content_type='application/pdf')
     return HttpResponse("Crear pagina de Error 404")
 
+
+
+@login_required
 def resources_author(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -74,6 +82,9 @@ def resources_author(request):
     }
     return render(request, 'main_app_resources_author.html', context)
 
+
+
+@login_required
 def resources_referee(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -114,6 +125,9 @@ def resources_referee(request):
     }
     return render(request, 'main_app_resources_referee.html', context)
 
+
+
+@login_required
 def resources_event(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -153,6 +167,9 @@ def resources_event(request):
     }
     return render(request, 'main_app_resources_event.html', context)
 
+
+
+@login_required
 def resources_sesion(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -192,6 +209,9 @@ def resources_sesion(request):
     }
     return render(request, 'main_app_resources_sesion.html', context)
 
+
+
+@login_required
 def resources_asovac(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -231,6 +251,9 @@ def resources_asovac(request):
     }
     return render(request, 'main_app_resources_asovac.html', context)
 
+
+
+@login_required
 def resources_arbitration(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},

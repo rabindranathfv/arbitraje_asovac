@@ -732,6 +732,9 @@ var SaveAñadirPagoForm= function(){
     $('#sesion-job-table').on('click','.assign-co-coordinator',ShowForm);
     // CRUD Arbitraje
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
-
+    
+    // CRUD Trabajos Aceptados
+    $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
+    
 
 });

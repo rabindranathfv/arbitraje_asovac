@@ -25,11 +25,11 @@
             <!-- Opciones de Top navbar pasados por contexto desde el view -->
             <ul class="nav navbar-nav">
                 {% if "area/subarea" in items.top_nav_options %}
-                <li>
+                <!-- <li>
                     <a href="#" data-url="{% url 'trabajos:mostrar_areas' user.id %}" class="show_areas" data-toggle="modal" data-target="#modal_areas">
                         <i class="fas fa-search"></i> Área/Subárea
                     </a>
-                </li>
+                </li> -->
                 {% endif %} {% if "configuration" in items.top_nav_options %}
                 <li>
                     <a href="{{ route_conf }}">
