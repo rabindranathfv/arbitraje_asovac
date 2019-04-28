@@ -727,7 +727,6 @@ var SaveAñadirPagoForm= function(){
     //CRUD Sesiones
     $('#sesion-table').on('click','.delete-sesion',ShowForm);
     $('#sesion-table').on('click','.detail-sesion',ShowForm);
-    $('#sesion-table').on('click','.sesion-coordinators',ShowForm);
     $('#sesion-job-table').on('click','.assign-coordinator',ShowForm);
     $('#sesion-job-table').on('click','.assign-co-coordinator',ShowForm);
     // CRUD Arbitraje
