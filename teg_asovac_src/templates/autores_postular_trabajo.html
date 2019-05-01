@@ -1,106 +1,101 @@
-{% extends "content_wrapper_with_sidebar.html" %}
-
-
+{% extends "content_wrapper.html" %}
 {% block inner_content %}
-<div class="container min-height-content col-sm-11" id="content-wrapper">
+<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
+    {% include "success_messages.html" %}
+    {% include "toggle_title.html" %}
 
-	<!-- Title content--> 
-	{% if messages %}
-	<ul class="messages">
-		{% for message in messages %}
-		<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-		{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-		{{ message }}
-	</li>
-	{% endfor %}
-	</ul>
-	{% endif %}
-	{% include "toggle_title.html" %}
-	<!-- EndTitle content-->
-
-	{% for autor_trabajo in autores_trabajos_list %} 
-		<!-- First Row New-->
-		<div class="row">
-			<div class="col-sm-12">
-				<div class="jumbotron RLcard">
-					<div class="row">
-						<h2 class="text-left">Autor</h2>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+				<div class="row">
+					<div class="col-sm-8">
+						<h2 class="text-left">Lista de pagos del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h2>
 					</div>
-
-					<div class="row middle-content">
-						<div class="col-sm-10">
-							<h3>Datos de pagadores del trabajo: '{{ autor_trabajo.trabajo.titulo_espanol }}'</h3>
-						</div>
-						{% if  autor_trabajo.monto_total > 0 and autor_trabajo.es_autor_principal%}
-							<div class="col-sm-3 text-center">
-								<button  class="btn btn-primary btn-lg btn-block añadir-pago-form" data-url ="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}" >Añadir Pago</button>
-							</div>
-						{% elif autor_trabajo.monto_total == 0 %}
-						<div class="col-sm-2 text-center">
-							<a href="#" class="btn btn-lg btn-success btn-block" >Pagado</a>
-						</div>
+					<div class="col-sm-4">
+						{% if not autor_trabajo.pagado %}
+							<h2 class="text-right">Falta por pagar: {{ autor_trabajo.monto_total }}</h2>
+						{% else %}
+							<h2 class="text-right">Trabajo pagado</h2>
 						{% endif %}
 					</div>
+				</div>
 
-					<br>
-					<table class="table table-bordered show-pays">
-						<thead>
-							<tr>
-								<th class="col-sm-3">Nombre</th>
+				<div id ="toolbar">
+					{% if autor_trabajo.es_autor_principal == True and autor_trabajo.pagado == False %}
+						<div class="btn-group">
+							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li>
+									<a data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}" class="añadir-pago-form" type="button" class=""><i class="fas fa-money-bill-alt" style="color:black"></i> Añadir Pago</a>
+								</li>				
+							</ul>
+						</div>
+					{% endif %}
+				</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="show-pays"
+                        data-toggle="table"
+                        data-search="true"
+                        data-sort-name="nombre"
+                        data-pagination="true"
+						data-toolbar="#toolbar"
+						data-toolbar-align="right"
+                        data-page-size="10"
+                        data-page-list="[5,10,25,50,100, 200]"
+                        data-show-toggle="true"
+                        data-show-columns="true">
+
+                        <thead>
+                            <tr>
+                                <th data-field = "nombre" class="col-sm-3">Nombre</th>
 								<th class="col-sm-2">Cédula</th>                 
 								<th class="col-sm-2">Banco Origen</th>
 								<th class="col-sm-2">N° de Transferencia/Cheque</th>
 								<th class="col-sm-2">Monto pagado</th>
 								<th class="col-sm-1">Acciones</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for pagador in pagador_list %}
-							<tr>
-								{% if pagador.autor_trabajo == autor_trabajo%}
-								<td>{{ pagador.datos_pagador.nombres }} {{ pagador.datos_pagador.apellidos}}</td>
-								<td>{{ pagador.datos_pagador.cedula }}</td>
+                            </tr>
+                        </thead>
+                        <tbody class="searchable">
 
-								{% for factura in factura_list %}
-								{% if factura.pagador == pagador %}
-								<td>{{ factura.pago.get_banco_origen_display }}</td>
-								<td>
-									{% if factura.pago.numero_transferencia %}
-										{{ factura.pago.numero_transferencia }}
-									{% else %}
-										{{ factura.pago.numero_cheque }}
-									{% endif %}
-								</td>
-								<td>{{ factura.monto_total}}</td>
-								{% endif %}
-								{% endfor %}
-								<td>
-									<a href="{% url 'autores:detalles_pago' pagador.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
-										<i class="fas fa-door-open"></i>
-									</a>
-								</td>
-								{% endif %}
-							</tr> 
-							{% endfor %}                
-						</tbody>
-					</table>
-					<!-- End table  -->
+                            {% for factura in facturas %}
+								<tr>
+									<td class="text-center">{{ factura.pagador.datos_pagador.nombres }} {{ factura.pagador.datos_pagador.apellidos }}</td>
+									<td class="text-center">
+										{% if factura.pagador.datos_pagador.cedula %}
+											{{ factura.pagador.datos_pagador.cedula }}
+										{% else %}
+											{{ factura.pagador.datos_pagador.pasaporte }}
+										{% endif %}
+									</td>
+									<td class="text-center">{{ factura.pago.get_banco_origen_display }}</td>
+									<td class="text-center">
+										{% if factura.pago.get_tipo_pago_display == "Cheque" %}
+											{{ factura.pago.numero_cheque }}
+										{% else %}
+											{{ factura.pago.numero_transferencia }}
+										{% endif %}
+									</td>
+									<td class="text-center"> {{ factura.monto_total}} </td>
+									<td class="text-center">
+										<a href="" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+											<i class="fas fa-door-open"></i>
+										</a>
+									</td>
+								</tr>
+							{% endfor %}
+                            
+                        </tbody>
 
-				</div>
-			</div>
-		</div>
-		<!-- EndFirst Row New-->
-	{% endfor %}
+                    </table>
+                    <!-- End table  -->
+                </div>
+
+				
+                <!--end jumbotrom -->
+            </div>
+        </div>
+    </div>
 </div>
 
-
-<!-- modal -->
-<div class="modal fade" id="modal-pay">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			
-		</div>
-	</div>
-</div>
 
 {% endblock %}
