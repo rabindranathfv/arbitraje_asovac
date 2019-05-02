@@ -828,7 +828,7 @@ def list_pagos(request,id):
 #---------------------------------------------------------------------------------#
 #                                CRUD de Trabajos                                 #
 #---------------------------------------------------------------------------------#
-@login_required
+# @login_required
 def filterArbitro(data,trabajo_id):
     arbitros= []
 
