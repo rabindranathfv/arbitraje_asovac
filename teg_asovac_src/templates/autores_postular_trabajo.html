@@ -1,4 +1,5 @@
 {% extends "content_wrapper.html" %}
+{% load humanize %}
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
     {% include "success_messages.html" %}
@@ -13,7 +14,7 @@
 					</div>
 					<div class="col-sm-4 text-right">
 						{% if not autor_trabajo.pagado %}
-							<h2 class="text-right">Falta por pagar: {{ autor_trabajo.monto_total }}</h2>
+							<h2 class="btn btn-danger">Falta por pagar: {{ autor_trabajo.monto_total |floatformat:2|intcomma}} Bs</h2>
 						{% else %}	
 							<h2 class="btn btn-info right">Trabajo pagado</h2>
 						{% endif %}
