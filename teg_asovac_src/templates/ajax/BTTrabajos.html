@@ -114,14 +114,77 @@
     </div>
         
     {% else %}
-        {% if tipo == "delete" %}
-        
-        {% else %}
-            {% if tipo == "deleted" %}
+        {% if tipo == "checkPago" %}
+        <form method="post" class="asignarArbitro" data-url="{% url 'trabajos:checkPago' trabajo_id %}">
+            {% csrf_token %}
+            <!-- <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}"> -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Verificar Pago del Trabajo</h3>
+            </div>
             
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                </div>
+                <div class="col-md-12">
+                    <br>
+                   <select name="status" id="status" class=" form-control" >
+                       <option selected value="">Seleccione</option>
+                       <option value="Aceptado">Aceptado</option>
+                       <option value="Rechazado">Rechazado</option>
+                   </select>
+                   <br>
+               </div>
+               <div class="col-md-12">
+                   <textarea name="comment" id="comment" rows="4" class="form-control" style="display:none;">
+       
+                   </textarea>
+               </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+            </div>
+        </form>
+        <script>
+            $(document).ready(function () {
+                $("#status").change(function (e) { 
+                    var status= $(this).val();
+                    console.log("El estatus es: "+status);
+                    if (status == "Rechazado") {
+                        $("#comment").show();
+                        $(".sendGenericForm").prop('disabled', true);
+                        console.log("El estatus es rechazado");
+                    }else{
+                        if (status == "Aceptado") {
+                            console.log("El estatus es aceptado");
+                            $(".sendGenericForm").prop('disabled', false);
+                            $("#comment").hide();
+                        }else{
+                            console.log("El estatus es pendiente");
+                            $("#comment").hide();
+                            $(".sendGenericForm").prop('disabled', false);
+                        }
+                    }
+                    
+                });
+        
+                $("#comment").change(function (e) { 
+                    var comment= $(this).val().trim();
+                    console.log(comment);
+                    if(comment == ""){
+                        $(".sendGenericForm").prop('disabled', true);
+                    }else{
+                        $(".sendGenericForm").prop('disabled', false);
+                    }
+                    
+                });
+            });
+        </script>
+        {% else %}
     
-                
-            {% endif %}
 
         {% endif %}
     {% endif %}

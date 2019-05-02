@@ -1,0 +1,134 @@
+{% extends "content_wrapper_with_sidebar.html" %} {% block inner_content %}
+<div class="container" id="content-wrapper">
+
+    {% include "toggle_title.html" %}
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="{% url 'trabajos:jobs_list' %}" class="btn btn-warning btn-lg btn-block"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a>
+                    </div>
+                    <div class="col-md-4">
+                        <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+                            {% csrf_token %}
+                            <button type="button" class="sendValidate btn btn-danger btn-lg btn-block" > Rechazar</button> 
+                            <input type="hidden" name="statusPago" value="Rechazado">
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                            <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+                                {% csrf_token %}
+                                <button type="button" class="sendValidate btn btn-primary btn-lg btn-block" > Aceptar</button> 
+                            <input type="hidden" name="statusPago" value="Aceptado">
+                        </form>
+                    </div>
+                </div>
+                <br>
+                
+                <div class="row">
+                    
+                    <div class="col-md-12">
+                        <input type="hidden" id="listPagos" name="list" data-url="{% url 'trabajos:list_pagos' trabajo_id %}">
+                        <input type="hidden" id="trabajo_id" name="trabajo_id" value="{{trabajo_id}}"">
+                        <table id="table"
+							data-toggle="table"
+							data-ajax="ajaxPagos"
+							data-side-pagination="server"
+							data-show-export="false"
+							data-toolbar="#toolbar"
+							data-pagination="true"
+							data-page-size="5"
+							data-page-list="[0,5,10,25,50,100, 200]"
+							data-show-refresh="true"
+							data-search="false"
+							data-sort-name="pk"
+							data-show-toggle="true"
+							data-show-columns="true"
+							data-detail-view="true"
+							data-detail-formatter="detailFormatter"
+							>
+							<thead>
+								<tr>
+									<th data-field="pagador" data-sortable="true">Pagador</th>
+									<th data-field="cedula" data-sortable="true">Cédula</th>
+									<th data-field="fecha_pago" data-sortable="true">Fecha</th>
+									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operatePagos" data-align="center">Acciones</th>
+								</tr>
+						</thead>
+					</table>
+                    </div>
+                </div>
+
+                
+
+               
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}"></script>
+	<script>
+
+		var $table = $('#table');
+		// your custom ajax request here
+		
+
+		function ajaxPagos(params) {
+			var route= $("#listPagos").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+
+        function detailFormatter(index, row) {
+            console.log(row);
+            var html = [];
+            var init= '<table class="table-bordered"><thead><tr>';
+                var init=init+ '<th style="text-align: center;" >Teléfono oficina</th>'; 
+                var init=init+ '<th style="text-align: center;" >Teléfono habitación/celular</th>'; 
+            var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+            html.push(init);
+            $.each(row, function (key, value) {
+                if(key == "telefono_oficina" || key == "telefono_habitacion_celular"){
+                html.push('<td >'+ value + '</td>');
+                }
+            });
+            var fin= '</tr></table>';
+            html.push(fin);
+            return html.join('');
+		}
+	
+	</script> 
+
+{% endblock %}

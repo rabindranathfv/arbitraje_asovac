@@ -128,6 +128,9 @@ $.ajaxSetup({
             '<a class="statusArbitro" href="javascript:void(0)" title="Estatus Árbitros">',
             '<i class="fas fa-history"></i>',
             '</a>  ' ,
+            '<a class="checkPago" href="javascript:void(0)" title="Verificar Pago">',
+            '<i class="fas fa-money-check"></i>',
+            '</a>  ' ,
         ].join('');
     }
 
@@ -158,6 +161,14 @@ $.ajaxSetup({
             '</a>  ' ,
             '<a class="asignarSesion" href="javascript:void(0)" title="Asignar Sesión">',
             '<i class="fas fa-hand-pointer"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
+    function operatePagos(value, row, index) {
+        return [
+            '<a class="Descargar" href="/media/'+row.comprobante+'" title="Descargar comprobante" download> ',
+            '<i class="fas fa-file-download"></i>',
             '</a>  ' ,
         ].join('');
     }
@@ -454,6 +465,12 @@ $.ajaxSetup({
                     $('#bootstrapTableModal .modal-content').html(data.content);
                 }
             });
+        },
+        
+        'click .checkPago': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            location.href=route;
         },
 
         'click .viewArbitraje': function (e, value, row, index) {

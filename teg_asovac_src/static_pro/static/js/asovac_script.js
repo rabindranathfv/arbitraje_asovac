@@ -734,4 +734,26 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
     
 
+    $(".sendValidate").click(function (e) { 
+        console.log("Para validar pagos");
+        
+        var form= $(this).parent();
+        console.log(form.attr('data-url'));
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+            beforeSend: function(){
+                $('#bootstrapTableModal').modal('show');  
+            },
+            success: function (data){
+                // console.log(data);
+                $('#bootstrapTableModal .modal-content').html('<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h3 class="modal-title" >Verificar pagos</h3></div><div class="modal-body">'+data.message+'</div><div class="modal-footer"><button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button></div>');
+            }
+        });
+        
+    });
+
+
 });

@@ -64,6 +64,7 @@
 									<th data-field="subarea" data-sortable="true">Subárea</th>
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
+									<th data-field="confirmacion_pago" data-sortable="true">Pago</th>
 									<th data-field="operate" data-events="operateEvents" data-formatter="operateTrabajos" data-align="center">Acciones</th>
 								</tr>
 						</thead>
@@ -116,11 +117,11 @@
 		}
 
 		function detailFormatter(index, row) {
-		
+		console.log(row);
 		var html = [];
 		var init= '<table class="table-bordered"><thead><tr>';
+			var init=init+ '<th style="text-align: center;" >Autores</th>'; 
 			var init=init+ '<th style="text-align: center;" >Observaciones</th>'; 
-			var init=init+ '<th style="text-align: center;" >Autor Principal</th>'; 
 		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
 		html.push(init);
 		$.each(row, function (key, value) {
