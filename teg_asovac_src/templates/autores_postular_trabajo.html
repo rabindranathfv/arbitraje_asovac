@@ -11,11 +11,11 @@
 					<div class="col-sm-8">
 						<h2 class="text-left">Lista de pagos del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h2>
 					</div>
-					<div class="col-sm-4">
+					<div class="col-sm-4 text-right">
 						{% if not autor_trabajo.pagado %}
 							<h2 class="text-right">Falta por pagar: {{ autor_trabajo.monto_total }}</h2>
-						{% else %}
-							<h2 class="text-right">Trabajo pagado</h2>
+						{% else %}	
+							<h2 class="btn btn-info right">Trabajo pagado</h2>
 						{% endif %}
 					</div>
 				</div>
