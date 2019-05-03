@@ -408,7 +408,7 @@ def generar_certificado(request):
 
 @login_required
 #Vista donde el autor ve los pagadores de sus trabajos y tiene opción de añadir nuevos
-def postular_trabajo(request):
+def postular_trabajo(request, trabajo_id):
 	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
@@ -437,12 +437,11 @@ def postular_trabajo(request):
 	usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
 	autor = Autor.objects.get(usuario = usuario_asovac)
 	sistema_asovac = Sistema_asovac.objects.get(id = event_id)
-	autores_trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
+	autor_trabajo = Autores_trabajos.objects.get(autor = autor, sistema_asovac = sistema_asovac, trabajo = trabajo_id )
 
-	pagador_list = Pagador.objects.all()
-	factura_list = Factura.objects.all()
+	facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = trabajo_id)
 
-
+	print facturas
 	context = {
 		"nombre_vista": 'Postular Trabajo',
 		'main_navbar_options' : main_navbar_options,
@@ -457,9 +456,8 @@ def postular_trabajo(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'autores_trabajos_list':autores_trabajos_list,
-        'pagador_list': pagador_list,
-        'factura_list':factura_list,
+		'autor_trabajo': autor_trabajo,
+		'facturas': facturas
     }
 	return render(request,"autores_postular_trabajo.html",context)
 
@@ -551,8 +549,8 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 			autor_trabajo.save()
 			print(request.session['factura']['monto_total'])
 			print(request.session['datos_pagador']['nombres'])
-
-			data['url'] = reverse('autores:postular_trabajo')
+			
+			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
 			data['form_is_valid'] = True
 		else:
 			data['form_is_valid'] = False

@@ -65,8 +65,10 @@
 										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-
-
+                                        <a href="{% url 'autores:postular_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Postular">
+											<i class="far fa-newspaper"></i>
+										</a>
+                                        
 										<!-- Esto es lo que hay que verificar -->
 										<a class="show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>

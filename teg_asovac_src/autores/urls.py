@@ -31,7 +31,7 @@ urlpatterns = [
 
     url(r'^generar-certificado/$', views.generar_certificado, name = 'generar_certificado'),
     
-    url(r'^postular-trabajo/$', views.postular_trabajo, name= 'postular_trabajo'),
+    url(r'^postular-trabajo/(?P<trabajo_id>\d+)/$', views.postular_trabajo, name= 'postular_trabajo'),
 
     url(r'^postular-trabajo/pagador/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pagador_modal, name= 'postular_trabajo_pagador_modal'),
     url(r'^postular-trabajo/factura/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_factura_modal, name= 'postular_trabajo_factura_modal'),
