@@ -1,0 +1,48 @@
+{% extends "email_templates/email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Asignación como {{ cargo }}
+{% endblock %}
+
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Se le notifica que usted ha sido asignado como {{ cargo }} de la sesión {{sesion.nombre_sesion}}, le dejaremos los datos de la sesión a continuación.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Nombre de la sesión: <strong>{{ sesion.nombre_sesion }}</strong>
+            <br>
+            Lugar: <strong>{{ sesion.lugar }}</strong>
+            <br>
+            Fecha de la sesión: <strong>{{ sesion.fecha_sesion }}</strong>
+            <br>
+            Hora de inicio: <strong>{{ sesion.hora_inicio }}</strong>
+            <br>
+            Hora de fin: <strong>{{ sesion.hora_fin }}</strong>
+            <br>
+            Capacidad: <strong>{{ sesion.capacidad }}</strong>
+            <br>
+            {% if sesion.video_beam %}    
+                <strong>Requiere vídeo beam</strong>
+            {% endif %}
+            <br>
+            {% if sesion.portatil %}
+                <strong>Requiere pórtatil</strong>
+            {% endif %}
+            <br>
+            Observaciones: <strong>{{ sesion.observaciones }}</strong>
+
+
+        </p>
+    </td>
+</tr>
+{% endblock %}
