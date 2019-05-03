@@ -502,7 +502,11 @@ def add_author_to_job(request, autor_trabajo_id):
             print("Entro")
             form_data = form.cleaned_data
             autor = get_object_or_404(Autor, correo_electronico = form_data['correo'])
-            new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'])
+            autor_trabajo_ponente = Autores_trabajos.objects.get(trabajo = autor_trabajo.trabajo, es_ponente = True)
+            if form_data['es_ponente']:
+                autor_trabajo_ponente.es_ponente = False
+                autor_trabajo_ponente.save()
+            new_autor_trabajo = Autores_trabajos(autor = autor, trabajo = autor_trabajo.trabajo, sistema_asovac = sistema_asovac ,es_autor_principal = False, es_ponente = form_data['es_ponente'], es_coautor = form_data['es_coautor'], monto_total = autor_trabajo.monto_total)
             new_autor_trabajo.save()
             rol_autor = Rol.objects.get(id=5)
 

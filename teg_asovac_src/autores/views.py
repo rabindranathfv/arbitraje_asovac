@@ -547,6 +547,13 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 			if autor_trabajo.monto_total <= 0:
 				autor_trabajo.pagado = True
 			autor_trabajo.save()
+			#Código para actualizar estados de las otras instancias de autor_trabajo
+			autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo.trabajo)
+			for autor_trabajo_to_update in autores_trabajo_list:
+				autor_trabajo_to_update.monto_total = autor_trabajo.monto_total
+				autor_trabajo_to_update.pagado = autor_trabajo.pagado
+				autor_trabajo_to_update.save()
+
 			print(request.session['factura']['monto_total'])
 			print(request.session['datos_pagador']['nombres'])
 			
