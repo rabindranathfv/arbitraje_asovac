@@ -126,9 +126,29 @@
                 <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
                 <button type="submit" class="btn btn-danger" >Eliminar</button>
             </div>
-    
+            
+            {% else %}
+
+                {% if tipo == "removeSubareaArbitro" %}
+                <form method="post" id="eliminarArbitro" class="eliminarArbitro" data-url="{% url 'arbitrajes:adminRemoveSubarea' id subarea.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" >Eliminar Árbitro</h3>
+                    </div>
                 
-            {% endif %}
+                    <div class="modal-body">
+                            <p>¿Desea eliminar la subárea {{subarea.nombre}}?</p>
+                    </div>
+                
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="sendGenericForm btn btn-danger btn-lg" >Eliminar</button>
+                    </div>
+                </form>
+                {% endif %}
+            
+                {% endif %}
 
         {% endif %}
     {% endif %}

@@ -1,0 +1,158 @@
+{% extends "content_wrapper_with_sidebar.html" %} {% block inner_content %}
+<div class="container" id="content-wrapper">
+
+    {% include "toggle_title.html" %}
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+
+                <div class="row">      
+                    
+                    <div class="col-sm-6">
+                        <h2 class="text-left">Área del árbitro</h2>
+                    </div>
+
+                    <!-- Lista de areas -->
+
+                    <div class="col-md-12">
+                        <!-- data table -->
+                        <input type="hidden" id="listAreas" name="list" data-url="{% url 'arbitrajes:list_areas_arbitros' arbitro_id %}">
+
+                        <div id="toolbar">
+                        </div>
+                        <table  id="table" 
+                                data-toggle="table" 
+                                data-ajax="ajaxAreas" 
+                                data-side-pagination="server" 
+                                data-show-export="true" 
+                                data-toolbar="#toolbar" 
+                                data-pagination="true" 
+                                data-page-size="5" 
+                                data-page-list="[0,5,10,25,50,100, 200]" 
+                                data-show-refresh="true" 
+                                data-search="false"
+                                data-sort-name="pk" 
+                                data-show-toggle="true" 
+                                data-show-columns="true">
+                            <thead>
+                                <tr>
+                                    <th data-field="nombre" data-sortable="true">Área</th>
+                                    <th data-field="codigo" data-sortable="true">Código</th>
+                                    <th data-field="descripcion" data-sortable="true">Descripción</th>
+                                    <th data-field="operate" data-events="operateEvents" data-formatter="" data-align="center">Acciones</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <!-- end data table -->
+                    </div>
+                <!-- Fin lista de areas -->
+
+                <!-- Lista de subareas -->
+                    <div class="col-md-12">
+                        <!-- data table -->
+                        <input type="hidden" id="listSubareas" name="list" data-url="{% url 'arbitrajes:list_subareas_arbitros' arbitro_id %}">
+
+                        <div id="toolbar">
+                        </div>
+                        <table  id="table2" 
+                                data-toggle="table" 
+                                data-ajax="ajaxSubareas" 
+                                data-side-pagination="server" 
+                                data-show-export="true" 
+                                data-toolbar="#toolbar" 
+                                data-pagination="true" 
+                                data-page-size="5" 
+                                data-page-list="[0,5,10,25,50,100, 200]" 
+                                data-show-refresh="true" 
+                                data-search="false"
+                                data-sort-name="pk" 
+                                data-show-toggle="true" 
+                                data-show-columns="true">
+                            <thead>
+                                <tr>
+                                    <th data-field="nombre" data-sortable="true">Subárea</th>
+                                    <th data-field="codigo" data-sortable="true">Código</th>
+                                    <th data-field="descripcion" data-sortable="true">Descripción</th>
+                                    <th data-field="operate" data-events="operateEvents" data-formatter="operateAdminSubareas" data-align="center">Acciones</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        <!-- end data table -->
+                    </div>
+                <!-- Fin lista de subareas -->
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block js_extra %} 
+{% load static %}
+<!-- js extra -->
+<script src="{% static 'js/grid.js' %}"></script>
+<script>
+    var $table = $('#table');
+    // your custom ajax request here
+
+
+    function ajaxAreas(params) {
+        var route = $("#listAreas").attr("data-url");
+        // console.log (route);
+        //  console.log("llamada a ajax request");
+        console.log(params.data);
+
+        $.ajax({
+            type: "post",
+            url: route,
+            data: params.data,
+            dataType: 'json',
+            success: function(data) {
+                // console.log(data);
+                // console.log(data.total)
+                // console.log(data.query.query)
+                params.success({
+                    total: data.total,
+                    rows: data.query.query
+                });
+
+            }
+        });
+    }
+
+    function ajaxSubareas(params) {
+        var route = $("#listSubareas").attr("data-url");
+        // console.log (route);
+        //  console.log("llamada a ajax request");
+        console.log(params.data);
+
+        $.ajax({
+            type: "post",
+            url: route,
+            data: params.data,
+            dataType: 'json',
+            success: function(data) {
+                // console.log(data);
+                // console.log(data.total)
+                // console.log(data.query.query)
+                params.success({
+                    total: data.total,
+                    rows: data.query.query
+                });
+
+            }
+        });
+    }
+
+</script>
+
+{% endblock %}

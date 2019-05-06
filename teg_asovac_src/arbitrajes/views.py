@@ -6,6 +6,7 @@ from django.conf.urls import include, url
 from django.contrib import admin, messages
 from django.core.mail import send_mail
 from django.shortcuts import render
+from django.db import connection
 
 import random, string,xlrd,os,sys,xlwt
 from autores.models import Autores_trabajos
@@ -404,7 +405,7 @@ def list_arbitros(request):
                 query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
             else:
                 if rol_user == 3:
-                    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
+                    query= "SELECT DISTINCT arb.id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
                     where=' WHERE a.id=  %s '
                     query= query+where
 
@@ -413,13 +414,13 @@ def list_arbitros(request):
             query= query + " ORDER BY " + order_by
 
             if rol_user == 1 or rol_user ==2 :
-                data= User.objects.raw(query)
-                data_count= User.objects.raw(query_count)
+                data= Arbitro.objects.raw(query)
+                data_count= Arbitro.objects.raw(query_count)
             else:
                 if rol_user == 3:
                     area= str(user_area.id)
-                    data= User.objects.raw(query,area)
-                    data_count= User.objects.raw(query_count,area)
+                    data= Arbitro.objects.raw(query,area)
+                    data_count= Arbitro.objects.raw(query_count,area)
 
             total=0
             for item in data_count:
@@ -443,6 +444,134 @@ def list_arbitros(request):
         titulo= item.titulo
         genero= item.genero
         response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'genero':genero ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+
+#---------------------------------------------------------------------------------#
+#            Carga el contenido de la tabla de áreas para árbitros                #
+#---------------------------------------------------------------------------------#
+@login_required
+def list_areas_arbitros(request,id):
+    
+    event_id = request.session['arbitraje_id']
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    # search= request.POST['search']
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+
+    print "Consulta Normal"
+    arbitraje_id = request.session['arbitraje_id']
+
+    # consulta mas completa
+    query= "SELECT DISTINCT ar.id,ar.nombre, ar.codigo, ar.descripcion FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso on sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso on usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id INNER JOIN main_app_area AS ar on ar.id= sub_a.area_id"
+    where=' WHERE sis_aso.sistema_asovac_id =%s AND usu_aso.id=%s '
+    # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
+    query= query+where
+    query_count=query
+
+    if sort != "pk":
+        order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+
+    data= Arbitro.objects.raw(query,[event_id,id])
+    data_count= Arbitro.objects.raw(query_count,[event_id,id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+
+    for item in data:
+        nombre= item.nombre
+        codigo= item.codigo
+        descripcion= item.descripcion
+        response['query'].append({'id':item.id,'nombre': nombre ,'codigo':codigo ,'descripcion':descripcion  })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+
+#---------------------------------------------------------------------------------#
+#          Carga el contenido de la tabla de subáreas para árbitros               #
+#---------------------------------------------------------------------------------#
+@login_required
+def list_subareas_arbitros(request,id):
+
+    event_id = request.session['arbitraje_id']
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    # search= request.POST['search']
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+    print "Consulta Normal"
+    arbitraje_id = request.session['arbitraje_id']
+
+    # consulta mas completa
+    query= "SELECT usu_sub_a.id, sub_a.nombre,sub_a.codigo,sub_a.descripcion FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso on sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso on usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id INNER JOIN main_app_area AS ar on ar.id= sub_a.area_id"
+    where=' WHERE sis_aso.sistema_asovac_id =%s AND usu_aso.id=%s '
+    # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
+    query= query+where
+    query_count=query
+
+    if sort != "pk":
+        order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+
+    data= Arbitro.objects.raw(query,[event_id,id])
+    data_count= Arbitro.objects.raw(query_count,[event_id,id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+
+    for item in data:
+        nombre= item.nombre
+        codigo= item.codigo
+        descripcion= item.descripcion
+       
+        response['query'].append({'id':item.id,'nombre': nombre ,'codigo':codigo ,'descripcion':descripcion  })
 
 
     response={
@@ -560,6 +689,85 @@ def removeArbitro(request,id):
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
 
+
+@login_required
+def adminRemoveSubarea(request,id,subarea):
+    print "Eliminar Subarea"
+    
+    data= dict()
+    query= "SELECT * FROM main_app_usuario_asovac_sub_area AS usu_sub_a INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id "
+    where=' WHERE usu_sub_a.id=%s ' 
+    query= query+where
+    
+    query_result= Usuario_asovac.objects.raw(query,[subarea])
+
+    for item in query_result:
+        subarea={'id':item.id,'nombre': item.nombre }
+
+    if request.method == 'POST':
+
+        print "para eliminar subarea"
+        query= "DELETE FROM main_app_usuario_asovac_sub_area "
+        where="WHERE id={}".format(subarea['id'])
+        query= query+where
+        # query_result= Usuario_asovac.objects.raw(query,[subarea['id']])
+        
+        cursor = connection.cursor()
+        cursor.execute(query)
+    
+        data['status']= 200
+        data['message']="La subárea se ha eliminado de forma exitosa."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"removeSubareaArbitro",
+            'id':id,
+            'subarea':subarea,
+        }
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def adminArea(request,id):
+    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    item_active = 2
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+    
+
+    context = {
+        'nombre_vista' : 'Área árbitro',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'arbitro_id':id,
+    }
+    return render(request,"arbitrajes_admin_areas.html",context)
 
 
 #---------------------------------------------------------------------------------#
