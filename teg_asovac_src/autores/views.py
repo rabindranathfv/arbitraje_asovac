@@ -644,6 +644,7 @@ def create_university_modal(request):
 			autor = serializers.json.Deserializer(request.session['autor']).next().object
 			autor.universidad = universidad
 			autor.save()
+			request.session['is_author_created'] = True  
 			data['url'] = reverse('trabajos:trabajos')
 			data['form_is_valid'] = True
 		else:
