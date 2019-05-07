@@ -146,6 +146,75 @@
                         <button type="button" class="sendGenericForm btn btn-danger btn-lg" >Eliminar</button>
                     </div>
                 </form>
+
+                {% else %}
+                    {% if tipo == "addSubareaArbitro" %}
+                    <form method="post" id="" class="" data-url="{% url 'arbitrajes:adminAddSubareas' user_id %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" >Agregar Subáreas</h3>
+                        </div>
+                    
+                        <div class="modal-body">
+                            
+                            <table class="table table-bordered">
+                                <thead>
+                                    <th>Subárea</th>
+                                    <th>Código</th>
+                                    <th style="text-align: center" >Asignar</th>
+                                </thead>
+                                {% for subarea in subareas %}
+                                    {% if subarea.area_id == area.id %}
+                                <tr>
+                                    <td>{{subarea.nombre}} </td>
+                                    <td>{{subarea.codigo}} </td>
+                                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                                    <td class="text-center" style="text-align: center">
+                                        <label class="contentCheck">
+                                                <input name="subareas_value[]" data-area="{{subarea.id}}" type="checkbox" id="{{subarea.id}}" >
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+
+                        </div>
+                    
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger btn-lg"  data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="adminAddSubareas btn btn-primary btn-lg" >Guardar</button>
+                        </div>
+                    </form>
+                    <script>
+                        $('input[type=checkbox]').each(function () {
+
+                            // console.log("No seleccionados");
+                            var check=$(this).attr('data-area');
+                            var area=  "{{area}}";
+                            var subareas=  "{{subareas_user}}";
+
+                            subareas= JSON.parse(subareas);
+
+                            // console.log(area);
+                            // console.log(subareas);
+                            // console.log(check);
+                            // console.log(subareas.indexOf(parseInt(check)));
+                            result= subareas.indexOf(parseInt(check));
+                            // console.log("El resultado es: "+ result);
+                            if (result >= 0 ) {
+                                $(this).prop("checked", true);
+                                // console.log("seleccionado"+" Estatus "+estatus );
+                            } else {
+                                $(this).prop("checked", false);
+                                // console.log("No seleccionado");
+                            }
+
+                        });
+                    </script>
+                    {% endif %}
                 {% endif %}
             
                 {% endif %}

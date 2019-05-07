@@ -10,7 +10,7 @@ from django.db import connection
 
 import random, string,xlrd,os,sys,xlwt
 from autores.models import Autores_trabajos
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
@@ -730,6 +730,72 @@ def adminRemoveSubarea(request,id,subarea):
     return JsonResponse(data)
 
 @login_required
+def adminAddSubareas(request,id):
+    print "ID recibido para agregar areas",id
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    auth_user=user    
+    user= Usuario_asovac.objects.get(usuario_id=id)
+    
+    subareas= Sub_area.objects.all()
+    subareas_user= user.sub_area.all()
+    area= subareas_user.first().area
+    array_subareas=[]
+
+    for item in subareas_user:
+        array_subareas.append(item.id)
+
+    # print array_subareas
+    # print subareas[0].area_id
+    # print subareas_user[0].nombre
+    # print area.id
+
+    if request.method == 'POST':
+        print "El metodo es post de add"
+        subareas_post= request.POST.getlist("id")
+        print (subareas_post)
+        print (id)
+        usuario_asovac= Usuario_asovac.objects.get(id=id)
+        print usuario_asovac.id
+        # Para eliminar registros viejos
+        query= "DELETE FROM main_app_usuario_asovac_sub_area "
+        where="WHERE usuario_asovac_id={}".format(usuario_asovac.id)
+        query= query+where
+        cursor = connection.cursor()
+        cursor.execute(query)
+
+        for item in subareas_post:
+            array_subareas= item.split(',')
+    
+        # Para agregar nuevos registros
+        for item in array_subareas:
+            query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
+            values="({0},{1})".format(id,item)
+            
+            query= query+values
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+
+
+        data['status']=200
+        data['message']= "Se han actualizado las subáreas de forma exitosa."
+
+    else:
+        # print "el metodo es get"
+        context= {
+            'tipo': 'addSubareaArbitro',
+            'area': area,
+            'subareas':subareas,
+            'subareas_user':array_subareas,
+            'user_id': id,
+        }
+        data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
+
+    return JsonResponse(data)
+
+
+@login_required
 def adminArea(request,id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -765,7 +831,7 @@ def adminArea(request,id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'arbitro_id':id,
+        'user_id':id,
     }
     return render(request,"arbitrajes_admin_areas.html",context)
 
