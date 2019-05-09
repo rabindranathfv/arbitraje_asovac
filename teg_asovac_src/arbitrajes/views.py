@@ -10,7 +10,7 @@ from django.db import connection
 
 import random, string,xlrd,os,sys,xlwt
 from autores.models import Autores_trabajos
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
@@ -692,31 +692,44 @@ def removeArbitro(request,id):
 
 @login_required
 def adminRemoveSubarea(request,id,subarea):
-    print "Eliminar Subarea"
+    print "Eliminar Subarea ", id
     
     data= dict()
     query= "SELECT * FROM main_app_usuario_asovac_sub_area AS usu_sub_a INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id "
     where=' WHERE usu_sub_a.id=%s ' 
     query= query+where
-    
     query_result= Usuario_asovac.objects.raw(query,[subarea])
+
+    # Para contar subareas 
+    query='SELECT * FROM arbitrajes_arbitro AS arb INNER JOIN '+'"arbitrajes_arbitro_Sistema_asovac"'+' as sis_aso on sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac as usu_aso on usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id INNER JOIN main_app_area as ar on ar.id= sub_a.area_id'
+    where=' WHERE usu_aso.id=%s ' 
+    query= query+where
+    total_subarea= Usuario_asovac.objects.raw(query,[id])
+    
+    total=0
+    for item in total_subarea:
+        total=total+1
 
     for item in query_result:
         subarea={'id':item.id,'nombre': item.nombre }
 
     if request.method == 'POST':
 
-        print "para eliminar subarea"
-        query= "DELETE FROM main_app_usuario_asovac_sub_area "
-        where="WHERE id={}".format(subarea['id'])
-        query= query+where
-        # query_result= Usuario_asovac.objects.raw(query,[subarea['id']])
+        print "para eliminar subarea total: ", total
+        if total > 1:
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE id={}".format(subarea['id'])
+            query= query+where
+            # query_result= Usuario_asovac.objects.raw(query,[subarea['id']])
+            
+            cursor = connection.cursor()
+            cursor.execute(query)
         
-        cursor = connection.cursor()
-        cursor.execute(query)
-    
-        data['status']= 200
-        data['message']="La subárea se ha eliminado de forma exitosa."
+            data['status']= 200
+            data['message']="La subárea se ha eliminado de forma exitosa."
+        else:
+            data['status']= 200
+            data['message']="El árbitro debe tener almenos 1 subárea asociada."
 
     else:
 
@@ -788,6 +801,60 @@ def adminAddSubareas(request,id):
             'area': area,
             'subareas':subareas,
             'subareas_user':array_subareas,
+            'user_id': id,
+        }
+        data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
+
+    return JsonResponse(data)
+
+@login_required
+def adminChangeAreas(request,id):
+    print "ID recibido para agregar areas",id
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    auth_user=user    
+    user= Usuario_asovac.objects.get(usuario_id=id)
+    
+    subareas= Sub_area.objects.all()
+    areas= Area.objects.all()
+
+    if request.method == 'POST':
+        print "El metodo es post de add"
+        subareas_post= request.POST.getlist("id")
+        print (subareas_post)
+        print (id)
+        usuario_asovac= Usuario_asovac.objects.get(id=id)
+        print usuario_asovac.id
+        # Para eliminar registros viejos
+        query= "DELETE FROM main_app_usuario_asovac_sub_area "
+        where="WHERE usuario_asovac_id={}".format(usuario_asovac.id)
+        query= query+where
+        cursor = connection.cursor()
+        cursor.execute(query)
+
+        for item in subareas_post:
+            array_subareas= item.split(',')
+    
+        # Para agregar nuevos registros
+        for item in array_subareas:
+            query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
+            values="({0},{1})".format(id,item)
+            
+            query= query+values
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+
+
+        data['status']=200
+        data['message']= "Se han actualizado las subáreas de forma exitosa."
+
+    else:
+        # print "el metodo es get"
+        context= {
+            'tipo': 'changeAreaArbitro',
+            'areas': areas,
+            'subareas':subareas,
             'user_id': id,
         }
         data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)

@@ -214,10 +214,69 @@
 
                         });
                     </script>
-                    {% endif %}
-                {% endif %}
+                    {% else %}
+                        {% if tipo == "changeAreaArbitro" %}
+                        <form method="post" id="" class="" data-url="{% url 'arbitrajes:adminChangeAreas' user_id %}">
+                            {% csrf_token %}
+                            <div class="tab-content">
+                                <div id="areas" class="tab-pane fade in active">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h3 class="modal-title" >Cambio de  Áreas</h3>
+                                    </div>
+                            
+                                    <div class="modal-body">
+                                        
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <th>Área</th>
+                                                <th>Código</th>
+                                                <th style="text-align: center" >Asignar</th>
+                                            </thead>
+                                            {% for area in areas %}
+                                            <tr>
+                                                <td>{{area.nombre}} </td>
+                                                <td>{{area.codigo}} </td>
+                                                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                                                <td class="text-center" style="text-align: center">
+                                                    <label class="contentCheck">
+                                                            <input name="areas_value" data-area="{{area.id}}" type="radio" id="{{area.id}}" >
+                                                            <span class="checkmark"></span>
+                                                        </label>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
             
-                {% endif %}
+                                    </div>
+                            
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger btn-lg"  data-dismiss="modal">Cerrar</button>
+                                        <a type="button" href="#subareas" data-toggle="pill" class=" btn btn-primary btn-lg" >Siguiente</a>
+                                    </div>
+                                </div>
+                                <!-- Sección para seleccionar subareas -->
+                                <div id="subareas" class="tab-pane fade">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h3 class="modal-title" >Agregar Subáreas</h3>
+                                    </div>
+                                    
+                                    {% include 'ajax/load_subareas_arbitro.html' %}
+                                    
+                                    <div class="modal-footer">
+                                        <a data-toggle="pill" href="#areas" type="button" class="btn btn-danger btn-lg" >Regresar</a>
+                                        <button type="button" class=" btn btn-primary btn-lg" >Guardar</button>
+                                    </div>
+                                </div>
+                                <!-- Sección para seleccionar subareas -->
+                            </div>
+                        </form> 
+                        {% endif %}
+                    {% endif %}
+                    {% endif %}
+            
+                    {% endif %}
 
         {% endif %}
     {% endif %}

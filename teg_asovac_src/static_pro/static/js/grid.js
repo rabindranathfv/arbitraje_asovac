@@ -175,6 +175,13 @@ $.ajaxSetup({
             '</a>  ' ,
         ].join('');
     }
+    function operateAdminAreas(value, row, index) {
+        return [
+            '<a class="changeAreaArbitro" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fas fa-edit"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
     function operateAdminSubareas(value, row, index) {
         return [
             '<a class="removeSubareaArbitro" href="javascript:void(0)" title="Eliminar">',
@@ -441,6 +448,24 @@ $.ajaxSetup({
         },
         'click .removeSubareaArbitro': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
+        'click .changeAreaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class");
             console.log(route);
             $.ajax({
                 url: route,

@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)$',views.adminArea,name='adminArea'),
     url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/removeSubareaArbitro/(?P<subarea>\d+)$',views.adminRemoveSubarea,name='adminRemoveSubarea'),
     url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/addSubareaArbitros$',views.adminAddSubareas,name='adminAddSubareas'),
+    url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/changeAreaArbitro$',views.adminChangeAreas,name='adminChangeAreas'),
 
     # CRUD Arbitraje
     url(r'^estatus-trabajos/viewArbitraje/(?P<id>\d+)$',views.viewArbitraje,name='verArbitraje'),

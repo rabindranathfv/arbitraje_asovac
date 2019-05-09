@@ -829,5 +829,12 @@ var SaveAñadirPagoForm= function(){
         
     });
 
+    // Para verificar seleccion de area 
+    $("input[name=areas_value]").prop("checked");
+
+    $("input[name=areas_value]").change(function (e) { 
+       console.log("Cambio de seleccion");
+        
+    });
 
 });
