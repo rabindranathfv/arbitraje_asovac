@@ -240,7 +240,7 @@
                                                 <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
                                                 <td class="text-center" style="text-align: center">
                                                     <label class="contentCheck">
-                                                            <input name="areas_value" data-area="{{area.id}}" type="radio" id="{{area.id}}" >
+                                                            <input class="getSubareas" name="areas_value" value="{{area.id}}" data-area="{{area.id}}" type="radio" id="{{area.id}}"  >
                                                             <span class="checkmark"></span>
                                                         </label>
                                                     </td>
@@ -252,7 +252,7 @@
                             
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-danger btn-lg"  data-dismiss="modal">Cerrar</button>
-                                        <a type="button" href="#subareas" data-toggle="pill" class=" btn btn-primary btn-lg" >Siguiente</a>
+                                        <button type="button" href="#subareas" data-toggle="pill" disabled class=" next btn btn-primary btn-lg" >Siguiente</button>
                                     </div>
                                 </div>
                                 <!-- Sección para seleccionar subareas -->
@@ -266,12 +266,90 @@
                                     
                                     <div class="modal-footer">
                                         <a data-toggle="pill" href="#areas" type="button" class="btn btn-danger btn-lg" >Regresar</a>
-                                        <button type="button" class=" btn btn-primary btn-lg" >Guardar</button>
+                                        <button type="button" disabled class="send btn btn-primary btn-lg" >Guardar</button>
                                     </div>
                                 </div>
                                 <!-- Sección para seleccionar subareas -->
                             </div>
-                        </form> 
+                        </form>
+                        <script>
+                            $("input[name='areas_value']").on('change', function (e) {
+                                
+                                $('.next').attr('disabled',false);
+                                var route=window.location.origin+'/arbitrajes/'+$(this).attr("class")+"/"+$(this).val();
+                                // console.log(route);
+                        
+                                $.ajax({
+                                    type: "post",
+                                    url: route,
+                                    data: $(this).val(),
+                                    dataType: "json",
+                                    success: function (response) {
+                                        if(response.status == 200){
+                                            $(".subareas-content").html(response.content);
+                                        }
+                                        
+                                    }
+                                });
+                            });
+                            
+                            var SelectSubarea= function (subarea){
+                                // console.log("se selecciona "+subarea);
+                                var select=0;
+                                $('input[name=subareas_value]').each(function () {
+
+                                // console.log($(this).prop("checked"));
+                                // console.log($(this).val());
+                                if ($(this).prop("checked") ) {
+                                    // $(".send").attr('disabled',false);
+                                    select++;
+                                } 
+
+                                });
+                                
+                                if(select > 0 ){
+                                    $('.send').attr('disabled',false);
+                                }else{
+                                    $('.send').attr('disabled',true);
+                                }
+                            }
+
+                            $(".send").on('click', function (e) {
+                                console.log("Para enviar formulario");
+
+                                // var route=window.location.origin+'/arbitrajes/'+$(this).attr("class")+"/"+$(this).val();
+                                form=$(this).parent().parent().parent().parent();
+                                route=form.attr("data-url");
+                                console.log(form.attr("data-url"));
+                        
+                                $.ajax({
+                                    type: "post",
+                                    url: route,
+                                    data: form.serialize(),
+                                    dataType: "json",
+                                    success: function (data) {
+                                        if(data.status == 200 ){
+                                            console.log('actualizacion exitosa')
+                                            $('#bootstrapTableModal .modal-body').html(data.message);
+                                            $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                                            $('#modal-user').modal('hide');
+                                            $('#table').bootstrapTable('refresh');
+                                            if(data.message.search("subárea") > 0 ){
+                                                $('#table2').bootstrapTable('refresh');
+                                            }
+                                        }else{
+                                            console.log('error en la actualizacion')
+                                            $('#bootstrapTableModal .modal-body').html(data.message);
+                                            $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                                            $('#modal-user').modal('hide');
+                                        }
+                                        
+                                    }
+                                });
+                            });
+                            
+
+                        </script> 
                         {% endif %}
                     {% endif %}
                     {% endif %}

@@ -819,23 +819,24 @@ def adminChangeAreas(request,id):
     areas= Area.objects.all()
 
     if request.method == 'POST':
-        print "El metodo es post de add"
-        subareas_post= request.POST.getlist("id")
-        print (subareas_post)
-        print (id)
+        print "El metodo es post para cambiar de area"
+        subareas_post= request.POST.getlist("subareas_value")
+        # print (subareas_post)
+        print request.POST.getlist("areas_value")
+        print request.POST.getlist("subareas_value")
+        # print (id)
         usuario_asovac= Usuario_asovac.objects.get(id=id)
-        print usuario_asovac.id
-        # Para eliminar registros viejos
+        # print usuario_asovac.id
+        # # Para eliminar registros viejos
         query= "DELETE FROM main_app_usuario_asovac_sub_area "
         where="WHERE usuario_asovac_id={}".format(usuario_asovac.id)
         query= query+where
         cursor = connection.cursor()
         cursor.execute(query)
-
-        for item in subareas_post:
-            array_subareas= item.split(',')
-    
-        # Para agregar nuevos registros
+        
+        array_subareas=subareas_post
+        
+        # # Para agregar nuevos registros
         for item in array_subareas:
             query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
             values="({0},{1})".format(id,item)
@@ -843,8 +844,6 @@ def adminChangeAreas(request,id):
             query= query+values
             cursor = connection.cursor()
             cursor.execute(query)
-
-
 
         data['status']=200
         data['message']= "Se han actualizado las subáreas de forma exitosa."
@@ -902,6 +901,25 @@ def adminArea(request,id):
     }
     return render(request,"arbitrajes_admin_areas.html",context)
 
+#---------------------------------------------------------------------------------#
+#                            Carga la lista de subareas                           #
+#---------------------------------------------------------------------------------#
+
+@login_required
+def getSubareas(request,id):
+    print "Área seleccionada",id
+    
+    data= dict()
+    subareas= Sub_area.objects.all().filter(area=id)
+
+    data['status']=200
+
+    context= {
+        'subareas':subareas,
+    }
+    data['content']=render_to_string('ajax/load_subareas_arbitro.html',context,request=request)
+
+    return JsonResponse(data)
 
 #---------------------------------------------------------------------------------#
 #                  Carga el contenido de la tabla de arbitraje                    #

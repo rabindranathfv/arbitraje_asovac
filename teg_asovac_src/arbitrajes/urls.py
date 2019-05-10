@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^listTrabajosAceptados$',views.list_trabajos_aceptados,name='list_trabajos_aceptados'),
     url(r'^listAreasArbitros/(?P<id>\d+)$',views.list_areas_arbitros,name='list_areas_arbitros'),
     url(r'^listSubAreasArbitros/(?P<id>\d+)$',views.list_subareas_arbitros,name='list_subareas_arbitros'),
+    url(r'^getSubareas/(?P<id>\d+)$',views.getSubareas,name='getSubareas'),
 
     # CRUD Arbitros
     url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),

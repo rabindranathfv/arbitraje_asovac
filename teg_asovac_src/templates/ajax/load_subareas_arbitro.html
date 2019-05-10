@@ -15,7 +15,7 @@
                     <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
                     <td class="text-center" style="text-align: center">
                             <label class="contentCheck">
-                                <input name="subareas_value" data-area="{{area.id}}" type="checkbox" id="{{subarea.id}}" >
+                                <input name="subareas_value" value="{{subarea.id}}" data-area="{{area.id}}" type="checkbox" id="{{subarea.id}}" onClick="SelectSubarea(this.value)" >
                                 <span class="checkmark"></span>
                             </label>
                         </td>
