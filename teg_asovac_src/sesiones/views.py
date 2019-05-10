@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decouple import config
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
@@ -640,11 +641,26 @@ def assign_coordinator(request, sesion_id, autor_id):
         
         coordinador_sesion.save()
 
-        coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, autor = autor, co_coordinador = True).first()
-        if coordinador_sesion:
-            coordinador_sesion.delete()
+        old_coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, autor = autor, co_coordinador = True).first()
+        if old_coordinador_sesion:
+            old_coordinador_sesion.delete()
 
         messages.success(request, "El coordinador fue asignado con éxito")
+        
+        context = {
+            'sesion': coordinador_sesion.sesion,
+            'cargo': "coordinador",
+            }
+        msg_plain = render_to_string('../templates/email_templates/coordinator_assign.txt', context)
+        msg_html = render_to_string('../templates/email_templates/coordinator_assign.html', context)
+
+        send_mail(
+                'Asignación como coordinador',         #titulo
+                msg_plain,                          #mensaje txt
+                config('EMAIL_HOST_USER'),          #email de envio
+                [coordinador_sesion.autor.correo_electronico],               #destinatario
+                html_message=msg_html,              #mensaje en html
+                )
 
         return redirect('sesiones:sesions_list')
 
@@ -678,7 +694,23 @@ def assign_co_coordinator(request, sesion_id, autor_id):
         coordinador_sesion = Coordinadores_sesion.objects.filter(sesion = sesion, autor = autor, coordinador = True).first()
         if coordinador_sesion:    
             coordinador_sesion.delete()
+        
         messages.success(request, "El co-coordinador fue asignado con éxito")
+
+        context = {
+            'sesion': co_coordinador_sesion.sesion,
+            'cargo': "co-coordinador",
+            }
+        msg_plain = render_to_string('../templates/email_templates/coordinator_assign.txt', context)
+        msg_html = render_to_string('../templates/email_templates/coordinator_assign.html', context)
+
+        send_mail(
+                'Asignación como co-coordinador',         #titulo
+                msg_plain,                          #mensaje txt
+                config('EMAIL_HOST_USER'),          #email de envio
+                [co_coordinador_sesion.autor.correo_electronico],               #destinatario
+                html_message=msg_html,              #mensaje en html
+                )
 
         return redirect('sesiones:sesions_list')
 

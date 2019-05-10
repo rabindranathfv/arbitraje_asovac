@@ -1218,7 +1218,9 @@ def add_new_version_to_job(request, last_version_trabajo_id):
         form = TrabajoForm(request.POST, request.FILES)
         if form.is_valid():
             #Se almacena la nueva versión del trabajo
-            job_new_version = form.save()
+            job_new_version = form.save(commit = False)
+            job_new_version.confirmacion_pago = "Aceptado"
+            job_new_version.save()
             subarea_to_assign = trabajo.subareas.first().id
             job_new_version.subareas.add(subarea_to_assign)
             

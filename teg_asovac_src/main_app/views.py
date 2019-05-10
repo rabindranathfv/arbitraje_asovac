@@ -1056,11 +1056,12 @@ def create_autor_instance_modal(request, user_id):
                     autor.save()
                     request.session['is_author_created'] = True
                     data['url'] = reverse('trabajos:trabajos')
+                    request.session['is_author_created'] = True  
                 else:
                     data['url'] = reverse('autores:create_university_modal')
                     request.session['autor'] = serializers.serialize('json', [ autor, ])
                     data['reload_modal'] = True
-                data['form_is_valid']= True             
+                data['form_is_valid']= True           
             except:
                 pass
     universidades = Universidad.objects.all()

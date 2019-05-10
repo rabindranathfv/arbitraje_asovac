@@ -33,58 +33,54 @@ def admin_create_author(request):
 		form = AdminCreateAutorForm(request.POST)
 		print(form.is_valid(),"Ok")
 		if form.is_valid():
-			try:
-				new_autor = form.save(commit = False)
-				usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
-				print("NO debería")
-				username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
-				counter = 1
-				username = username_base
-				while User.objects.filter(username=username):
-					username = username_base + str(counter)
-					counter += 1
+			new_autor = form.save(commit = False)
+			usuario = User(email = new_autor.correo_electronico, first_name = new_autor.nombres, last_name = new_autor.apellidos)
+			username_base = (new_autor.nombres.split(' ')[0] + '.' + new_autor.apellidos.split(' ')[0]).lower()
+			counter = 1
+			username = username_base
+			while User.objects.filter(username=username):
+				username = username_base + str(counter)
+				counter += 1
 
-				usuario.username = username
-				password = User.objects.make_random_password().lower()
-				usuario.set_password(password)
-				usuario.save()
+			usuario.username = username
+			password = User.objects.make_random_password().lower()
+			usuario.set_password(password)
+			usuario.save()
 
-				print(usuario.username)
-				print(password)
-				usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
-				new_autor.usuario = usuario_asovac
-				new_autor.save()
+			print(usuario.username)
+			print(password)
+			usuario_asovac = Usuario_asovac.objects.get(usuario = usuario)
+			new_autor.usuario = usuario_asovac
+			new_autor.save()
 
-				rol = Rol.objects.get(id=5)
-				sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
-				usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
-				usuario_rol_in_sistema.save()
+			rol = Rol.objects.get(id=5)
+			sistema_asovac = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+			usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = sistema_asovac, usuario_asovac = usuario_asovac)
+			usuario_rol_in_sistema.save()
 
-				subarea= request.POST.getlist("subarea_select")
-				for item in subarea:
-					usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
-				usuario_asovac.save()
+			subarea= request.POST.getlist("subarea_select")
+			for item in subarea:
+				usuario_asovac.sub_area.add(Sub_area.objects.get(id=item))
+			usuario_asovac.save()
 
-				#Creación de instancia de arbitro
-				new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
-				new_arbitro.save()
-				context = {
-				'username': username,
-				'sistema_asovac': sistema_asovac.nombre,
-				'password': password,
-				}
-				msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
-				msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
-				send_mail(
-				        'Creación de usuario',         #titulo
-				        msg_plain,                          #mensaje txt
-				        config('EMAIL_HOST_USER'),          #email de envio
-				        [usuario.email],               #destinatario
-				        html_message=msg_html,              #mensaje en html
-				        )
-				return redirect('autores:authors_list')
-			except:
-				pass
+			#Creación de instancia de arbitro
+			new_arbitro = Arbitro(usuario = usuario_asovac, nombres = new_autor.nombres, apellidos = new_autor.apellidos, genero = new_autor.genero, cedula_pasaporte = new_autor.cedula_pasaporte, correo_electronico = new_autor.correo_electronico, telefono_habitacion_celular = new_autor.telefono_habitacion_celular )
+			new_arbitro.save()
+			context = {
+			'username': username,
+			'sistema_asovac': sistema_asovac.nombre,
+			'password': password,
+			}
+			msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
+			msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
+			send_mail(
+					'Creación de usuario',         #titulo
+					msg_plain,                          #mensaje txt
+					config('EMAIL_HOST_USER'),          #email de envio
+					[usuario.email],               #destinatario
+					html_message=msg_html,              #mensaje en html
+					)
+			return redirect('autores:authors_list')
 	else:
 		form = AdminCreateAutorForm()
 
@@ -644,6 +640,7 @@ def create_university_modal(request):
 			autor = serializers.json.Deserializer(request.session['autor']).next().object
 			autor.universidad = universidad
 			autor.save()
+			request.session['is_author_created'] = True  
 			data['url'] = reverse('trabajos:trabajos')
 			data['form_is_valid'] = True
 		else:
