@@ -1248,7 +1248,6 @@ def validate_access_modal(request,id):
 #---------------------------------------------------------------------------------#
 #                 Obtener lista de subareas asociadas a un area                   #
 #---------------------------------------------------------------------------------#
-@login_required
 def get_subareas(request,id):
     data= dict()
 
