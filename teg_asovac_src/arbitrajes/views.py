@@ -1181,7 +1181,7 @@ def changeStatus(request, id):
 
                 trabajo.estatus=request.POST.get("status")
                 trabajo.observaciones=request.POST.get("comment").strip()
-
+                print request.POST.get("comment").strip()
             else:
                 status=request.POST.get("status")
                 if status == "Aceptado":

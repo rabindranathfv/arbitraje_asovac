@@ -46,7 +46,6 @@
         </div>
         <div class="col-md-12">
             <textarea name="comment" id="comment" rows="4" class="form-control" style="display:none;">
-
             </textarea>
         </div>
     </div>
@@ -58,38 +57,66 @@
 </form>
 
 <script>
+    CKEDITOR.replace( 'comment',{
+        toolbar: [
+			{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+			{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+			
+		],
+    } );
+    
+    $("#cke_comment").hide();
     $(document).ready(function () {
+        $("#cke_comment").hide();
+        CKEDITOR.instances.comment.on('change', function() {
+            console.log("TEST");
+            var comment= CKEDITOR.instances.comment.getData().trim();
+            // console.log(CKEDITOR.instances.comment.getData());
+            console.log(comment);
+            if(comment == ""){
+                $(".sendGenericForm").prop('disabled', true);
+            }else{
+                $("#comment").val(comment);
+                $(".sendGenericForm").prop('disabled', false);
+            }
+        });
+
         $("#status").change(function (e) { 
             var status= $(this).val();
             console.log("El estatus es: "+status);
             if (status == "Rechazado") {
-                $("#comment").show();
+                $("#cke_comment").show();
+                // $("#comment").show();
                 $(".sendGenericForm").prop('disabled', true);
                 console.log("El estatus es rechazado");
             }else{
                 if (status == "Aceptado") {
                     console.log("El estatus es aceptado");
                     $(".sendGenericForm").prop('disabled', false);
-                    $("#comment").hide();
+                    $("#cke_comment").hide();
+                    // $("#comment").hide();
                 }else{
                     console.log("El estatus es pendiente");
-                    $("#comment").hide();
+                    $("#cke_comment").hide();
+                    // $("#comment").hide();
                     $(".sendGenericForm").prop('disabled', false);
                 }
             }
             
         });
 
-        $("#comment").change(function (e) { 
-            var comment= $(this).val().trim();
-            console.log(comment);
-            if(comment == ""){
-                $(".sendGenericForm").prop('disabled', true);
-            }else{
-                $(".sendGenericForm").prop('disabled', false);
-            }
+        // $("#comment").change(function (e) { 
+        //     var comment= $(this).val().trim();
+        //     console.log(comment);
+        //     if(comment == ""){
+        //         $(".sendGenericForm").prop('disabled', true);
+        //     }else{
+        //         $(".sendGenericForm").prop('disabled', false);
+        //     }
             
-        });
+        // });
+
+        
     });
 </script>
 
