@@ -48,7 +48,7 @@ class Trabajo(models.Model):
 	forma_presentacion = models.CharField(max_length=20,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
 	resumen = models.TextField(max_length=255)
 	documento_inscrito =  models.CharField(max_length=100,blank=True)
-	observaciones = models.TextField(max_length=255, blank = True)
+	observaciones = models.TextField(blank = True)
 	url_trabajo = models.URLField(max_length=255,blank=True)
 	version = models.CharField(max_length=20,blank=True)
 	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
