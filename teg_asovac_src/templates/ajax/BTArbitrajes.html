@@ -155,16 +155,53 @@
     </div>
     {% else %}
         {% if tipo == "newArbitraje" %}
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h3 class="modal-title" >Nuevo proceso de Arbitraje</h3>
-        </div>
-        <div class="modal-body">
-            <p>El trabajo fué asignado a un nuevo proceso de revisión</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
-        </div>
+        <form method="post" class="" data-url="{% url 'arbitrajes:nuevoArbitraje' trabajo_id %}">
+                {% csrf_token %}
+                <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" >Asignar nueva revisión</h3>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <label for="observaciones">Indique las corecciones para la nueva versión:</label>
+                        <textarea name="observaciones" id="observaciones" rows="4" class="form-control" style="display:block;">
+                        </textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                    <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                </div>
+        </form>
+        <script>
+            
+            CKEDITOR.replace( 'observaciones',{
+                toolbar: [
+                    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+                    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+                    
+                ],
+            } );
+            $(document).ready(function () {
+                
+                CKEDITOR.instances.observaciones.on('change', function() {
+                    var observaciones= CKEDITOR.instances.observaciones.getData().trim();
+                    // console.log(CKEDITOR.instances.observaciones.getData());
+                    console.log(observaciones);
+                    if(observaciones == ""){
+                        $(".sendGenericForm").prop('disabled', true);
+                    }else{
+                        $("#observaciones").val(observaciones);
+                        $(".sendGenericForm").prop('disabled', false);
+                    }
+                });
+                    
+            });
+        </script>
+
         {% else %}
             {% if tipo == "editPresentacion" %}
             <form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:editarPresentacion' trabajo_id %}">

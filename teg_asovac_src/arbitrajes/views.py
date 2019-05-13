@@ -1253,14 +1253,22 @@ def statusArbitraje(request, id):
 @login_required
 def newArbitraje(request, id):
 
-    trabajo= Trabajo.objects.get(id = id)
-    trabajo.requiere_arbitraje=True
-    trabajo.save()
-    
     response= dict()
-    response['status']= 200
+
+    if request.method == 'POST':
+        print "Metodo post"
+        # print request.POST.get("observaciones")
+        
+        trabajo= Trabajo.objects.get(id = id)
+        trabajo.requiere_arbitraje=True
+        trabajo.observaciones=request.POST.get("observaciones")
+        trabajo.save()
+
+        response['status']= 200
+        response['message']= "El trabajo ha sido asignado a una nueva revisión de manera exitosa."
     context={
         'tipo':"newArbitraje",
+        'trabajo_id':id,
     }
     response['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
     
