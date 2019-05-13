@@ -1498,7 +1498,7 @@ def asigSesion(request,id):
         trabajo.save()
         
         data['status']= 200
-        data['message']="La forma de presentación se ha cambiado de manera exitosa."
+        data['message']="La sesión fué asignada de manera exitosa."
 
     else:
 

@@ -258,15 +258,15 @@
                             <table class="table table-bordered">
                                 <thead>
                                         <th>Nombre</th>
-                                        <th>Codigo</th>
                                         <th>Fecha presentación</th>
+                                        <th>Hora inicio</th>
                                         <th>Agregar</th>
                                 </thead>
                                     {% for item in sesiones %}
                                         <tr>
                                             <td>{{item.nombre_sesion}}</td>
-                                            <td>{{item.sesion}}</td>
-                                            <td>{{item.fecha_presentacion}}</td>
+                                            <td>{{item.fecha_sesion}}</td>
+                                            <td>{{item.hora_inicio}}</td>
                                             <td class="text-center" >
                                                 <label class="contentCheck">
                                                 {% if item.id == asig %}
