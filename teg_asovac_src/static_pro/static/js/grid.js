@@ -113,6 +113,9 @@ $.ajaxSetup({
             '<a class="removeArbitro" href="javascript:void(0)" title="Eliminar">',
             '<i class="fa fa-trash"></i>',
             '</a>  ' ,
+            '<a class="adminArea" href="javascript:void(0)" title="Detalle Área">',
+            '<i class="fas fa-exchange-alt"></i>',
+            '</a>  ' ,
         ].join('');
     }
 
@@ -169,6 +172,20 @@ $.ajaxSetup({
         return [
             '<a class="Descargar" href="/media/'+row.comprobante+'" title="Descargar comprobante" download> ',
             '<i class="fas fa-file-download"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+    function operateAdminAreas(value, row, index) {
+        return [
+            '<a class="changeAreaArbitro" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fas fa-edit"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+    function operateAdminSubareas(value, row, index) {
+        return [
+            '<a class="removeSubareaArbitro" href="javascript:void(0)" title="Eliminar">',
+            '<i class="fa fa-trash"></i>',
             '</a>  ' ,
         ].join('');
     }
@@ -424,6 +441,47 @@ $.ajaxSetup({
                 }
             });
         },
+        'click .adminArea': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            location.href=route;
+        },
+        'click .removeSubareaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
+        'click .changeAreaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class");
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
         'click .selectArbitro': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
@@ -526,8 +584,8 @@ $.ajaxSetup({
                 },
                 success: function (data){
                     // console.log(data);
-                    $tabla = $("table");
-                    $tabla.bootstrapTable("refresh");
+                    // $tabla = $("table");
+                    // $tabla.bootstrapTable("refresh");
                     $('#bootstrapTableModal .modal-content').html(data.content);
                 }
             });

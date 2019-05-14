@@ -177,6 +177,11 @@ body {
 
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
+    /* test styles */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border: solid #999 1px;
+    background-color: #FFFFFF;
 }
 
 #page-content-wrapper {
@@ -221,7 +226,8 @@ body {
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #222;
-    background: #CFCFCF;
+    background: #f5f5f5;
+    /* background: #CFCFCF; */
 }
 
 .sidebar-nav li a:active,
@@ -429,12 +435,14 @@ textarea {
 #footer {
     width: 100%;
     min-height: 50px;
-    background-color: #222;
+    /* background-color: #222; */
+    background: #fff;
     z-index: 1000;
 }
 
 #footer p {
-    color: #EEE;
+    /* color: #EEE; */
+    color: #54667a;
     padding-top: 15px;
     font-family: 'Raleway';
     font-weight: 600;
@@ -563,70 +571,76 @@ input:checked + .slider:before {
   }
 
   /*---- Estilos para checkbox ----*/
-
+  
   .contentCheck {
-    /* display: block; */
-    position: relative;
-    padding-left: 35px;
-    margin-bottom: 12px;
+      /* display: block; */
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
     cursor: pointer;
     font-size: 22px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
+}
 
-  /* Hide the browser's default checkbox */
+/* Hide the browser's default checkbox */
   .contentCheck input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
   /* Create a custom checkbox */
   .checkmark {
-    position: absolute;
-    top: 0;
+      position: absolute;
+      top: -6px;
     left: 0;
     height: 25px;
     width: 25px;
     background-color: #eee;
-  }
+}
 
-  /* On mouse-over, add a grey background color */
-  .contentCheck:hover input ~ .checkmark {
+/* On mouse-over, add a grey background color */
+.contentCheck:hover input ~ .checkmark {
     background-color: #ccc;
-  }
+}
 
-  /* When the checkbox is checked, add a blue background */
-  .contentCheck input:checked ~ .checkmark {
+/* When the checkbox is checked, add a blue background */
+.contentCheck input:checked ~ .checkmark {
     background-color: #2196F3;
-  }
+}
 
-  /* Create the checkmark/indicator (hidden when not checked) */
-  .checkmark:after {
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
     content: "";
     position: absolute;
     display: none;
-  }
+}
 
-  /* Show the checkmark when checked */
-  .contentCheck input:checked ~ .checkmark:after {
+/* Show the checkmark when checked */
+.contentCheck input:checked ~ .checkmark:after {
     display: block;
   }
-
+  
   /* Style the checkmark/indicator */
   .contentCheck .checkmark:after {
-    left: 9px;
-    top: 5px;
-    width: 7px;
-    height: 13px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    transform: rotate(45deg);
-  }
+      left: 9px;
+      top: 5px;
+      width: 7px;
+      height: 13px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+
+/*---- Estilos para ckeditor ----*/
+
+#cke_comment{
+    display: none;
+}

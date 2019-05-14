@@ -34,11 +34,18 @@ urlpatterns = [
     url(r'^listArbitros$',views.list_arbitros,name='list_arbitros'),
     url(r'^listArbitrajes$',views.list_arbitrajes,name='list_arbitrajes'),
     url(r'^listTrabajosAceptados$',views.list_trabajos_aceptados,name='list_trabajos_aceptados'),
+    url(r'^listAreasArbitros/(?P<id>\d+)$',views.list_areas_arbitros,name='list_areas_arbitros'),
+    url(r'^listSubAreasArbitros/(?P<id>\d+)$',views.list_subareas_arbitros,name='list_subareas_arbitros'),
+    url(r'^getSubareas/(?P<id>\d+)$',views.getSubareas,name='getSubareas'),
 
     # CRUD Arbitros
     url(r'^arbitro/listar-arbitros/viewArbitro/(?P<id>\d+)$',views.viewArbitro,name='verArbitro'),
     url(r'^arbitro/listar-arbitros/editArbitro/(?P<id>\d+)$',views.editArbitro,name='editarArbitro'),
     url(r'^arbitro/listar-arbitros/removeArbitro/(?P<id>\d+)$',views.removeArbitro,name='eliminarArbitro'),
+    url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)$',views.adminArea,name='adminArea'),
+    url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/removeSubareaArbitro/(?P<subarea>\d+)$',views.adminRemoveSubarea,name='adminRemoveSubarea'),
+    url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/addSubareaArbitros$',views.adminAddSubareas,name='adminAddSubareas'),
+    url(r'^arbitro/listar-arbitros/adminArea/(?P<id>\d+)/changeAreaArbitro$',views.adminChangeAreas,name='adminChangeAreas'),
 
     # CRUD Arbitraje
     url(r'^estatus-trabajos/viewArbitraje/(?P<id>\d+)$',views.viewArbitraje,name='verArbitraje'),

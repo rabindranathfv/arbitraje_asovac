@@ -527,6 +527,55 @@ var SaveAñadirPagoForm= function(){
 
     };
 
+    // Para enviar el id de las subareas seleccionadas para un arbitro 
+    var sendSubareas= function(){
+        // console.log("metodo para enviar");
+        var form= $(this).parent().parent();
+        var subareas=[];
+        var datos=[];
+        $("input:checkbox:checked").each(function () {
+            if($(this).val() == "on"){
+                // console.log("Subarea ID: "+$(this).attr("id"));
+                // arbitros.push({"name": "id", "value": $(this).attr("id")});
+                subareas.push($(this).attr("id"));
+            }
+        });
+
+        // console.log(subareas);
+        datos.push({"name": "id", "value": subareas});
+        // console.log(datos,length == "");
+        if (subareas.length != ""){
+
+            $.ajax({
+                url: form.attr('data-url'),
+                data:datos,
+                type: form.attr('method'),
+                dataType: 'json',
+    
+                success: function(data){
+                    // console.log(data);
+                    if(data.status == 200 ){
+                        // console.log('actualizacion exitosa')
+                        $('#bootstrapTableModal .modal-body').html(data.message);
+                        $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                        $('#modal-user').modal('hide');
+                        $('#table').bootstrapTable('refresh');
+                        if(data.message.search("subáreas") > 0 ){
+                            $('#table2').bootstrapTable('refresh');
+                        }
+                    }else{
+                        // console.log('error en la actualizacion')
+                        $('#bootstrapTableModal .modal-body').html(data.message)
+                    }
+                }
+            });
+        }else{
+            $('#bootstrapTableModal .modal-body').html("El árbitro debe tener almenos 1 subárea seleccionada");
+            $('#bootstrapTableModal .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+        }
+
+    };
+
     // Para enviar el id de los arbitros seleccionados para un trabajo
     var modalSelectArbitro= function(){
         console.log("metodo para enviar");
@@ -722,6 +771,7 @@ var SaveAñadirPagoForm= function(){
     // CRUD Árbitros
     $('#bootstrapTableModal').on('submit','.editarArbitro',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
+    $('#bootstrapTableModal').on('click','.adminAddSubareas',sendSubareas);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
     //CRUD Sesiones
@@ -757,5 +807,26 @@ var SaveAñadirPagoForm= function(){
         
     });
 
-
+    // Para listar subareas del arbitro seleccionado
+    $("#addSubarea").click(function (e) { 
+        console.log("Para validar agregar subareas");
+        
+        var form= $(this);
+        console.log(form.attr('data-url'));
+        $.ajax({
+            url: form.attr('data-url'),
+            data: form.serialize(),
+            type: form.attr('method'),
+            dataType: 'json',
+            beforeSend: function(){
+                $('#bootstrapTableModal').modal('show');  
+            },
+            success: function (data){
+                // console.log(data);
+                $('#bootstrapTableModal .modal-content').html(data.content);
+            }
+        });
+        
+    });
+    
 });
