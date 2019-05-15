@@ -751,7 +751,7 @@ def state_arbitration(request, arbitraje_id):
             state = form.save()
             #Codigo para enviar correo electronico
             if state.estado_arbitraje == 8:
-                autores_principal_list = Autores_trabajos.objects.filter(es_autor_principal = True, pagado = True)
+                autores_principal_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_autor_principal = True, pagado = True)
                 for autor_trabajo_principal in autores_principal_list:  
                     fecha = date.today()
                     autores_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo_principal.trabajo)
