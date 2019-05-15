@@ -66,7 +66,9 @@ def trabajos(request):
         if form.is_valid() and new_subarea != "":
             new_trabajo = form.save()
             subarea_to_assign = Sub_area.objects.get(id = new_subarea)
+            codigo = subarea_to_assign.codigo + '-' + str(new_trabajo.id)
             new_trabajo.subareas.add(subarea_to_assign)
+            new_trabajo.codigo = codigo
             new_trabajo.save()
 
             #Código para crear una instancia de Autores_trabajos
@@ -1221,7 +1223,8 @@ def add_new_version_to_job(request, last_version_trabajo_id):
             job_new_version = form.save(commit = False)
             job_new_version.confirmacion_pago = "Aceptado"
             job_new_version.save()
-            subarea_to_assign = trabajo.subareas.first().id
+            subarea_to_assign = trabajo.subareas.first()
+            job_new_version.codigo = trabajo.codigo
             job_new_version.subareas.add(subarea_to_assign)
             
             #Se coloca el padre a la nueva versión
@@ -1259,4 +1262,17 @@ def add_new_version_to_job(request, last_version_trabajo_id):
         'form':form,
     }
     data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
+    return JsonResponse(data)
+
+
+
+@login_required
+def view_referee_observation(request, trabajo_id):
+    data = dict()
+    trabajo = get_object_or_404(Trabajo, id = trabajo_id) 
+    
+    context = {
+        'trabajo': trabajo,
+    }
+    data['html_form'] = render_to_string('ajax/referee_job_observations.html', context, request=request)
     return JsonResponse(data)

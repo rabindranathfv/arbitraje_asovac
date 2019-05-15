@@ -664,6 +664,10 @@ var SaveAñadirPagoForm= function(){
     // Delete Job
     $('#job-list').on('click','.show-form-delete',ShowForm);
 
+    //Show referee observations
+    $('#job-list').on('click','.show-referee-observations',ShowForm);
+    
+
     // Añadir coautores al trabajo
     $('#job-list').on('click','.show-form-add-author',ShowForm);
     $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);

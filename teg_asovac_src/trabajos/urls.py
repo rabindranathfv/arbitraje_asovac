@@ -38,4 +38,6 @@ urlpatterns = [
     url(r'^mostrar/(?P<id>\d+)/areas$',views.show_areas_modal,name='mostrar_areas'),
     url(r'^agregar-autor/(?P<autor_trabajo_id>\d+)/$',views.add_author_to_job , name='add_author_to_job'),
     url(r'^crear-nueva-version/(?P<last_version_trabajo_id>\d+)/$',views.add_new_version_to_job , name='add_new_version_to_job'),
+    url(r'^resultados/arbitraje/(?P<trabajo_id>\d+)/$',views.view_referee_observation , name='view_referee_observation'),    
+        
 ]
