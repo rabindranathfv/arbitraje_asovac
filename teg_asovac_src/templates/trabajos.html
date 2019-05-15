@@ -25,11 +25,11 @@
 
                         <thead>
                             <tr>
-                                <th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
+                                <th class="col-sm-1" data-sortable="true">Estatus</th>
                                 <th class="col-sm-2" data-sortable="true">Área</th>
                                 <th class="col-sm-2" data-sortable="true">Subárea</th>
-                                <th class="col-sm-2">Autor(es)</th>
-                                <th class="col-sm-1" data-sortable="true">Estatus</th>
+                                <th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
+                                <th class="col-sm-2">Autor(es)</th>  
                                 <th class="col-sm-2" data-switchable="false">Acciones</th>
                             </tr>
                         </thead>
@@ -37,24 +37,25 @@
 
                             {% for trabajo, autor_list in job_data %}
                             <tr>
-                                <td class="text-center">{{trabajo.trabajo.titulo_espanol}}</td>
+                                <td class="text-center">
+                                    {% if trabajo.trabajo.estatus == "Pendiente" %}
+                                        <span class="label label-warning">Pendiente</span>
+                                    {% elif trabajo.trabajo.estatus == "Aceptado" %}
+                                        <span class="label label-success">Aceptado</span>
+                                    {% elif trabajo.trabajo.estatus == "Rechazado" %}
+                                        <span class="label label-danger">Rechazado</span>
+                                    {% endif %}
+                                </td>
                                 <td class="text-center">{{trabajo.trabajo.subareas.first.area}}</td>
                                 <td class="text-center">{{trabajo.trabajo.subareas.first.nombre}}</td>
+                                <td class="text-center">{{trabajo.trabajo.titulo_espanol}}</td>                                
                                 <td class="text-center">
                                     {% for autor in autor_list %}
                                         {{autor.autor.nombres}} {{autor.autor.apellidos}}
                                         </br>
                                     {% endfor %}
                                 </td>
-                                <td class="text-center">
-                                    {% if trabajo.trabajo.estatus == "Pendiente" %}
-                  										<span class="label label-warning lb-md center-block">Pendiente</span>
-                  									{% elif trabajo.trabajo.estatus == "Aceptado" %}
-                  										<span class="label label-success lb-md center-block">Aceptado</span>
-                  									{% elif trabajo.trabajo.estatus == "Rechazado" %}
-                  										<span class="label label-danger lb-md center-block">Rechazado</span>
-                  									{% endif %}
-                                </td>
+                                
                                 <td class="text-center">
                                     {% if trabajo.pagado == False and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
 										<a class="show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
