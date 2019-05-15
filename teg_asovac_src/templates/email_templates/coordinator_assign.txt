@@ -12,6 +12,6 @@ Capacidad: {{ sesion.capacidad }}
 Requiere vídeo beam
 {% endif %}
 {% if sesion.portatil %}
-Requiere pórtatil
+Requiere portátil
 {% endif %}
 Observaciones: {{ sesion.observaciones }}

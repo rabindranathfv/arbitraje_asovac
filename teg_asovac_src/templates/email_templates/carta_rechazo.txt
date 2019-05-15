@@ -1,0 +1,24 @@
+
+Caracas, {{ fecha }}
+{% if autor_trabajo_principal.autor.genero == 0 %}    
+Estimado Investigador:
+{% else %}
+Estimada Investigadora:
+{% endif %}
+
+{{ autor_trabajo_principal.autor.nombres }} {{autor_trabajo_principal.autor.apellidos}}
+
+Reciba un cordial saludo del Comité Organizador de la Convención Anual de AsoVAC, en ocasión de informarle que el resumen titulado:
+{{ autor_principal.trabajo.titulo_espanol }}
+Autores:
+
+{% for autor_trabajo in autores_list %}
+    {{ autor_trabajo.autor.nombres }} {{ autor_trabajo_principal.autor.apellidos}}{% if autor_trabajo != autor_list.last %}, {% endif %}
+{% endfor %}
+
+Identificado con el código {{autor_trabajo.trabajo.subarea.first.codigo}}-{{autor_trabajo.trabajo.id}} ha sido debidamente arbitrado y los miembros del jurado lo han rechazado para su presentación en la Convención Anual. Por problemas en el formato del correo, las razones por la cuál fue rechazado el trabajo las puede revisar en nuestro portal.
+
+Invitamos coordialmente a los autores a complementar el trabajo realizando, mejorando y ampliando su resumen, a fin de presentarlo a evaluación en otro evento o en la próxima Convención Anual AsoVAC, divulgando así el trabajo realizado y su aporte a la comunidad.
+
+Saludos cordiales,
+Comité Organizador
