@@ -1,0 +1,33 @@
+
+Caracas, {{ fecha }}
+Estimado Investigador:
+
+{{ autor_trabajo_principal.autor.nombres }} {{autor_trabajo_principal.autor.apellidos}}
+
+Reciba un cordial saludo del Comité Organizador de la Convención Anual de AsoVAC, en ocasión de informarle que el resumen titulado:
+{{ autor_principal.trabajo.titulo_espanol }}
+Autores:
+
+{% for autor_trabajo in autores_list %}
+    {{ autor_trabajo.autor.nombres }} {{ autor_trabajo_principal.autor.apellidos}}{% if autor_trabajo != autor_list.last %}, {% endif %}
+{% endfor %}
+Identificado con el código TAL ha sido debidamente arbitrado y aceptado para su presentación en la Convención Anual, en la sesión que le indicamos a continuación:
+Nombre de la sesión: {{ autor_principal.trabajo.sesion.nombre_sesion }}
+
+Lugar: {{ sesion.lugar }}
+
+Fecha de la sesión: {{ autor_principal.trabajo.sesion.fecha_sesion }}
+
+Hora de inicio: {{ autor_principal.trabajo.sesion.hora_inicio }}
+
+Hora de fin: {{ autor_principal.trabajo.sesion.hora_fin }}
+
+Capacidad: {{ autor_principal.trabajo.sesion.capacidad }}
+{% if autor_principal.trabajo.sesion.video_beam %}    
+    Requiere vídeo beam
+{% endif %}
+{% if autor_principal.trabajo.sesion.portatil %}
+    Requiere pórtatil
+{% endif %}
+Saludos cordiales,
+Comité Organizador

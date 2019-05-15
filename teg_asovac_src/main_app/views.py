@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import date
 import random, string,xlrd,os,sys,xlwt
 from openpyxl import Workbook
 from django.contrib.auth.hashers import make_password
@@ -25,6 +26,10 @@ from django.utils.crypto import get_random_string
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from autores.models import Autores_trabajos
+from sesiones.models import Sesion
+from trabajos.models import Trabajo
+
 from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
 
 from autores.models import Autor, Universidad
@@ -743,7 +748,31 @@ def state_arbitration(request, arbitraje_id):
     form = ArbitrajeStateChangeForm(request.POST or None, instance = arbitraje)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            state = form.save()
+            #Codigo para enviar correo electronico
+            if state.estado_arbitraje == 8:
+                autores_principal_list = Autores_trabajos.objects.filter(es_autor_principal = True, pagado = True)
+                for autor_trabajo_principal in autores_principal_list:  
+                    titulo = 'Carta de aceptación'
+                    fecha = date.today()
+                    autores_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo_principal.trabajo)
+                    print autor_trabajo_principal.trabajo
+                    context = {
+                        'autor_trabajo_principal': autor_trabajo_principal,
+                        'autores_list': autores_list,
+                        'fecha': fecha
+                        }
+                    msg_plain = render_to_string('../templates/email_templates/carta_aceptacion.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/carta_aceptacion.html', context)
+
+                    send_mail(
+                            titulo,         #titulo
+                            msg_plain,                          #mensaje txt
+                            config('EMAIL_HOST_USER'),          #email de envio
+                            [autor_trabajo_principal.autor.correo_electronico],               #destinatario
+                            html_message=msg_html,              #mensaje en html
+                            )
+                
         else:
             print (form.errors)
         #estado = request.POST['estadoArbitraje']
