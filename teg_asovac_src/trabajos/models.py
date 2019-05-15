@@ -42,6 +42,7 @@ class Trabajo(models.Model):
 	sesion = models.ForeignKey('sesiones.Sesion', null=True, blank = True)
 
 	estatus = models.CharField(max_length=20, default="Pendiente")
+	codigo = models.CharField(max_length=20, blank = True)
 	titulo_espanol = models.CharField(max_length=100)
 	titulo_ingles = models.CharField(max_length=100, blank = True)
 	palabras_clave = models.CharField(max_length=60, blank = True)
