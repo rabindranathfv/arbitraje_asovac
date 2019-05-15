@@ -55,28 +55,18 @@ Sistema ASOVAC: Asignación como {{ cargo }}
     <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
         <!-- Email text goes here-->
         <p style="text-align: justify;">
-            Identificado con el código TAL ha sido debidamente arbitrado y <strong>aceptado para su presentación</strong> en la Convención Anual, en la sesión que le indicamos a continuación:
+            Identificado con el código TAL ha sido debidamente arbitrado y los miembros del jurado lo han <strong><u>rechazado</u> para su presentación</strong> en la Convención Anual. Las razones del rechazo fueron las siguientes:
             <br>
             <br>
-            Nombre de la sesión: <strong>{{ autor_trabajo_principal.trabajo.sesion.nombre_sesion }}</strong>
-            <br>
-            Lugar: <strong>{{ autor_trabajo_principal.trabajo.sesion.lugar }}</strong>
-            <br>
-            Fecha de la sesión: <strong>{{ autor_trabajo_principal.trabajo.sesion.fecha_sesion }}</strong>
-            <br>
-            Hora de inicio: <strong>{{ autor_trabajo_principal.trabajo.sesion.hora_inicio }}</strong>
-            <br>
-            Hora de fin: <strong>{{ autor_trabajo_principal.trabajo.sesion.hora_fin }}</strong>
-            <br>
-            Capacidad: <strong>{{ autor_trabajo_principal.trabajo.sesion.capacidad }}</strong>
-            <br>
-            {% if autor_trabajo_principal.trabajo.sesion.video_beam %}    
-                <strong>Requiere vídeo beam</strong>
-            {% endif %}
-            <br>
-            {% if autor_trabajo_principal.trabajo.sesion.portatil %}
-                <strong>Requiere portátil</strong>
-            {% endif %}
+            {{ autor_trabajo_principal.trabajo.observaciones | safe }}
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Invitamos coordialmente a los autores a complementar el trabajo realizando, mejorando y ampliando su resumen, a fin de presentarlo a evaluación en otro evento o en la próxima Convención Anual AsoVAC, divulgando así el trabajo realizado y su aporte a la comunidad.
         </p>
     </td>
 </tr>

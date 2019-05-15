@@ -753,18 +753,22 @@ def state_arbitration(request, arbitraje_id):
             if state.estado_arbitraje == 8:
                 autores_principal_list = Autores_trabajos.objects.filter(es_autor_principal = True, pagado = True)
                 for autor_trabajo_principal in autores_principal_list:  
-                    titulo = 'Carta de aceptación'
                     fecha = date.today()
                     autores_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo_principal.trabajo)
-                    print autor_trabajo_principal.trabajo
                     context = {
                         'autor_trabajo_principal': autor_trabajo_principal,
                         'autores_list': autores_list,
                         'fecha': fecha
                         }
-                    msg_plain = render_to_string('../templates/email_templates/carta_aceptacion.txt', context)
-                    msg_html = render_to_string('../templates/email_templates/carta_aceptacion.html', context)
-
+                    if autor_trabajo_principal.trabajo.estatus == "Aceptado":
+                        titulo = 'Carta de aceptación'
+                        msg_plain = render_to_string('../templates/email_templates/carta_aceptacion.txt', context)
+                        msg_html = render_to_string('../templates/email_templates/carta_aceptacion.html', context)
+                    else:
+                        titulo = 'Carta de rechazo'
+                        msg_plain = render_to_string('../templates/email_templates/carta_rechazo.txt', context)
+                        msg_html = render_to_string('../templates/email_templates/carta_rechazo.html', context)
+                    
                     send_mail(
                             titulo,         #titulo
                             msg_plain,                          #mensaje txt
