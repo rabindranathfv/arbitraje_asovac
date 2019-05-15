@@ -78,7 +78,11 @@
                                         </a>
 
                                     {% endif %}
-
+                                    {% if trabajo.trabajo.observaciones %}
+                                        <a class="show-referee-observations" data-url="{% url 'trabajos:view_referee_observation' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
+                                            <i class="fas fa-flag"></i>
+                                        </a>
+                                    {% endif %}
                                     <a href="{% url 'autores:postular_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Pagos de postulación">
                                         <i class="far fa-newspaper"></i>
                                     </a>

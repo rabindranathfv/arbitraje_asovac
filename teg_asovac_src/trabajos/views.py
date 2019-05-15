@@ -1260,3 +1260,16 @@ def add_new_version_to_job(request, last_version_trabajo_id):
     }
     data['html_form'] = render_to_string('ajax/job_create_new_version_modal.html', context, request=request)
     return JsonResponse(data)
+
+
+
+@login_required
+def view_referee_observation(request, trabajo_id):
+    data = dict()
+    trabajo = get_object_or_404(Trabajo, id = trabajo_id) 
+    
+    context = {
+        'trabajo': trabajo,
+    }
+    data['html_form'] = render_to_string('ajax/referee_job_observations.html', context, request=request)
+    return JsonResponse(data)
