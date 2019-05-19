@@ -13,14 +13,14 @@
                     <div class="container-fluid">
                         <div class="row middle-content">
                             <div class="col-sm-6">
-                                <canvas id="trabajos" height="150"></canvas>
+                                <canvas id="trabajos" height="200"></canvas>
                                 </br>
-                                <canvas id="autores-nivel-instruccion" height="150"></canvas>
+                                <canvas id="autores-nivel-instruccion" height="200"></canvas>
                             </div>
                             <div class="col-sm-6">
-                                <canvas id="arbitros-invitaciones" height="150"></canvas>
+                                <canvas id="arbitros-invitaciones" height="200"></canvas>
                                 </br>
-                                <canvas id="chart" height="150"></canvas>
+                                <canvas id="areas" height="200"></canvas>
                             </div>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                 setChartTrabajos(data.trabajos)
                 setChartArbitrosInvitaciones(data.arbitros)
                 setChartAutoresNivelInstruccion(data.autores)
-                setChart()
+                setChartAreas(data.area)
             },
             error: function(error_data){
                 console.log("Error:")
@@ -87,9 +87,9 @@
                         label: 'Información de arbitrajes',
                         data: arbitrosData.data,
                         backgroundColor: [
-                            ,
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
+                            'gray',
+                            'blue',
+                            'yellow',
                         ],
                         borderColor: [
                             ,
@@ -116,7 +116,7 @@
         function setChartAutoresNivelInstruccion(autoresData){
             var ctx = document.getElementById('autores-nivel-instruccion').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
                     labels: autoresData.labels,
                     datasets: [{
@@ -146,51 +146,27 @@
 
 
 
-        function setChart(){
-            var ctx = document.getElementById('chart').getContext('2d');
+        function setChartAreas(areasData){
+            var ctx = document.getElementById('areas').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["hola","mundo"],
+                    labels: areasData.labels,
                     datasets: [{
-                        label: 'Información de arbitrajes',
-                        data: [2,4],
-                        backgroundColor: [
-                            'rgba(255, 150, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
+                        label: 'Trabajos Aceptados',
+                        data: areasData.data_aceptados,
+                        backgroundColor: 'blue',
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
                         ],
                         borderWidth: 1
                     },
                     {
-                        label: 'Inform',
-                        data: [2,4],
-                        backgroundColor: [
-                            'rgba(255, 150, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
+                        label: 'Trabajos Rechazados',
+                        data: areasData.data_rechazados,
+                        backgroundColor: 'red',
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
                         ],
                         borderWidth: 1
                     },

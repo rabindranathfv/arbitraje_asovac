@@ -32,20 +32,57 @@ class ChartData(APIView):
         default = [us_count, 10,13,7,1,3]
 
         arbitraje_id = request.session['arbitraje_id']
-
+        #El siguiente codigo es para obtener los datos necesarios para la grafica de resultados de trabajos
         trabajos_aceptados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Aceptado").count()
         trabajos_rechazados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Rechazado").count()
         trabajos_pendientes = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Pendiente").count()
         
+        #El siguiente codigo es para obtener los datos necesarios para la grafica de datos de arbitrajes y datos de area
         total_arbitros = Usuario_rol_in_sistema.objects.filter(rol = 4, sistema_asovac = arbitraje_id, status = True).count()
         autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True)
         invitaciones_aceptadas = 0
         invitaciones_pendientes = 0
+        
+        sociedad_fisica_aceptados = 0
+        sociedad_fisica_rechazados = 0
+        ciencias_sociales_aceptados = 0
+        ciencias_sociales_rechazados = 0
+        tecnologia_aceptados = 0
+        tecnologia_rechazados = 0
+        ciencias_exactas_aceptados = 0
+        ciencias_exactas_rechazados = 0
+        biociencias_aceptados = 0
+        biociencias_rechazados = 0
         for autor_trabajo in autores_trabajos:
             invitaciones_aceptadas += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = True).count()
             invitaciones_pendientes += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = False, fin_arbitraje = False).count()
-        
-        
+            if autor_trabajo.trabajo.subareas.first().area.id == 1:
+                if autor_trabajo.trabajo.estatus == "Aceptado":
+                    biociencias_aceptados += 1
+                else:
+                    biociencias_rechazados += 1
+            elif autor_trabajo.trabajo.subareas.first().area.id == 2:
+                if autor_trabajo.trabajo.estatus == "Aceptado":
+                    ciencias_exactas_aceptados += 1
+                else: 
+                    ciencias_exactas_rechazados += 1
+            elif autor_trabajo.trabajo.subareas.first().area.id == 3:
+                if autor_trabajo.trabajo.estatus == "Aceptado":
+                    tecnologia_aceptados += 1
+                else: 
+                    tecnologia_rechazados += 1
+            elif autor_trabajo.trabajo.subareas.first().area.id == 4:
+                if autor_trabajo.trabajo.estatus == "Aceptado":
+                    ciencias_sociales_aceptados += 1
+                else:
+                    ciencias_sociales_rechazados += 1
+            elif autor_trabajo.trabajo.subareas.first().area.id == 5:
+                if autor_trabajo.trabajo.estatus == "Aceptado":
+                    sociedad_fisica_aceptados += 1
+                else:
+                    sociedad_fisica_rechazados += 1
+
+        #El siguiente codigo es para obtener los datos necesarios para la grafica de niveles de intruccion de los autores
         usuarios_autor = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id, status = True)
         educacion_primaria = 0
         educacion_secundaria = 0
@@ -83,6 +120,11 @@ class ChartData(APIView):
             "autores": {
                 "labels": ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado'],
                 "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
+            },
+            "area":{
+                "labels": ['Biociencias', 'Ciencias Exactas', 'Tecnología', 'Ciencias Sociales', 'Congreso de la Sociedad Venezolana de Física'],
+                "data_aceptados": [biociencias_aceptados, ciencias_exactas_aceptados, tecnologia_aceptados, ciencias_sociales_aceptados, sociedad_fisica_aceptados],
+                "data_rechazados": [biociencias_rechazados, ciencias_exactas_rechazados, tecnologia_rechazados, ciencias_sociales_rechazados, sociedad_fisica_rechazados]
             },
         "labels": labels,
         "default": default,
