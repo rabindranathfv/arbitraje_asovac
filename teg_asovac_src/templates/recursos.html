@@ -15,10 +15,12 @@
                             <div class="col-sm-6">
                                 <canvas id="trabajos" height="150"></canvas>
                                 </br>
-                                
+                                <canvas id="autores-nivel-instruccion" height="150"></canvas>
                             </div>
                             <div class="col-sm-6">
                                 <canvas id="arbitros-invitaciones" height="150"></canvas>
+                                </br>
+                                <canvas id="chart" height="150"></canvas>
                             </div>
                         </div>
                     </div>
@@ -43,6 +45,8 @@
                 defaultData = data.default
                 setChartTrabajos(data.trabajos)
                 setChartArbitrosInvitaciones(data.arbitros)
+                setChartAutoresNivelInstruccion(data.autores)
+                setChart()
             },
             error: function(error_data){
                 console.log("Error:")
@@ -52,15 +56,15 @@
         function setChartTrabajos(trabajosData){
             var ctx = document.getElementById('trabajos').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
                     labels: trabajosData.labels,
                     datasets: [{
                         data: trabajosData.data,
                         backgroundColor: [
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
+                            'blue',
+                            'red',
+                            'yellow',
                         ],
                         borderColor: [
                             'rgba(75, 192, 192, 1)',
@@ -97,6 +101,9 @@
                 },
                 options: {
                     scales: {
+                        xAxes: [{
+                            barPercentage: 0.35,
+                        }],
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true
@@ -106,15 +113,48 @@
                 }
             });
         }
-            function setChart(){
+        function setChartAutoresNivelInstruccion(autoresData){
+            var ctx = document.getElementById('autores-nivel-instruccion').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: autoresData.labels,
+                    datasets: [{
+                        label: 'Nivel de instrucción',
+                        data: autoresData.data,
+                        backgroundColor: [
+                            'green',
+                            'red',
+                            'yellow',
+                            'blue',
+                            'orange',
+                            'gray'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+            });
+        }
+
+
+
+        function setChart(){
             var ctx = document.getElementById('chart').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: arbitrosData.labels,
+                    labels: ["hola","mundo"],
                     datasets: [{
                         label: 'Información de arbitrajes',
-                        data: arbitrosData.data,
+                        data: [2,4],
                         backgroundColor: [
                             'rgba(255, 150, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -132,7 +172,30 @@
                             'rgba(255, 159, 64, 1)'
                         ],
                         borderWidth: 1
-                    }]
+                    },
+                    {
+                        label: 'Inform',
+                        data: [2,4],
+                        backgroundColor: [
+                            'rgba(255, 150, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    },
+                    
+                    ]
                 },
                 options: {
                     scales: {

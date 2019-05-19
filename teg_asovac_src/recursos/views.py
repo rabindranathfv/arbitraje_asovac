@@ -19,7 +19,7 @@ from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
 from arbitrajes.models import Arbitraje
-from autores.models import Autores_trabajos
+from autores.models import Autores_trabajos, Autor
 from main_app.models import Usuario_rol_in_sistema
 from trabajos.models import Trabajo, Trabajo_arbitro
 class ChartData(APIView):
@@ -38,13 +38,39 @@ class ChartData(APIView):
         trabajos_pendientes = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Pendiente").count()
         
         total_arbitros = Usuario_rol_in_sistema.objects.filter(rol = 4, sistema_asovac = arbitraje_id, status = True).count()
-
         autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True)
         invitaciones_aceptadas = 0
         invitaciones_pendientes = 0
         for autor_trabajo in autores_trabajos:
             invitaciones_aceptadas += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = True).count()
             invitaciones_pendientes += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = False, fin_arbitraje = False).count()
+        
+        
+        usuarios_autor = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id, status = True)
+        educacion_primaria = 0
+        educacion_secundaria = 0
+        bachillerato = 0
+        tecnico = 0
+        universidad = 0
+        postgrado = 0
+        for usuario_autor in usuarios_autor:
+            try:
+                autor = Autor.objects.get(usuario = usuario_autor.usuario_asovac)
+                if autor.nivel_instruccion == "Educación Básica Primaria":
+                    educacion_primaria += 1
+                elif autor.nivel_instruccion == "Educación Básica Secundaria":
+                    educacion_secundaria += 1
+                elif autor.nivel_instruccion == "Bachillerato/Educación Media":
+                    bachillerato += 1
+                elif autor.nivel_instruccion == "Educación Técnico/Profesional":
+                    tecnico += 1
+                elif autor.nivel_instruccion == "Universidad":
+                    universidad += 1
+                else:
+                    postgrado += 1
+            except: 
+                pass
+
         data = {
             "trabajos": {
                 "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
@@ -53,6 +79,10 @@ class ChartData(APIView):
             "arbitros": {
                 "labels": ['Total arbitros', 'Invitaciones de arbitraje aceptadas', 'Invitaciones de arbitraje pendientes'],
                 "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
+            },
+            "autores": {
+                "labels": ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado'],
+                "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
             },
         "labels": labels,
         "default": default,
