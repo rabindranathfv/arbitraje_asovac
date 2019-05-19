@@ -2,26 +2,67 @@
 {% block inner_content %}
 <div class="container-fluid">
 	<div class="row">
-        <div class="jumbotron RLcard col-sm-8 col-sm-offset-2">
+        <div class="jumbotron RLcard col-sm-offset-1 col-sm-5">
             <div class="panel panel-default">  
                 <div class="panel-heading">
                     <h4>
-                        Resultados
+                        Resultados de trabajos
                     </h4>
                 </div>
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
-                            <div class="col-sm-6">
-                                <canvas id="trabajos" height="200"></canvas>
-                                </br>
-                                <canvas id="autores-nivel-instruccion" height="200"></canvas>
-                            </div>
-                            <div class="col-sm-6">
-                                <canvas id="arbitros-invitaciones" height="200"></canvas>
-                                </br>
-                                <canvas id="areas" height="200"></canvas>
-                            </div>
+                            <canvas id="trabajos"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron RLcard col-sm-5">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Autores según nivel de instrucción
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="autores-nivel-instruccion"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-1 col-sm-5">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados de arbitrajes
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="arbitros-invitaciones"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron RLcard col-sm-5">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados según áreas
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="areas"></canvas>
                         </div>
                     </div>
                 </div>

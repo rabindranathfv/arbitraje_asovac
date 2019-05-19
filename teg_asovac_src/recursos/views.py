@@ -114,7 +114,7 @@ class ChartData(APIView):
                 "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
             },
             "arbitros": {
-                "labels": ['Total arbitros', 'Invitaciones de arbitraje aceptadas', 'Invitaciones de arbitraje pendientes'],
+                "labels": ['Total arbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
                 "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
             },
             "autores": {
@@ -122,7 +122,7 @@ class ChartData(APIView):
                 "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
             },
             "area":{
-                "labels": ['Biociencias', 'Ciencias Exactas', 'Tecnología', 'Ciencias Sociales', 'Congreso de la Sociedad Venezolana de Física'],
+                "labels": ['Biociencias', 'Ciencias Exactas', 'Tecnología', 'Ciencias Sociales', 'CSVF'],
                 "data_aceptados": [biociencias_aceptados, ciencias_exactas_aceptados, tecnologia_aceptados, ciencias_sociales_aceptados, sociedad_fisica_aceptados],
                 "data_rechazados": [biociencias_rechazados, ciencias_exactas_rechazados, tecnologia_rechazados, ciencias_sociales_rechazados, sociedad_fisica_rechazados]
             },
