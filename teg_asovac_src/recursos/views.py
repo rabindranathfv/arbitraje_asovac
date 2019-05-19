@@ -18,7 +18,9 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
-
+from arbitrajes.models import Arbitraje
+from autores.models import Autores_trabajos
+from trabajos.models import Trabajo
 class ChartData(APIView):
     authentication_classes = ()
     permission_classes = ()
@@ -27,7 +29,17 @@ class ChartData(APIView):
         us_count = User.objects.all().count()
         labels = ['Users', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
         default = [us_count, 10,13,7,1,3]
+
+        arbitraje_id = request.session['arbitraje_id']
+
+        trabajos_aceptados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True, trabajo__estatus = "Aceptado").count()
+        trabajos_rechazados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True,trabajo__estatus = "Rechazado").count()
+        trabajos_pendientes = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True,trabajo__estatus = "Pendiente").count()
         data = {
+            "trabajos": {
+                "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
+                "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
+            },
         "labels": labels,
         "default": default,
         }   

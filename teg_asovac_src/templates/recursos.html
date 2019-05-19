@@ -13,7 +13,8 @@
                     <div class="container-fluid">
                         <div class="row middle-content">
                             <div class="col-sm-6">
-                                <canvas id="myChart" height="200"></canvas>
+                                <canvas id="trabajos" height="150"></canvas>
+                                <canvas id="myChart2" height="150"></canvas>
                             </div>
                         </div>
                     </div>
@@ -36,18 +37,52 @@
             success: function(data){
                 labels = data.labels
                 defaultData = data.default
-                setChart()
-                
+                setChart(data.trabajos)
+                setChart2()
             },
             error: function(error_data){
                 console.log("Error:")
                 console.log(error_data)
             }
         })
-        function setChart(){
-            var ctx = document.getElementById('myChart').getContext('2d');
+        function setChart(trabajosData){
+            var ctx = document.getElementById('trabajos').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'line',
+                type: 'pie',
+                data: {
+                    labels: trabajosData.labels,
+                    datasets: [{
+                        label: '# of Votes',
+                        data: trabajosData.data,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+        function setChart2(){
+            var ctx = document.getElementById('myChart2').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'horizontalBar',
                 data: {
                     labels: labels,
                     datasets: [{
