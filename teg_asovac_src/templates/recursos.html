@@ -14,7 +14,11 @@
                         <div class="row middle-content">
                             <div class="col-sm-6">
                                 <canvas id="trabajos" height="150"></canvas>
-                                <canvas id="myChart2" height="150"></canvas>
+                                </br>
+                                
+                            </div>
+                            <div class="col-sm-6">
+                                <canvas id="arbitros-invitaciones" height="150"></canvas>
                             </div>
                         </div>
                     </div>
@@ -37,32 +41,56 @@
             success: function(data){
                 labels = data.labels
                 defaultData = data.default
-                setChart(data.trabajos)
-                setChart2()
+                setChartTrabajos(data.trabajos)
+                setChartArbitrosInvitaciones(data.arbitros)
             },
             error: function(error_data){
                 console.log("Error:")
                 console.log(error_data)
             }
         })
-        function setChart(trabajosData){
+        function setChartTrabajos(trabajosData){
             var ctx = document.getElementById('trabajos').getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: trabajosData.labels,
                     datasets: [{
-                        label: '# of Votes',
                         data: trabajosData.data,
                         backgroundColor: [
                             'rgba(75, 192, 192, 0.2)',
                             'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
                         ],
                         borderColor: [
                             'rgba(75, 192, 192, 1)',
                             'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+            });
+        }
+
+        function setChartArbitrosInvitaciones(arbitrosData){
+            var ctx = document.getElementById('arbitros-invitaciones').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: arbitrosData.labels,
+                    datasets: [{
+                        label: 'Información de arbitrajes',
+                        data: arbitrosData.data,
+                        backgroundColor: [
+                            ,
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                        ],
+                        borderColor: [
+                            ,
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 206, 86, 1)',
                         ],
                         borderWidth: 1
                     }]
@@ -78,18 +106,17 @@
                 }
             });
         }
-
-        function setChart2(){
-            var ctx = document.getElementById('myChart2').getContext('2d');
+            function setChart(){
+            var ctx = document.getElementById('chart').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'horizontalBar',
+                type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: arbitrosData.labels,
                     datasets: [{
-                        label: '# of Votes',
-                        data: defaultData,
+                        label: 'Información de arbitrajes',
+                        data: arbitrosData.data,
                         backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(255, 150, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
                             'rgba(255, 206, 86, 0.2)',
                             'rgba(75, 192, 192, 0.2)',

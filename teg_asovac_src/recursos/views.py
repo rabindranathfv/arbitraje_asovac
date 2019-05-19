@@ -20,7 +20,8 @@ from django.contrib.auth.models import User
 
 from arbitrajes.models import Arbitraje
 from autores.models import Autores_trabajos
-from trabajos.models import Trabajo
+from main_app.models import Usuario_rol_in_sistema
+from trabajos.models import Trabajo, Trabajo_arbitro
 class ChartData(APIView):
     authentication_classes = ()
     permission_classes = ()
@@ -32,13 +33,26 @@ class ChartData(APIView):
 
         arbitraje_id = request.session['arbitraje_id']
 
-        trabajos_aceptados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True, trabajo__estatus = "Aceptado").count()
-        trabajos_rechazados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True,trabajo__estatus = "Rechazado").count()
-        trabajos_pendientes = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, es_autor_principal = True,trabajo__estatus = "Pendiente").count()
+        trabajos_aceptados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Aceptado").count()
+        trabajos_rechazados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Rechazado").count()
+        trabajos_pendientes = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Pendiente").count()
+        
+        total_arbitros = Usuario_rol_in_sistema.objects.filter(rol = 4, sistema_asovac = arbitraje_id, status = True).count()
+
+        autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True)
+        invitaciones_aceptadas = 0
+        invitaciones_pendientes = 0
+        for autor_trabajo in autores_trabajos:
+            invitaciones_aceptadas += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = True).count()
+            invitaciones_pendientes += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = False, fin_arbitraje = False).count()
         data = {
             "trabajos": {
                 "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
                 "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
+            },
+            "arbitros": {
+                "labels": ['Total arbitros', 'Invitaciones de arbitraje aceptadas', 'Invitaciones de arbitraje pendientes'],
+                "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
             },
         "labels": labels,
         "default": default,
