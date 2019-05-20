@@ -13,13 +13,6 @@ body {
     font-weight: 600;
 }
 
-.navbar-nav>li>a,
-.navbar-brand {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: 40px;
-}
-
 .navbar-nav>li>p {
     padding-top: 10px !important;
     padding-right: 15px !important;
@@ -29,9 +22,34 @@ body {
 }
 
 .navbar {
-    min-height: 30px !important
+    min-height: 30px !important;
 }
 
+.navbar-toggle {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+.dropdown-menu{
+    padding: 0 0 !important;
+}
+
+.dropdown-menu > li > a{
+    background-color: #EEE !important;
+    color: #333 !important;
+}
+
+.dropdown-menu > li > a:hover{
+    background-color: #CCC !important;
+}
+
+.pointer-cursor{
+    cursor: pointer;
+}
+
+.small-menu-item{
+    font-size: 13px;
+}
 
 /*============================ Main Navbar colors ============================*/
 
@@ -40,6 +58,10 @@ body {
     border-color: #BBBBBB;
 }
 
+.navbar-default .navbar-toggle:focus,
+.navbar-default .navbar-toggle:hover {
+    background-color: #FF7E46;
+}
 
 /* Title */
 
@@ -106,29 +128,22 @@ body {
 /*============================ Secondary Navbar structure ============================*/
 
 .secondary-navbar {
-    margin-top: 41px;
+    margin-top: 51px;
     font-size: 16px;
     font-weight: 600;
-    min-height: 30px !important;
+    max-height: 20px !important;
 }
 
 .secondary-navbar ul>li {
     margin: 0 5px;
 }
 
-.secondary-navbar>li>a,
-.navbar-brand {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: 40px;
-}
-
-.secondary-navbar ul>li>p {
+.secondary-navbar >p {
     padding-top: 10px !important;
     padding-right: 15px !important;
     padding-bottom: 10px !important;
     margin: 0;
-    height: 30px;
+    height: 20px;
 }
 
 

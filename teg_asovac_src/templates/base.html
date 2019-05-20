@@ -11,177 +11,230 @@
         <div class="container-fluid">
             <!-- Logo de la Navbar -->
             <div class="navbar-header">
-                {% if events_app %}
-                <a class="navbar-brand" href="{% url 'eventos:home' %}">
+                {% if user.is_authenticated %}
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-navbar-items">
+                    <i class="fa fa-bars" style="color: #FFF"></i>
+                </button>
+                {% endif %}
+                <a class="navbar-brand" href="{% if events_app %}{% url 'eventos:home' %}{% else %}{% url 'main_app:home' %}{% endif %}">
                     <strong>ASOVAC</strong>
                 </a>
-                {% else %}
-                <a class="navbar-brand" href="{% url 'main_app:home' %}">
-                    <strong>ASOVAC</strong>
-                </a>
+            </div>
+            <!-- Opciones de Top navbar pasados por contexto desde el view -->
+            <div class="collapse navbar-collapse" id="top-navbar-items">
+                <ul class="nav navbar-nav">
+                    {% if "area/subarea" in items.top_nav_options %}
+                        <!-- <li><a href="#" data-url="{% url 'trabajos:mostrar_areas' user.id %}" class="show_areas" data-toggle="modal" data-target="#modal_areas">
+                                <i class="fas fa-search"></i> Área/Subárea
+                        </a></li> -->
+                    {% endif %}
+
+                    {% if "configuration" in items.top_nav_options %}
+                        <li><a href="{{ route_conf }}">
+                            <span class="hidden-sm hidden-md">
+                                <i class="fas fa-cogs"></i> Configuración
+                            </span>
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                <i class="fas fa-cogs"></i> Configuración
+                            </span>
+                        </a></li>
+                    {% endif %}
+
+                    {% if "arbitration" in items.top_nav_options %}
+                        <li><a href="{{ route_seg }}">
+                            <span class="hidden-sm hidden-md">
+                                <i class="fas fa-eye"></i> Seguimiento
+                            </span>
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                <i class="fas fa-eye"></i> Seguimiento
+                            </span>
+                        </a></li>
+                    {% endif %}
+
+                    {% if "result" in items.top_nav_options %}
+                        <li><a href="{{ route_resultados }}">
+                            <span class="hidden-sm hidden-md">
+                                <i class="fas fa-chart-area"></i> Resultados
+                            </span>
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                <i class="fas fa-chart-area"></i> Resultados
+                            </span>
+                        </a></li>
+                    {% endif %}
+
+                    {% if "jobs" in items.top_nav_options %}
+                        {% if "job_options" in items.top_nav_options %}
+                            <li>
+                                {% if not request.session.is_author_created %}
+                                    <a id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >
+                                        <span class="hidden-sm hidden-md">
+                                            <i class="fas fa-book"></i> Trabajos
+                                        </span>
+                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                            <i class="fas fa-book"></i> Trabajos
+                                        </span>
+                                    </a>
+                                {% else %}
+                                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                        <span class="hidden-sm hidden-md">
+                                            <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
+                                        </span>
+                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                            <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="dropdown-menu" style="z-index:2">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Lista de trabajos</a>
+                                        </li>
+                                        {% if rol_id < 5  and rol_id != 1 and estado == 5 %}
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'arbitrajes:jobs_for_review' %}">Lista de trabajos por arbitrar</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'trabajos:trabajos_evaluados' %}">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-book"></i> Trabajos
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-book"></i> Trabajos
+                                </span>
+                            </a></li>
+                        {% endif %}
+                    {% endif %}
+                    <!-- Opciones de aplicación de eventos -->
+                    {% if events_app %}
+                        <li>
+                            <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-user"></i> Organizador <i class="fas fa-caret-down"></i>
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-user"></i> Organizador <i class="fas fa-caret-down"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" style="z-index:2">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:organizer_create' %}">Crear Organizador</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:organizer_list' %}">Lista de organizadores</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-map"></i> Locacion <i class="fas fa-caret-down"></i>
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-map"></i> Locacion <i class="fas fa-caret-down"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" style="z-index:2">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:event_place_create' %}">Crear Locación</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:event_place_list' %}">Lista de locaciones</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-calendar"></i> Evento <i class="fas fa-caret-down"></i>
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-calendar"></i> Evento <i class="fas fa-caret-down"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" style="z-index:2">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:event_create' %}">Crear Evento</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:event_list' %}">Lista de eventos</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if rol_id == 1 or rol_id == 2 or rol_id == 3 %}
+                        <li>
+                            <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-calendar"></i> Sesiones <i class="fas fa-caret-down"></i>
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-calendar"></i> Sesiones <i class="fas fa-caret-down"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" style="z-index:2">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'sesiones:sesions_list' %}">Lista de sesiones</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:arbitraje_places_list' %}">Lista de locaciones</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'eventos:arbitraje_organizers_list' %}">Lista de organizadores</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                    <!-- Desplegar aqui el nombre del usuario si está autenticado -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a role="button" class="navbar-link" id = "dropdownMenuButton" data-toggle="dropdown">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-user"></i> {{ user.username }} <i class="fas fa-caret-down"></i>
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-user"></i> {{ user.username }} <i class="fas fa-caret-down"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu" style ="z-index:2">
+                                {% if not events_app  and request.session.is_author_created %}
+                                    <li>
+                                        <a class="dropdown-item" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' >
+                                            <i class="fas fa-edit"></i> Editar datos de autor
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li>
+                                    <a class="dropdown-item pointer-cursor" data-url="{% url 'main_app:changepassword_modal' %}" id='changepassword-user'>
+                                        <i class="fas fa-key"></i> Cambiar Contraseña
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}" class="navbar-link">
+                                <span class="hidden-sm hidden-md">
+                                    <i class="fas fa-sign-out-alt"></i> Salir
+                                </span>
+                                <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
+                                    <i class="fas fa-sign-out-alt"></i> Salir
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
                 {% endif %}
             </div>
-
-            <!-- Opciones de Top navbar pasados por contexto desde el view -->
-            <ul class="nav navbar-nav">
-                {% if "area/subarea" in items.top_nav_options %}
-                <!-- <li>
-                    <a href="#" data-url="{% url 'trabajos:mostrar_areas' user.id %}" class="show_areas" data-toggle="modal" data-target="#modal_areas">
-                        <i class="fas fa-search"></i> Área/Subárea
-                    </a>
-                </li> -->
-                {% endif %} {% if "configuration" in items.top_nav_options %}
-                <li>
-                    <a href="{{ route_conf }}">
-                        <i class="fas fa-cogs"></i> Configuración
-                    </a>
-                </li>
-                {% endif %} {% if "arbitration" in items.top_nav_options %}
-                <li>
-                    <a href="{{ route_seg }}">
-                        <i class="fas fa-eye"></i> Arbitraje y seguimiento
-                    </a>
-                </li>
-                {% endif %} {% if "result" in items.top_nav_options %}
-                <li>
-                    <a href="{{ route_resultados }}">
-                        <i class="fas fa-chart-area"></i> Resultados
-                    </a>
-                </li>
-                {% endif %} {% if "jobs" in items.top_nav_options %} {% if "job_options" in items.top_nav_options %}
-                <li>
-                    {% if not request.session.is_author_created %}
-                        
-                        <a id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" ><i class="fas fa-book"></i> Trabajos</a>
-                    {% else %}
-                    
-                        <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                            <i class="fas fa-book"></i> Trabajos
-                        </a>
-                        <ul class="dropdown-menu" style="z-index:2">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Lista de trabajos</a>
-                            </li>
-                            {% if rol_id < 5  and rol_id != 1 and estado == 5 %}
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'arbitrajes:jobs_for_review' %}">Lista de trabajos por arbitrar</a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    {% endif %}
-                </li>
-                {% else %}
-                <li>
-                    <a href="{% url 'trabajos:trabajos_evaluados' %}">
-                        <i class="fas fa-book"></i> Trabajos
-                    </a>
-                </li>
-                {% endif %} {% endif %}
-                <!-- Opciones de aplicación de eventos -->
-                {% if events_app %}
-                <li>
-                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                        <i class="fas fa-user"></i> Organizador
-                    </a>
-                    <ul class="dropdown-menu" style="z-index:2">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:organizer_create' %}">Crear Organizador</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:organizer_list' %}">Lista de organizadores</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                        <i class="fas fa-map"></i> Locacion
-                    </a>
-                    <ul class="dropdown-menu" style="z-index:2">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:event_place_create' %}">Crear Locación</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:event_place_list' %}">Lista de locaciones</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                        <i class="fas fa-calendar"></i> Evento
-                    </a>
-                    <ul class="dropdown-menu" style="z-index:2">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:event_create' %}">Crear Evento</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:event_list' %}">Lista de eventos</a>
-                        </li>
-                    </ul>
-                </li>
-                {% endif %}
-
-                {% if rol_id == 1 or rol_id == 2 or rol_id == 3 %}
-                <li>
-                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                        <i class="fas fa-calendar"></i> Sesiones
-                    </a>
-                    <ul class="dropdown-menu" style="z-index:2">
-                        <li>
-                            <a class="dropdown-item" href="{% url 'sesiones:sesions_list' %}">Lista de sesiones</a>
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:arbitraje_places_list' %}">Lista de locaciones</a>
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item" href="{% url 'eventos:arbitraje_organizers_list' %}">Lista de organizadores</a>
-                        </li>
-                    </ul>
-                </li>
-                {% endif %}
-
-
-            </ul>
-
-			{% if user.username %}
-			<!-- Desplegar aqui el nombre del usuario si está autenticado -->
-			<ul class="nav navbar-nav navbar-right">
-				<li>					
-					<a role="button" class="navbar-link" id = "dropdownMenuButton" data-toggle = "dropdown"><i class="fas fa-user"></i> {{ user.username }}</a>	
-					<ul class="dropdown-menu" style ="z-index:2">
-    					{% if not events_app  and request.session.is_author_created %}
-                            <li>
-                                <a class="dropdown-item" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' ><i class="fas fa-edit"></i> Editar datos de autor</a>
-                            </li>
-                        {% endif %}
-						<li>
-							<a class="dropdown-item" data-url="{% url 'main_app:changepassword_modal' %}" id='changepassword-user' ><i class="fas fa-key"></i> Cambiar Contraseña</a>
-						</li>
-					</ul>
-				</li>
-				
-				<li>
-					<p class="navbar-text">
-						<a href="{% url 'logout' %}" class="navbar-link">
-							<i class="fas fa-sign-out-alt"></i> Cerrar sesión
-						</a>
-					</p>
-				</li>
-			</ul>
-			{% endif %}
-		</div>
-	</nav>
+        </div>
+    </nav>
 
     <!-- Barra de navegacion secundaria fija de adorno -->
-    <nav class="navbar navbar-default navbar-fixed-top secondary-navbar" id="secondary-navbar" style="z-index: 1">
-        <div class="container-fluid">
-            <ul class="nav navbar-nav ">
-                <li>
-                    <p class="navbar-text"> </p>
-                </li>
-            </ul>
-        </div>
+    <nav class="navbar-fixed-top secondary-navbar" id="secondary-navbar" style="z-index: 1">
+        <p class="navbar-text"> </p>
     </nav>
 
     {% block content %}{% endblock %} {% include "modals.html" %} {% include "footer.html" %} {% include "js_scripts.html" %} {% block js_extra %} {% endblock %}
