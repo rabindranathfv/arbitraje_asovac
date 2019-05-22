@@ -850,6 +850,10 @@ def filterArbitro(data,trabajo_id):
                 if str(trabajo_id) == str(item.trabajo_id):
                     isAsig=1
 
+            for item2 in arbitros:
+                if item2['correo_electronico'] == arb.correo_electronico:
+                    isAsig=1
+            
             if isAsig == 0:
                 # print ("Datos del arbitro: {0} {1} {2} {3}".format(arb.nombres,arb.apellidos,arb.correo_electronico,arb.trabajo_id))
                 arbitros.append({'id':arb.id,'nombres': arb.nombres,'apellidos':arb.apellidos, 'correo_electronico':arb.correo_electronico, 'trabajo_id':arb.trabajo_id  })
