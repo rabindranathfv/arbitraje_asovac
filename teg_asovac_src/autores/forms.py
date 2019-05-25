@@ -210,7 +210,7 @@ class PagoForm(forms.ModelForm):
             'numero_cuenta_origen': forms.TextInput(attrs={'placeholder': 'Formato: XXXX-XXXX-XXXX-XXXX-XXXX'}),
             'numero_transferencia': forms.TextInput(attrs={'placeholder': 'Formato: XXXXXXXXXX'}),
             'numero_cheque': forms.TextInput(attrs={'placeholder': 'Formato: XXXXXXXXXX'}),
-            'fecha_pago': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
+            'fecha_pago': forms.DateInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
             'observaciones': forms.TextInput(attrs={'placeholder': 'Introduzca sus observaciones'}),
         }
 	def __init__(self, *args, **kwargs):
@@ -280,7 +280,7 @@ class FacturaForm(forms.ModelForm):
 		model = Factura
 		fields = ['fecha_emision', 'monto_total']
 		widgets = {
-            'fecha_emision': forms.TextInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
+            'fecha_emision': forms.DateInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
         }
 	def __init__(self, *args, **kwargs):
 		super(FacturaForm,self).__init__(*args, **kwargs)
