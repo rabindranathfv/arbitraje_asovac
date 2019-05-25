@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Añadir observaciones al trabajo: {{ trabajo_version_final.trabajo.titulo_espanol }}</h4>
+        <h3 class="modal-title" >Añadir observaciones al trabajo: {{ trabajo_version_final.trabajo.titulo_espanol }}</h3>
 </div>
 <form method="POST" class="autor-observation-form" action="{% url 'trabajos:autor_add_observations_to_job' trabajo_version_final.id %}">
     <div class="modal-body">

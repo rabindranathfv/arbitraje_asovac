@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Añadir observaciones a la locación: {{ locacion.nombre }}</h4>
+        <h3 class="modal-title" >Añadir observaciones a la locación: {{ locacion.nombre }}</h3>
 </div>
 <form method="POST" class="add-observations-to-event-place-form" action="{% url 'eventos:add_observations_to_event_place' locacion.id %}">
     <div class="modal-body">

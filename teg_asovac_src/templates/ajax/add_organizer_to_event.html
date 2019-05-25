@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Añadir organizador al evento: {{ evento.nombre }}</h4>
+        <h3 class="modal-title" >Añadir organizador al evento: {{ evento.nombre }}</h3>
 </div>
 <form method="POST" class="add-organizer-to-event-form" data-url="{% url 'eventos:add_organizer_to_event' evento.id %}">
     <div class="modal-body">
