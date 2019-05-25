@@ -20,4 +20,22 @@
     $( function(){
         $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
     });
+    $("#div_id_numero_transferencia").hide();
+    $("#div_id_numero_cheque").hide();
+    // Para manejar la seleccion modalidad
+    $('#id_tipo_pago').change(function(){
+        var tipo_pago = $(this).val();
+        if (tipo_pago == "T")
+        {
+            $("#div_id_numero_transferencia").show();
+            $("#div_id_numero_cheque").hide();
+            $('#id_numero_cheque').val('');
+        }
+        else
+        {
+            $("#div_id_numero_cheque").show();
+            $("#div_id_numero_transferencia").hide();
+            $('#id_numero_transferencia').val('');
+        }
+    });
 </script>
