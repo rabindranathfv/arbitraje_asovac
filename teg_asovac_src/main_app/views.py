@@ -584,31 +584,32 @@ def data_basic(request, arbitraje_id):
     # No: Se despliega un error 404
     #------------------------------------------------------------------------------------#
 
-    form= DataBasicForm()
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-
-    rol_id=get_roles(request.user.id,arbitraje_id)
-    # print (rol_id)
-    
+    rol_id =get_roles(request.user.id,arbitraje_id)
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 
-    if request.POST:
-        pass
+    form = DataBasicForm(request.POST or None, instance=arbitraje)
+    if request.method == 'POST':
+        print('Request es POST')
+        if form.is_valid():
+            print('formulario es valido')
+            form.save()
+            messages.success(request, 'Los datos del arbitraje han sido guardados con éxito.')
+            return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+        print(form.errors)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
-
     route_conf = get_route_configuracion(estado,rol_id,arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    # print items
-
     context = {
         'nombre_vista' : 'Editar Configuración General',
+        'form': form,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
