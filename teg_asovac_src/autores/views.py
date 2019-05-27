@@ -390,6 +390,18 @@ def author_edit_modal(request, user_id):
 	data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
 	return JsonResponse(data)
 
+#Modal para ver los detalles del autor
+@login_required
+def author_details(request, autor_id):
+	data = dict()
+	#user =  User.objects.get(id = user_id)
+	autor =  get_object_or_404(Autor, id = autor_id)
+	context ={
+		'autor': autor,
+	}
+	data['html_form'] = render_to_string('ajax/autores_details.html', context, request=request)
+	return JsonResponse(data)
+
 
 
 @login_required
