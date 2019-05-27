@@ -71,13 +71,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="1">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_COG_key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -93,14 +89,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="2">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_COA_key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -116,14 +107,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="3">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_ARS _key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>
