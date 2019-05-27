@@ -1,0 +1,89 @@
+{% load humanize %}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title" >Pago del trabajo: {{ factura.pagador.autor_trabajo.trabajo.titulo_espanol }}</h3>
+</div>
+<div class="modal-body text-center">
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Cédula</th>
+                <td>{{factura.pagador.datos_pagador.cedula}}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{factura.pagador.datos_pagador.nombres}} {{factura.pagador.datos_pagador.apellidos}}</td>
+            </tr>
+            <tr>
+                <th>Pasaporte/RIF</th>
+                <td>{{ factura.pagador.datos_pagador.pasaporte_rif }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono de oficina</th>
+                <td>{{ factura.pagador.datos_pagador.telefono_oficina }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono de habitación/celular</th>
+                <td>{{ factura.pagador.datos_pagador.telefono_habitacion_celular }}</td>
+            </tr>
+            <tr>
+                <th>Dirección Fiscal</th>
+                <td>{{ factura.pagador.datos_pagador.direccion_fiscal }}</td>
+            </tr>
+            <tr>
+                <th>Tipo de pago</th>
+                <td>{{ factura.pago.get_tipo_pago_display }}</td>
+            </tr>
+            <tr>
+                <th>Número de cuenta origen</th>
+                <td>{{ factura.pago.numero_cuenta_origen }}</td>
+            </tr>
+            <tr>
+                <th>Banco Origen</th>
+                <td>{{ factura.pago.get_banco_origen_display }}</td>
+            </tr>
+            {% if factura.pago.numero_transferencia %}
+                <tr>
+                    <th>Número de transferencia</th>
+                    <td>{{ factura.pago.numero_transferencia }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th>Número de cheque</th>
+                    <td>{{ factura.pago.numero_cheque }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Fecha de pago</th>
+                <td>{{ factura.pago.fecha_pago }}</td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{{ factura.pago.observaciones }}</td>
+            </tr>
+            <tr>
+                <th>Fecha de emisión</th>
+                <td>{{ factura.fecha_emision }}</td>
+            </tr>
+            <tr>
+                <th>Monto subtotal</th>
+                <td>{{ factura.monto_subtotal |floatformat:2|intcomma}} Bs</td>
+            </tr>
+            <tr>
+                <th>IVA</th>
+                <td>{{ factura.iva |floatformat:2|intcomma}} Bs</td>
+            </tr>
+            <tr>
+                <th>Monto total</th>
+                <td>{{ factura.monto_total |floatformat:2|intcomma }} Bs</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+</div>
