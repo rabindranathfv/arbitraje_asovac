@@ -2,13 +2,13 @@
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
-	{% include "success_messages.html" %}
 	{% include "toggle_title.html" %}
 
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
 				<div class="row">
+					{% include "success_messages.html" %}
 					<h2 class="text-left">Lista de Sesiones</h2>
 					<div class = "col-sm-12">
 						<!-- data table -->

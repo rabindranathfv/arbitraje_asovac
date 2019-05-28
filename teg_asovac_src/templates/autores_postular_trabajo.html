@@ -2,13 +2,13 @@
 {% load humanize %}
 {% block inner_content %}
 <div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
-    {% include "success_messages.html" %}
     {% include "toggle_title.html" %}
 
     <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
 				<div class="row">
+					{% include "success_messages.html" %}
 					<div class="col-sm-8">
 						<h2 class="text-left">Lista de pagos del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h2>
 					</div>
