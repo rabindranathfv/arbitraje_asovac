@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^crear-universidad/$',views.create_university_modal, name='create_university_modal'),
     url(r'^listar-autores/$',views.authors_list,name='authors_list'),
     url(r'^editar-autor/(?P<autor_id>\d+)/$',views.author_edit,name='author_edit'),
-    url(r'^detalles/(?P<autor_id>\d+)/$',views.author_details,name='author_details'),
     url(r'^importar-excel/$',views.load_authors_modal,name='load_authors_modal'),
 
     url(r'^generar-certificado/$', views.generar_certificado, name = 'generar_certificado'),
@@ -37,6 +36,7 @@ urlpatterns = [
     url(r'^postular-trabajo/factura/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_factura_modal, name= 'postular_trabajo_factura_modal'),
     url(r'^postular-trabajo/pago/(?P<autor_trabajo_id>\d+)/$', views.postular_trabajo_pago_modal, name= 'postular_trabajo_pago_modal'),
     url(r'^editar-perfil/(?P<user_id>\d+)/$',views.author_edit_modal,name='author_edit_modal'),
+    url(r'^detalles/(?P<autor_id>\d+)/$',views.author_details,name='author_details'),    
 
 
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),

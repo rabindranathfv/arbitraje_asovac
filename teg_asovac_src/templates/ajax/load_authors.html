@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Cargar autores con Excel:</h4>
+        <h3 class="modal-title" >Cargar autores con Excel:</h3>
 </div>
 <form method="POST" class=""  enctype="multipart/form-data" action="{% url 'autores:load_authors_modal' %}">
     <div class="modal-body">
@@ -12,7 +12,7 @@
         <p><strong>*</strong>Cuando le dé importar, esto tomará algunos segundos. Por favor, espere.</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Importar</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Importar</button>
     </div>
 </form>

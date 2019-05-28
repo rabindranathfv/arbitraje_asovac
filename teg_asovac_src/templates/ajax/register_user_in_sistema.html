@@ -2,7 +2,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >No registrado en el sistema</h4>
+        <h3 class="modal-title" >No registrado en el sistema</h3>
 </div>
 <form method="POST"  action="{% url 'main_app:register_user_in_sistema' arbitraje.id %}">
     <div class="modal-body">
@@ -11,7 +11,7 @@
         <p>¿Desea que obtengamos sus datos de autor para crearlo en el arbitraje?</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger col-sm-offset-7 col-sm-2" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success col-sm-2">Sí</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Sí</button>
     </div>
 </form>

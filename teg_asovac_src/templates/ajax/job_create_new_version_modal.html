@@ -1,9 +1,9 @@
 {% load crispy_forms_tags %}
 <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" >Crear nueva versión del trabajo: {{last_version_trabajo.titulo_espanol}}</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title" >Crear nueva versión del trabajo: {{last_version_trabajo.titulo_espanol}}</h3>
 </div>
 <form method="POST" enctype="multipart/form-data" class="job-create-new-version" data-url="{% url 'trabajos:add_new_version_to_job' last_version_trabajo.id %}">
     <div class="modal-body">
@@ -11,7 +11,7 @@
         {{ form | crispy }}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Añadir</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Añadir</button>
     </div>
 </form>

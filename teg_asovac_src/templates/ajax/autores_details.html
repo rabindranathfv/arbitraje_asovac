@@ -1,0 +1,65 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title" >Detalles de autor</h3>
+</div>
+<div class="modal-body text-center">
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Nombres</th>
+                <td>{{ autor.nombres }}</td>
+            </tr>
+            <tr>
+                <th>Apellidos</th>
+                <td>{{ autor.apellidos }}</td>
+            </tr>
+            <tr>
+                <th>Género:</th>
+                <td>{{ autor.get_genero_display }}</td>
+            </tr>
+            <tr>
+                <th>Universidad</th>
+                <td>{{ autor.universidad.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Cédula/Pasaporte</th>
+                <td>{{ autor.cedula_pasaporte }}</td>
+            </tr>
+            <tr>
+                <th>Correo Electrónico</th>
+                <td>{{ autor.correo_electronico }}</td>
+            </tr>
+            <tr>
+                <th>Capítulo perteneciente</th>
+                <td>{{ autor.capitulo_perteneciente }}</td>
+            </tr>
+            <tr>
+                <th>Nivel de instrucción</th>
+                <td>{{ autor.nivel_instruccion }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono de oficina</th>
+                <td>{{ autor.telefono_oficina }}</td>
+            </tr>
+            <tr>
+                <th>Teléfono de habitación/celular</th>
+                <td>{{ autor.telefono_habitacion_celular }}</td>
+            </tr>
+            <tr>
+                <th>Es miembro AsoVAC</th>
+                <td>{% if autor.es_miembro_asovac %}Sí {% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{{ autor.observaciones }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+</div>

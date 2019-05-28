@@ -3,13 +3,13 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Actualizar roles del usuario: 
+        <h3 class="modal-title" >Actualizar roles del usuario: 
             {% if user.usuario.first_name and user.usuario.last_name %}
                 <strong>{{ user.usuario.first_name }} {{ user.usuario.last_name }}</strong>
             {% else %}
                 <strong>{{ user.usuario.username }}</strong>
             {% endif %}
-        </h4>
+        </h3>
 </div>
 <form method="POST" class="rol-form" data-url="{% url 'main_app:actualizar_rol' form.instance.id %}">
     <div class="modal-body">
@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button id="test" type="submit" class="btn btn-success">Actualizar</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button id="test" type="submit" class="btn btn-lg btn-primary">Actualizar</button>
     </div>
 </form>

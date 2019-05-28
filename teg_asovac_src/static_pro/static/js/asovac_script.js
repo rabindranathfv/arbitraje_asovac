@@ -666,8 +666,10 @@ var SaveAñadirPagoForm= function(){
 
     //Show referee observations
     $('#job-list').on('click','.show-referee-observations',ShowForm);
-    
 
+    //Show autor details
+    $('#autores-table').on('click','.authorDetails',ShowForm);
+    
     // Añadir coautores al trabajo
     $('#job-list').on('click','.show-form-add-author',ShowForm);
     $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);
@@ -677,6 +679,10 @@ var SaveAñadirPagoForm= function(){
 
     //Añadir observaciones a la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
+
+    //Mostrar detalles del pago para postular trabajo
+    $('#show-pays').on('click', '.pay_details', ShowForm)
+
 
     // Añadir pago a un trabajo
     $('.añadir-pago-form').click(ShowForm);

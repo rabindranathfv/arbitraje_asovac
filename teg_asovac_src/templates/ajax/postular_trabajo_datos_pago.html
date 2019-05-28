@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Datos de pago del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h4>
+        <h3 class="modal-title" >Datos de pago del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
 </div>
 <form method="POST" enctype="multipart/form-data" class="create-datos-pago" data-url="{% url 'autores:postular_trabajo_pago_modal' autor_trabajo.id %}">
     <div class="modal-body">
@@ -11,7 +11,31 @@
         {{ form | crispy }}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Añadir</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Añadir</button>
     </div>
 </form>
+
+<script>
+    $( function(){
+        $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
+    });
+    $("#div_id_numero_transferencia").hide();
+    $("#div_id_numero_cheque").hide();
+    // Para manejar la seleccion modalidad
+    $('#id_tipo_pago').change(function(){
+        var tipo_pago = $(this).val();
+        if (tipo_pago == "T")
+        {
+            $("#div_id_numero_transferencia").show();
+            $("#div_id_numero_cheque").hide();
+            $('#id_numero_cheque').val('');
+        }
+        else
+        {
+            $("#div_id_numero_cheque").show();
+            $("#div_id_numero_transferencia").hide();
+            $('#id_numero_transferencia').val('');
+        }
+    });
+</script>

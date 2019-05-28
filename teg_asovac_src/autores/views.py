@@ -390,6 +390,18 @@ def author_edit_modal(request, user_id):
 	data['html_form'] = render_to_string('ajax/edit_own_author.html', context, request=request)
 	return JsonResponse(data)
 
+#Modal para ver los detalles del autor
+@login_required
+def author_details(request, autor_id):
+	data = dict()
+	#user =  User.objects.get(id = user_id)
+	autor =  get_object_or_404(Autor, id = autor_id)
+	context ={
+		'autor': autor,
+	}
+	data['html_form'] = render_to_string('ajax/autores_details.html', context, request=request)
+	return JsonResponse(data)
+
 
 
 @login_required
@@ -567,65 +579,22 @@ def postular_trabajo_pago_modal(request, autor_trabajo_id):
 	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
 	return JsonResponse(data)
 
-
-
+#Modal para ver los detalles del pago para postular un trabajo
 @login_required
-#Detalles del pago
 def detalles_pago(request, pagador_id):
-
-	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
-	# print (rol_id)
+	data = dict()
+	#usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
+	#autor = Autor.objects.get(usuario__usuario = request.user)
+	#sistema_asovac = Sistema_asovac.objects.get(id = event_id)
+	#pagador = get_object_or_404(Pagador, id = pagador_id)
 	event_id = request.session['arbitraje_id']
-	arbitraje = Sistema_asovac.objects.get(pk=event_id)
-	estado = arbitraje.estado_arbitraje
-	rol_id=get_roles(request.user.id , event_id)
-
-	item_active = 0
-	items=validate_rol_status(estado,rol_id,item_active, event_id)
-
-	route_conf= get_route_configuracion(estado,rol_id, event_id)
-	route_seg= get_route_seguimiento(estado,rol_id)
-	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-	route_resultados = get_route_resultados(estado,rol_id, event_id)
-
-	# print items
-	usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
-	autor = Autor.objects.get(usuario = usuario_asovac)
-	sistema_asovac = Sistema_asovac.objects.get(id = event_id)
-
-	pagador = get_object_or_404(Pagador, id = pagador_id)
-	factura = get_object_or_404(Factura, pagador = pagador)
-	autor_trabajo = get_object_or_404(Autores_trabajos ,autor = autor, sistema_asovac = sistema_asovac, trabajo = pagador.autor_trabajo.trabajo)
-
-
-
-
-	context = {
-		"nombre_vista": 'Postular Trabajo - Detalles del pago',
-		'main_navbar_options' : main_navbar_options,
-		'estado' : estado,
-		'rol_id' : rol_id,
-		'arbitraje_id' : event_id,
-		'item_active' : item_active,
-		'items':items,
-		'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-        'pagador': pagador,
-        'autor_trabajo': autor_trabajo,
-        'factura': factura,
-    }
-
-	return render(request,"autores_detalles_pago.html",context)
-
+	factura = get_object_or_404(Factura, pagador = pagador_id)
+	autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+	context ={
+		'factura': factura,
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+	return JsonResponse(data)
 
 
 @login_required
