@@ -528,14 +528,13 @@ def dashboard(request, arbitraje_id):
 
 @login_required
 def create_arbitraje(request):
-    form = CreateArbitrajeForm()
+    form = CreateArbitrajeForm(request.POST or None)
     context = {
         'nombre_vista' : 'Crear un Arbitraje',
         'username' : request.user.username,
         'form' : form,
     }
     if request.method == 'POST':
-        form = CreateArbitrajeForm(request.POST or None)
         if form.is_valid():
             form.save()
             # print(form)

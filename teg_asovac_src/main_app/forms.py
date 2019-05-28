@@ -118,6 +118,18 @@ class DataBasicForm(forms.ModelForm):
             )
         )
 
+    def clean(self):
+        cleaned_data = super(DataBasicForm, self).clean()
+        start_date = cleaned_data.get("fecha_inicio_arbitraje")
+        end_date = cleaned_data.get("fecha_fin_arbitraje")
+
+        if end_date <= start_date:
+            # Si la fecha de culminación es igual o posterior a la fecha de inicio levantar un error.
+            raise forms.ValidationError(
+                "La fecha de culminación debe ser diferente y posterior a la fecha de inicio."
+            )
+
+
 
 class CreateArbitrajeForm(forms.ModelForm):
 
@@ -172,6 +184,17 @@ class CreateArbitrajeForm(forms.ModelForm):
                 css_class='row'
             )
         )
+
+    def clean(self):
+        cleaned_data = super(CreateArbitrajeForm, self).clean()
+        start_date = cleaned_data.get("fecha_inicio_arbitraje")
+        end_date = cleaned_data.get("fecha_fin_arbitraje")
+
+        if end_date <= start_date:
+            # Si la fecha de culminación es igual o posterior a la fecha de inicio levantar un error.
+            raise forms.ValidationError(
+                "La fecha de culminación debe ser diferente y posterior a la fecha de inicio."
+            )
 
 class PerfilForm(forms.ModelForm):
     
