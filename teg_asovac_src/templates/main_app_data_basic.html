@@ -1,4 +1,5 @@
 {% extends "content_wrapper_with_sidebar.html" %}
+{% load crispy_forms_tags %}
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
@@ -12,37 +13,8 @@
 					<h4>Datos básicos</h4>
 				</div>
 				<div class="panel-body">
-					<form>
-						<div class="form-group row">
-							<label for="name_arbitration" class="col-sm-2 col-form-label">Nombre del Arbitraje</label>
-							<div class="col-sm-10">
-								<input type="text" class="form-control" id="name_arbitration" placeholder="Nombre del arbitraje...">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label for="description" class="col-sm-2 col-form-label">Descripción</label>
-							<div class="col-sm-10">
-								<textarea style="resize: none;" class="form-control" id="description" rows="3"></textarea>
-							</div>
-						</div>
 
-						<div class="form-group row">
-							<label for="start_date" class="col-sm-2 col-form-label">Fecha de inicio</label>
-							<div class="col-sm-3">
-								<input type="date" class="form-control" id="start_date">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label for="end_date" class="col-sm-2 col-form-label">Fecha de fin</label>
-							<div class="col-sm-3">
-								<input type="date" class="form-control" id="end_date">
-							</div>
-							<div class="col-sm-3 col-sm-offset-4">
-								<button type="submit" class="btn btn-danger">Cancelar</button>
-								<button type="submit" class="btn btn-primary">Guardar</button>
-							</div>
-						</div>
-					</form>
+					{% crispy form %}
 				</div>
 			</div>
 		</div>
@@ -60,13 +32,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="1">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_COG_key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -82,14 +50,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="2">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_COA_key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -105,14 +68,9 @@
 					{% else %}
 					<p class="col-sm-12 text-center">Haga click abajo para generar una.</p>
 					{% endif %}
-
-					<form class="form-inline" method="post" action="{% url 'main_app:data_basic' arbitraje_id %}">
-						<div class="col-sm-12">
-							{% csrf_token %}
-							<input class="" name="generar_clave" type='hidden' value="3">
-							<button type="submit" class="btn btn-primary col-sm-12" role="button">Generar nueva clave</button>
-						</div>
-					</form>
+					<div class="col-sm-12">
+						<a href="{% url 'main_app:generate_ARS_key' arbitraje_id %}" class="btn btn-primary col-sm-12">Generar nueva clave</a>
+					</div>
 				</div>
 			</div>
 		</div>

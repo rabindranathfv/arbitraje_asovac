@@ -528,25 +528,19 @@ def dashboard(request, arbitraje_id):
 
 @login_required
 def create_arbitraje(request):
-    form = CreateArbitrajeForm()
+    form = CreateArbitrajeForm(request.POST or None)
     context = {
-                    'nombre_vista' : 'Crear un Arbitraje',
-                    'username' : request.user.username,
-                    'form' : form,
-                }
+        'nombre_vista' : 'Crear un Arbitraje',
+        'username' : request.user.username,
+        'form' : form,
+    }
     if request.method == 'POST':
-        form = CreateArbitrajeForm(request.POST or None)
         if form.is_valid():
             form.save()
             # print(form)
             arbitraje_data = Sistema_asovac.objects.all()
-            context = {
-                'nombre_vista' : 'Crear un Arbitraje',
-                'username' : request.user.username,
-                'form' : form,
-                'arb_data': arbitraje_data,
-                }
-            return redirect('main_app:home')        
+            context['arb_data'] = arbitraje_data
+            return redirect('main_app:home')
     return render(request, 'main_app_create_arbitraje.html', context)
 
 
@@ -555,7 +549,7 @@ def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
-        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño erandom_passwordperimental',
+        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño experimental',
         'authors': ['Karla Calo', 'Luis Henríquez']
     }
     return render(request, 'resumen_rejected_email.html', context)
@@ -583,126 +577,38 @@ def detalles_resumen(request):
 
 @login_required
 def data_basic(request, arbitraje_id):
-    form= DataBasicForm()
-
     #------------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
     #------------------------------------------------------------------------------------#
 
-    arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-
-    rol_id=get_roles(request.user.id,arbitraje_id)
-    # print (rol_id)
-    
+    rol_id =get_roles(request.user.id,arbitraje_id)
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 
-    if request.POST:
-        opcion = request.POST['generar_clave']
-        random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
-            
-        if opcion == '1': #Caso de generar clave  para coordinador general
-            random_password += 'COG'
-            arbitraje.clave_maestra_coordinador_general = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de coordinador general ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=2 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=2).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-
-        elif opcion == '2':#Caso de generar clave para coordinador de area
-            random_password += 'COA'
-            arbitraje.clave_maestra_coordinador_area = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id= 3) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=3).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-        
-
-        elif opcion == '3':#Caso de generar clave para arbitro de subarea
-            random_password += 'ARS'
-            arbitraje.clave_maestra_arbitro_subarea = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=4 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=4).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-        #print("The password is:"+random_password)
+    form = DataBasicForm(request.POST or None, instance=arbitraje)
+    if request.method == 'POST':
+        print('Request es POST')
+        if form.is_valid():
+            print('formulario es valido')
+            form.save()
+            messages.success(request, 'Los datos del arbitraje han sido guardados con éxito.')
+            return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+        print(form.errors)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
-
     route_conf = get_route_configuracion(estado,rol_id,arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    # print items
-
     context = {
         'nombre_vista' : 'Editar Configuración General',
+        'form': form,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -718,6 +624,98 @@ def data_basic(request, arbitraje_id):
     return render(request, 'main_app_data_basic.html', context)
 
 
+@login_required
+def generate_COG_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'COG'
+    arbitraje.clave_maestra_coordinador_general = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de coordinador general ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 2])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=2).nombre
+    context = {
+    'rol': nombre_rol,
+    'sistema': nombre_sistema,
+    'password': random_password,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+
+@login_required
+def generate_COA_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'COA'
+    arbitraje.clave_maestra_coordinador_area = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 3])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=3).nombre
+    context = {
+    'rol': nombre_rol,
+    'sistema': nombre_sistema,
+    'password': random_password,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+
+@login_required
+def generate_ARS_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'ARS'
+    arbitraje.clave_maestra_arbitro_subarea = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 4])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=4).nombre
+    context = {
+    'rol': nombre_rol,
+    'sistema': nombre_sistema,
+    'password': random_password,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
 def state_arbitration(request, arbitraje_id):

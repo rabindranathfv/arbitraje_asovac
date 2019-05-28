@@ -76,20 +76,84 @@ class MyLoginForm(forms.Form):
        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
        self.helper.add_input(Submit('submit', 'Ingresar', css_class='btn-block'))
 
-class DataBasicForm(forms.Form):
-    name_arbitration = forms.CharField(label="Nombre arbitraje", max_length=20)
-    description = forms.CharField(label="Descripción", max_length=255)
-    start_date = forms.DateField(label="Fecha de inicio", input_formats=my_date_formats)
-    end_date = forms.DateField(label="Fecha de fin", input_formats=my_date_formats)
+
+class DataBasicForm(forms.ModelForm):
+    class Meta:
+        model = Sistema_asovac
+        fields = (
+            'nombre',
+            'descripcion',
+            'fecha_inicio_arbitraje',
+            'fecha_fin_arbitraje'
+        )
+        widgets = {
+            'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
+            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)
+        }
+        labels = {
+            'descripcion': 'Descripción',
+            'fecha_fin_arbitraje': 'Fecha de Culminación',
+            'fecha_inicio_arbitraje': 'Fecha de Inicio',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DataBasicForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'edit-arbitraje-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-8'
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            'nombre',
+            Field('descripcion', rows="4"),
+            'fecha_inicio_arbitraje',
+            'fecha_fin_arbitraje',
+            Div(
+                Div(
+                    Submit('submit', 'Guardar', css_class='btn-primary btn-block', css_id='btn-modal-success'),
+                    css_class='col-sm-offset-9 col-sm-2'
+                ),
+                css_class='row'
+            )
+        )
+
+    def clean(self):
+        cleaned_data = super(DataBasicForm, self).clean()
+        start_date = cleaned_data.get("fecha_inicio_arbitraje")
+        end_date = cleaned_data.get("fecha_fin_arbitraje")
+
+        if end_date <= start_date:
+            # Si la fecha de culminación es igual o posterior a la fecha de inicio levantar un error.
+            raise forms.ValidationError(
+                "La fecha de culminación debe ser diferente y posterior a la fecha de inicio."
+            )
+
+
 
 class CreateArbitrajeForm(forms.ModelForm):
 
     class Meta:
         model = Sistema_asovac
-        fields = ['nombre','descripcion', 'fecha_inicio_arbitraje', 'fecha_fin_arbitraje','porcentaje_iva', 'monto_pagar_trabajo']
-        widgets = {'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
-                   'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)}
-        labels = {'descripcion': 'Descripción', 'fecha_fin_arbitraje': 'Fecha de Culminación', 'fecha_inicio_arbitraje': 'Fecha de Inicio','porcentaje_iva' : 'Porcentaje del IVA', 'monto_pagar_trabajo' : 'Monto para postular trabajos'}
+        fields = [
+            'nombre',
+            'descripcion',
+            'fecha_inicio_arbitraje',
+            'fecha_fin_arbitraje',
+            'porcentaje_iva',
+            'monto_pagar_trabajo'
+        ]
+        widgets = {
+            'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
+            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)
+        }
+        labels = {
+            'descripcion': 'Descripción',
+            'fecha_fin_arbitraje': 'Fecha de Culminación',
+            'fecha_inicio_arbitraje': 'Fecha de Inicio',
+            'porcentaje_iva' : 'Porcentaje del IVA',
+            'monto_pagar_trabajo' : 'Monto para postular trabajos'
+        }
 
     def __init__(self, *args, **kwargs):
         super(CreateArbitrajeForm, self).__init__(*args, **kwargs)
@@ -111,14 +175,26 @@ class CreateArbitrajeForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("<a href=\"{% url 'main_app:home' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-2 col-sm-offset-7'),
-
+                    css_class='col-sm-2 col-sm-offset-7'
+                ),
                 Div(
                     Submit('submit', 'Crear', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
-                css_class='col-sm-2'),
-
-            css_class='row')
+                    css_class='col-sm-2'
+                ),
+                css_class='row'
+            )
         )
+
+    def clean(self):
+        cleaned_data = super(CreateArbitrajeForm, self).clean()
+        start_date = cleaned_data.get("fecha_inicio_arbitraje")
+        end_date = cleaned_data.get("fecha_fin_arbitraje")
+
+        if end_date <= start_date:
+            # Si la fecha de culminación es igual o posterior a la fecha de inicio levantar un error.
+            raise forms.ValidationError(
+                "La fecha de culminación debe ser diferente y posterior a la fecha de inicio."
+            )
 
 class PerfilForm(forms.ModelForm):
     
