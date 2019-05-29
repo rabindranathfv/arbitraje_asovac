@@ -59,27 +59,27 @@ class ChartData(APIView):
             if autor_trabajo.trabajo.subareas.first().area.id == 1:
                 if autor_trabajo.trabajo.estatus == "Aceptado":
                     biociencias_aceptados += 1
-                else:
+                elif autor_trabajo.trabajo.estatus == "Rechazado":
                     biociencias_rechazados += 1
             elif autor_trabajo.trabajo.subareas.first().area.id == 2:
                 if autor_trabajo.trabajo.estatus == "Aceptado":
                     ciencias_exactas_aceptados += 1
-                else: 
+                elif autor_trabajo.trabajo.estatus == "Rechazado": 
                     ciencias_exactas_rechazados += 1
             elif autor_trabajo.trabajo.subareas.first().area.id == 3:
                 if autor_trabajo.trabajo.estatus == "Aceptado":
                     tecnologia_aceptados += 1
-                else: 
+                elif autor_trabajo.trabajo.estatus == "Rechazado": 
                     tecnologia_rechazados += 1
             elif autor_trabajo.trabajo.subareas.first().area.id == 4:
                 if autor_trabajo.trabajo.estatus == "Aceptado":
                     ciencias_sociales_aceptados += 1
-                else:
+                elif autor_trabajo.trabajo.estatus == "Rechazado":
                     ciencias_sociales_rechazados += 1
             elif autor_trabajo.trabajo.subareas.first().area.id == 5:
                 if autor_trabajo.trabajo.estatus == "Aceptado":
                     sociedad_fisica_aceptados += 1
-                else:
+                elif autor_trabajo.trabajo.estatus == "Rechazado":
                     sociedad_fisica_rechazados += 1
 
         #El siguiente codigo es para obtener los datos necesarios para la grafica de niveles de intruccion de los autores
