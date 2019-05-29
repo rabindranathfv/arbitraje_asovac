@@ -2,23 +2,7 @@
 {% block inner_content %}
 <div class="container-fluid">
 	<div class="row">
-        <div class="jumbotron RLcard col-sm-offset-1 col-sm-5">
-            <div class="panel panel-default">  
-                <div class="panel-heading">
-                    <h4>
-                        Resultados de trabajos
-                    </h4>
-                </div>
-                <div class="panel-body">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <canvas id="trabajos"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="jumbotron RLcard col-sm-5">
+         <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
             <div class="panel panel-default">  
                 <div class="panel-heading">
                     <h4>
@@ -28,31 +12,16 @@
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
-                            <canvas id="autores-nivel-instruccion"></canvas>
+                            <canvas id="autores-nivel-instruccion" heigth="100px"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-1 col-sm-5">
-            <div class="panel panel-default">  
-                <div class="panel-heading">
-                    <h4>
-                        Resultados de arbitrajes
-                    </h4>
-                </div>
-                <div class="panel-body">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <canvas id="arbitros-invitaciones"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="jumbotron RLcard col-sm-5">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
             <div class="panel panel-default">  
                 <div class="panel-heading">
                     <h4>
@@ -62,7 +31,43 @@
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
-                            <canvas id="areas"></canvas>
+                            <canvas id="areas" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados de arbitrajes
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="arbitros-invitaciones" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados de trabajos
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="trabajos" heigth="100px"></canvas>
                         </div>
                     </div>
                 </div>
@@ -157,7 +162,7 @@
         function setChartAutoresNivelInstruccion(autoresData){
             var ctx = document.getElementById('autores-nivel-instruccion').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
                     labels: autoresData.labels,
                     datasets: [{
