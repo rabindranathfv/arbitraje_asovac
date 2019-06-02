@@ -1296,9 +1296,9 @@ def get_subareas(request,id):
 def get_area(user_id):
     usuario_asovac= Usuario_asovac.objects.get(usuario_id=user_id)
     area=0
-    subarea=usuario_asovac.sub_area.get()
+    subarea=usuario_asovac.sub_area.first()
+    # subarea=usuario_asovac.sub_area.get()
     area= subarea.area
-    # print area
     return area
 
 
