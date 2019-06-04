@@ -14,7 +14,7 @@ import os
 from decouple import config
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.messages import constants as messages
-
+import dj_database_url
 #import django_heroku
 
 
@@ -115,9 +115,16 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST': {
+            'NAME': 'd97jl8qdgbvlmh',
+        },
     }
 }
 
+# Heroku: Update database configuration from $DATABASE_URL.
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 # Email Configuration (GMAIL)
 
