@@ -907,7 +907,7 @@ def adminArea(request,id):
 
 @login_required
 def getSubareas(request,id):
-    print "Área seleccionada",id
+    print "Area seleccionada",id
     
     data= dict()
     subareas= Sub_area.objects.all().filter(area=id)
