@@ -657,6 +657,8 @@ var SaveAñadirPagoForm= function(){
     //Save form in modal and redirect
     $('#modal-user').on('submit', '.save-redirect',SaveFormAndRedirect);
     
+
+    
     // //update
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
@@ -672,8 +674,6 @@ var SaveAñadirPagoForm= function(){
     //Show autor details
     $('#autores-table').on('click','.authorDetails',ShowForm);
     
-   
-
     //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
 
