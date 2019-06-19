@@ -78,7 +78,7 @@
 									</td>
 									<td class="text-center"> {{ factura.monto_total}} </td>
 									<td class="text-center">
-										<a class="pay_details" data-url="{% url 'autores:detalles_pago' factura.pagador.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
+										<a class="show-form" data-url="{% url 'autores:detalles_pago' factura.pagador.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 											<i class="fas fa-door-open"></i>
 										</a>
 									</td>

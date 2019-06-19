@@ -647,6 +647,7 @@ var SaveAñadirPagoForm= function(){
 
     // Show modal
     $('.show-form').click(ShowForm);
+    $('#table').on('click','.show-form',ShowForm); //Este caso para los links que se forman en un join en las bootstrap table
 
     //Save form in modal
     $('#modal-user').on('submit', '.create-form',SaveForm);
@@ -658,7 +659,6 @@ var SaveAñadirPagoForm= function(){
     $('#modal-user').on('submit', '.save-redirect',SaveFormAndRedirect);
     
 
-    
     // //update
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
@@ -671,8 +671,7 @@ var SaveAñadirPagoForm= function(){
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
-    //Show autor details
-    $('#autores-table').on('click','.authorDetails',ShowForm);
+    
     
     //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
@@ -680,12 +679,9 @@ var SaveAñadirPagoForm= function(){
     //Añadir observaciones a la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-form-job-observations', ShowForm)
 
-    //Mostrar detalles del pago para postular trabajo
-    $('#show-pays').on('click', '.pay_details', ShowForm)
 
 
     // Añadir pago a un trabajo
-    $('.añadir-pago-form').click(ShowForm);
     $('#modal-user').on('submit','.create-datos-pagador',SaveAñadirPagoForm);
     $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
     $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
@@ -731,12 +727,14 @@ var SaveAñadirPagoForm= function(){
     $('.showAreasForm').click(ShowForm);
     $('#modal-user').on('click','.cargarAreas',processGenericFile);
     $('#modal-user').on('click','.cargarSubareas',processGenericFile);
-   
     $('.showSubAreasForm').click(ShowForm);
     $('.showUsersForm').click(ShowForm);
+
+
     // Modal para que los usuarios creen su instancia de autor
     $('#user-create-author').click(ShowForm);
     $('#modal-user').on('submit', '.author-create-author-form',SaveFormAndRedirect);
+
     // Modal para que los usuarios editen su instancia de autor
     $('#edit-author-profile').click(ShowForm);
     $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);
@@ -744,10 +742,6 @@ var SaveAñadirPagoForm= function(){
     // Modal para que los usuarios creen su instancia de autor en sistema
     $('.show-register-user-in-sistema-modal').click(ShowForm);
 
-
-    // Modal para carga de autores por excel
-    $('#import-excel').click(ShowForm);
-    $('#modal-user').on('submit', '.import-authors-form',saveFileFormAndRedirect);
 
 
     // Modal para que añadan alguna universidad que no ha sido creada
