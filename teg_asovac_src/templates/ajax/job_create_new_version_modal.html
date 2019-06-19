@@ -5,7 +5,7 @@
     </button>
     <h3 class="modal-title" >Crear nueva versión del trabajo: {{last_version_trabajo.titulo_espanol}}</h3>
 </div>
-<form method="POST" enctype="multipart/form-data" class="job-create-new-version" data-url="{% url 'trabajos:add_new_version_to_job' last_version_trabajo.id %}">
+<form method="POST" enctype="multipart/form-data" class="save-file-form" data-url="{% url 'trabajos:add_new_version_to_job' last_version_trabajo.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}

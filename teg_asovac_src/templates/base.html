@@ -66,7 +66,7 @@
                         {% if "job_options" in items.top_nav_options %}
                             <li>
                                 {% if not request.session.is_author_created %}
-                                    <a id="user-create-author" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >
+                                    <a class="show-form" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >
                                         <span class="hidden-sm hidden-md">
                                             <i class="fas fa-book"></i> Trabajos
                                         </span>
@@ -204,13 +204,13 @@
                             <ul class="dropdown-menu" style ="z-index:2">
                                 {% if not events_app  and request.session.is_author_created %}
                                     <li>
-                                        <a class="dropdown-item" data-url="{% url 'autores:author_edit_modal' user.id %}" id='edit-author-profile' >
+                                        <a class="dropdown-item show-form" data-url="{% url 'autores:author_edit_modal' user.id %}" >
                                             <i class="fas fa-edit"></i> Editar datos de autor
                                         </a>
                                     </li>
                                 {% endif %}
                                 <li>
-                                    <a class="dropdown-item pointer-cursor" data-url="{% url 'main_app:changepassword_modal' %}" id='changepassword-user'>
+                                    <a class="dropdown-item pointer-cursor show-form" data-url="{% url 'main_app:changepassword_modal' %}">
                                         <i class="fas fa-key"></i> Cambiar Contraseña
                                     </a>
                                 </li>

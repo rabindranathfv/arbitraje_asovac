@@ -17,7 +17,7 @@
 					<div id ="toolbar">
 					</div>
 
-					<table id="sesion-job-table"
+					<table id="table"
 					data-toggle="table"
 					data-ajax="ajaxJobSesion"
 					data-side-pagination="server"
@@ -58,14 +58,14 @@
 	<script src="{% static 'js/grid.js' %}">
 	</script>
 	<script>
-		var $table = $('#sesion-job-table');
+		var $table = $('#table');
 		function operateJobSesion(value, row, index) {
 			let asignar_coordinador = ""
 			if(row.posible_coordinador)	
 			{   let route_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-coordinador/${ row.autor__id }`
 				//let route_coordinador="{% url 'sesiones:assign_coordinator' 0 0 %}".replace(1, row.sesion__id);
 				asignar_coordinador = [
-					'<a class="assign-coordinator" data-url="',
+					'<a class="show-form" data-url="',
 					route_coordinador,
 					' "',
 					'title="Asignar coordinador" >',
@@ -75,7 +75,7 @@
 			}
             let route_co_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-co-coordinador/${ row.autor__id }`
 			let asignar_co_coordinador = [
-                '<a class="assign-co-coordinator" data-url="',
+                '<a class="show-form" data-url="',
 					route_co_coordinador,
 					' "',
 					'title="Asignar co-coordinador" >',
