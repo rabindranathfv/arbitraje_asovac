@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Field, Layout, Submit, Div, HTML
+from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -84,7 +84,10 @@ class DataBasicForm(forms.ModelForm):
             'nombre',
             'descripcion',
             'fecha_inicio_arbitraje',
-            'fecha_fin_arbitraje'
+            'fecha_fin_arbitraje',
+            'cabecera',
+            'color_fondo_pie',
+            'color_letras_pie'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
@@ -94,6 +97,9 @@ class DataBasicForm(forms.ModelForm):
             'descripcion': 'Descripción',
             'fecha_fin_arbitraje': 'Fecha de Culminación',
             'fecha_inicio_arbitraje': 'Fecha de Inicio',
+            'cabecera': 'URL de Imagen Cabecera',
+            'color_fondo_pie': 'Color de Pie de Página',
+            'color_letras_pie': 'Color Texto de Pie de Página',
         }
 
     def __init__(self, *args, **kwargs):
@@ -109,12 +115,40 @@ class DataBasicForm(forms.ModelForm):
             Field('descripcion', rows="4"),
             'fecha_inicio_arbitraje',
             'fecha_fin_arbitraje',
+            HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Correos</h3><hr>""", ),
+            'cabecera',
+            Div(
+                HTML("""{% if form.cabecera.value %}<label class="control-label col-sm-3">Imagen de Cabecera Actual</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.cabecera.value %}<img src="{{ form.cabecera.value }}" alt="Preview Cabecera ASOVAC" style="width:100%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'color_fondo_pie',
+            'color_letras_pie',
+            Div(
+                HTML(
+                    """
+                    {% if form.color_letras_pie.value and form.color_fondo_pie.value %}
+                    <div class="col-sm-offset-3 col-sm-8" style="border-radius: 5px; margin-bottom: 18px; border: 1px solid #999; height: 50px; background-color: {{ form.color_fondo_pie.value }};">
+                        <p style="color: {{ form.color_letras_pie.value }}; font-size: 16px; padding-top: 12px;">
+                            <b>Previsualización de Colores</b>
+                        </p>
+                    </div>
+                    {% endif %}
+                    """
+                ,),
+                css_class="row",
+                style="padding-left: 15px;"
+            ),
             Div(
                 Div(
                     Submit('submit', 'Guardar', css_class='btn-primary btn-block', css_id='btn-modal-success'),
                     css_class='col-sm-offset-9 col-sm-2'
                 ),
-                css_class='row'
+                css_class='row',
+                style="margin-bottom: 20px;"
             )
         )
 
