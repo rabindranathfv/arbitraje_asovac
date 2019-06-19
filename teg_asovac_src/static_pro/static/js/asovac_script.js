@@ -657,8 +657,11 @@ var SaveAñadirPagoForm= function(){
 
     //Save form in modal and redirect
     $('#modal-user').on('submit', '.save-redirect',SaveFormAndRedirect);
-    
 
+    //Save form and stay in modal
+    $('#modal-user').on('submit', '.save-form-stay',SaveFormAndStayInModal);
+    
+    
     // //update
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
@@ -731,27 +734,8 @@ var SaveAñadirPagoForm= function(){
     $('.showUsersForm').click(ShowForm);
 
 
-    // Modal para que los usuarios creen su instancia de autor
-    $('#user-create-author').click(ShowForm);
-    $('#modal-user').on('submit', '.author-create-author-form',SaveFormAndRedirect);
-
-    // Modal para que los usuarios editen su instancia de autor
-    $('#edit-author-profile').click(ShowForm);
-    $('#modal-user').on('submit', '.edit-author-form',SaveFormAndStayInModal);
-
-    // Modal para que los usuarios creen su instancia de autor en sistema
-    $('.show-register-user-in-sistema-modal').click(ShowForm);
-
-
-
     // Modal para que añadan alguna universidad que no ha sido creada
     $('#create-university-modal').click(ReloadModal);
-    $('#modal-user').on('submit', '.create-university-modal-form',SaveFormAndRedirect);
-
-
-    // Modal para que los usuarios creen su instancia de autor
-    $('#changepassword-user').click(ShowForm);
-    $('#modal-user').on('submit', '.changepassword-modal-form',SaveFormAndStayInModal);
 
     // CRUD Areas
     // $('#bootstrapTableModal').on('submit','.editarArea',bootstrapTableForm);
