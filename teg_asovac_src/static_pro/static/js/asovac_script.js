@@ -773,8 +773,9 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('click','.adminAddSubareas',sendSubareas);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
+    
+    
     //CRUD Sesiones
-    $('#sesion-table').on('click','.delete-sesion',ShowForm);
     $('#sesion-table').on('click','.detail-sesion',ShowForm);
     $('#sesion-job-table').on('click','.assign-coordinator',ShowForm);
     $('#sesion-job-table').on('click','.assign-co-coordinator',ShowForm);
