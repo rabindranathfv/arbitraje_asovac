@@ -60,17 +60,17 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <button class="btn btn-info show-form-delete" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
-                                <i class="fas fa-times"></i>
-                            </button>
+                                    <button class="btn btn-info show-form" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
+                                        <i class="fas fa-times"></i>
+                                    </button>
 
                                     <a href="{% url 'eventos:event_place_detail' place_data.id %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-info show-form-observations" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
-                                <i class="fas fa-comment"></i>
-                            </button>
+                                    <button class="btn btn-info show-form" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
 
                                 </td>
                             </tr>

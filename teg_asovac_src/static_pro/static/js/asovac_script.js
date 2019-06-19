@@ -697,30 +697,6 @@ var SaveAñadirPagoForm= function(){
     $('.show-form-access').click(ValidateAccess);
     $('#rol_validate').on('submit','.validate_access',ValidateAccess);
 
-    // Delete Event
-    $('#event-list').on('click','.show-form-delete',ShowForm);
-
-    // Delete Location
-    $('#location-list').on('click','.show-form-delete',ShowForm);
-
-    // Delete Organizer
-    $('#organizer-list').on('click','.show-form-delete',ShowForm);
-
-    // Organizer's details
-    $('#organizer-list').on('click','.show-details',ShowForm);
-
-    // Add organizer to event
-    $('#event-list').on('click','.show-form-add-organizer-to-event',ShowForm);
-    $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
-
-     // Add observations to event
-    $('#event-list').on('click','.show-form-observations',ShowForm);
-
-    // Add organizer to event
-    $('#location-list').on('click','.show-form-observations',ShowForm);
-
-    // Add observations to organizer
-    $('#organizer-list').on('click','.show-form-observations',ShowForm);
 
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
