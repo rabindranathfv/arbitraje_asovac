@@ -645,10 +645,18 @@ var SaveAñadirPagoForm= function(){
         return false;
       };
 
-    // create
+    // Show modal
     $('.show-form').click(ShowForm);
+
+    //Save form in modal
     $('#modal-user').on('submit', '.create-form',SaveForm);
 
+    //Save file form in modal
+    $('#modal-user').on('submit','.save-file-form',saveFileFormAndRedirect);
+
+    //Save form in modal and redirect
+    $('#modal-user').on('submit', '.save-redirect',SaveFormAndRedirect);
+    
     // //update
     $('#show_users').on('click','.show-form-update',ShowForm);
     $('#modal-user').on('submit','.update-form',SaveForm);
@@ -661,18 +669,10 @@ var SaveAñadirPagoForm= function(){
     $('#show_users').on('click','.show-form-rol',ShowForm);
     $('#modal-user').on('submit','.rol-form',SaveForm);
 
-    // Delete Job
-    $('#job-list').on('click','.show-form-delete',ShowForm);
-
-    //Show referee observations
-    $('#job-list').on('click','.show-referee-observations',ShowForm);
-
     //Show autor details
     $('#autores-table').on('click','.authorDetails',ShowForm);
     
-    // Añadir coautores al trabajo
-    $('#job-list').on('click','.show-form-add-author',ShowForm);
-    $('#modal-user').on('submit', '.add-autor-form',SaveFormAndRedirect);
+   
 
     //Mostrar observaciones de la versión final del trabajo
     $('#show-job-final-version').on('click', '.show-job-observations', ShowForm)
@@ -713,11 +713,6 @@ var SaveAñadirPagoForm= function(){
     // Add organizer to event
     $('#event-list').on('click','.show-form-add-organizer-to-event',ShowForm);
     $('#modal-user').on('submit', '.add-organizer-to-event-form',SaveFormAndRedirect);
-
-
-    // Add new version to job
-    $('#job-list').on('click','.show-form-add-new-version-to-job',ShowForm);
-    $('#modal-user').on('submit','.job-create-new-version',saveFileFormAndRedirect);
 
      // Add observations to event
     $('#event-list').on('click','.show-form-observations',ShowForm);
