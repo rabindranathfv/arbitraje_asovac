@@ -722,10 +722,6 @@ var SaveAñadirPagoForm= function(){
     // Add observations to organizer
     $('#organizer-list').on('click','.show-form-observations',ShowForm);
 
-    // Aprobe job
-    $('#job-list-to-review').on('click','.review-job',ShowForm);
-    $('.review_job').click(ShowForm);
-
     // Para cargar areas
     $('.showAreasForm').click(ShowForm);
     $('#modal-user').on('click','.cargarAreas',processGenericFile);

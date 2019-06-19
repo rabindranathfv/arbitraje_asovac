@@ -13,7 +13,7 @@
                 <h2 class="text-left">Lista de Trabajos</h2>
 
                 <div class="table-responsive">
-					<table class="table table-bordered" id="job-list-to-review"
+					<table class="table table-bordered" id="table"
 						data-toggle="table"
 						data-search="true"
 						data-sort-name="titulo_espanol"
@@ -61,7 +61,7 @@
 										<i class="fas fa-eye"></i>
 									</a>
 
-									<a class="review-job" data-url="{% url 'arbitrajes:review_job' trabajos_arbitro.trabajo.id %}" title="Arbitrar trabajo" role="button">
+									<a class="show-form" data-url="{% url 'arbitrajes:review_job' trabajos_arbitro.trabajo.id %}" title="Arbitrar trabajo" role="button">
 										<i class="fa fa-gavel"></i>
 									</a>
 

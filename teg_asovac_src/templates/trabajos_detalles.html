@@ -16,7 +16,7 @@
                                     <a href="{% url 'trabajos:trabajos' %}" class="btn btn-warning btn-block btn-lg" role="button"><i class="fas fa-arrow-alt-circle-left"></i> Atrás</a>
                                 {% endif %}
                                 {% if arbitro_review %}
-                                    <a class="btn btn-primary btn-block btn-lg review_job" data-url="{% url 'arbitrajes:review_job' trabajo.id %}" title="Arbitrar trabajo" role="button">
+                                    <a class="btn btn-primary btn-block btn-lg show-form" data-url="{% url 'arbitrajes:review_job' trabajo.id %}" title="Arbitrar trabajo" role="button">
                                         <i class="fa fa-gavel"></i>Arbitrar
                                     </a>
                                 {% endif %}                            
