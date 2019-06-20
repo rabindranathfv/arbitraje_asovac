@@ -22,6 +22,7 @@ from arbitrajes.models import Arbitraje
 from autores.models import Autores_trabajos, Autor
 from main_app.models import Usuario_rol_in_sistema
 from trabajos.models import Trabajo, Trabajo_arbitro
+
 class ChartData(APIView):
     authentication_classes = ()
     permission_classes = ()

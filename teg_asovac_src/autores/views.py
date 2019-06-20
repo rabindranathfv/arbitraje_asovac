@@ -70,6 +70,7 @@ def admin_create_author(request):
 			'username': username,
 			'sistema_asovac': sistema_asovac.nombre,
 			'password': password,
+			'arbitraje': sistema_asovac,
 			}
 			msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
 			msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
@@ -946,9 +947,10 @@ def create_authors(excel_file, arbitraje_id):
 					new_arbitro.save()
 
 					context = {
-					'username': username,
-					'sistema_asovac': arbitraje.nombre,
-					'password': password,
+						'username': username,
+						'sistema_asovac': arbitraje.nombre,
+						'password': password,
+						'arbitraje': arbitraje,
 					}
 					msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
 					msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)

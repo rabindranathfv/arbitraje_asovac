@@ -638,9 +638,10 @@ def generate_COG_key(request, arbitraje_id):
     nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
     nombre_rol = Rol.objects.get(id=2).nombre
     context = {
-    'rol': nombre_rol,
-    'sistema': nombre_sistema,
-    'password': random_password,
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
     }
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
@@ -653,6 +654,7 @@ def generate_COG_key(request, arbitraje_id):
             [item.usuario_asovac.usuario.email],               #destinatario
             html_message=msg_html,              #mensaje en html
         )
+
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
@@ -669,9 +671,10 @@ def generate_COA_key(request, arbitraje_id):
     nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
     nombre_rol = Rol.objects.get(id=3).nombre
     context = {
-    'rol': nombre_rol,
-    'sistema': nombre_sistema,
-    'password': random_password,
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
     }
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
@@ -700,9 +703,10 @@ def generate_ARS_key(request, arbitraje_id):
     nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
     nombre_rol = Rol.objects.get(id=4).nombre
     context = {
-    'rol': nombre_rol,
-    'sistema': nombre_sistema,
-    'password': random_password,
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
     }
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
@@ -756,8 +760,9 @@ def state_arbitration(request, arbitraje_id):
                     context = {
                         'autor_trabajo_principal': autor_trabajo_principal,
                         'autores_list': autores_list,
-                        'fecha': fecha
-                        }
+                        'fecha': fecha,
+                        'arbitraje': arbitraje,
+                    }
                     if autor_trabajo_principal.trabajo.estatus == "Aceptado":
                         titulo = 'Carta de aceptación'
                         msg_plain = render_to_string('../templates/email_templates/carta_aceptacion.txt', context)
@@ -1758,7 +1763,6 @@ def count_username(sh,username):
 
 
 def create_users(sh,arbitraje_id,rol):
-    
     for fila in range(sh.nrows):
         if fila > 0: 
             # Guarda el usuario
@@ -1839,7 +1843,15 @@ def create_users(sh,arbitraje_id,rol):
                     clave_arbitraje_rol="Árbitro de Subárea"
                     # print clave_arbitraje
                     # Envío de correo
-                    context = {'clave_arbitraje_rol':clave_arbitraje_rol,'clave_arbitraje':clave_arbitraje,'username': user.username ,'password':clave,'nombre':user.first_name,'apellido':user.last_name}
+                    context = {
+                        'clave_arbitraje_rol':clave_arbitraje_rol,
+                        'clave_arbitraje':clave_arbitraje,
+                        'username': user.username ,
+                        'password':clave,
+                        'nombre':user.first_name,
+                        'apellido':user.last_name,
+                        'arbitraje': arbitraje,
+                    }
                     msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
                     msg_html = render_to_string('../templates/email_templates/create_user.html', context)
 
@@ -1857,7 +1869,15 @@ def create_users(sh,arbitraje_id,rol):
                     clave_arbitraje_rol="Coordinador de Área"
                     print clave_arbitraje
                     # Envío de correo
-                    context = {'clave_arbitraje_rol':clave_arbitraje_rol,'clave_arbitraje':clave_arbitraje,'username': user.username ,'password':clave,'nombre':user.first_name,'apellido':user.last_name}
+                    context = {
+                        'clave_arbitraje_rol':clave_arbitraje_rol,
+                        'clave_arbitraje':clave_arbitraje,
+                        'username': user.username ,
+                        'password':clave,
+                        'nombre':user.first_name,
+                        'apellido':user.last_name,
+                        'arbitraje': arbitraje,
+                    }
                     msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
                     msg_html = render_to_string('../templates/email_templates/create_user.html', context)
 
@@ -2245,7 +2265,10 @@ def changepassword_modal(request):
                 #Envio de email con las nuevas credenciales al correo electrónico del usuario
                 
                 user = User.objects.get(pk=request.user.id)
-                context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
+                context = {
+                    'username': user.username,
+                    'password':form.cleaned_data['new_password1']
+                }
 
                 msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
                 msg_html = render_to_string('../templates/email_templates/changepassword.html', context)

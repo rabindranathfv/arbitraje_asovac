@@ -935,6 +935,7 @@ def selectArbitro(request,id):
     # print "Trabajo id: ",id
 
     event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
     subAreaTrabajo= Trabajo.objects.get(id=id).subareas.get().id
@@ -962,16 +963,16 @@ def selectArbitro(request,id):
             area= str(user_area.id)
             data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
             data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
-    
+
     total=0
     datafilter= filterArbitro(data,id)
-    
+
     for item in data_count:
         total=total+1
-    
+
     response=dict()
     arbitros= []
-    
+
 
 
     if request.method == 'POST':
@@ -1010,7 +1011,15 @@ def selectArbitro(request,id):
                 # print ("Datos Correo: {0} {1} {2} {3} {4} {5}".format(url_site,arbitro.apellidos,arbitro.nombres,arbitro.correo_electronico,arb_id,token))
 
                 # Correo de asignacion a trabajos con token de confirmacion
-                context = {'invitacion':inv_id,'url_site':url_site,'arbitro':arbitro,'arb_id':arb_id ,'token':token, "trabajo":trabajo.titulo_espanol}
+                context = {
+                    'invitacion':inv_id,
+                    'url_site':url_site,
+                    'arbitro':arbitro,
+                    'arb_id':arb_id,
+                    'token':token,
+                    'trabajo':trabajo.titulo_espanol,
+                    'arbitraje':arbitraje,
+                }
                 msg_plain = render_to_string('../templates/email_templates/create_invitation.txt', context)
                 msg_html = render_to_string('../templates/email_templates/create_invitation.html', context)
 
