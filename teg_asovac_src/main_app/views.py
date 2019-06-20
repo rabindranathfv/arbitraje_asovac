@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string
+from datetime import date
+import random, string,xlrd,os,sys,xlwt
+from openpyxl import Workbook
+from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
@@ -17,12 +21,18 @@ from django.urls import reverse
 import json
 from django.db.models import Q
 from django.db.models import Count
+from django.utils.crypto import get_random_string
 
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from autores.models import Autores_trabajos
+from sesiones.models import Sesion
+from trabajos.models import Trabajo
 
-from autores.models import Autor
+from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
+
+from autores.models import Autor, Universidad
 from autores.forms import AuthorCreateAutorForm
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
@@ -56,10 +66,10 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 == rol_id) or ((estado != 6 and estado != 8) and 3 == rol_id) or ((estado != 8 and estado != 6) and 4 == rol_id) or (estado != 6 and 5 == rol_id)):
         top_nav_options.append('result')
     # verify job
-    if ((estado == 3 and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
+    if ((estado in [3,5] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
         top_nav_options.append('jobs')
     # verify trabajo_options
-    if(estado == 3 and 5 >= rol_id):
+    if((estado == 3 or estado == 5 )and 5 >= rol_id):
         top_nav_options.append('job_options')
 
     items['top_nav_options'] = top_nav_options
@@ -158,11 +168,10 @@ def get_route_trabajos_sidebar(estado,rol_id,item_active):
 
 
 def get_route_trabajos_navbar(estado,rol_id):
-    if(estado == 3 and 5 == rol_id):
+    if((estado == 3 or estado == 5)and 5 == rol_id):
         return reverse('trabajos:trabajos')
-    if(estado == 5 and 4 == rol_id):
-        return reverse('trabajos:trabajos_evaluados')
-    return None 
+    else:
+        return None 
 
 def get_route_resultados(estado,rol_id, arbitraje_id):
     if(estado== 6 and 5 == rol_id):
@@ -209,14 +218,15 @@ def get_roles(user_id, arbitraje_id):
 
 # Para obtener la lista de roles 
 def get_role_list(user,arbitraje):
-
     admin= get_roles(user,"is_admin")
+    user_asovac= get_object_or_404(Usuario_asovac, usuario = user)
+    # print "usuario asovac: ",user_asovac.id
     if(admin == 1):
         # Lista de roles
-        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user,status=True)
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user_asovac,status=True)
     else:
         # Lista de roles
-        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user, sistema_asovac=arbitraje,status=True)
+        rol_active= Usuario_rol_in_sistema.objects.filter(usuario_asovac = user_asovac, sistema_asovac=arbitraje,status=True)
     
     rols=[]
     for item in rol_active:
@@ -301,16 +311,36 @@ def create_params_validations(request,status):
     # print params_validations
     return params_validations
 
+# Para guardar el archivo recibido del formulario  
+def save_file(request,type_load):
+
+    name= str(request.FILES.get('file')).decode('UTF-8')
+    file_name=''
+
+    if type_load == "usuarios":   
+        extension = name.split('.')        	
+        file_name= "cargaUsuarios."+extension[1]
+        # Permite guardar el archivo y asignarle un nombre
+        handle_uploaded_file(request.FILES['file'], file_name)
+        route= "upload/"+file_name
+    # print "Ruta del archivo: ",route
+    return route
+
+# Para obtener la extension del archivo
+def get_extension_file(filename):
+
+    extension = filename.split('.')
+    return extension[1] 
+
 def compute_progress_bar(state):
     if state == 0:
         return 0
     else:
         return int(float(state) / 8.0 * 100.0)
-#########################################################################################
-################################## VIEWS BACKEND #######################################
-########################################################################################
 
-
+#---------------------------------------------------------------------------------#
+#                            VIEWS BACKEND                                        #
+#---------------------------------------------------------------------------------#
 def login(request):
     form = MyLoginForm()
     context = {
@@ -328,6 +358,13 @@ def register(request):
         if form.is_valid():
             user= form.save()
             usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
+            # Para crear instancia de arbitro
+            arbitro =Arbitro()
+            arbitro.nombres=user.first_name
+            arbitro.apellidos=user.last_name
+            arbitro.correo_electronico=user.email
+            arbitro.usuario=usuario_asovac
+            arbitro.save()
 
             subarea= request.POST.getlist("subarea_select")
             for item in subarea:
@@ -340,7 +377,7 @@ def register(request):
         else:
             areas= Area.objects.all()
             subareas= Sub_area.objects.all()
-            form = RegisterForm()
+            # form = RegisterForm()
             subareaform=SubAreaRegistForm()
             context={
                     "form":form,
@@ -365,6 +402,7 @@ def register(request):
 
 
 
+@login_required
 def home(request):
     # Queryset
     arbitraje_data = Sistema_asovac.objects.all()
@@ -402,7 +440,7 @@ def home(request):
             allow_entry_list.append(True)
         elif 4 >= rol_id and arb.estado_arbitraje in [5,6,8]:
             allow_entry_list.append(True)
-        elif 5 >= rol_id and arb.estado_arbitraje in [3,6]:
+        elif 5 >= rol_id and arb.estado_arbitraje in [3,5,6]:
             allow_entry_list.append(True)
         else:
             allow_entry_list.append(False)
@@ -421,13 +459,14 @@ def home(request):
 
 
 
+@login_required
 def dashboard(request, arbitraje_id):
-    ######################################################################################
+    #-----------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
-    ######################################################################################
-    
+    #-----------------------------------------------------------------------------------#
+
     user_id= request.user.id
     user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
     # para enviar area a la cual pertenece el usuari por sesion 
@@ -440,11 +479,17 @@ def dashboard(request, arbitraje_id):
 
     request.session['arbitraje_id'] = arbitraje_id
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    request.session['estado'] = arbitraje.estado_arbitraje
+    estado = arbitraje.estado_arbitraje
+    request.session['estado']=estado
 
     rol_id=get_roles(request.user.id, arbitraje.id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+
+    try:
+        autor = Autor.objects.get( usuario = user )
+        request.session['is_author_created'] = True
+    except:
+        request.session['is_author_created'] = False
 
     item_active = 1
     #print(request.session['estado'])
@@ -457,7 +502,6 @@ def dashboard(request, arbitraje_id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
 
     # for item,val in items.items():
         # print item, ":", val[0]
@@ -480,26 +524,23 @@ def dashboard(request, arbitraje_id):
     }
     return render(request, 'main_app_dashboard.html', context)
 
+
+
+@login_required
 def create_arbitraje(request):
-    form = CreateArbitrajeForm()
+    form = CreateArbitrajeForm(request.POST or None)
     context = {
-                    'nombre_vista' : 'Crear un Arbitraje',
-                    'username' : request.user.username,
-                    'form' : form,
-                }
+        'nombre_vista' : 'Crear un Arbitraje',
+        'username' : request.user.username,
+        'form' : form,
+    }
     if request.method == 'POST':
-        form = CreateArbitrajeForm(request.POST or None)
         if form.is_valid():
             form.save()
             # print(form)
             arbitraje_data = Sistema_asovac.objects.all()
-            context = {
-                'nombre_vista' : 'Crear un Arbitraje',
-                'username' : request.user.username,
-                'form' : form,
-                'arb_data': arbitraje_data,
-                }
-            return redirect('main_app:home')        
+            context['arb_data'] = arbitraje_data
+            return redirect('main_app:home')
     return render(request, 'main_app_create_arbitraje.html', context)
 
 
@@ -508,13 +549,13 @@ def email_test(request):
     context = {
         'nombre_vista' : 'Email-Test',
         'username' : 'Rabindranath Ferreira',
-        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño erandom_passwordperimental',
+        'resumen_title': 'Escalamiento a escala industrial de una crema azufrada optimizada mediante un diseño experimental',
         'authors': ['Karla Calo', 'Luis Henríquez']
     }
     return render(request, 'resumen_rejected_email.html', context)
 
 
-
+@login_required
 def listado_trabajos(request):
     context = {
         'nombre_vista' : 'Listado de Trabajos',
@@ -524,6 +565,7 @@ def listado_trabajos(request):
 
 
 
+@login_required
 def detalles_resumen(request):
     context = {
         'nombre_vista' : 'Detalles de Trabajo',
@@ -531,131 +573,42 @@ def detalles_resumen(request):
     }
     return render(request, 'main_app_detalle_resumen.html', context)
 
-def data_basic(request, arbitraje_id):
-    form= DataBasicForm()
 
-    ######################################################################################
+
+@login_required
+def data_basic(request, arbitraje_id):
+    #------------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
     # Si: se procede a desplegar el contenido normalmente.
     # No: Se despliega un error 404
-    ######################################################################################
+    #------------------------------------------------------------------------------------#
 
-    estado = request.session['estado']
-    arbitraje_id = request.session['arbitraje_id']
-
-    rol_id=get_roles(request.user.id,arbitraje_id)
-    # print (rol_id)
-    
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id =get_roles(request.user.id,arbitraje_id)
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 
-    if request.POST:
-        opcion = request.POST['generar_clave']
-        random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
-            
-        if opcion == '1': #Caso de generar clave  para coordinador general
-            random_password += 'COG'
-            arbitraje.clave_maestra_coordinador_general = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de coordinador general ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=2 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=2).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-
-        
-        elif opcion == '2':#Caso de generar clave para coordinador de area
-            random_password += 'COA'
-            arbitraje.clave_maestra_coordinador_area = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id= 3) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=3).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-        
-
-        elif opcion == '3':#Caso de generar clave para arbitro de subarea
-            random_password += 'ARS'
-            arbitraje.clave_maestra_arbitro_subarea = random_password
-            arbitraje.save()
-            messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
-
-            usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=4 ) | Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id=1 )
-
-            nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
-            nombre_rol = Rol.objects.get(id=4).nombre
-            context = {
-            'rol': nombre_rol,
-            'sistema': nombre_sistema,
-            'password': random_password,
-            }
-            msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
-            msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-            
-            for item in usuario_rol_in_sistema:
-                
-                send_mail(
-                        'Asignación de contraseña',         #titulo
-                        msg_plain,                          #mensaje txt
-                        config('EMAIL_HOST_USER'),          #email de envio
-                        [item.usuario_asovac.usuario.email],               #destinatario
-                        html_message=msg_html,              #mensaje en html
-                        )
-        
-
-        print("The password is:"+random_password)
-
-
+    form = DataBasicForm(request.POST or None, instance=arbitraje)
+    if request.method == 'POST':
+        print('Request es POST')
+        if form.is_valid():
+            print('formulario es valido')
+            form.save()
+            messages.success(request, 'Los datos del arbitraje han sido guardados con éxito.')
+            return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+        print(form.errors)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
-
     route_conf = get_route_configuracion(estado,rol_id,arbitraje_id)
     route_seg = get_route_seguimiento(estado,rol_id)
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
-    # print items
-
     context = {
         'nombre_vista' : 'Editar Configuración General',
+        'form': form,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -670,11 +623,110 @@ def data_basic(request, arbitraje_id):
     }
     return render(request, 'main_app_data_basic.html', context)
 
-def state_arbitration(request, arbitraje_id):
 
+@login_required
+def generate_COG_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'COG'
+    arbitraje.clave_maestra_coordinador_general = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de coordinador general ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 2])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=2).nombre
+    context = {
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+
+@login_required
+def generate_COA_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'COA'
+    arbitraje.clave_maestra_coordinador_area = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 3])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=3).nombre
+    context = {
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+
+@login_required
+def generate_ARS_key(request, arbitraje_id):
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
+    random_password += 'ARS'
+    arbitraje.clave_maestra_arbitro_subarea = random_password
+    arbitraje.save()
+    messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
+
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 4])
+
+    nombre_sistema = Sistema_asovac.objects.get(id=request.session['arbitraje_id']).nombre
+    nombre_rol = Rol.objects.get(id=4).nombre
+    context = {
+        'rol': nombre_rol,
+        'sistema': nombre_sistema,
+        'password': random_password,
+        'arbitraje': arbitraje,
+    }
+    msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
+    msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
+
+    for item in usuario_rol_in_sistema:
+        send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+    return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
+
+@login_required
+def state_arbitration(request, arbitraje_id):
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     user_id = request.user.id
     rol_id=get_roles(request.user.id,arbitraje_id)
 
@@ -698,7 +750,36 @@ def state_arbitration(request, arbitraje_id):
     form = ArbitrajeStateChangeForm(request.POST or None, instance = arbitraje)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            state = form.save()
+            #Codigo para enviar correo electronico
+            if state.estado_arbitraje == 8:
+                autores_principal_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_autor_principal = True, pagado = True)
+                for autor_trabajo_principal in autores_principal_list:  
+                    fecha = date.today()
+                    autores_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo_principal.trabajo)
+                    context = {
+                        'autor_trabajo_principal': autor_trabajo_principal,
+                        'autores_list': autores_list,
+                        'fecha': fecha,
+                        'arbitraje': arbitraje,
+                    }
+                    if autor_trabajo_principal.trabajo.estatus == "Aceptado":
+                        titulo = 'Carta de aceptación'
+                        msg_plain = render_to_string('../templates/email_templates/carta_aceptacion.txt', context)
+                        msg_html = render_to_string('../templates/email_templates/carta_aceptacion.html', context)
+                    else:
+                        titulo = 'Carta de rechazo'
+                        msg_plain = render_to_string('../templates/email_templates/carta_rechazo.txt', context)
+                        msg_html = render_to_string('../templates/email_templates/carta_rechazo.html', context)
+                    
+                    send_mail(
+                            titulo,         #titulo
+                            msg_plain,                          #mensaje txt
+                            config('EMAIL_HOST_USER'),          #email de envio
+                            [autor_trabajo_principal.autor.correo_electronico],               #destinatario
+                            html_message=msg_html,              #mensaje en html
+                            )
+                
         else:
             print (form.errors)
         #estado = request.POST['estadoArbitraje']
@@ -724,6 +805,9 @@ def state_arbitration(request, arbitraje_id):
     }
     return render(request, 'main_app_status_arbitration.html', context)
 
+
+
+@login_required
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     users = User.objects.all()
@@ -739,8 +823,9 @@ def users_list(request, arbitraje_id):
         #user.area_id.all()
         #print (query)
 
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     item_active = 1
     items = validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -771,12 +856,14 @@ def users_list(request, arbitraje_id):
 
 
 
+@login_required
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -805,11 +892,12 @@ def user_edit(request, arbitraje_id):
 
 
 
+@login_required
 def user_roles(request, arbitraje_id):
-
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -840,11 +928,12 @@ def user_roles(request, arbitraje_id):
 
 
 
+@login_required
 def coord_general(request, arbitraje_id):
-
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -883,12 +972,13 @@ def coord_general(request, arbitraje_id):
 
 
 
-
+@login_required
 def coord_area(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     item_active = 1
@@ -917,11 +1007,15 @@ def coord_area(request, arbitraje_id):
     }
     return render(request, 'main_app_coord_area.html', context)
 
+
+
+@login_required
 def total(request, arbitraje_id):
 
     # print (rol_id)
-    estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
     
     item_active = 3
@@ -950,12 +1044,13 @@ def total(request, arbitraje_id):
     }
     return render(request, 'main_app_totales.html', context)
 
+
+
+@login_required
 def apps_selection(request):
-    
     user_id= request.user.id
     data= dict()
     user= get_object_or_404(User,id=user_id)
-    
     user= Usuario_asovac.objects.get(usuario_id=user_id)
     #user_role = user.biggest_role()
 
@@ -973,30 +1068,49 @@ def apps_selection(request):
 
     return render(request, 'main_app_aplicaciones_opc.html',context)
 
+
+
 # Ajax/para el uso de ventanas modales
+@login_required
 def create_autor_instance_modal(request, user_id):
     data = dict()
+    form = AuthorCreateAutorForm()
     if request.method == 'POST':
         form = AuthorCreateAutorForm(request.POST)
+        universidad = request.POST.get("university_select") #Se colocó el valor de -1 para añadir una nueva universidad
         if form.is_valid():
-            autor = form.save(commit = False)
-            user = User.objects.get(id = user_id)
-            usuario_asovac = Usuario_asovac.objects.get(usuario = user)
-            autor.usuario = usuario_asovac
-            autor.nombres = user.first_name
-            autor.apellidos = user.last_name
-            autor.correo_electronico = user.email
-            autor.save()
-            return redirect('main_app:home')
-    else:
-        form = AuthorCreateAutorForm()
-        context = {
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
+            try:
+                autor = form.save(commit = False)
+                user = User.objects.get(id = user_id)
+                usuario_asovac = Usuario_asovac.objects.get(usuario = user)
+                autor.usuario = usuario_asovac
+                autor.nombres = user.first_name
+                autor.apellidos = user.last_name
+                autor.correo_electronico = user.email
+                if universidad != '-1':
+                    autor.universidad = Universidad.objects.get(id = universidad)
+                    autor.save()
+                    request.session['is_author_created'] = True
+                    data['url'] = reverse('trabajos:trabajos')
+                    request.session['is_author_created'] = True  
+                else:
+                    data['url'] = reverse('autores:create_university_modal')
+                    request.session['autor'] = serializers.serialize('json', [ autor, ])
+                    data['reload_modal'] = True
+                data['form_is_valid']= True           
+            except:
+                pass
+    universidades = Universidad.objects.all()
+    context = {
+        'form':form,
+        'universidades': universidades
+    }
+    data['html_form'] = render_to_string('ajax/author_create_autor_modal.html', context, request = request)
     return JsonResponse(data)
 
 
+
+@login_required
 def process_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1015,6 +1129,9 @@ def process_modal(request,form,template_name):
     data['html_form']= render_to_string(template_name,context, request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def create_user_modal(request):
     if request.method == 'POST':
         form= RegisterForm(request.POST)
@@ -1023,6 +1140,9 @@ def create_user_modal(request):
 
     return process_modal(request,form,'ajax/users-create.html')
 
+
+
+@login_required
 def update_user_modal(request,id):
     print "update_user_modal"
     user=  get_object_or_404(User,id=id)
@@ -1033,7 +1153,10 @@ def update_user_modal(request,id):
         # form= RegisterForm(instance=user)
         form= PerfilForm(instance=user)
     return process_modal(request,form,'ajax/user_update.html')
-    
+
+
+
+@login_required
 def delete_user_modal(request,id):
     data= dict()
     user= get_object_or_404(User,id=id)
@@ -1050,6 +1173,9 @@ def delete_user_modal(request,id):
 
     return JsonResponse(data)
 
+
+
+@login_required
 def update_rol_modal(request,id):
     #print "update_rol_modal"
     data= dict()
@@ -1091,6 +1217,9 @@ def update_rol_modal(request,id):
 
     return JsonResponse(data)
 
+
+
+@login_required
 def validate_access_modal(request,id):
     data= dict()
     user_id= request.user.id
@@ -1150,9 +1279,11 @@ def validate_access_modal(request,id):
 
     return JsonResponse(data)
 
-###################################################################################
-#############     Obtener lista de subareas asociadas a un area     ###############
-###################################################################################
+
+
+#---------------------------------------------------------------------------------#
+#                 Obtener lista de subareas asociadas a un area                   #
+#---------------------------------------------------------------------------------#
 def get_subareas(request,id):
     data= dict()
 
@@ -1162,9 +1293,25 @@ def get_subareas(request,id):
     
     return JsonResponse(data)
 
-###################################################################################
-##########################     Vista areas subareas     ###########################
-###################################################################################
+
+
+#---------------------------------------------------------------------------------#
+#                   Obtener Área asociada a un usuario                            #
+#---------------------------------------------------------------------------------#
+def get_area(user_id):
+    usuario_asovac= Usuario_asovac.objects.get(usuario_id=user_id)
+    area=0
+    subarea=usuario_asovac.sub_area.first()
+    # subarea=usuario_asovac.sub_area.get()
+    area= subarea.area
+    return area
+
+
+
+#---------------------------------------------------------------------------------#
+#                              Vista areas subareas                               #
+#---------------------------------------------------------------------------------#
+@login_required
 def areas_subareas(request):
 
     estado = request.session['estado']
@@ -1197,31 +1344,37 @@ def areas_subareas(request):
     }
     return render(request, 'main_app_areas_subareas.html', context)
 
-###################################################################################
-########################     Procesar carga de areas     ##########################
-###################################################################################
+
+
+#---------------------------------------------------------------------------------#
+#                            Procesar carga de areas                              #
+#---------------------------------------------------------------------------------#
+@login_required
 def process_areas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
         # if form.is_valid():
-        status=0
+        status=200
+        print "Se envia el archivo en post"
         if request.FILES != {}:
             data['form_is_valid']= True
-            status=1
-            response="Las areas se han cargado de forma exitosa."
+            status=200
+            response="Las áreas se han cargado de forma exitosa."
+            data['message']= "Las áreas se han cargado de forma exitosa."
             try:
                 request.FILES['file'].save_to_database(
                 # name_columns_by_row=2,
                 model=Area,
-                mapdict=['nombre', 'descripcion'])
+                mapdict=['nombre', 'descripcion','codigo'])
             except:
                 print("Hay un error en los valores de entrada")
                 data['form_is_valid']= False
-                status=0
+                data['message']= "Ha ocurrido un error, verifique que los valores suministrados son validos."
+                status=500
                 response="Ha ocurrido un error, verifique que los valores suministrados son validos."
 
             context={
-                'title': "Cargar Areas",
+                'title': "Cargar Áreas",
                 'response': response,
                 'status': status,
             }
@@ -1238,9 +1391,11 @@ def process_areas_modal(request,form,template_name):
     return JsonResponse(data) 
 
 
-###################################################################################
-######################     Procesar carga de subareas     #########################
-###################################################################################
+
+#---------------------------------------------------------------------------------#
+#                          Procesar carga de subareas                             #
+#---------------------------------------------------------------------------------#
+@login_required
 def process_subareas_modal(request,form,template_name):
     data= dict()
     if request.method == 'POST':
@@ -1248,21 +1403,23 @@ def process_subareas_modal(request,form,template_name):
         status=0
         if request.FILES != {}:
             data['form_is_valid']= True
+            data['message']= "Las subáreas se han cargado de forma exitosa."
             status=1
-            response="Las subareas se han cargado de forma exitosa."
+            response="Las subáreas se han cargado de forma exitosa."
             try:
                 request.FILES['file'].save_to_database(
                 # name_columns_by_row=2,
                 model=Sub_area,
-                mapdict=['nombre', 'descripcion','area_id'])
+                mapdict=['nombre', 'descripcion','area_id','codigo'])
             except:
                 print("Hay un error en los valores de entrada")
                 data['form_is_valid']= False
                 status=0
-                response="Ha ocurrido un error, verifique que las areas asignadas existen."
+                data['message']="Ha ocurrido un error, verifique que las áreas asignadas existen."
+                response="Ha ocurrido un error, verifique que las áreas asignadas existen."
             
             context={
-                'title': "Cargar Subareas",
+                'title': "Cargar Subáreas",
                 'response': response,
                 'status': status,
             }
@@ -1280,10 +1437,10 @@ def process_subareas_modal(request,form,template_name):
 
 
 
-###################################################################################
-########################     Carga de areas via files     ##########################
-###################################################################################
-
+#---------------------------------------------------------------------------------#
+#                            Carga de areas via files                             #
+#---------------------------------------------------------------------------------#
+@login_required
 def load_areas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1301,10 +1458,11 @@ def load_areas_modal(request):
     return process_areas_modal(request,form,'ajax/load_areas.html')
 
 
-###################################################################################
-######################     Carga de subareas via files     ########################
-###################################################################################
 
+#---------------------------------------------------------------------------------#
+#                          Carga de subareas via files                            #
+#---------------------------------------------------------------------------------#
+@login_required
 def load_subareas_modal(request):
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1322,10 +1480,449 @@ def load_subareas_modal(request):
     return process_subareas_modal(request,form,'ajax/load_subareas.html')
 
 
-###################################################################################
-###############     Carga el contenido de la tabla de areas     ###################
-###################################################################################
 
+#---------------------------------------------------------------------------------#
+#                            Carga de usuarios via files                          #
+#---------------------------------------------------------------------------------#
+@login_required
+def load_users_modal(request,arbitraje_id,rol):
+    data=dict()
+
+    if request.method == 'POST':
+        print 'el metodo es post'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+
+            # Para guardar el archivo de forma local
+            file_name= save_file(request,"usuarios")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo 
+            response= validate_load_users(file_name, extension,arbitraje_id,rol)
+            print response
+
+            context={
+                'title': "Cargar Usuarios",
+                'response': response['message'],
+                'status': response['status'],
+            }
+
+            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
+            return JsonResponse(data) 
+        else:
+            form= UploadFileForm(request.POST, request.FILES)
+            context={
+            'form': form,
+            'arbitraje_id': arbitraje_id,
+            'rol': rol,
+            }
+            data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
+            return JsonResponse(data) 
+    else:
+        print 'el metodo es get'
+        form= UploadFileForm()
+
+        context={
+            'form': form,
+            'arbitraje_id': arbitraje_id,
+            'rol': rol,
+        }
+        data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
+        return JsonResponse(data) 
+
+
+
+#---------------------------------------------------------------------------------#
+#                Valida el contenido del excel para cargar usuarios               #
+#---------------------------------------------------------------------------------#
+def validate_load_users(filename,extension,arbitraje_id,rol):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
+
+    if extension == "xlsx" or extension == "xls":
+        print "Formato xls/xlsx"
+        book = xlrd.open_workbook(filename)   
+
+        if book.nsheets > 0:
+         
+            print "El numero de hojas es mayor a 0 "
+            sh = book.sheet_by_index(0)
+
+            if sh.ncols == 17:
+                print "El archivo tiene 17 columnas"
+                data['status']=200
+                data['message']="Se cargaron los usuarios de manera exitosa"
+
+                # se validan los campos del documento
+                for fila in range(sh.nrows):
+                    # Para no buscar los titulos 
+                    if fila > 0: 
+                        # Se verifica si el correo electronico ya se encuentra registrado
+                        email_exist=exist_email(sh.cell_value(rowx=fila, colx=3).strip())
+                        email_count=count_email(sh,sh.cell_value(rowx=fila, colx=3).strip())
+                        
+                        # Se verifica que el campo nombre no este vacio
+                        if sh.cell_value(rowx=fila, colx=0) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo apellido no este vacio
+                        if sh.cell_value(rowx=fila, colx=1) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el apellido es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo nombre de usuario no este vacio
+                        if sh.cell_value(rowx=fila, colx=2) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre de usuario es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo correo electronico no este vacio
+                        if sh.cell_value(rowx=fila, colx=3) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo es un campo obligatorio".format(fila)
+                            break
+                        
+                        # Se verifica que el campo genero no este vacio
+                        if sh.cell_value(rowx=fila, colx=8) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el genero es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo cedula o pasaporte no este vacio
+                        if sh.cell_value(rowx=fila, colx=9) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la cédula o pasaporte es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo titulo no este vacio
+                        if sh.cell_value(rowx=fila, colx=10) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el titulo es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo linea de investigación no este vacio
+                        if sh.cell_value(rowx=fila, colx=11) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la linea de investigación es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo celular no este vacio
+                        if sh.cell_value(rowx=fila, colx=13) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el teléfono celular o habitación es un campo obligatorio".format(fila)
+                            break
+                        
+                        # Se verifica que el campo correo electronico sea unico
+                        if email_count > 1:
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo {1} debe ser asignado a un solo usuario".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            break
+
+                        # Se verifica que el campo correo electronico sea unico
+                        if email_exist == True:
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            break
+
+                        # Se verifica si el username ya se encuentra registrado
+                        username_exist=exist_username(sh.cell_value(rowx=fila, colx=2).strip())
+                        username_count=count_username(sh,sh.cell_value(rowx=fila, colx=2).strip())
+
+                        if username_count > 1:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre de usuario {1} debe ser asignado a un solo usuario".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            break
+
+                        if username_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            break
+
+                        # Se verifica si el area ya se encuentra registrada
+                        area_exist=exist_area(sh.cell_value(rowx=fila, colx=4).strip())
+                        if area_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área {1} no se encuentra registrada".format(fila,sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                         # Se verifica si el area ya se encuentra registrada
+                        subarea1_exist=""
+                        subarea2_exist=""
+                        subarea3_exist=""
+
+                        if sh.cell_value(rowx=fila, colx=5) != "": 
+                            subarea1_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=5).strip())
+
+                        if sh.cell_value(rowx=fila, colx=6) != "":
+                            subarea2_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=6).strip())
+
+                        if sh.cell_value(rowx=fila, colx=7) != "":
+                            subarea3_exist=exist_subarea(sh.cell_value(rowx=fila, colx=4),sh.cell_value(rowx=fila, colx=7).strip())
+
+                        if subarea1_exist == "" and subarea2_exist == "" and subarea3_exist == "":
+                            data['status']=400
+                            data['message']="Error en la fila {0}  debe registrar almenos 1 subárea. ".format(fila)
+                            break
+
+                        if subarea1_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea1 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=5),sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                        if subarea2_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea2 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=6),sh.cell_value(rowx=fila, colx=4))
+                            break
+                        
+                        if subarea3_exist == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea3 '{1}' no se encuentra registrada en el área {2}".format(fila,sh.cell_value(rowx=fila, colx=7),sh.cell_value(rowx=fila, colx=4))
+                            break
+
+                # Inserta los registros una vez realizada la validación correspondiente
+                if data['status'] == 200:
+                    is_create=create_users(sh,arbitraje_id,rol)
+                    print is_create
+                    if is_create == 400:
+                        data['status']=400
+                        data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
+                    print "Los datos del archivo son válidos"
+
+    return data 
+
+
+
+#---------------------------------------------------------------------------------#
+#             Verifica si existe el correo o el nombre de usuario                 #
+#---------------------------------------------------------------------------------#
+def exist_email(email):
+    exist= User.objects.filter(email=email).exists()
+    return exist
+
+
+
+def exist_username(user):
+    exist= User.objects.filter(username=user).exists()
+    return exist
+
+
+
+def exist_area(area):
+    exist= Area.objects.filter(nombre=area).exists()
+    return exist
+
+
+
+def exist_subarea(area, subarea):
+    # print subarea
+    query= Area.objects.get(nombre=area)
+    exist= Sub_area.objects.filter(nombre=subarea,area_id=query.id).exists()
+    
+    return exist
+
+
+
+def count_email(sh,email):
+    cont=0
+    for fila in range(sh.nrows):
+        if email== sh.cell_value(rowx=fila, colx=3):
+            cont=cont+1
+    return cont
+
+
+
+def count_username(sh,username):
+    cont=0
+    for fila in range(sh.nrows):
+        if username== sh.cell_value(rowx=fila, colx=2):
+            cont=cont+1
+        # print "El contador vale: ",cont
+    return cont
+
+
+
+def create_users(sh,arbitraje_id,rol):
+    for fila in range(sh.nrows):
+        if fila > 0: 
+            # Guarda el usuario
+            try: 
+                user= User()
+                user.first_name=sh.cell_value(rowx=fila, colx=0).strip()
+                user.last_name=sh.cell_value(rowx=fila, colx=1).strip()
+                user.username=sh.cell_value(rowx=fila, colx=2).strip()
+                user.email=sh.cell_value(rowx=fila, colx=3).strip()
+                clave= get_random_string(length=12)
+                user.password=make_password(clave)
+                user.save()
+                # print "Se crea el usuario: ", user.first_name
+
+                # Guarda la subarea
+                usuario_asovac= Usuario_asovac.objects.get(usuario=user)
+                arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+
+                if sh.cell_value(rowx=fila, colx=5) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 1"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=5).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
+                
+                if sh.cell_value(rowx=fila, colx=6) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 2"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=6).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
+                
+                if sh.cell_value(rowx=fila, colx=7) != "":
+                    # calcular el id de cada subarea para mandarlo por parametro
+                    # print "subarea 3"
+                    subarea_id= get_subarea(sh.cell_value(rowx=fila, colx=7).strip())
+                    usuario_asovac.sub_area.add(Sub_area.objects.get(id=subarea_id))
+                    usuario_asovac.save()
+
+                # Guarda el rol asociado al sistema donde se esta cargando el usuario 
+                itemRole= Rol.objects.get(id=rol)
+                # Se construye el objeto para crear los roles
+                addRol=Usuario_rol_in_sistema()
+                addRol.usuario_asovac=usuario_asovac
+                addRol.rol=itemRole
+                addRol.sistema_asovac=arbitraje
+                addRol.save()
+
+                # Guarda los datos asociados al arbitro
+                
+                # Campos obliogatorios
+                arbitro =Arbitro()
+                arbitro.nombres=sh.cell_value(rowx=fila, colx=0).strip()
+                arbitro.apellidos=sh.cell_value(rowx=fila, colx=1).strip()
+                arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
+                arbitro.cedula_pasaporte=str(sh.cell_value(rowx=fila, colx=9)).replace(".0","").strip()
+                arbitro.titulo=sh.cell_value(rowx=fila, colx=10).strip()
+                arbitro.linea_investigacion=sh.cell_value(rowx=fila, colx=11).strip()
+                arbitro.telefono_habitacion_celular=str(sh.cell_value(rowx=fila, colx=13)).replace(".0","").strip()
+                arbitro.correo_electronico=user.email
+                arbitro.usuario=usuario_asovac
+
+                # Campos opcionales
+                if sh.cell_value(rowx=fila, colx=12) != "":
+                    arbitro.telefono_oficina=str(sh.cell_value(rowx=fila, colx=12)).replace(".0","").strip()
+                if sh.cell_value(rowx=fila, colx=13) != "":
+                    arbitro.institucion_trabajo=sh.cell_value(rowx=fila, colx=14).strip()
+                if sh.cell_value(rowx=fila, colx=14) != "":
+                    arbitro.datos_institucion=sh.cell_value(rowx=fila, colx=15).strip()
+                if sh.cell_value(rowx=fila, colx=15) != "":
+                    arbitro.observaciones=sh.cell_value(rowx=fila, colx=16).strip()
+                if(rol == "4"):
+                    # Coordinador de área
+                    arbitro.save()
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
+                    clave_arbitraje= arbitraje.clave_maestra_arbitro_subarea
+                    clave_arbitraje_rol="Árbitro de Subárea"
+                    # print clave_arbitraje
+                    # Envío de correo
+                    context = {
+                        'clave_arbitraje_rol':clave_arbitraje_rol,
+                        'clave_arbitraje':clave_arbitraje,
+                        'username': user.username ,
+                        'password':clave,
+                        'nombre':user.first_name,
+                        'apellido':user.last_name,
+                        'arbitraje': arbitraje,
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/create_user.html', context)
+
+                    send_mail(
+                        'Registro de usuario',              #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [user.email],                       #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+                else:
+                    # Árbitro de Subárea
+                    arbitro.save()
+                    clave_arbitraje= arbitraje.clave_maestra_coordinador_area
+                    clave_arbitraje_rol="Coordinador de Área"
+                    print clave_arbitraje
+                    # Envío de correo
+                    context = {
+                        'clave_arbitraje_rol':clave_arbitraje_rol,
+                        'clave_arbitraje':clave_arbitraje,
+                        'username': user.username ,
+                        'password':clave,
+                        'nombre':user.first_name,
+                        'apellido':user.last_name,
+                        'arbitraje': arbitraje,
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/create_user.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/create_user.html', context)
+
+                    send_mail(
+                        'Registro de usuario',              #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [user.email],                       #destinatario
+                        html_message=msg_html,              #mensaje en html
+                        )
+            except:
+                print "Ha ocurrido un error con los parametros recibidos"   
+                return 400
+    return 200 
+
+
+
+#---------------------------------------------------------------------------------#
+#                 Para obtener el id de la subarea importada                      #
+#---------------------------------------------------------------------------------#
+def get_subarea(name):
+    # print "Area a crear: ",name
+    subarea=Sub_area.objects.get(nombre=name)
+    return subarea.id
+
+
+
+#---------------------------------------------------------------------------------#
+#                Guarda el archivo en la carpeta del proyecto                     #
+#---------------------------------------------------------------------------------#
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('upload/'):
+        os.mkdir('upload/')
+
+    # print "Nombre del archivo a guardar: ",filename
+    with open('upload/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+
+#---------------------------------------------------------------------------------#
+#                   Carga el contenido de la tabla de areas                       #
+#---------------------------------------------------------------------------------#
+@login_required
 def list (request):
     response = {}
     response['query'] = []
@@ -1362,7 +1959,7 @@ def list (request):
                 order='-'+sort
 
     if search != "":
-        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        data=Area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) | Q(codigo__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -1381,7 +1978,7 @@ def list (request):
     # print response
     for item in data:
         # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,'codigo': item.codigo})
 
     response={
         'total': total,
@@ -1391,9 +1988,11 @@ def list (request):
     return JsonResponse(response)
 
 
-###################################################################################
-###############################     Crud Areas     ################################
-###################################################################################
+
+#---------------------------------------------------------------------------------#
+#                                   Crud Areas                                    #
+#---------------------------------------------------------------------------------#
+@login_required
 def viewArea(request,id):
     data= dict()
     area=Area.objects.get(id=id)
@@ -1405,20 +2004,25 @@ def viewArea(request,id):
     data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editArea(request,id):
     data= dict()
 
     if request.method == 'POST':
         
         area=Area.objects.get(id=id)
-        print "edit post"
+        # print "edit post"
         form= AreaCreateForm(request.POST,instance=area)
         if form.is_valid():
-            print "Se guarda el valor del formulario"
+            # print "Se guarda el valor del formulario"
             form.save()
             data['status']= 200
+            data['message']= "Se ha actualizado el área de forma exitosa."
         else:
             data['status']= 404
+            data['message']= "Ha ocurrido un error, no se ha podido actualizar el área."
     else:
         area=Area.objects.get(id=id)
         data['status']= 200
@@ -1432,22 +2036,26 @@ def editArea(request,id):
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeArea(request,id):
     
     data= dict()
 
     if request.method == 'POST':
-        # print "post delete form"
+        print "post delete form"
         area=Area.objects.get(id=id)
         area.delete()
         data['status']= 200
-        message="eliminado"
-        context={
-            'area':area,
-            'tipo':"deleted",
-            'message':message,
-        }
-        data['content']= render_to_string('ajax/BTArea.html',context,request=request)
+        message="Se ha eliminado el área de forma exitosa."
+        data['message']= message
+        # context={
+        #     'area':area,
+        #     'tipo':"deleted",
+        #     'message':message,
+        # }
+        # data['content']= render_to_string('ajax/BTArea.html',context,request=request)
 
     else:
         # print "get delete form"
@@ -1465,10 +2073,12 @@ def removeArea(request,id):
         data['content']= render_to_string('ajax/BTArea.html',context,request=request)
     return JsonResponse(data)
 
-###################################################################################
-##############     Carga el contenido de la tabla de Subareas     #################
-###################################################################################
 
+
+#---------------------------------------------------------------------------------#
+#                  Carga el contenido de la tabla de Subareas                     #
+#---------------------------------------------------------------------------------#
+@login_required
 def list_subareas(request):
     response = {}
     response['query'] = []
@@ -1501,7 +2111,7 @@ def list_subareas(request):
                 order='-'+sort
 
     if search != "":
-        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) ).order_by(order)#[:limit]
+        data=Sub_area.objects.all().filter( Q(pk__contains=search) | Q(nombre__contains=search) | Q(descripcion__contains=search) | Q(codigo__contains=search) ).order_by(order)#[:limit]
         total= len(data)
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -1520,7 +2130,7 @@ def list_subareas(request):
     # print response
     for item in data:
         # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,})
+        response['query'].append({'id':item.pk,'nombre': item.nombre,'descripcion': item.descripcion,'codigo':item.codigo})
 
     response={
         'total': total,
@@ -1529,9 +2139,12 @@ def list_subareas(request):
    
     return JsonResponse(response)
 
-###################################################################################
-#############################     Crud Subareas     ###############################
-###################################################################################
+
+
+#---------------------------------------------------------------------------------#
+#                                 Crud Subareas                                   #
+#---------------------------------------------------------------------------------#
+@login_required
 def viewSubarea(request,id):
     data= dict()
     subarea=Sub_area.objects.get(id=id)
@@ -1543,20 +2156,23 @@ def viewSubarea(request,id):
     data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editSubarea(request,id):
     data= dict()
-
     if request.method == 'POST':
         
         subarea=Sub_area.objects.get(id=id)
-        print "edit post"
         form= AreaCreateForm(request.POST,instance=subarea)
         if form.is_valid():
             print "Se guarda el valor del formulario"
             form.save()
             data['status']= 200
+            data['message']= "Se ha actualizado la subárea de forma exitosa."
         else:
             data['status']= 404
+            data['message']= "Ha ocurrido un error, no se ha podido actualizar la subárea."
     else:
         subarea=Sub_area.objects.get(id=id)
         data['status']= 200
@@ -1570,6 +2186,9 @@ def editSubarea(request,id):
         data['content']= render_to_string('ajax/BTSubarea.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeSubarea(request,id):
     
     data= dict()
@@ -1579,6 +2198,7 @@ def removeSubarea(request,id):
         subarea=Sub_area.objects.get(id=id)
         subarea.delete()
         data['status']= 200
+        data['message']="Se ha eliminado la subárea de forma exitosa."
         message="eliminado"
         context={
             'subarea':subarea,
@@ -1604,6 +2224,8 @@ def removeSubarea(request,id):
     return JsonResponse(data)
 
 
+
+@login_required
 def register_user_in_sistema(request, arbitraje_id):
     data = dict()
     if request.method == 'POST':
@@ -1630,54 +2252,65 @@ def register_user_in_sistema(request, arbitraje_id):
 
 
 
+@login_required
 def changepassword_modal(request):
     data = dict()
     if request.method == 'POST':
         form = ChangePassForm(request.user, request.POST)
         if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
+            try:
+                form.save()
+                update_session_auth_hash(request, form.user)
 
-            #Envio de email con las nuevas credenciales al correo electrónico del usuario
-            
-            user = User.objects.get(pk=request.user.id)
-            context = {'username': user.username ,'password':form.cleaned_data['new_password1']}
+                #Envio de email con las nuevas credenciales al correo electrónico del usuario
+                
+                user = User.objects.get(pk=request.user.id)
+                context = {
+                    'username': user.username,
+                    'password':form.cleaned_data['new_password1']
+                }
 
-            msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
-            msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
+                msg_plain = render_to_string('../templates/email_templates/changepassword.txt', context)
+                msg_html = render_to_string('../templates/email_templates/changepassword.html', context)
 
-            send_mail(
-                    'Cambio de Contraseña - Asovac',      #titulo
-                    msg_plain,                                  #mensaje txt
-                    config('EMAIL_HOST_USER'),                        #email de envio
-                    [user.email],                               #destinatario
-                    html_message=msg_html,                      #mensaje en html
-                    )
+                send_mail(
+                        'Cambio de Contraseña - Asovac',      #titulo
+                        msg_plain,                                  #mensaje txt
+                        config('EMAIL_HOST_USER'),                        #email de envio
+                        [user.email],                               #destinatario
+                        html_message=msg_html,                      #mensaje en html
+                        )
 
-            # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
-            messages.success(request, 'Se ha cambiado su contraseña con éxito')
-            data['form_is_valid']= True
-
+                # Nos aseguramos siempre de desbloquar a un usuario despues de el cambio de contraseña
+                messages.success(request, 'Se ha cambiado su contraseña con éxito')
+                data['form_is_valid']= True
+            except:
+                pass
     else:
         form = ChangePassForm(request.user)
-        context = {
-            'form': form,
-        }
-        data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
+    
+    context = {
+        'form': form,
+    }
+    data['html_form'] = render_to_string('ajax/changepassword_modal.html', context, request = request)
+    
     return JsonResponse(data)
 
-###################################################################################
-##############     Carga el contenido de la tabla de usuarios     #################
-###################################################################################
 
 
+#---------------------------------------------------------------------------------#
+#                  Carga el contenido de la tabla de usuarios                     #
+#---------------------------------------------------------------------------------#
+@login_required
 def list_usuarios(request):
     
     response = {}
     response['query'] = []
 
     sort= request.POST['sort']
+    order= request.POST['order']
     search= request.POST['search']
+    
     # Se verifica la existencia del parametro
     if request.POST.get('offset', False) != False:
         init= int(request.POST['offset'])
@@ -1685,52 +2318,79 @@ def list_usuarios(request):
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
         limit= int(request.POST['limit'])+init
-
-    if request.POST['order'] == 'asc':
-        if sort == 'fields.nombre':
-            order='nombre'
-        else:
-            if sort == 'fields.descripcion':
-                order='descripcion'
-            else:
-                order=sort
+    
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
     else:
-        if sort == 'fields.nombre':
-            order='-nombre'
-        else:
-            if sort == 'fields.descripcion':
-                order='-descripcion'
-            else:
-                order='-'+sort
+        export= ""
 
-    if search != "":
-        data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
-        total= len(data)
+    if sort == 'pk':
+        sort='first_name'
+
+
+    if search != "" and export == "":
+        print "Consulta Search"
+        # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
+        # total= len(data)
+        # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        query_count=query
+        search= search+'%'
+        where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
+        # where=' WHERE au.first_name LIKE %s' 
+        query= query+where
+        order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+        # query= query + " ORDER BY " + order_by
+        
+        data= User.objects.raw(query,[search,search,search,search])
+        data_count= User.objects.raw(query,[search,search,search,search])
+        # data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
     else:
-        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
-            print "consulta para exportar"
-            print Sub_area.objects.all().order_by(order).query
-            data=Sub_area.objects.all().order_by(order)
-            total= Sub_area.objects.all().count()
+        # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+        if export !=  "":
+    
+            print "Consulta para Exportar Todo"
+
         else:
-            print "consulta normal"
+            print "Consulta Normal"
             arbitraje_id = request.session['arbitraje_id']
-            # users = User.objects.all()
-            # users = Usuario_asovac.objects.all().query
-            # print users
-            # for item in users:
-            #     print "Resultado de la consulta: ",item
+            # consulta basica
+            # data=User.objects.all().order_by(order)[init:limit].query
+            # data=User.objects.all().order_by('pk')[init:limit].query
 
-            # print Sub_area.objects.all().order_by(order)[init:limit].query
-            # test= Sub_area.objects.all().order_by(order)[init:limit]
-            data=User.objects.all().order_by(order)[init:limit]
-            total= User.objects.all().count()
-            # test=Sub_area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # response['total']=total
-    # print response
-    for item in data:
+            # consulta mas completa
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
+            query_count=query
+            query= query + " ORDER BY " + order_by
+            
+            data= User.objects.raw(query)
+            data_count= User.objects.raw(query_count)
+            total=0
+            for item in data_count:
+                total=total+1
+  
+            # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
+            # total= len(data)
+
+    # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
-        response['query'].append({'id':item.id,'nombre': item.first_name,'apellido':item.last_name,'nombre_user': item.username,'correo':item.email})
+        # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
+    
+    for item in data:
+        username= item.username 
+        first_name= item.first_name 
+        last_name= item.last_name 
+        email= item.email 
+        area= item.nombre 
+        linea_investigacion= item.linea_investigacion 
+        cedula_pasaporte=  item.cedula_pasaporte 
+        titulo= item.titulo 
+        response['query'].append({'id':item.id,'first_name': first_name ,'last_name':last_name ,'username':username ,'email':email  , 'nombre':area  , 'linea_investigacion':linea_investigacion , 'cedula_pasaporte':cedula_pasaporte,'titulo':titulo })
+
 
     response={
         'total': total,
@@ -1739,9 +2399,54 @@ def list_usuarios(request):
    
     return JsonResponse(response)
 
-###################################################################################
-#############################     Crud Usuarios     ###############################
-###################################################################################
+
+
+#---------------------------------------------------------------------------------#
+#                               Exportar Usuarios                                 #
+#---------------------------------------------------------------------------------#
+@login_required
+def generate_report(request,tipo):
+
+    # Para exportar información de usuarios 
+    if tipo == '1':
+        # consulta para obtener informacion de los usuarios
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        query_count=query
+        query= query
+        
+        data= User.objects.raw(query)
+        data_count= User.objects.raw(query_count)
+        total=0
+        for item in data_count:
+            total=total+1
+
+        # Para definir propiedades del documento de excel
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=Usuarios.xls'
+        workbook = xlwt.Workbook()
+        worksheet = workbook.add_sheet("Usuarios")
+        # Para agregar los titulos de cada columna
+        row_num = 0
+        columns = ['Nombres (*)', 'Apellidos (*)', 'Nombre de usuario (*)','Correo electronico (*)','Área (*)','Subarea 1 (*)','Subarea 2','Subarea 3','Género (*)','Cédula o pasaporte (*)','Título (*)','Línea de investigación (*)','Teléfono oficina','Teléfono celular o habitación (*)','Institución donde  trabaja','Datos de la institución','Observaciones']
+        for col_num in range(len(columns)):
+            worksheet.write(row_num, col_num, columns[col_num])     
+        
+        for item in data:
+            row_num += 1
+            row = [item.first_name ,item.last_name ,item.username ,item.email,item.nombre,'-','-','-','-',item.cedula_pasaporte,item.titulo,item.linea_investigacion,'-','-','-','-','-']
+            for col_num in range(len(row)):
+                worksheet.write(row_num, col_num, row[col_num])
+        
+        workbook.save(response)
+
+    return response
+
+
+
+#---------------------------------------------------------------------------------#
+#                                 Crud Usuarios                                   #
+#---------------------------------------------------------------------------------#
+@login_required
 def viewUsuario(request,id,arbitraje_id):
     data= dict()
     user=User.objects.get(id=id)
@@ -1753,17 +2458,24 @@ def viewUsuario(request,id,arbitraje_id):
     data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def editUsuario(request,id,arbitraje_id):
     data= dict()
     user=  get_object_or_404(User,id=id)
 
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
-    
+    # user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_asovac= Usuario_asovac.objects.get(usuario=id)
+    user_role= get_roles(user.id,"is_admin")
+    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
+    rols= get_role_list(id,arbitraje_id)
+
     # Obtenemos el mayor rol del usuario que hizo la petición
-    request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    # request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
+    request_user= Usuario_asovac.objects.get(usuario=request.user.id)
+    # print "Usuario autenticado User: ", request_user.id," Arbitraje ",arbitraje_id
     request_user_role= get_roles(request_user.id,"is_admin")
 
     if(request_user_role > user_role):
@@ -1796,14 +2508,18 @@ def editUsuario(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def removeUsuario(request,id,arbitraje_id):
 
     data= dict()
 
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
+    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_role= get_roles(id,"is_admin")
+    # print "Usuario seleccionado User: ", id," Arbitraje ",arbitraje_id
+    rols= get_role_list(id,arbitraje_id)
     
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
@@ -1845,6 +2561,9 @@ def removeUsuario(request,id,arbitraje_id):
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     return JsonResponse(data)
 
+
+
+@login_required
 def changeRol(request,id,arbitraje_id):
     
     # Lista de roles
@@ -1861,9 +2580,10 @@ def changeRol(request,id,arbitraje_id):
     user=User.objects.get(id=id)
     arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
     # Usuario seleccionado 
-    user_asovac= get_object_or_404(Usuario_asovac,id=id)
-    user_role= get_roles(user_asovac.id,"is_admin")
-    rols= get_role_list(user_asovac.id,arbitraje_id)
+    user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
+    user_role= get_roles(id,"is_admin")
+    # rols= get_role_list(user_asovac.id,arbitraje_id)
+    rols= get_role_list(id,arbitraje_id)
     
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
@@ -1881,6 +2601,21 @@ def changeRol(request,id,arbitraje_id):
             # print "Se guarda el valor del formulario"
             # Borrar registros anteriores para evitar repeticion de registros
             delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=arbitraje,usuario_asovac=user_asovac).delete()
+            # Para verificar que el usuario tenga registro en la tabla de arbitros
+            arbitro_exist=Arbitro.objects.filter(usuario=user_asovac).exists()
+        
+            if not arbitro_exist:
+                # Para crear registro en la tabla arbitro de usuarios no cargados por excel y se le modifique el rol
+                user_select= get_object_or_404(User,id=user_asovac.usuario_id)
+                arbitro =Arbitro()
+                arbitro.nombres=user_select.first_name
+                arbitro.apellidos=user_select.last_name
+                arbitro.correo_electronico=user_select.email
+                arbitro.usuario=user_asovac
+                arbitro.save()
+            else:
+                arbitro= get_object_or_404(Arbitro,usuario=user_asovac)
+                arbitro.Sistema_asovac.remove(arbitraje)
             # print delete
            
             for item in params_rol:
@@ -1890,12 +2625,16 @@ def changeRol(request,id,arbitraje_id):
                 addRol.usuario_asovac=user_asovac
                 addRol.rol=itemRole
                 addRol.sistema_asovac=arbitraje
-                print addRol
+                # Para asignar el arbitro al sistema asovac al que pertenece
+                if item == "4":
+                    arbitro= get_object_or_404(Arbitro,usuario=user_asovac)
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
                 addRol.save()
                 # form.save()
             data['status']= 200
         else:
-            # print form.errors
+            print form.errors
             data['status']= 404
     else:
     
@@ -1917,9 +2656,9 @@ def changeRol(request,id,arbitraje_id):
             'rol_active':rols,
             'rol_auth':request_user_role,
             'array_rols':array_rols,
+            'usuario_asovac':user_asovac,
         }
 
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     
     return JsonResponse(data)
-

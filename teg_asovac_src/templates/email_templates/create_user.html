@@ -1,0 +1,32 @@
+{% extends "email_templates/email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Creación de usuario
+{% endblock %}
+
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Bienvenido(a) {{nombre}} {{apellido}}. Se ha registrado de manera exitosa en nuestro sistema, a continuación le mostramos la información de su cuenta:
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Su usuario es: <strong>{{ username }}</strong>
+            <br>
+            Su contraseña es: <strong>{{ password }}</strong>
+            <br>
+            Se le ha asignado el rol de <strong>{{clave_arbitraje_rol}}</strong>
+            <br>
+            Su clave para realizar arbitrajes es: <strong>{{clave_arbitraje}}</strong>
+        </p>
+    </td>
+</tr>
+{% endblock %}

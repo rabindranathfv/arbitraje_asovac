@@ -8,6 +8,26 @@ CHOICES_GENERO = ((0,'Masculino'),
                  (1,'Femenino'),
                  )
 
+# Create your models here.
+CHOICES_CATEGORIA_PAGO = (('P','Personal'),
+                 ('I','Institutos profesionales'),
+                 ('T', 'Terceros'),
+				 ('U', 'Universidades')
+                 )
+
+# Create your models here.
+CHOICES_TIPO_PAGO = (('T','Transferencia'),
+                 ('C','Cheque'),
+                 )
+
+# Create your models here.
+CHOICES_NIVELES_ESTUDIO = (('Educación Básica Primaria','Educación Básica Primaria'),
+                 ('Educación Básica Secundaria','Educación Básica Secundaria'),
+								 ('Bachillerato/Educación Media','Bachillerato/Educación Media'),
+								 ('Educación Técnico/Profesional','Educación Técnico/Profesional'),
+								 ('Universidad','Universidad'),
+								 ('Postgrado','Postgrado'),
+                 )
 
 
 """""""""""""""""""""""""""
@@ -21,7 +41,7 @@ class Universidad(models.Model):
 	instituto_investigacion = models.CharField(max_length=100)
 	
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 
@@ -41,11 +61,11 @@ class Autor(models.Model):
 	correo_electronico = models.EmailField(max_length=254)
 	telefono_oficina = models.CharField(max_length=20)
 	telefono_habitacion_celular = models.CharField(max_length=20)
-	constancia_estudio = models.CharField(max_length=255,blank=True)
+	constancia_estudio = models.FileField(upload_to = 'constancias_de_estudio/', blank = True)
 	direccion_envio_correspondencia = models.TextField(max_length=100,blank=True)
 	es_miembro_asovac = models.BooleanField(default=False)
 	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
-	nivel_instruccion = models.CharField(max_length=50)
+	nivel_instruccion = models.CharField(max_length=50, choices = CHOICES_NIVELES_ESTUDIO)
 	observaciones = models.TextField(max_length=255, blank = True)
 	
 	def __str__(self):
@@ -88,7 +108,7 @@ class Datos_pagador(models.Model):
 	telefono_oficina = models.CharField(max_length=20, blank = True)
 	telefono_habitacion_celular = models.CharField(max_length=20)
 	direccion_fiscal = models.TextField(max_length=100)
-	categorias_pago = models.CharField(max_length=20, blank = True)
+	categorias_pago = models.CharField(max_length=20, choices = CHOICES_CATEGORIA_PAGO)
 	def __str__(self):
 		return self.cedula#.encode('utf-8', errors='replace')
 
@@ -135,7 +155,7 @@ CHOICES_BANCO = (
 class Pago(models.Model):
 
 
-	tipo_pago = models.CharField(max_length=50)
+	tipo_pago = models.CharField(max_length=1, choices = CHOICES_TIPO_PAGO)
 	numero_cuenta_origen = models.CharField(max_length=50)
 	banco_origen = models.SmallIntegerField(choices = CHOICES_BANCO)
 	numero_transferencia = models.CharField(max_length=50, blank = True)

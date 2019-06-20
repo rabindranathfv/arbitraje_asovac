@@ -1,65 +1,148 @@
+
+
 {% extends "content_wrapper_with_sidebar.html" %}
 
 {% block inner_content %}
-<div class="container-fluid" id="content-wrapper">
+<div class="container" id="content-wrapper">
 
 	{% include "toggle_title.html" %}
 
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="row">
-					<div class="col-sm-12">
-						<h2>Listado de trabajos</h2>
-					</div>
+				<div class="col-sm-6">
+					<h2 class="text-left">Estatus de Trabajos</h2>
 				</div>
-				<div class="container-fluid">
-					<div class="row middle-content">
-						<div class="col-sm-12">
-							<table class="table table-bordered">
-								<thead>
-									<tr>
-										<th>Título</th>
-										<th>Área</th>
-										<th>Subárea</th>
-										<th>Autor(es)</th>
-										<th>Estado</th>
-										<th class="col-sm-1">Ver.</th>
-										<th class="col-sm-2">Acciones</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Este es un T&iacute;tulo</td>
-										<td>Computaci&oacute;n</td>
-										<td>Computaci&oacute;n001</td>
-										<td>
-											Rabindranath Ferreira
-										</td>
-										<td><span class="label label-success lb-md center-block">Aprobado</span></td>
-										<td>2.0</td>
-										<td>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
-												<i class="fas fa-edit"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Rechazar">
-												<i class="fas fa-times"></i>
-											</a>
-											<a href="#" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Enviar">
-												<i class="fas fa-envelope"></i>
-											</a>
-											<a href="{% url 'arbitrajes:detalles_resumen' %}" class="btn btn-sm btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Entrar">
-												<i class="fas fa-door-open"></i>
-											</a>
-										</td>
-									</tr>
-								</tbody>
-							</table>
+
+				<!-- Bootstrap table -->
+				<div class="row">
+
+					<div class="col-md-8">
+					</div>
+					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
+						<div class="btn-group">
+							<!-- <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
+								class="caret"></span></button>
+							<ul class="dropdown-menu"> -->
+								<!-- <li>
+									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
+									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
+								</li> -->
+							</ul>
 						</div>
 					</div>
 				</div>
+
+				<input type="hidden" id="listArbitrajes" name="list" data-url="{% url 'arbitrajes:list_arbitrajes' %}">
+
+				<div id="toolbar">
+					<div class="form-inline" role="form">
+						<a href="{% url 'trabajos:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+					</div>
+				</div>
+					<table id="table"
+							data-toggle="table"
+							data-ajax="ajaxArbitrajes"
+							data-side-pagination="server"
+							data-show-export="false"
+							data-toolbar="#toolbar"
+							data-pagination="true"
+							data-page-size="5"
+							data-page-list="[0,5,10,25,50,100, 200]"
+							data-show-refresh="true"
+							data-search="true"
+							data-sort-name="pk"
+							data-show-toggle="true"
+							data-show-columns="true"
+							data-detail-view="true"
+							data-detail-formatter="detailFormatter"
+							>
+							<thead>
+								<tr>
+									<th data-field="estatus" data-sortable="true">Estatus</th>
+									<th data-field="nombre" data-sortable="true">Área</th>
+									<th data-field="subarea" data-sortable="true">Subárea</th>
+									<th data-field="titulo_espanol" data-sortable="true">Título </th>
+									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
+									<th data-field="revision" data-sortable="true">Versión</th>
+									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operateArbitraje" data-align="center">Acciones</th>
+								</tr>
+						</thead>
+					</table>
+					  
+				<!-- End Bootstrap table -->
+		
 			</div>
 		</div>
 	</div>
 </div>
+
+
+{% endblock %}
+
+
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}"></script>
+	<script>
+
+		var $table = $('#table');
+		// your custom ajax request here
+		
+
+		function ajaxArbitrajes(params) {
+			var route= $("#listArbitrajes").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+		function detailFormatter(index, row) {
+		console.log(row);
+		var html = [];
+		var init= '<table class="table-bordered"><thead><tr>';
+			var init=init+ '<th style="text-align: center;" >Observaciones</th>'; 
+			var init=init+ '<th style="text-align: center;" >Autores</th>'; 
+		var init=init+ '</tr></thead> <tr style="text-align: center;">'; 
+		html.push(init);
+		$.each(row, function (key, value) {
+			if(key == "autor_principal" || key == "observaciones"){
+			html.push('<td >'+ value + '</td>');
+			}
+		});
+		var fin= '</tr></table>';
+		html.push(fin);
+		return html.join('');
+		}
+		$("#export").click(function(){
+        console.log("Descargar excel");
+		var route= $("#listArbitrajes").attr("data-url");
+		type= $("#type_export").val();
+	
+		buildBoostrapTable($(this).attr("data-target"),type);
+
+		});
+		
+		
+
+	</script> 
+
 {% endblock %}

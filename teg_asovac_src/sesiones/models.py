@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from main_app.models import Sistema_asovac
+
 # Create your models here.
 
 """""""""""""""""""""""""""
@@ -18,7 +20,7 @@ class Espacio_fisico(models.Model):
 	turno = models.CharField(max_length=50)
 
 	def __str__(self):
-		return self.nombre#.encode('utf-8', errors='replace')
+		return self.nombre.encode('utf-8', errors='replace')
 
 
 """""""""""""""""""""""""""
@@ -46,29 +48,45 @@ class Espacio(models.Model):
 	tipo_espacio = models.CharField(max_length=50)
 
 	def __str__(self):
-		return self.tipo_espacio#.encode('utf-8', errors='replace')
+		return self.tipo_espacio.encode('utf-8', errors='replace')
 
 
+"""""""""""""""""""""""""""
+Coordinadores_sesion
+"""""""""""""""""""""""""""
+class Coordinadores_sesion(models.Model):
+	autor = models.ForeignKey("autores.Autor", blank = True, null = True)
+	sesion = models.ForeignKey("sesion")
+	coordinador = models.BooleanField(default = False)
+	co_coordinador = models.BooleanField(default=False)
 
-
+	def __str__(self):
+		return "{}".format(self.sesion.nombre_sesion).encode('utf-8', errors='replace')
 """""""""""""""""""""""""""
 Sesion Model
 """""""""""""""""""""""""""
 class Sesion(models.Model):
+	sistema = models.ForeignKey('main_app.Sistema_asovac')
+	#espacio = models.OneToOneField('Espacio')
+	coordinadores = models.ManyToManyField("autores.Autor", through='Coordinadores_sesion')
 	
-	arbitraje = models.ForeignKey('arbitrajes.Arbitraje')
-	espacio = models.OneToOneField('sesiones.Espacio')
-
-	Sesion = models.CharField(max_length=15)
-	fecha_sesion = models.DateTimeField()
-	coordinadores = models.CharField(max_length=100)
-	nombre_sesion = models.CharField(max_length=50)
-	modalidad = models.CharField(max_length=50)
+	nombre_sesion = models.CharField(max_length=25)
+	lugar = models.CharField(max_length=50)
+	fecha_sesion = models.DateField()
+	hora_inicio = models.TimeField()
+	hora_fin = models.TimeField()
 	observaciones = models.TextField(max_length=100, blank = True)
-	fecha_presentacion = models.DateTimeField()
+	capacidad = models.IntegerField()
+
+	video_beam = models.BooleanField(default=False)
+	portatil = models.BooleanField(default=False)
+
+	#nombre_sesion = models.CharField(max_length=50)
+	#modalidad = models.CharField(max_length=50)
+	#fecha_presentacion = models.DateTimeField()
 
 	def __str__(self):
-		return self.Sesion#.encode('utf-8', errors='replace')
+		return self.nombre_sesion.encode('utf-8', errors='replace')
 
 
 

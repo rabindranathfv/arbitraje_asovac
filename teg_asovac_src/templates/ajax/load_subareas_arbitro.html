@@ -1,0 +1,28 @@
+<div class="subareas-content">
+
+        <div class="modal-body">
+                                                
+            <table class="table table-bordered">
+                <thead>
+                    <th>Área</th>
+                    <th>Código</th>
+                    <th style="text-align: center" >Asignar</th>
+                </thead>
+                {% for subarea in subareas %}
+                <tr>
+                    <td>{{subarea.nombre}} </td>
+                    <td>{{subarea.codigo}} </td>
+                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                    <td class="text-center" style="text-align: center">
+                            <label class="contentCheck">
+                                <input name="subareas_value" value="{{subarea.id}}" data-area="{{area.id}}" type="checkbox" id="{{subarea.id}}" onClick="SelectSubarea(this.value)" >
+                                <span class="checkmark"></span>
+                            </label>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                
+        </div>
+
+</div>	

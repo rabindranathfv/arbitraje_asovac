@@ -1,0 +1,12 @@
+<div class="subareas-content">
+
+        <label class="control-label"  for="subarea_select">Subárea <span class="asteriskField">*</span></label>
+        <div class="controls was-validated" name="subarea" >
+            <select title="Seleccione subareas de interés" multiple="multiple" name="subarea_select" class="form-control selectpicker" id = "subarea_select">
+                {% for subarea in subareas %}
+                <option data-area="{{subarea.area.id}}" value="{{subarea.id}}">{{ subarea.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    
+    </div>	

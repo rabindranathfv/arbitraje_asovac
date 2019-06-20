@@ -13,13 +13,6 @@ body {
     font-weight: 600;
 }
 
-.navbar-nav>li>a,
-.navbar-brand {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: 40px;
-}
-
 .navbar-nav>li>p {
     padding-top: 10px !important;
     padding-right: 15px !important;
@@ -29,9 +22,34 @@ body {
 }
 
 .navbar {
-    min-height: 30px !important
+    min-height: 30px !important;
 }
 
+.navbar-toggle {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+.dropdown-menu{
+    padding: 0 0 !important;
+}
+
+.dropdown-menu > li > a{
+    background-color: #EEE !important;
+    color: #333 !important;
+}
+
+.dropdown-menu > li > a:hover{
+    background-color: #CCC !important;
+}
+
+.pointer-cursor{
+    cursor: pointer;
+}
+
+.small-menu-item{
+    font-size: 13px;
+}
 
 /*============================ Main Navbar colors ============================*/
 
@@ -40,6 +58,10 @@ body {
     border-color: #BBBBBB;
 }
 
+.navbar-default .navbar-toggle:focus,
+.navbar-default .navbar-toggle:hover {
+    background-color: #FF7E46;
+}
 
 /* Title */
 
@@ -106,29 +128,22 @@ body {
 /*============================ Secondary Navbar structure ============================*/
 
 .secondary-navbar {
-    margin-top: 41px;
+    margin-top: 51px;
     font-size: 16px;
     font-weight: 600;
-    min-height: 30px !important;
+    max-height: 20px !important;
 }
 
 .secondary-navbar ul>li {
     margin: 0 5px;
 }
 
-.secondary-navbar>li>a,
-.navbar-brand {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    height: 40px;
-}
-
-.secondary-navbar ul>li>p {
+.secondary-navbar >p {
     padding-top: 10px !important;
     padding-right: 15px !important;
     padding-bottom: 10px !important;
     margin: 0;
-    height: 30px;
+    height: 20px;
 }
 
 
@@ -177,6 +192,11 @@ body {
 
 #wrapper.toggled #sidebar-wrapper {
     width: 250px;
+    /* test styles */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border: solid #999 1px;
+    background-color: #FFFFFF;
 }
 
 #page-content-wrapper {
@@ -221,7 +241,8 @@ body {
 .sidebar-nav li a:hover {
     text-decoration: none;
     color: #222;
-    background: #CFCFCF;
+    background: #f5f5f5;
+    /* background: #CFCFCF; */
 }
 
 .sidebar-nav li a:active,
@@ -359,6 +380,12 @@ incluso cuando el contenido de la página es muy corto */
     align-items: center;
 }
 
+/*================= Bootrstrap align bottom rows =================*/
+
+.row.bottom-content {
+    display: flex;
+    align-items: bottom;
+}
 
 /*================= Typography styling =================*/
 
@@ -400,10 +427,12 @@ incluso cuando el contenido de la página es muy corto */
 /*================= Filler spaces =================*/
 
 .preview-resumen {
-    height: 400px;
-    width: 300px;
     border: 1px solid #DDDDDD;
     line-height: 440px;
+}
+
+.display-flex{
+    display: flex;
 }
 
 .observations-space {
@@ -421,12 +450,14 @@ textarea {
 #footer {
     width: 100%;
     min-height: 50px;
-    background-color: #222;
+    /* background-color: #222; */
+    background: #fff;
     z-index: 1000;
 }
 
 #footer p {
-    color: #EEE;
+    /* color: #EEE; */
+    color: #54667a;
     padding-top: 15px;
     font-family: 'Raleway';
     font-weight: 600;
@@ -472,4 +503,159 @@ textarea {
 
 .vertical-middle-align {
     vertical-align: middle !important;
+}
+
+/*---- Estilos para ventanas modales ----*/
+
+.modal-header {
+    color: #ffff;
+    background: #337ab7;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+button.close {
+    color: #FFFFFF;
+}
+
+.modal-body {
+    max-height:500px;
+    overflow:auto;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+  /*---- Estilos para switches ----*/
+
+  .switch input {
+      opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+  .slider:before {
+      position: absolute;
+      content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+  input:checked + .slider {
+      background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+      border-radius: 34px;
+  }
+
+  .slider.round:before {
+      border-radius: 50%;
+  }
+
+  /*---- Estilos para checkbox ----*/
+  
+  .contentCheck {
+      /* display: block; */
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+  .contentCheck input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+    
+  /* Create a custom checkbox */
+  .checkmark {
+      position: absolute;
+      top: -6px;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.contentCheck:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.contentCheck input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.contentCheck input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .contentCheck .checkmark:after {
+      left: 9px;
+      top: 5px;
+      width: 7px;
+      height: 13px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+
+/*---- Estilos para ckeditor ----*/
+
+#cke_comment{
+    display: none;
 }

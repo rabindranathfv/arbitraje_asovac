@@ -1,0 +1,88 @@
+{% load crispy_forms_tags %}
+<form method="post" action="{% url 'arbitrajes:review_job' trabajo.id %}">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" >Arbitrar trabajo</h3>
+    </div>
+    <div class="modal-body text-center">
+
+        <div class="col-md-12 text-left" style="font-size: 16px;">
+            <span>
+                <b>Titulo:</b> {{trabajo.titulo_espanol}}   
+            </span>
+            <br>
+            <span>
+                <b>Forma de presentación:</b>  {{trabajo.get_forma_presentacion_display }}   
+            </span>
+            <br>
+            <span>
+                <strong>Área:</strong> {{ trabajo.subareas.first.area }}
+            </span>
+            <br>
+            <span>
+                <strong>Subárea:</strong> {{trabajo.subareas.first}}
+            </span>
+            <br>
+            <span>
+                <strong>Estatus:</strong> {{trabajo.estatus}}
+            </span>
+            <br>
+            <span >
+                <strong>Resumen:</strong> {{trabajo.resumen}}
+            </span>
+        </div>
+        <div class="col-md-12">
+            <br>
+            <select name="status" id="status" class=" form-control" required>
+                <option selected value="">Seleccione el resultado</option>
+                <option value="Aceptado">Aceptado</option>
+                <option value="Rechazado">Rechazado</option>
+            </select>
+            <br>
+        </div>
+        <div class="col-md-12">
+            <textarea name="comment" id="comment" rows="4" class="form-control" onkeyup="check(this);" style="display:none;"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <p class="text-center btn-danger" >Una vez le dé click en arbitrar, no podrá cambiar su decisión.</p>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button disabled="true" type="submit" class="sendGenericForm btn btn-lg btn-primary">Arbitrar</button>
+    </div>
+</form>
+
+<script>
+    $("#status").change(function (e) { 
+        var status= $(this).val();
+        console.log("El estatus es: "+status);
+        if (status == "Rechazado") {
+            $("#comment").show();
+            $(".sendGenericForm").prop('disabled', true);
+            console.log("El estatus es rechazado");
+        }else{
+            if (status == "Aceptado") {
+                console.log("El estatus es aceptado");
+                $(".sendGenericForm").prop('disabled', false);
+                $("#comment").hide();
+            }else{
+                console.log("El estatus es pendiente");
+                $("#comment").hide();
+                $(".sendGenericForm").prop('disabled', false);
+            }
+        }
+        
+    });
+    function check(element) {
+        console.log(element.value)
+        if(element.value.trim() != ""){
+            $(".sendGenericForm").prop('disabled', false);
+        }else{
+            $(".sendGenericForm").prop('disabled', true);
+        }
+    };
+   
+</script>

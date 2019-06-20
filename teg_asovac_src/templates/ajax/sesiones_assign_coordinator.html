@@ -1,0 +1,18 @@
+{% load crispy_forms_tags %}
+<form method="post" class="delete-job-form" action="{% url 'sesiones:assign_coordinator' sesion.id autor.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" >Asignar coordinador</h3>
+    </div>
+    <div class="modal-body text-center">
+         <p class="text-center"><strong>¿Desea asignar a {{autor.nombres}} {{autor.apellidos}} como coordinador en la sesión '{{sesion.nombre_sesion}}'?</strong></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Confirmar selección</button>
+    </div>
+</form>

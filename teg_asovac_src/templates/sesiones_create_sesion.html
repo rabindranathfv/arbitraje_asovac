@@ -1,0 +1,96 @@
+{% extends "content_wrapper.html" %}
+{% load crispy_forms_tags %}
+
+{% block inner_content %}
+<div class="container-fluid">
+	<div class="row">
+        <div class="jumbotron RLcard col-sm-8 col-sm-offset-2">
+            <div class="container-fluid">
+                <div class="col-sm-12 middle-content">
+                    {% include "errors_form.html" %}
+                </div>
+            </div>
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        {% if not modo_edicion %}  
+                            Crear sesión
+                        {% else %}
+                            Editar sesión
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <div class="col-sm-12">
+                                
+                                <form method="POST" id="create-sesion-form" enctype="multipart/form-data" action="{% if not modo_edicion %}.{% else %}{% url 'sesiones:edit_sesion' sesion.id %}{% endif %}">    
+                                    <div class= "row">
+                                        {% crispy sesion_form %}	
+                                        <!--							
+                                        <div class = "col-sm-6">
+                                            <div class="form-group">
+                                                <label class="control-label  requiredField" for="modalidad_select"> Modalidad <span class="asteriskField">*</span></label>
+                                                <div class="controls was-validated" name="modalidad" >
+                                                    <select data-url=" 'sesiones:load_space_form' "1" " name="modalidad_select" class="form-control" id="modalidad_select" required>
+                                                        <option value="1">Presencial</option>
+                                                        <option value="0" selected>Virtual</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group"  id="content_modalidad">
+                                                { %}
+                                            </div>
+                                        </div>
+                                        -->
+                                    </div>
+                                    <div class = "row">
+                                        <button class = "col-sm-offset-8 col-sm-2 btn btn-lg btn-success" type ="submit">
+                                            {% if not modo_edicion %}  
+                                                Crear Sesión
+                                            {% else %}
+                                                Editar Sesión
+                                            {% endif %}
+                                        </button>
+                                        <a role = "button" class = "col-sm-2 btn btn-lg btn-danger" href="{% url 'sesiones:sesions_list' %}">Cancelar</a>
+                                    </div>
+                                </form>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+{% load static %}
+    <script>
+    /*
+        // Para manejar la seleccion modalidad
+        $('#modalidad_select').change(function(){
+            var modalidad = $(this).val();
+            var route= $(this).attr('data-url');
+            // Se reemplaza el valor por defeto de la ruta por el id de la modalidad
+            route = route.replace("1",modalidad);
+            id=modalidad;
+            $.ajax({
+                type: "post",
+                url: route,
+                data: id,
+                dataType: "json",
+                success: function (data) {
+                    //console.log(data.html_select);
+                    $('#content_modalidad').html(data.html_select);
+                    $('.selectpicker').selectpicker();
+                    //$('#opcion-inicial').css("display", "none");
+                }
+            });
+        });
+    */
+    </script>
+{% endblock %}

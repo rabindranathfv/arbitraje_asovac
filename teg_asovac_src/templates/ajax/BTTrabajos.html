@@ -1,0 +1,191 @@
+
+{% load crispy_forms_tags %}
+{% if tipo == "select" %}
+<form method="post" class="asignarArbitro" data-url="{% url 'trabajos:selectArbitro' trabajo_id %}">
+    {% csrf_token %}
+    <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Asignar Árbitro</h3>
+    </div>
+    
+    <div class="modal-body">
+
+        <table class="table table-bordered">
+            <thead>
+                <th>Nombre</th>
+                <th>Correo electrónico</th>
+                <th style="text-align: center" >Asignar</th>
+            </thead>
+            {% for arbitro in arbitros %}
+            <tr>
+                <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
+                <td>{{arbitro.correo_electronico}} </td>
+                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                <td class="text-center" style="text-align: center">
+                    <label class="contentCheck">
+                        {% if arbitro.trabajo_id == trabajo_id %}
+                            <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
+                        {% else %}
+                            <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
+                        {% endif %}
+                        <span class="checkmark"></span>
+                    </label>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="sendForm btn btn-primary btn-lg">Guardar</button>
+    </div>
+</form>
+<script>
+    $('input[type=checkbox]').each(function () {
+        
+        // console.log("No seleccionados");
+        // console.log($(this).val() );
+        // console.log("Estatus del item "+$(this).attr('data-status')+ " con id: "+$(this).attr('id'));
+        var status=$(this).attr('data-status');
+        if(status == "on" ){
+            $(this).prop("checked",true);
+            // console.log("seleccionado"+" Estatus "+estatus );
+        }else{
+            // console.log("No seleccionado");
+        }
+
+    }); 
+
+</script>
+{% else %}
+    {% if tipo == "status" %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Estatus</h3>
+    </div>
+
+    <div class="modal-body">
+		
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <!-- <th>Arbitraje</th> -->
+                    <th style="text-align: center">Invitación</th>
+                    <!-- <th>Comentario</th> -->
+                </tr>
+            </thead>
+    
+            <tbody>
+                {% for item in arbitros %}
+                    <tr>
+                        <td>{{item.nombres}} {{item.apellidos}}</td>
+                        <td>{{item.correo_electronico}}</td>
+                        
+                        {% if item.fin_arbitraje == False %}
+                            <!-- <td>Pendiente</td> -->
+                        {% else %}
+                            <!-- <td>{{item.arbitraje_resultado}}</td> -->
+                        {% endif%}
+                        {% if item.invitacion == False %}
+                            <!-- <td style="text-align: center">Pendiente</td> -->
+                            <td style="text-align: center"><span class="label label-warning">Pendiente</span></td> 
+                        {% else %}
+                            <!-- <td style="text-align: center">Aceptada</td> -->
+                            <td style="text-align: center"><span class="label label-success">Aceptada</span></td> 
+                        {% endif%}
+
+                        <!-- <td>{{item.comentario_autor}}</td> -->
+            
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+    </div>
+        
+    {% else %}
+        {% if tipo == "checkPago" %}
+        <form method="post" class="asignarArbitro" data-url="{% url 'trabajos:checkPago' trabajo_id %}">
+            {% csrf_token %}
+            <!-- <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}"> -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title" >Verificar Pago del Trabajo</h3>
+            </div>
+            
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                </div>
+                <div class="col-md-12">
+                    <br>
+                   <select name="status" id="status" class=" form-control" >
+                       <option selected value="">Seleccione</option>
+                       <option value="Aceptado">Aceptado</option>
+                       <option value="Rechazado">Rechazado</option>
+                   </select>
+                   <br>
+               </div>
+               <div class="col-md-12">
+                   <textarea name="comment" id="comment" rows="4" class="form-control" style="display:none;">
+       
+                   </textarea>
+               </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+            </div>
+        </form>
+        <script>
+            $(document).ready(function () {
+                $("#status").change(function (e) { 
+                    var status= $(this).val();
+                    console.log("El estatus es: "+status);
+                    if (status == "Rechazado") {
+                        $("#comment").show();
+                        $(".sendGenericForm").prop('disabled', true);
+                        console.log("El estatus es rechazado");
+                    }else{
+                        if (status == "Aceptado") {
+                            console.log("El estatus es aceptado");
+                            $(".sendGenericForm").prop('disabled', false);
+                            $("#comment").hide();
+                        }else{
+                            console.log("El estatus es pendiente");
+                            $("#comment").hide();
+                            $(".sendGenericForm").prop('disabled', false);
+                        }
+                    }
+                    
+                });
+        
+                $("#comment").change(function (e) { 
+                    var comment= $(this).val().trim();
+                    console.log(comment);
+                    if(comment == ""){
+                        $(".sendGenericForm").prop('disabled', true);
+                    }else{
+                        $(".sendGenericForm").prop('disabled', false);
+                    }
+                    
+                });
+            });
+        </script>
+        {% else %}
+    
+
+        {% endif %}
+    {% endif %}
+{% endif %}

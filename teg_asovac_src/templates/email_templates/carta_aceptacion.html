@@ -1,0 +1,80 @@
+{% extends "email_templates/email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Asignación como {{ cargo }}
+{% endblock %}
+
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: right;">
+            Caracas, {{ fecha }}
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: left;">
+            {% if autor_trabajo_principal.autor.genero == 0 %}
+                <strong>Estimado Investigador:</strong>
+            {% else %}
+                <strong>Estimada Investigadora:</strong>
+            {% endif %}
+            <br>
+            <strong>{{ autor_trabajo_principal.autor.nombres }} {{autor_trabajo_principal.autor.apellidos}}</strong>
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Reciba un cordial saludo del Comité Organizador de la Convención Anual de AsoVAC, en ocasión de informarle que el resumen titulado:
+            <br>
+        </p>
+        <p style="text-align: center;">
+            <strong>{{ autor_trabajo_principal.trabajo.titulo_espanol }}</strong>
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: left;">
+            Autores:
+            <br>
+        </p>
+        <p style="text-align: center;">
+            {% for autor_trabajo in autores_list %}
+                <strong>{{ autor_trabajo.autor.nombres }} {{ autor_trabajo.autor.apellidos}}{% if autor_trabajo != autores_list.last %}, {% endif %}</strong>
+            {% endfor %}
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Identificado con el código {{autor_trabajo.trabajo.subarea.first.codigo}}-{{autor_trabajo.trabajo.id}} ha sido debidamente arbitrado y <strong>aceptado para su presentación</strong> en la Convención Anual, en la sesión que le indicamos a continuación:
+            <br>
+            <br>
+            Nombre de la sesión: <strong>{{ autor_trabajo_principal.trabajo.sesion.nombre_sesion }}</strong>
+            <br>
+            Lugar: <strong>{{ autor_trabajo_principal.trabajo.sesion.lugar }}</strong>
+            <br>
+            Fecha de la sesión: <strong>{{ autor_trabajo_principal.trabajo.sesion.fecha_sesion }}</strong>
+            <br>
+            Hora de inicio: <strong>{{ autor_trabajo_principal.trabajo.sesion.hora_inicio }}</strong>
+            <br>
+            Hora de fin: <strong>{{ autor_trabajo_principal.trabajo.sesion.hora_fin }}</strong>
+            <br>
+            Capacidad: <strong>{{ autor_trabajo_principal.trabajo.sesion.capacidad }}</strong>
+            <br>
+        </p>
+    </td>
+</tr>
+{% endblock %}

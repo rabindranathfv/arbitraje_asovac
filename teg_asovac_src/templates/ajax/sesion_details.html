@@ -1,0 +1,66 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title" >Detalles de sesión</h3>
+</div>
+<div class="modal-body text-center">
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ sesion.nombre_sesion }}</td>
+            </tr>
+            <tr>
+                <th>Lugar</th>
+                <td>{{ sesion.lugar }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ sesion.fecha_sesion | date:'d-m-Y' }}</td>
+            </tr>
+            <tr>
+                <th>Hora de inicio</th>
+                <td>{{ sesion.hora_inicio }}</td>
+            </tr>
+            <tr>
+                <th>Hora de fin</th>
+                <td>{{ sesion.hora_fin }}</td>
+            </tr>
+            <tr>
+                <th>Capacidad</th>
+                <td>{{ sesion.capacidad }}</td>
+            </tr>
+            <tr>
+                <th>Video Beam</th>
+                <td>
+                    {% if sesion.video_beam %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Portatil</th>
+                <td>
+                    {% if sesion.portatil %}
+                        Sí
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Observaciones</th>
+                <td>{{ sesion.observaciones }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+</div>

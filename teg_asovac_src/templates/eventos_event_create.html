@@ -4,7 +4,6 @@
 
 {% block inner_content %}
 <div class="container min-height-content" id="content-wrapper">
-
 	{% include "toggle_title.html" %}
 
         <div class="row">
@@ -19,7 +18,7 @@
                                 <a class="btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
                             </div>
                     </div>
-
+                    {% include "success_messages.html" %}
 					{% include "errors_form.html" %}
 					{% crispy form form.helper1 %}
 

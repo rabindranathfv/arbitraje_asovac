@@ -1,135 +1,127 @@
-{% extends "content_wrapper_with_sidebar.html" %}
+{% extends "content_wrapper.html" %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block inner_content %}
-<div class="container col-sm-11" id="content-wrapper">
-	{% if messages %}
-		<ul class="messages">
-			{% for message in messages %}
-				<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-				{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
-				{{ message }}
-				</li>
-			{% endfor %}
-		</ul>
-	{% endif %}
-	{% include "toggle_title.html" %}
+<div class="container col-sm-10 col-sm-offset-1" id="content-wrapper">
+    {% include "toggle_title.html" %}
 
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                {% include "errors_form.html" %}
+                {% include "success_messages.html" %}
+                <h2 class="text-left">Lista de Trabajos</h2>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
-				<div class="col-sm-12">
-					<h2 class="text-left">Autor - Lista de trabajos</h2>
-				</div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="job-list"
+                        data-toggle="table"
+                        data-search="true"
+                        data-sort-name="titulo_espanol"
+                        data-pagination="true"
+                        data-page-size="10"
+                        data-page-list="[5,10,25,50,100, 200]"
+                        data-show-toggle="true"
+                        data-show-columns="true">
 
+                        <thead>
+                            <tr>
+                                <th class="col-sm-1" data-sortable="true">Estatus</th>
+                                <th class="col-sm-2" data-sortable="true">Área</th>
+                                <th class="col-sm-2" data-sortable="true">Subárea</th>
+                                <th data-field="titulo_espanol" class="col-sm-3" data-sortable="true" data-switchable="false">Título</th>
+                                <th class="col-sm-2">Autor(es)</th>  
+                                <th class="col-sm-2" data-switchable="false">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="searchable">
 
-				<br>
-				<table class="table table-bordered" id = "show-job">
-					<thead>
-						<tr>
-							<th class="col-sm-2">Título</th>
-							<th class="col-sm-2">Área</th>
-							<th class="col-sm-2">Subárea</th>
-							<th class="col-sm-2">Autor(es)</th>
-							<th class="col-sm-1">Estatus</th>
-							<th class="col-sm-1">Versión</th>
-							<th class="col-sm-2">Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for trabajo in trabajos %}
-							<tr>
-								<td style="vertical-align: middle;">{{ trabajo.trabajo.titulo_espanol }}</td>
-								<td style="vertical-align: middle;">{{ trabajo.trabajo.area }}</td>
-								<td style="vertical-align: middle;">{{ trabajo.trabajo.subarea1 }}</td>
-								<td style="vertical-align: middle;">
-									{{ trabajo.autor.nombres }} {{ trabajo.autor.apellidos }}
-									<br>
-									{% for autor_trabajo in autores_trabajos_list %}
-										{% if autor_trabajo.autor != trabajo.autor and autor_trabajo.trabajo == trabajo.trabajo %}
-											{{ autor_trabajo.autor.nombres }} {{ autor_trabajo.autor.apellidos }}
-											<br>
-										{% endif %}
-									{% endfor %}
-								</td>
-								<td style="vertical-align: middle;">
-									{% if trabajo.trabajo.estatus == "Pendiente" %}
-										<span class="label label-warning lb-md center-block">Pendiente</span>
-									{% elif trabajo.trabajo.estatus == "Aprobado" %}
-										<span class="label label-success lb-md center-block">Aprobado</span>
-									{% elif trabajo.trabajo.estatus == "Rechazado" %}
-										<span class="label label-danger lb-md center-block">Rechazado</span>
-									{% endif %}
-								</td>
-								<td class="col-sm-1" style="vertical-align: middle;">{{ trabajo.trabajo.version }}</td>
-								<td class="col-sm-1 text-center" style="vertical-align: middle;">
-									
-									{% if trabajo.monto_total > 0 and trabajo.es_autor_principal %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
-										<button class="btn btn-info show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor">
+                            {% for trabajo, autor_list in job_data %}
+                            <tr>
+                                <td class="text-center">
+                                    {% if trabajo.trabajo.estatus == "Pendiente" %}
+                                        <span class="label label-warning">Pendiente</span>
+                                    {% elif trabajo.trabajo.estatus == "Aceptado" %}
+                                        <span class="label label-success">Aceptado</span>
+                                    {% elif trabajo.trabajo.estatus == "Rechazado" %}
+                                        <span class="label label-danger">Rechazado</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{trabajo.trabajo.subareas.first.area}}</td>
+                                <td class="text-center">{{trabajo.trabajo.subareas.first.nombre}}</td>
+                                <td class="text-center">{{trabajo.trabajo.titulo_espanol}}</td>                                
+                                <td class="text-center">
+                                    {% for autor in autor_list %}
+                                        {{autor.autor.nombres}} {{autor.autor.apellidos}}
+                                        </br>
+                                    {% endfor %}
+                                </td>
+                                
+                                <td class="text-center">
+                                    {% if trabajo.pagado == False and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
+										<a class="show-form" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
 											<i class="fas fa-user"></i>
-										</button>
+                                        </a>
 
 
-										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
-
+                                        
 										<!-- Esto es lo que hay que verificar -->
-										<button class="btn btn-info show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar">
+										<a class="show-form" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
-										</button>
-										
-									{% endif %}
-									<a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" class="btn btn-info" role="button" title="Ver trabajo">
+                                        </a>
+									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
+
+                                        <a class="show-form" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
+                                            <i class="fas fa-book"></i>
+                                        </a>
+
+                                    {% endif %}
+                                    {% if trabajo.trabajo.observaciones %}
+                                        <a class="show-form" data-url="{% url 'trabajos:view_referee_observation' trabajo.trabajo.id %}" title="Ver observaciones del arbitro" role="button">
+                                            <i class="fas fa-flag"></i>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'autores:postular_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Pagos de postulación">
+                                        <i class="far fa-newspaper"></i>
+                                    </a>
+                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" role="button" title="Ver trabajo">
 										<i class="fas fa-eye"></i>
 									</a>
-								</td>
-							</tr>
-						{% endfor %}              
-					</tbody>
-				</table>
-				<!-- End table  -->
-				<div class="pagination">
-					<span class="step-links">
-						{% if trabajos.has_previous %}
-						<a href="?page={{ trabajos.previous_page_number }}">previous</a>
-						{% endif %}
 
-						<span class="current">
-							Page {{ trabajos.number }} of {{ trabajos.paginator.num_pages }}.
-						</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
 
-						{% if trabajos.has_next %}
-						<a href="?page={{ trabajos.next_page_number }}">next</a>
-						{% endif %}
-					</span>
-				</div>
+                    </table>
+                    <!-- End table  -->
+                </div>
 
-
-
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>
+				{% if sistema_asovac.estado_arbitraje == 3 %}
+					<div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a href="#accordion" class="btn btn-info btn-block" data-toggle="collapse">Crear Trabajo</a>
+                        </div>
+                        <div id="accordion" class="panel-body collapse">
+                            <div class="container-fluid">
+                                <div class="row middle-content">
+                                    <div class="col-sm-12">
+                                        <form method="POST" id="create-job-form" enctype="multipart/form-data" action="{% url 'trabajos:trabajos' %}">
+                                            {% crispy form %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
-					<div id="accordion" class="panel-body collapse">
-						<div class="container-fluid">
-							<div class="row middle-content">
-								<div class="col-sm-12">
-									{% crispy form %}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- EndFirst Row -->
-
+				{% endif %}
+                <!--end jumbotrom -->
+            </div>
+        </div>
+    </div>
 </div>
-
-
 
 
 {% endblock %}

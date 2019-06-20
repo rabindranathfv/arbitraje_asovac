@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.postgres',
     'django.contrib.staticfiles',
+    'rest_framework',
 
     ## add all aps
     'main_app',
@@ -180,3 +183,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+# Session time out settings
+SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)

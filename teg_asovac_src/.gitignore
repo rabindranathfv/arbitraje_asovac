@@ -3,3 +3,5 @@ db.sqlite3
 __pycache__
 .env
 *.pdf
+static_env/media_root/comprobantes_de_pago/
+static_env/media_root/trabajos/

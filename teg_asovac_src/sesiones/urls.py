@@ -20,8 +20,22 @@ from . import views
 
 urlpatterns = [
     url(r'^sesiones/$', views.sesiones_pag, name= 'sesiones'),
+    url(r'^crear/$', views.create_sesion, name= 'create_sesion'),
     url(r'^lista/$', views.sesions_list, name= 'sesions_list'),
-    url(r'^editar/$', views.sesions_edit, name= 'sesions_edit'),
+    url(r'^editar/(?P<sesion_id>\d+)$', views.edit_sesion, name= 'edit_sesion'),
     url(r'^espacio/lista/$', views.sesions_space_list, name= 'sesions_space_list'),
     url(r'^espacio/editar/$', views.sesions_space_edit, name= 'sesions_space_edit'),
+    url(r'^lista-trabajos/(?P<sesion_id>\d+)$', views.sesion_job_list, name= 'sesion_job_list'),
+
+    #Bootstrap Table data
+    url(r'^load-sesions-data$',views.list_sesions, name='list_sesions'),
+    url(r'^load-jobs-sesion-data/(?P<sesion_id>\d+)$',views.list_job_sesion, name='list_job_sesion'),
+
+    #Ajax
+    url(r'^cargar-espacio-form/(?P<modalidad>\d+)$', views.load_space_form, name= 'load_space_form'),
+    url(r'^eliminar/(?P<sesion_id>\d+)$', views.delete_sesion, name= 'delete_sesion'),
+    url(r'^detalles/(?P<sesion_id>\d+)$', views.details_sesion, name= 'details_sesion'),
+    url(r'^(?P<sesion_id>\d+)/asignar-coordinador/(?P<autor_id>\d+)$', views.assign_coordinator, name= 'assign_coordinator'),
+    url(r'^(?P<sesion_id>\d+)/asignar-co-coordinador/(?P<autor_id>\d+)$', views.assign_co_coordinator, name= 'assign_co_coordinator'),
+    
 ]

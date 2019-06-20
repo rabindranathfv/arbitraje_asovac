@@ -1,0 +1,57 @@
+{% load crispy_forms_tags %}
+<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id rol %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" >Cargar Usuarios</h3>
+    </div>
+    <div class="modal-body">
+        {% include "errors_form.html" %}
+        {{  form | crispy }}
+    </div>
+    <div class="modal-footer">
+      <!-- Default switch -->
+        <label class="bs-switch">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-lg" >Guardar</button>
+    </div>
+</form>
+
+<script>
+   
+     $('#loadUsersForm').submit(function(e){
+        e.preventDefault();
+        var input = document.getElementById('id_file');
+        //console.log("File Seleccionado : ", input.files[0]);
+
+        var form = $(this);
+        var formData = new FormData(form);
+        formData.append('file',input.files[0]);
+
+        
+        //console.log(formData);
+        $.ajax({
+            url: $('#loadUsersForm').attr("data-url"),
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                
+                $('#table').bootstrapTable('refresh')
+                if(data.form_is_valid){
+                    // console.log('data is saved')
+                    $('#modal-user .modal-content').html(data.html_form);
+                }else{
+                    //console.log('data is invalid')
+                    $('#modal-user .modal-content').html(data.html_form)
+                }
+
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+</script>

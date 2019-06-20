@@ -1,0 +1,17 @@
+Sistema ASOVAC: Asignación como {{ cargo }}
+
+Se le notifica que usted ha sido asignado como {{ cargo }} de la sesión {{sesion.nombre_sesion}}, le dejaremos los datos de la sesión a continuación.
+
+Nombre de la sesión: {{ sesion.nombre_sesion }}
+Lugar: {{ sesion.lugar }}
+Fecha de la sesión: {{ sesion.fecha }}
+Hora de inicio: {{ sesion.hora_inicio }}
+Hora de fin: {{ sesion.hora_fin }}
+Capacidad: {{ sesion.capacidad }}
+{% if sesion.video_beam %}    
+Requiere vídeo beam
+{% endif %}
+{% if sesion.portatil %}
+Requiere portátil
+{% endif %}
+Observaciones: {{ sesion.observaciones }}

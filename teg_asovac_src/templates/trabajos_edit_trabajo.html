@@ -3,15 +3,13 @@
 
 {% block inner_content %}
 <div class="container-fluid">
-
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1">
 			<div class="jumbotron RLcard">
 				<div class="container-fluid">
-					<div class="row middle-content">
-						<div class="col-sm-3">
-							<h2>Autor</h2>
-						</div>
+					<div class="col-sm-12 middle-content">
+						{% include "success_messages.html" %}
+						{% include "errors_form.html" %}
 					</div>
 				</div>
 				<div class="panel panel-default">
@@ -22,34 +20,42 @@
 						<div class="container-fluid">
 							<div class="row middle-content">
 								<div class="col-sm-12">
-									{% crispy form %}
+									<form method="POST" id="create-job-form" enctype="multipart/form-data" action="{% url 'trabajos:edit_trabajo' trabajo.id%}">
+										{% crispy form %}
+														
+										<div class="col-sm-2 col-sm-offset-8">
+											<a href="{% url 'trabajos:trabajos' %}" class="btn btn-danger btn-block btn-lg" >Cancelar</a>
+										</div>
+										<div class="col-sm-2"><button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">Guardar</button>
+										</div>
+										
+										
+										<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h3 class="modal-title" id="ModalLongTitle">Editar Trabajo</h3>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="modal-body text-center content-modal">
+														¿Está seguro que desea editar el trabajo?
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+														<button type="submit" class="btn btn-primary btn-success">Postular</button>
+													</div>
+												</div>
+											</div>
+										</div>									
+									
+									</form>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title text-center" id="ModalLongTitle">Editar Trabajo</h3>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body text-center content-modal">
-				<p>¿Está seguro que desea guardar los cambios?</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
-				<button type="submit" class="btn btn-primary btn-success">Guardar</button>
 			</div>
 		</div>
 	</div>

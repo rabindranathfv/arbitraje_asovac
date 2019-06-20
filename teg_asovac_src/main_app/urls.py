@@ -37,6 +37,9 @@ urlpatterns = [
     url(r'^(?P<arbitraje_id>\d+)/$',views.dashboard,name='dashboard'),
     url(r'^crear-arbitraje/$',views.create_arbitraje, name='create_arbitraje'),
     url(r'^(?P<arbitraje_id>\d+)/datos-basicos/$',views.data_basic,name='data_basic'),
+    url(r'^(?P<arbitraje_id>\d+)/crear-clave-COG/$',views.generate_COG_key,name='generate_COG_key'),
+    url(r'^(?P<arbitraje_id>\d+)/crear-clave-COA/$',views.generate_COA_key,name='generate_COA_key'),
+    url(r'^(?P<arbitraje_id>\d+)/crear-clave-ARS/$',views.generate_ARS_key,name='generate_ARS_key'),
     url(r'^(?P<arbitraje_id>\d+)/estado-arbitraje/$',views.state_arbitration,name='arbitration_state'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/$',views.users_list,name='users_list'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/editar-usuario/$',views.user_edit,name='user_edit'),
@@ -49,8 +52,10 @@ urlpatterns = [
     #url(r'^', include('eventos.urls')),
     url(r'^aplicaciones/$',views.apps_selection,name='apps_selection'),
     url(r'^areas-subareas/$',views.areas_subareas,name='arbitrations_areas_subareas'),
+    # Carga de tablas via archivos
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
     url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
+    url(r'^(?P<arbitraje_id>\d+)/load/(?P<rol>\d+)/usuarios$',views.load_users_modal,name='load_users'),
 
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),
@@ -85,5 +90,8 @@ urlpatterns = [
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
+
+    # Generar Reportes
+    url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
 
 ]

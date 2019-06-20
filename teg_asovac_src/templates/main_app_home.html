@@ -19,11 +19,13 @@
 						<div class="col-sm-10">
 							<h3>Arbitrajes Disponibles</h3>
 						</div>
-						<div class="col-sm-2">
-							<a href="{% url 'main_app:create_arbitraje' %}" class="btn btn-warning btn-block">
-								<i class="fas fa-plus-circle"></i> Crear Arbitraje
-							</a>
-						</div>
+						{% if request.user.is_staff %}
+							<div class="col-sm-2">
+								<a href="{% url 'main_app:create_arbitraje' %}" class="btn btn-warning btn-block">
+									<i class="fas fa-plus-circle"></i> Crear Arbitraje
+								</a>
+							</div>
+						{% endif %}
 					</div>
 					{% if arb_data %}
 					{% for arb, state, allow, rol_id in arb_data %}
@@ -50,7 +52,7 @@
 							{% endif %}
 						{% elif rol_id > 5 %}
 							{% if arb.estado_arbitraje <= 3 %}
-							<button class="btn btn-primary btn-lg btn-block show-register-user-in-sistema-modal" data-url ="{% url 'main_app:register_user_in_sistema' arb.id %}" ><i class="fas fa-door-open"></i>Entrar</button>
+							<button class="btn btn-primary btn-lg btn-block show-form" data-url ="{% url 'main_app:register_user_in_sistema' arb.id %}" ><i class="fas fa-door-open"></i>Entrar</button>
 							{% else %}
 								<a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalRegisterDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
 							{% endif %}
@@ -83,7 +85,7 @@
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title text-danger" id="ModalLongTitle">Acceso Denegado</h5>
+				<h3 class="modal-title">Acceso Denegado</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -102,9 +104,9 @@
 <div class="modal fade" id="ModalRegisterDenied" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered" role="document">
 		<div class="modal-content">
-			<div class="modal-header btn-danger">
-				<h3 class="modal-title col-sm-11" id="ModalLongTitle">Acceso Denegado</h5>
-					<button type="button" class="close col-sm-1" data-dismiss="modal" aria-label="Close">
+			<div class="modal-header">
+				<h3 class="modal-title">Acceso Denegado</h3>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -112,7 +114,7 @@
 					El arbitraje está en una etapa que no se aceptan nuevos autores.  
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary btn-danger" data-dismiss="modal">Cancelar</button>
+					<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,5 @@
+Sistema ASOVAC: Creación de usuario
+
+
+Bienvenido(a) {{arbitro.nombres}} {{arbitro.apellidos}}. Ha sido asignado para realizar la revisión del resumen {{trabajo}}
+pulse el boton para aceptar la invitación.

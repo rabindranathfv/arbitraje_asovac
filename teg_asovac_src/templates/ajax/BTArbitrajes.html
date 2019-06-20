@@ -1,0 +1,305 @@
+
+{% load crispy_forms_tags %}
+{% if tipo == "changeStatus" %}
+<form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:cambiarEstatus' trabajo_id %}">
+    {% csrf_token %}
+    <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Cambiar estatus</h3>
+    </div>
+    
+    <div class="modal-body">
+        <div class="col-md-12 text-left" style="font-size: 16px;">
+            <span>
+                <b>Titulo:</b> {{trabajo.titulo_espanol}}   
+            </span>
+            <br>
+            <span>
+                <b>Forma de presentación:</b>  {{trabajo.forma_presentacion}}   
+            </span>
+            <br>
+            <span>
+                <strong>Área:</strong> {{area }}
+            </span>
+            <br>
+            <span>
+                <strong>Subárea:</strong> {{subarea}}
+            </span>
+            <br>
+            <span>
+                <strong>Estatus:</strong> {{trabajo.estatus}}
+            </span>
+            <br>
+            <span >
+                <strong>Resumen:</strong> {{trabajo.resumen}}
+            </span>
+        </div>
+        <div class="col-md-12">
+             <br>
+            <select name="status" id="status" class=" form-control" >
+                <option selected value="">Seleccione</option>
+                <option value="Aceptado">Aceptado</option>
+                <option value="Rechazado">Rechazado</option>
+            </select>
+            <br>
+        </div>
+        <div class="col-md-12">
+            <textarea name="comment" id="comment" rows="4" class="form-control" style="display:none;">
+            </textarea>
+        </div>
+    </div>
+    
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+        <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+    </div>
+</form>
+
+<script>
+    CKEDITOR.replace( 'comment',{
+        toolbar: [
+			{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+			{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+			
+		],
+    } );
+    
+    $("#cke_comment").hide();
+    $(document).ready(function () {
+        $("#cke_comment").hide();
+        CKEDITOR.instances.comment.on('change', function() {
+            console.log("TEST");
+            var comment= CKEDITOR.instances.comment.getData().trim();
+            // console.log(CKEDITOR.instances.comment.getData());
+            console.log(comment);
+            if(comment == ""){
+                $(".sendGenericForm").prop('disabled', true);
+            }else{
+                $("#comment").val(comment);
+                $(".sendGenericForm").prop('disabled', false);
+            }
+        });
+
+        $("#status").change(function (e) { 
+            var status= $(this).val();
+            console.log("El estatus es: "+status);
+            if (status == "Rechazado") {
+                $("#cke_comment").show();
+                // $("#comment").show();
+                $(".sendGenericForm").prop('disabled', true);
+                console.log("El estatus es rechazado");
+            }else{
+                if (status == "Aceptado") {
+                    console.log("El estatus es aceptado");
+                    $(".sendGenericForm").prop('disabled', false);
+                    $("#cke_comment").hide();
+                    // $("#comment").hide();
+                }else{
+                    console.log("El estatus es pendiente");
+                    $("#cke_comment").hide();
+                    // $("#comment").hide();
+                    $(".sendGenericForm").prop('disabled', false);
+                }
+            }
+            
+        });
+
+        // $("#comment").change(function (e) { 
+        //     var comment= $(this).val().trim();
+        //     console.log(comment);
+        //     if(comment == ""){
+        //         $(".sendGenericForm").prop('disabled', true);
+        //     }else{
+        //         $(".sendGenericForm").prop('disabled', false);
+        //     }
+            
+        // });
+
+        
+    });
+</script>
+
+{% else %}
+    {% if tipo == "statusArbitraje" %}
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 class="modal-title" >Estatus Arbitraje</h3>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 text-left" style="font-size: 16px;">
+            <table class="table table-bordered">
+                <thead>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Resultado</th>
+                        <th>Comentario</th>
+                </thead>
+                    {% for resultado in arbitrajes %}
+                        <tr>
+                            <td>{{resultado.nombres}} {{resultado.apellidos}}</td>
+                            <td>{{resultado.correo_electronico}}</td>
+                            {% if resultado.evaluacion == "Aceptado"%}
+                                <td><span class="label label-success">{{resultado.evaluacion}}</span></td>
+                            {% else %}
+                                <td><span class="label label-danger">{{resultado.evaluacion}}</span></td>
+                            {% endif %}
+                            <td>{{resultado.comentario}}</td>
+                        </tr>
+                    {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+    </div>
+    {% else %}
+        {% if tipo == "newArbitraje" %}
+        <form method="post" class="" data-url="{% url 'arbitrajes:nuevoArbitraje' trabajo_id %}">
+                {% csrf_token %}
+                <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title" >Asignar nueva revisión</h3>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <label for="observaciones">Indique las corecciones para la nueva versión:</label>
+                        <textarea name="observaciones" id="observaciones" rows="4" class="form-control" style="display:block;">
+                        </textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                    <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                </div>
+        </form>
+        <script>
+            
+            CKEDITOR.replace( 'observaciones',{
+                toolbar: [
+                    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+                    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+                    
+                ],
+            } );
+            $(document).ready(function () {
+                
+                CKEDITOR.instances.observaciones.on('change', function() {
+                    var observaciones= CKEDITOR.instances.observaciones.getData().trim();
+                    // console.log(CKEDITOR.instances.observaciones.getData());
+                    console.log(observaciones);
+                    if(observaciones == ""){
+                        $(".sendGenericForm").prop('disabled', true);
+                    }else{
+                        $("#observaciones").val(observaciones);
+                        $(".sendGenericForm").prop('disabled', false);
+                    }
+                });
+                    
+            });
+        </script>
+
+        {% else %}
+            {% if tipo == "editPresentacion" %}
+            <form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:editarPresentacion' trabajo_id %}">
+                {% csrf_token %}
+                <input type="hidden" id="trabajo" name="trabajo" value="{{trabajo_id}}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Modalidad de presentación</h3>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="col-md-12">
+                        <!-- <br> -->
+                        <label for="forma_presentacion">Modalidad de Presentación</label>
+                        <select name="forma_presentacion" id="forma_presentacion" class=" form-control">
+                            <option selected value="">Seleccione</option>
+                            <option value="Presencial">Presencial</option>
+                            <option value="Virtual">Virtual</option>
+                        </select>
+                        <br>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                    <button disabled="true" type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                </div>
+            </form>
+            <script>
+                $(document).ready(function () {
+                    $("#forma_presentacion").change(function (e) { 
+                        var format= $(this).val();
+                        if (format == "") {
+                            $(".sendGenericForm").prop('disabled', true);
+                        }else{
+                                $(".sendGenericForm").prop('disabled', false);
+                        }
+                        
+                    });
+            
+                });
+            </script>
+            {% else %}
+                {% if tipo == "asigSesion" %}
+                <form method="post" class="asignarArbitro" data-url="{% url 'arbitrajes:asignarSesion' trabajo_id %}">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" >Asignar Sesión</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12 text-left" style="font-size: 16px;">
+                            <table class="table table-bordered">
+                                <thead>
+                                        <th>Nombre</th>
+                                        <th>Fecha presentación</th>
+                                        <th>Hora inicio</th>
+                                        <th>Agregar</th>
+                                </thead>
+                                    {% for item in sesiones %}
+                                        <tr>
+                                            <td>{{item.nombre_sesion}}</td>
+                                            <td>{{item.fecha_sesion}}</td>
+                                            <td>{{item.hora_inicio}}</td>
+                                            <td class="text-center" >
+                                                <label class="contentCheck">
+                                                {% if item.id == asig %}
+                                                    <input name="sesion" type="radio" data-status="on" id="{{item.id}}" value="{{item.id}}">
+                                                {% else %}
+                                                    <input name="sesion" type="radio" data-status="off" id="{{item.id}}" value="{{item.id}}">
+                                                {% endif %}
+                                                <span class="checkmark"></span>
+                                                </label>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                    </div>
+                </form>
+                <script>
+                        $('input[type=radio]').each(function () {
+                            
+                            var status=$(this).attr('data-status');
+                            if(status == "on" ){
+                                $(this).prop("checked",true);
+                            }
+                    
+                        }); 
+                    
+                    </script>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endif %}

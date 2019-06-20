@@ -5,6 +5,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>{% block title %}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
     </head>
     <body style="margin: 0; padding: 0;">
         <table cellpadding="0" cellspacing="0" width="100%">
@@ -14,7 +16,7 @@
                         <tr>
                             <td valing="middle" align="center" style="padding: 0px">
                                 <a href="#" target="_blank">
-                                    <img src="https://i.imgur.com/G1PXYZU.jpg" alt="Logo Header ASOVAC" style="width:100%; border:0;"/>
+                                    <img src="{% if arbitraje %}{{ arbitraje.cabecera }}{% else %}https://i.imgur.com/G1PXYZU.jpg{% endif %}" alt="Logo Header ASOVAC" style="width:100%; border:0;"/>
                                 </a>
                             </td>
                         </tr>
@@ -47,12 +49,13 @@
                                 </table>
                             </td>
                         </tr>
+                        <!--  Footer  o Pie de página -->
                         <tr>
-                            <td bgcolor="#222222" style="padding: 5px 10px 5px 10px;">
+                            <td bgcolor="{% if arbitraje %}{{ arbitraje.color_fondo_pie }}{% else %}#222222{% endif %}" style="padding: 5px 10px 5px 10px;">
                                 <table cellpadding="0" cellspacing="0" width="100%">
                                     <tr>
                                         <td>
-                                            <p style="color: #ffffff; font-family: sans-serif; font-size: 16px;">Asociación Venezolana para el Avance de la Ciencia</p>
+                                            <p style="color: {% if arbitraje %}{{ arbitraje.color_letras_pie }}{% else %}#ffffff{% endif %}; font-family: sans-serif; font-size: 16px;">Asociación Venezolana para el Avance de la Ciencia</p>
                                         </td>
                                         <td align="center">
                                             <a alt="Facebook site" href="">
@@ -62,11 +65,13 @@
                                     </tr>
                                 </table>
                             </td>
-                            
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
     </body>
 </html>

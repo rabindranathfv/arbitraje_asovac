@@ -5,38 +5,47 @@
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" >{{area.nombre}}</h4>
+        <h3 class="modal-title" >{{area.nombre}}</h3>
     </div>
 
     <div class="modal-body">
 		
         <table class="table table-bordered">
             <thead>
-                <th>Nombre</th>
-                <th>Descripcion</th>
             </thead>
             <tbody>
-                <td>{{area.nombre}}</td>
-                <td>{{area.descripcion}}</td>
+                <tr>
+                    <th>Nombre</th>
+                    <td>{{area.nombre}}</td>
+                </tr>
+                <tr>
+                    <th>Código</th>
+                    <td>{{area.codigo}}</td>
+                </tr>
+                    <th>Descripción</th>
+                    <td>{{area.descripcion}}</td>
+                <tr>
+
+                </tr>
             </tbody>
         </table>
 
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" id="tableButtonSave">Guardar</button>
+        <button type="button" class="btn btn-danger btn-lg" id="tableButtonClose" data-dismiss="modal">Cerrar</button>
+        <!-- <button type="button" class="btn btn-primary btn-lg" id="tableButtonSave">Guardar</button> -->
     </div>
 
 {% else %}
     {% if tipo == "edit" %}
     {% load crispy_forms_tags %}
     {% include "errors_form.html" %}
-        <form method="post" class="editarArea" data-url="{% url 'main_app:editarArea' area.id %}">
+        <form method="post" class="editarAreaa" data-url="{% url 'main_app:editarArea' area.id %}">
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >{{area.nombre}}</h4>
+                <h3 class="modal-title" >{{area.nombre}}</h3>
             </div>
             
             <div class="modal-body">
@@ -44,29 +53,29 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" >Guardar</button>
+                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="editarArea btn btn-primary btn-lg" >Guardar</button>
             </div>
         </form>
     {% else %}
         {% if tipo == "delete" %}
-        <form method="post" id="eliminarArea" action="" class="eliminarArea" data-url="{% url 'main_app:eliminarArea' area.id %}">
+        <form method="post" id="eliminarAreaa" action="" class="eliminarAreaa" data-url="{% url 'main_app:eliminarArea' area.id %}">
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >Eliminar area</h4>
+                <h3 class="modal-title" >Eliminar Área</h3>
             </div>
         
             <div class="modal-body">
                 {% if message == "eliminar"%}
-                    <p>¿Desea eliminar el area {{area.nombre }}?</p>
+                    <p>¿Desea eliminar el área {{area.nombre }}?</p>
                 {% endif %}
 
             </div>
         
             <div class="modal-footer">
-                <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger" >Eliminar</button>
+                <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
+                <button type="button" class="eliminarArea btn btn-danger btn-lg" >Eliminar</button>
             </div>
         </form>
         {% else %}
@@ -74,7 +83,7 @@
     
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" >Eliminar Usuario</h4>
+                    <h3 class="modal-title" >Eliminar Área</h3>
                 </div>
             
                 <div class="modal-body">
@@ -82,8 +91,8 @@
                 </div>
             
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default"  data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-danger" >Eliminar</button>
+                    <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-danger btn-lg" >Eliminar</button>
                 </div>
             {% endif %}
         {% endif %}

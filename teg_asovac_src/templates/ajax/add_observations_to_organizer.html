@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title" >Añadir observaciones al organizador: {{ organizador.nombres }} {{ organizador.apellidos }}</h4>
+        <h3 class="modal-title" >Añadir observaciones al organizador: {{ organizador.nombres }} {{ organizador.apellidos }}</h3>
 </div>
 <form method="POST" class="add-observations-to-organizer-form" action="{% url 'eventos:add_observations_to_organizer' organizador.id %}">
     <div class="modal-body">
@@ -11,7 +11,7 @@
         {{ form | crispy }}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-success">Añadir</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Añadir</button>
     </div>
 </form>

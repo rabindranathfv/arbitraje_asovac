@@ -1,0 +1,234 @@
+{% extends "content_wrapper.html" %}
+{% block inner_content %}
+<div class="container-fluid">
+	<div class="row">
+         <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Autores según nivel de instrucción
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="autores-nivel-instruccion" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados según áreas
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="areas" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados de arbitrajes
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="arbitros-invitaciones" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">  
+                <div class="panel-heading">
+                    <h4>
+                        Resultados de trabajos
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row middle-content">
+                            <canvas id="trabajos" heigth="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block js_extra %}
+{% load static %}
+    <script>
+        var endpoint = "{% url 'recursos:chart_data' %}"
+        var defaultData = []
+        var labels = []
+        $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function(data){
+                labels = data.labels
+                defaultData = data.default
+                setChartTrabajos(data.trabajos)
+                setChartArbitrosInvitaciones(data.arbitros)
+                setChartAutoresNivelInstruccion(data.autores)
+                setChartAreas(data.area)
+            },
+            error: function(error_data){
+                console.log("Error:")
+                console.log(error_data)
+            }
+        })
+        function setChartTrabajos(trabajosData){
+            var ctx = document.getElementById('trabajos').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: trabajosData.labels,
+                    datasets: [{
+                        data: trabajosData.data,
+                        backgroundColor: [
+                            'blue',
+                            'red',
+                            'yellow',
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+            });
+        }
+
+        function setChartArbitrosInvitaciones(arbitrosData){
+            var ctx = document.getElementById('arbitros-invitaciones').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: arbitrosData.labels,
+                    datasets: [{
+                        label: 'Información de arbitrajes',
+                        data: arbitrosData.data,
+                        backgroundColor: [
+                            'gray',
+                            'blue',
+                            'yellow',
+                        ],
+                        borderColor: [
+                            ,
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(255, 206, 86, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            barPercentage: 0.35,
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+        function setChartAutoresNivelInstruccion(autoresData){
+            var ctx = document.getElementById('autores-nivel-instruccion').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: autoresData.labels,
+                    datasets: [{
+                        label: 'Nivel de instrucción',
+                        data: autoresData.data,
+                        backgroundColor: [
+                            'green',
+                            'red',
+                            'yellow',
+                            'blue',
+                            'orange',
+                            'gray'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+            });
+        }
+
+
+
+        function setChartAreas(areasData){
+            var ctx = document.getElementById('areas').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: areasData.labels,
+                    datasets: [{
+                        label: 'Trabajos Aceptados',
+                        data: areasData.data_aceptados,
+                        backgroundColor: 'blue',
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                        ],
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Trabajos Rechazados',
+                        data: areasData.data_rechazados,
+                        backgroundColor: 'red',
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                        ],
+                        borderWidth: 1
+                    },
+                    
+                    ]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
