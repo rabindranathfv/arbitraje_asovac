@@ -1,10 +1,9 @@
-{% extends "content_wrapper_with_sidebar.html" %}
+{% extends "content_wrapper.html" %}
 {% load crispy_forms_tags %}
 
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
-	{% include "toggle_title.html" %}
 
 	<div class="row">
 		<div class="col-sm-12">
@@ -19,7 +18,7 @@
 					</div>
 				</div>
 
-
+				{% include "errors_form.html" %}
 				{% crispy form %}
 
 			</div>

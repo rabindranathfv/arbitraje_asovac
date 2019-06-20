@@ -1,28 +1,22 @@
-{% extends "content_wrapper_with_sidebar.html" %}
-{% load static %}
+{% extends "content_wrapper.html" %}
 {% load crispy_forms_tags %}
 
 {% block inner_content %}
 <div class="container min-height-content" id="content-wrapper">
-
-    {% include "toggle_title.html" %}
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="jumbotron RLcard">
-                                         
-                    <div class="row">
-                            <div class="col-sm-10">
-                                    <h2 class="text-left">Crear locación de evento</h2>
-                            </div>
-                            <div class="col-sm-2">
-                                <a class="btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
-                            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron RLcard">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <h2 class="text-left">Crear locación de evento</h2>
                     </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-warning btn-block btn-lg" href="{% url 'eventos:event_list' %}">Atras</a> 
+                    </div>
+                </div>
 
-                    {% include "errors_form.html" %}
-                    {% crispy form %}
-
+                {% include "errors_form.html" %}
+                {% crispy form %}
 
             </div>
         </div>

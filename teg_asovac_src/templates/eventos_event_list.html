@@ -1,7 +1,7 @@
-{% extends "content_wrapper_with_sidebar.html" %} {% load static %} {% block inner_content %}
-<div class="container col-sm-12" id="content-wrapper">
+{% extends "content_wrapper.html" %} {% load static %} {% block inner_content %}
+<div class="container" id="content-wrapper">
     {% include "success_messages.html" %}
-    {% include "toggle_title.html" %}
+
     <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
@@ -23,7 +23,7 @@
                 </div>
                 <div class="table-responsive">
 
-                    <table class="table table-bordered" id="event-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="nombre" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
+                    <table class="table table-bordered" id="event-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="nombre" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
                         data-show-toggle="true" data-show-columns="true">
                         {% if event_data %}
                         <thead>

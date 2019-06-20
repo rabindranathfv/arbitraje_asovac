@@ -287,13 +287,14 @@ def organizer_import_excel(request):
     if request.method == 'POST':
         organizer_resource = OrganizadorResource()
         dataset = Dataset()
-        new_places = request.FILES['myfile']
+        new_places = request.FILES.get('myfile', None)
 
-        imported_data = dataset.load(new_places.read())
-        result = organizer_resource.import_data(dataset, dry_run=True)  # Test the data import
+        if new_places:
+            imported_data = dataset.load(new_places.read())
+            result = organizer_resource.import_data(dataset, dry_run=True)  # Test the data import
 
-        if not result.has_errors():
-            organizer_resource.import_data(dataset, dry_run=False)  # Actually import now
+            if not result.has_errors():
+                organizer_resource.import_data(dataset, dry_run=False)  # Actually import now
 
     return redirect(reverse('eventos:organizer_list'))
 
@@ -384,13 +385,14 @@ def event_place_import_excel(request):
     if request.method == 'POST':
         locacion_resource = LocacionResource()
         dataset = Dataset()
-        new_places = request.FILES['myfile']
+        new_places = request.FILES.get('myfile', None)
 
-        imported_data = dataset.load(new_places.read())
-        result = locacion_resource.import_data(dataset, dry_run=True)  # Test the data import
+        if new_places:
+            imported_data = dataset.load(new_places.read())
+            result = locacion_resource.import_data(dataset, dry_run=True)  # Test the data import
 
-        if not result.has_errors():
-            locacion_resource.import_data(dataset, dry_run=False)  # Actually import now
+            if not result.has_errors():
+                locacion_resource.import_data(dataset, dry_run=False)  # Actually import now
 
     return redirect(reverse('eventos:event_place_list'))
 
