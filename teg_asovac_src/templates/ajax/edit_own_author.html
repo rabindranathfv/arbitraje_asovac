@@ -5,7 +5,7 @@
     </button>
     <h3 class="modal-title" >Editar Autor:</h3>
 </div>
-<form method="POST" class="edit-author-form" data-url="{% url 'autores:author_edit_modal' user.id %}">
+<form method="POST" class="save-form-stay" data-url="{% url 'autores:author_edit_modal' user.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}

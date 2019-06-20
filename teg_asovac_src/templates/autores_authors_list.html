@@ -22,7 +22,7 @@
 										<a href="{% url 'autores:admin_create_author' %}" type="button"><i class="fa fa-user" style="color:black"></i> Crear Autor</a>
 									</li>
 									<li>
-										<a data-url ="{% url 'autores:load_authors_modal' %}" type="button"  id="import-excel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
+										<a data-url ="{% url 'autores:load_authors_modal' %}" type="button"  class="show-form"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Carga Excel</a>
 									</li>
 									<li>
 										<a href ="{% url 'autores:export_authors' %}" type="button"  id="export-excel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Exportar autores en Excel</a>
@@ -31,7 +31,7 @@
 							</div>
 						</div>
 
-						<table id="autores-table"
+						<table id="table"
 						data-toggle="table"
 						data-ajax="ajaxAuthors"
 						data-side-pagination="server"
@@ -85,7 +85,7 @@
 	            'title="Editar" >',
 	            '<i class="far fa-edit"></i>',
 	            '</a>  ',
-	            '<a class="authorDetails" data-url="',
+	            '<a class="show-form" data-url="',
 	            route_details,
 	            ' "',
 	            'title="Detalles del autor" >',

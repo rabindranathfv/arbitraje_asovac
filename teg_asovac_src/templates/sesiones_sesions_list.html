@@ -25,7 +25,7 @@
 							</div>
 						</div>
 
-						<table id="sesion-table"
+						<table id="table"
 						data-toggle="table"
 						data-ajax="ajaxSesions"
 						data-side-pagination="server"
@@ -70,7 +70,7 @@
 	<script src="{% static 'js/grid.js' %}">
 	</script>
 	<script>
-		var $table = $('#sesion-table');
+		var $table = $('#table');
 		function operateSesions(value, row, index) {
 			let eliminar = ""
 			let asignar_coordinadores = ""
@@ -78,7 +78,7 @@
 			{
 				let route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
 				eliminar = [
-					'<a class="delete-sesion" data-url="',
+					'<a class="show-form" data-url="',
 					route_delete,
 					' "',
 					'title="Eliminar" >',
@@ -111,7 +111,7 @@
 
 			let route_details = "{% url 'sesiones:details_sesion' 1 %}".replace(1, row.sesion__id);
 			let detalles = [
-					'<a class="detail-sesion" data-url="',
+					'<a class="show-form" data-url="',
 					route_details,
 					'"',
 					'title="Detalles" >',

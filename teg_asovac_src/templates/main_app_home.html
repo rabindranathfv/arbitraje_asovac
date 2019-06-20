@@ -52,7 +52,7 @@
 							{% endif %}
 						{% elif rol_id > 5 %}
 							{% if arb.estado_arbitraje <= 3 %}
-							<button class="btn btn-primary btn-lg btn-block show-register-user-in-sistema-modal" data-url ="{% url 'main_app:register_user_in_sistema' arb.id %}" ><i class="fas fa-door-open"></i>Entrar</button>
+							<button class="btn btn-primary btn-lg btn-block show-form" data-url ="{% url 'main_app:register_user_in_sistema' arb.id %}" ><i class="fas fa-door-open"></i>Entrar</button>
 							{% else %}
 								<a class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalRegisterDenied" role="button"><i class="fas fa-door-open"></i> Entrar</a>
 							{% endif %}
