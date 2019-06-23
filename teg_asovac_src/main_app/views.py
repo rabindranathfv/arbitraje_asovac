@@ -645,29 +645,25 @@ def generate_COG_key(request, arbitraje_id):
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
 
-    coordinador_general_correo = False
-    for item in usuario_rol_in_sistema:
-        if item.usuario_asovac != arbitraje.coordinador_general:    
-            send_mail(
-                'Asignación de contraseña',         #titulo
-                msg_plain,                          #mensaje txt
-                config('EMAIL_HOST_USER'),          #email de envio
-                [item.usuario_asovac.usuario.email],               #destinatario
-                html_message=msg_html,              #mensaje en html
-            )
-        
-    coordinador_general_correo = send_mail(
-            'Asignación de contraseña',                                     #titulo
-            msg_plain,                                                      #mensaje txt
-            config('EMAIL_HOST_USER'),                                      #email de envio
-            [arbitraje.coordinador_general.usuario.email],                  #destinatario
-            html_message=msg_html,                                          #mensaje en html
+    coordinador_general_correo = 0
+    correo_cg = ""
+    for item in usuario_rol_in_sistema:  
+        value = send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [item.usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
         )
+        if item.rol.id == 2:
+            coordinador_general_correo = value
+            correo_cg = item.usuario_asovac.usuario.email
+
 
     if coordinador_general_correo:
-        messages.success(request, 'La contraseña de coordinador general ha sido generada y se le ha envidado al coordinador general al siguiente correo: ' + arbitraje.coordinador_general.usuario.email)
+        messages.success(request, 'La contraseña de coordinador general ha sido generada y se le ha envidado al coordinador general al siguiente correo: ' + correo_cg)
     else:
-        messages.error(request, 'Hubo un error en el envío de la nueva contraseña al coordinador general, no se pudo enviar la clave al correo: ' + arbitraje.coordinador_general.usuario.email)
+        messages.error(request, 'Hubo un error en el envío de la nueva contraseña al coordinador general, no se pudo enviar la clave al correo: ' + correo_cg)
     
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
