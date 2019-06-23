@@ -83,7 +83,7 @@ class Evento(models.Model):
 	# OJO antes era TimeField
 	fecha_preferida = models.DateField()
 	observaciones = models.TextField(max_length=400, blank = True)
-    #Agregar blank=True
+	#Agregar blank=True
 	url_anuncio_evento = models.CharField(max_length=200,validators=[URLValidator()])
 
 	def __str__(self):

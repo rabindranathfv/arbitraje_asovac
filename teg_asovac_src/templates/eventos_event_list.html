@@ -21,6 +21,14 @@
                         </div>
                     </form>
                 </div>
+                <div>
+                    <form method="post" action="{% url 'eventos:event_import_excel' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h3>Importar Eventos</h3>
+                        <input type="file" name="myfile">
+                        <button type="submit">Upload</button>
+                    </form>
+                </div>
                 <div class="table-responsive">
 
                     <table class="table table-bordered" id="event-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="nombre" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"

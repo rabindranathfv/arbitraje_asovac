@@ -18,8 +18,8 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from eventos.forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
 
 #Import Models
-from .models import Organizador,Organizador_evento,Evento,Locacion_evento
-from .resources import OrganizadorResource, LocacionResource
+from .models import Organizador, Organizador_evento, Evento, Locacion_evento
+from .resources import OrganizadorResource, LocacionResource, EventoResource
 
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
@@ -196,6 +196,31 @@ def event_detail(request, evento_id):
         'events_app': True,
     }
     return render(request, 'eventos_event_detail.html',context)  
+
+
+def event_export_excel(request):
+    event_resource = EventoResource()
+    dataset = event_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Eventos.xls"'
+    return response
+
+
+def event_import_excel(request):
+    if request.method == 'POST':
+        event_resource = EventoResource()
+        dataset = Dataset()
+        new_places = request.FILES.get('myfile', None)
+
+        if new_places:
+            imported_data = dataset.load(new_places.read())
+            result = event_resource.import_data(dataset, dry_run=True)  # Test the data import
+
+            if not result.has_errors():
+                event_resource.import_data(dataset, dry_run=False)  # Actually import now
+
+    return redirect(reverse('eventos:event_list'))
+
 
 ##################### Organizer Views ###########################
 

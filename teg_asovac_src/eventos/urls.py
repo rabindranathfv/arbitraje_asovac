@@ -19,6 +19,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.home, name= 'home'),
     url(r'^listar-eventos/$',views.event_list,name='event_list'),
+    url(r'^exportar-eventos/$',views.event_export_excel,name='event_export_excel'),
+    url(r'^importar-eventos/$',views.event_import_excel,name='event_import_excel'),
     url(r'^editar-evento/(?P<evento_id>\d+)/$',views.event_edit,name='event_edit'),
     url(r'^crear-evento/$',views.event_create,name='event_create'),
     url(r'^detalles-evento/(?P<evento_id>\d+)/$',views.event_detail,name='event_detail'),
