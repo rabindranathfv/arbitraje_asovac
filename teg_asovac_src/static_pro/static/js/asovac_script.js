@@ -436,7 +436,8 @@ var SaveAñadirPagoForm= function(){
         //console.log("File Seleccionado : ", input.files[0]);
 
         var form= $(this).parent().parent();
-        var formData = new FormData(form);
+        // var formData = new FormData(form);
+        var formData = new FormData();
         formData.append('file',input.files[0]);
 
         $.ajax({
