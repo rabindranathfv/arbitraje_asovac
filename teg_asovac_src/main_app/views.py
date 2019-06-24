@@ -829,7 +829,10 @@ def state_arbitration(request, arbitraje_id):
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     users = User.objects.all()
-    
+    try:
+        print request.session['message-type']
+    except:
+        request.session['message-type'] = ''
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
     user_asovac = Usuario_asovac.objects.all()
     users = Usuario_asovac.objects.all()
@@ -855,7 +858,13 @@ def users_list(request, arbitraje_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-
+    if request.session['message-type'] == 'Success':
+        print("Success")
+        messages.success(request, request.session['message'])
+    elif request.session['message-type'] == 'Error':
+        print("Error")
+        messages.error(request, request.session['message'])
+    request.session['message-type'] = 'X'
     context = {
         'nombre_vista' : 'Listado de Usuarios',
         'users' : users,
@@ -2583,7 +2592,6 @@ def removeUsuario(request,id,arbitraje_id):
 
 @login_required
 def changeRol(request,id,arbitraje_id):
-    
     # Lista de roles
     rol_list=Rol.objects.all()
     array_rols=[]
@@ -2650,9 +2658,16 @@ def changeRol(request,id,arbitraje_id):
                     arbitro.save()
                 addRol.save()
                 # form.save()
+
+            request.session['message-type'] = 'Success'
+            request.session['message'] = "Se han asignado los roles seleccionados con éxito al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name 
             data['status']= 200
+            
         else:
             print form.errors
+            request.session['message-type'] = 'Error'
+            request.session['message'] = "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name  
+            
             data['status']= 404
     else:
     
