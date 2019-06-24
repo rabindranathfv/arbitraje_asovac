@@ -858,13 +858,7 @@ def users_list(request, arbitraje_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    if request.session['message-type'] == 'Success':
-        print("Success")
-        messages.success(request, request.session['message'])
-    elif request.session['message-type'] == 'Error':
-        print("Error")
-        messages.error(request, request.session['message'])
-    request.session['message-type'] = 'X'
+
     context = {
         'nombre_vista' : 'Listado de Usuarios',
         'users' : users,
@@ -2659,17 +2653,13 @@ def changeRol(request,id,arbitraje_id):
                 addRol.save()
                 # form.save()
 
-            request.session['message-type'] = 'Success'
-            request.session['message'] = "Se han asignado los roles seleccionados con éxito al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name 
-            data['status']= 200
-            data['redirect'] = 1
-            data['url'] = reverse('main_app:users_list',kwargs={'arbitraje_id': arbitraje.id} )
+            messages.success(request,"Se han asignado los roles seleccionados con éxito al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name )
+            data['status']= 200 
             return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
             
         else:
             print form.errors        
-            request.session['message-type'] = 'Error'
-            request.session['message'] = "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name + " debe tener al menos un rol" 
+            messages.error(request, "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name + " debe tener al menos un rol" )
             data['status']= 404
             return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
     else:
