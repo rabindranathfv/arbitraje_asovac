@@ -2662,13 +2662,16 @@ def changeRol(request,id,arbitraje_id):
             request.session['message-type'] = 'Success'
             request.session['message'] = "Se han asignado los roles seleccionados con éxito al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name 
             data['status']= 200
+            data['redirect'] = 1
+            data['url'] = reverse('main_app:users_list',kwargs={'arbitraje_id': arbitraje.id} )
+            return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
             
         else:
-            print form.errors
+            print form.errors        
             request.session['message-type'] = 'Error'
-            request.session['message'] = "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name  
-            
+            request.session['message'] = "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name + " debe tener al menos un rol" 
             data['status']= 404
+            return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
     else:
     
         if(request_user_role > user_role):
