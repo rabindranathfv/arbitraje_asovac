@@ -35,7 +35,7 @@ body {
 }
 
 .dropdown-menu > li > a{
-    background-color: #EEE !important;
+    /* background-color: #EEE !important; */
     color: #333 !important;
 }
 
@@ -658,4 +658,11 @@ input:checked + .slider:before {
 
 #cke_comment{
     display: none;
+}
+
+/* Estiilos para boton de accion */
+
+.bs-bars {
+    line-height: 0px !important;
+    float: right !important;
 }
