@@ -2,20 +2,19 @@
 <div class="container" id="content-wrapper">
 
     {% include "toggle_title.html" %}
-
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="row middle-content">
-					<div class="col-sm-4">
-						<h2 class="text-left">Listado de Usuarios</h2>
-					</div>
+				{% include "success_messages.html" %}
+				{% include "errors_form.html" %}
+				<div class="row middle-content">			
+					<h2 class="text-left">Listado de Usuarios</h2>	
 				</div>
-
 				<!-- bootstrap-table -->
 				<div class="row"> 
-
+					
 					<div class="col-md-8">
+						
 					</div>
 					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
 						<!-- <div class="btn-group">

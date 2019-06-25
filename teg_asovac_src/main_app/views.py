@@ -636,7 +636,6 @@ def generate_COG_key(request, arbitraje_id):
     random_password += 'COG'
     arbitraje.clave_maestra_coordinador_general = random_password
     arbitraje.save()
-    messages.success(request, 'La contraseña de coordinador general ha sido generada.')
 
     usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 2])
 
@@ -651,15 +650,26 @@ def generate_COG_key(request, arbitraje_id):
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
 
-    for item in usuario_rol_in_sistema:
-        send_mail(
+    coordinador_general_correo = 0
+    correo_cg = ""
+    for item in usuario_rol_in_sistema:  
+        value = send_mail(
             'Asignación de contraseña',         #titulo
             msg_plain,                          #mensaje txt
             config('EMAIL_HOST_USER'),          #email de envio
             [item.usuario_asovac.usuario.email],               #destinatario
             html_message=msg_html,              #mensaje en html
         )
+        if item.rol.id == 2:
+            coordinador_general_correo = value
+            correo_cg = item.usuario_asovac.usuario.email
 
+
+    if coordinador_general_correo:
+        messages.success(request, 'La contraseña de coordinador general ha sido generada y se le ha envidado al coordinador general al siguiente correo: ' + correo_cg)
+    else:
+        messages.error(request, 'Hubo un error en el envío de la nueva contraseña al coordinador general, no se pudo enviar la clave al correo: ' + correo_cg)
+    
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
@@ -669,7 +679,6 @@ def generate_COA_key(request, arbitraje_id):
     random_password += 'COA'
     arbitraje.clave_maestra_coordinador_area = random_password
     arbitraje.save()
-    messages.success(request, 'La contraseña de coordinador de area ha sido generada.')
 
     usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 3])
 
@@ -683,15 +692,19 @@ def generate_COA_key(request, arbitraje_id):
     }
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
-
+    contador = 0
     for item in usuario_rol_in_sistema:
-        send_mail(
+        value = send_mail(
             'Asignación de contraseña',         #titulo
             msg_plain,                          #mensaje txt
             config('EMAIL_HOST_USER'),          #email de envio
             [item.usuario_asovac.usuario.email],               #destinatario
             html_message=msg_html,              #mensaje en html
         )
+        if value and item.rol.id == 3:
+            contador+=1
+
+    messages.success(request, 'La contraseña de coordinador de área ha sido generada y se le ha envidado por correo electrónico a ' + str(contador) + ' coordinador(es) de área')
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
@@ -701,7 +714,6 @@ def generate_ARS_key(request, arbitraje_id):
     random_password += 'ARS'
     arbitraje.clave_maestra_arbitro_subarea = random_password
     arbitraje.save()
-    messages.success(request, 'La contraseña de arbitro de subarea ha sido generada.')
 
     usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac_id = arbitraje.id, rol_id__in=[1, 4])
 
@@ -716,14 +728,20 @@ def generate_ARS_key(request, arbitraje_id):
     msg_plain = render_to_string('../templates/email_templates/password_generator.txt', context)
     msg_html = render_to_string('../templates/email_templates/password_generator.html', context)
 
+    contador = 0
+
     for item in usuario_rol_in_sistema:
-        send_mail(
+        value = send_mail(
             'Asignación de contraseña',         #titulo
             msg_plain,                          #mensaje txt
             config('EMAIL_HOST_USER'),          #email de envio
             [item.usuario_asovac.usuario.email],               #destinatario
             html_message=msg_html,              #mensaje en html
         )
+        if value and item.rol.id == 4:
+            contador+=1
+
+    messages.success(request, 'La contraseña de arbitro de subárea ha sido generada y se le ha envidado por correo electrónico a ' + str(contador) + ' arbitro(s)')
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
@@ -816,7 +834,10 @@ def state_arbitration(request, arbitraje_id):
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     users = User.objects.all()
-    
+    try:
+        print request.session['message-type']
+    except:
+        request.session['message-type'] = ''
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
     user_asovac = Usuario_asovac.objects.all()
     users = Usuario_asovac.objects.all()
@@ -2570,7 +2591,6 @@ def removeUsuario(request,id,arbitraje_id):
 
 @login_required
 def changeRol(request,id,arbitraje_id):
-    
     # Lista de roles
     rol_list=Rol.objects.all()
     array_rols=[]
@@ -2637,10 +2657,16 @@ def changeRol(request,id,arbitraje_id):
                     arbitro.save()
                 addRol.save()
                 # form.save()
-            data['status']= 200
+
+            messages.success(request,"Se han asignado los roles seleccionados con éxito al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name )
+            data['status']= 200 
+            return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
+            
         else:
-            print form.errors
+            print form.errors        
+            messages.error(request, "Hubo un error al momento de asignar los roles al usuario: " + user_asovac.usuario.first_name + " " + user_asovac.usuario.last_name + " debe tener al menos un rol" )
             data['status']= 404
+            return redirect('main_app:users_list', arbitraje_id = arbitraje.id)
     else:
     
         if(request_user_role > user_role):
