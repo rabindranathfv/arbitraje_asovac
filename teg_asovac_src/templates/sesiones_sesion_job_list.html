@@ -74,14 +74,18 @@
 				].join('');
 			}
             let route_co_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-co-coordinador/${ row.autor__id }`
-			let asignar_co_coordinador = [
-                '<a class="show-form" data-url="',
-					route_co_coordinador,
-					' "',
-					'title="Asignar co-coordinador" >',
-					'<i class="far fa-user"></i>',
-					'</a> '
-				].join('');
+			let asignar_co_coordinador = "" 
+			if ( {{ have_coordinator }} == 1 )
+			{	
+				asignar_co_coordinador = [
+					'<a class="show-form" data-url="',
+						route_co_coordinador,
+						' "',
+						'title="Asignar co-coordinador" >',
+						'<i class="far fa-user"></i>',
+						'</a> '
+					].join('');
+			}
 
 			return [asignar_coordinador, asignar_co_coordinador].join('');
 	    }
