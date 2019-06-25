@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from decouple import config
+#from decouple import config
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.messages import constants as messages
 import dj_database_url
