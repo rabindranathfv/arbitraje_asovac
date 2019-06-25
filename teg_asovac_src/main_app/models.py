@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import uuid
+
 from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.encoding import smart_unicode
 
-import uuid
 # Create your models here.
 
 # Este es un diccionario con los estados numericos y en string de los arbitrajes.
@@ -77,9 +79,14 @@ class Sistema_asovac(models.Model):
 	clave_maestra_arbitro_subarea = models.CharField(max_length=100,blank=True)
 	porcentaje_iva = models.SmallIntegerField()
 	monto_pagar_trabajo = models.IntegerField()
+	cabecera = models.CharField('URL Imagen de Cabecera', max_length=255, default='https://i.imgur.com/G1PXYZU.jpg')
+	color_fondo_pie = models.CharField(max_length=7, default='#222', validators=[RegexValidator(r'^(\#[a-fA-F0-9]{6}|\#[a-fA-F0-9]{3})?$', 'Este es un código de color inválido. Debe ser un código de color hexadecimal html ej. #000000')])
+	color_letras_pie = models.CharField(max_length=7, default='#FFF', validators=[RegexValidator(r'^(\#[a-fA-F0-9]{6}|\#[a-fA-F0-9]{3})?$', 'Este es un código de color inválido. Debe ser un código de color hexadecimal html ej. #000000')])
+
 
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
+
 
 """""""""""""""""""""""""""
 Usuario_asovac Model

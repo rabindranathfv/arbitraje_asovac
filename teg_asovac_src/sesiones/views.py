@@ -650,7 +650,8 @@ def assign_coordinator(request, sesion_id, autor_id):
         context = {
             'sesion': coordinador_sesion.sesion,
             'cargo': "coordinador",
-            }
+            'arbitraje': sesion.sistema,
+        }
         msg_plain = render_to_string('../templates/email_templates/coordinator_assign.txt', context)
         msg_html = render_to_string('../templates/email_templates/coordinator_assign.html', context)
 
@@ -700,7 +701,8 @@ def assign_co_coordinator(request, sesion_id, autor_id):
         context = {
             'sesion': co_coordinador_sesion.sesion,
             'cargo': "co-coordinador",
-            }
+            'arbitraje': sesion.sistema,
+        }
         msg_plain = render_to_string('../templates/email_templates/coordinator_assign.txt', context)
         msg_html = render_to_string('../templates/email_templates/coordinator_assign.html', context)
 

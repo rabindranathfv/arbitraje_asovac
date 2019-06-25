@@ -8,7 +8,7 @@
     </button>
     <h3 class="modal-title" >Creando universidad: </h3>
 </div>
-<form method="POST" class="create-university-modal-form" data-url="{% url 'autores:create_university_modal' %}">
+<form method="POST" class="save-redirect" data-url="{% url 'autores:create_university_modal' %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}

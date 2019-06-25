@@ -10,7 +10,7 @@
         <h3 class="modal-title col-sm-8" >Registrando autor en aplicación de arbitrajes: </h3>
     </div>
 </div>
-<form method="POST" class="author-create-author-form" data-url="{% url 'main_app:create_autor_instance_modal' request.user.id %}">
+<form method="POST" class="save-redirect" data-url="{% url 'main_app:create_autor_instance_modal' request.user.id %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}

@@ -58,7 +58,7 @@
                                 
                                 <td class="text-center">
                                     {% if trabajo.pagado == False and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
-										<a class="show-form-add-author" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
+										<a class="show-form" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
 											<i class="fas fa-user"></i>
                                         </a>
 
@@ -68,18 +68,18 @@
 										</a>
                                         
 										<!-- Esto es lo que hay que verificar -->
-										<a class="show-form-delete" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
+										<a class="show-form" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
                                         </a>
 									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
 
-                                        <a class="show-form-add-new-version-to-job" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
+                                        <a class="show-form" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
                                             <i class="fas fa-book"></i>
                                         </a>
 
                                     {% endif %}
                                     {% if trabajo.trabajo.observaciones %}
-                                        <a class="show-referee-observations" data-url="{% url 'trabajos:view_referee_observation' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
+                                        <a class="show-form" data-url="{% url 'trabajos:view_referee_observation' trabajo.trabajo.id %}" title="Ver observaciones del arbitro" role="button">
                                             <i class="fas fa-flag"></i>
                                         </a>
                                     {% endif %}

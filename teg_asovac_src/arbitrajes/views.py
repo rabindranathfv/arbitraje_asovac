@@ -1483,7 +1483,8 @@ def editPresentacion(request,id):
 
 @login_required
 def asigSesion(request,id):
-    print "Asignar sesion"
+
+    # print "Asignar sesión"
     data= dict()
     arbitraje = request.session['arbitraje_id']
     listSesion= Sesion.objects.filter(sistema=arbitraje)
