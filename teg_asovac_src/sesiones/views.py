@@ -527,8 +527,18 @@ def sesion_job_list(request, sesion_id):
     have_coordinator = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = True).exists()
     if have_coordinator:
        have_coordinator = 1
+       coordinator_id = Coordinadores_sesion.objects.filter(sesion = sesion, coordinador = True).first().autor.id
     else:
-        have_coordinator = 0 
+        have_coordinator = 0
+        coordinator_id = 0
+    
+    have_cocoordinator = Coordinadores_sesion.objects.filter(sesion = sesion, co_coordinador = True).exists()
+    if have_cocoordinator:
+        have_cocoordinator = 1
+        cocoordinator_id = Coordinadores_sesion.objects.filter(sesion = sesion, co_coordinador = True).first().autor.id
+    else:
+        have_cocoordinator = 0
+        cocoordinator_id = 0
     context = {
         'nombre_vista' : 'Sesiones de arbitraje',
         'main_navbar_options' : main_navbar_options,
@@ -543,7 +553,10 @@ def sesion_job_list(request, sesion_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'sesion': sesion,
-        'have_coordinator': have_coordinator
+        'have_coordinator': have_coordinator,
+        'coordinator_id': coordinator_id,
+        'have_cocoordinator': have_cocoordinator,
+        'cocoordinator_id': cocoordinator_id
     }
     return render(request,"sesiones_sesion_job_list.html",context)
 
