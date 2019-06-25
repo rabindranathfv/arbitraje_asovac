@@ -46,14 +46,18 @@
                                         -->
                                     </div>
                                     <div class = "row">
-                                        <button class = "col-sm-offset-8 col-sm-2 btn btn-lg btn-success" type ="submit">
-                                            {% if not modo_edicion %}  
-                                                Crear Sesión
-                                            {% else %}
-                                                Editar Sesión
-                                            {% endif %}
-                                        </button>
-                                        <a role = "button" class = "col-sm-2 btn btn-lg btn-danger" href="{% url 'sesiones:sesions_list' %}">Cancelar</a>
+                                        <div class = "col-sm-offset-8 col-sm-2 ">
+                                            <button class = "btn btn-lg btn-success col-sm-offset-1 col-sm-12" type ="submit">
+                                                {% if not modo_edicion %}  
+                                                    Crear Sesión
+                                                {% else %}
+                                                    Editar Sesión
+                                                {% endif %}
+                                            </button>
+                                        </div>
+                                        <div class = "col-sm-2 ">
+                                            <a role = "button" class = "btn btn-lg btn-danger col-sm-offset-1 col-sm-11" href="{% url 'sesiones:sesions_list' %}">Cancelar</a>
+                                        </div>
                                     </div>
                                 </form>
                             
