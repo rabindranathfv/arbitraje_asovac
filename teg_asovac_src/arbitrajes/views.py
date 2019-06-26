@@ -657,7 +657,7 @@ def editArbitro(request,id):
 @login_required
 def removeArbitro(request,id):
 
-    print "eliminar arbitro"
+    # print "eliminar arbitro"
     data= dict()
 
     user=User.objects.get(id=id)
@@ -669,13 +669,16 @@ def removeArbitro(request,id):
         # print "post delete form"
         arbitro=Arbitro.objects.get(usuario=user_asovac,Sistema_asovac=sistema_asovac)
         arbitro.Sistema_asovac.remove(sistema_asovac)
-
+        
         data['status']= 200
-        context={
-            'arbitro':arbitro,
-            'tipo':"deleted",
-        }
-        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+        data['message']="El usuario se ha eliminado de manera exitosa."
+        
+        # data['status']= 200
+        # context={
+        #     'arbitro':arbitro,
+        #     'tipo':"deleted",
+        # }
+        # data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
 
     else:
         # print "get delete form"
