@@ -19,7 +19,7 @@ from eventos.forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,
 
 #Import Models
 from .models import Organizador, Organizador_evento, Evento, Locacion_evento
-from .resources import OrganizadorResource, LocacionResource, EventoResource
+from .resources import OrganizadorResource, LocacionResource, EventoResource, OrganizadoresEventosResource
 
 from main_app.models import Usuario_asovac,Sistema_asovac,Rol
 
@@ -221,6 +221,29 @@ def event_import_excel(request):
 
     return redirect(reverse('eventos:event_list'))
 
+
+def organizers_events_export_excel(request):
+    organizers_events_resource = OrganizadoresEventosResource()
+    dataset = organizers_events_resource.export()
+    response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Organizadores_Eventos.xls"'
+    return response
+
+
+def organizers_events_import_excel(request):
+    if request.method == 'POST':
+        organizers_events_resource = OrganizadoresEventosResource()
+        dataset = Dataset()
+        new_places = request.FILES.get('myfile', None)
+
+        if new_places:
+            imported_data = dataset.load(new_places.read())
+            result = organizers_events_resource.import_data(dataset, dry_run=True)  # Test the data import
+
+            if not result.has_errors():
+                organizers_events_resource.import_data(dataset, dry_run=False)  # Actually import now
+
+    return redirect(reverse('eventos:event_list'))
 
 ##################### Organizer Views ###########################
 
