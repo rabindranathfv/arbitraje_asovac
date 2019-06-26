@@ -666,9 +666,15 @@ def removeArbitro(request,id):
     sistema_asovac= request.session['arbitraje_id']
 
     if request.method == 'POST':
-        # print "post delete form"
         arbitro=Arbitro.objects.get(usuario=user_asovac,Sistema_asovac=sistema_asovac)
-        arbitro.Sistema_asovac.remove(sistema_asovac)
+        # arbitro.Sistema_asovac.remove(sistema_asovac)
+        # Para eliminar relacion sistema arbitro
+        query= "DELETE FROM "+'"arbitrajes_arbitro_Sistema_asovac"'
+        where="WHERE arbitro_id={} AND sistema_asovac_id={}".format(arbitro.id,sistema_asovac)
+        query= query+where
+
+        cursor = connection.cursor()
+        cursor.execute(query)
         
         data['status']= 200
         data['message']="El usuario se ha eliminado de manera exitosa."
