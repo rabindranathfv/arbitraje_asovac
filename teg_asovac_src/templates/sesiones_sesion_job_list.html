@@ -8,7 +8,12 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard container">
-				<h2 class="text-left">Lista de trabajos de la sesión: {{ sesion.nombre_sesion }}</h2>
+				<div class="col-sm-8">
+					<h2 class="text-left">Lista de trabajos de la sesión: {{ sesion.nombre_sesion }}</h2>
+				</div>
+				<div class="col-sm-offset-2 col-sm-2">
+					<a class="btn btn-danger btn-lg col-sm-12" href="{% url 'sesiones:sesions_list' %}">Atrás</a>
+				</div>
 				<div class = "col-sm-12">
 					<!-- data table -->
 					<input type="hidden" id="listJobsSesion" name="list" data-url="{% url 'sesiones:list_job_sesion' sesion.id %}">
@@ -72,16 +77,29 @@
 					'<i class="fa fa-user"></i>',
 					'</a> '
 				].join('');
+				if({{ have_coordinator }} == 1 && {{ coordinator_id }} == row.autor__id)
+				{
+					asignar_coordinador=""
+				}
 			}
             let route_co_coordinador = `/sesiones/${ {{sesion.id}} }/asignar-co-coordinador/${ row.autor__id }`
-			let asignar_co_coordinador = [
-                '<a class="show-form" data-url="',
-					route_co_coordinador,
-					' "',
-					'title="Asignar co-coordinador" >',
-					'<i class="far fa-user"></i>',
-					'</a> '
-				].join('');
+			let asignar_co_coordinador = "" 
+			if ( {{ have_coordinator }} == 1 && {{ coordinator_id }} != row.autor__id  )
+			{	
+				asignar_co_coordinador = [
+					'<a class="show-form" data-url="',
+						route_co_coordinador,
+						' "',
+						'title="Asignar co-coordinador" >',
+						'<i class="far fa-user"></i>',
+						'</a> '
+					].join('');
+
+				if({{ have_cocoordinator }} == 1 && {{ cocoordinator_id }} == row.autor__id)
+				{
+					asignar_co_coordinador=""
+				}
+			}
 
 			return [asignar_coordinador, asignar_co_coordinador].join('');
 	    }

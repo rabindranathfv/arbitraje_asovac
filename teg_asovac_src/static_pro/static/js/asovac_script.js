@@ -417,7 +417,11 @@ var SaveAñadirPagoForm= function(){
             success: function(data){
                 // console.log(data);
                 if(data.status == 200 ){
-                    console.log('actualizacion exitosa');
+                    console.log('redirect');
+                    if(data.redirect == 1)
+                    {
+                        window.location.replace(data.url)
+                    }
                     // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
                     // $('#modal-user').modal('hide');
                 }else{
@@ -723,7 +727,7 @@ var SaveAñadirPagoForm= function(){
     // CRUD Usuarios
     $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
-    $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
+    //$('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
     // CRUD Árbitros
     $('#bootstrapTableModal').on('submit','.editarArbitro',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
