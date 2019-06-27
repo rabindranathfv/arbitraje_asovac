@@ -2538,9 +2538,7 @@ def editUsuario(request,id,arbitraje_id):
 
 @login_required
 def removeUsuario(request,id,arbitraje_id):
-
     data= dict()
-
     # Usuario seleccionado 
     user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
     user_role= get_roles(id,"is_admin")
@@ -2557,17 +2555,16 @@ def removeUsuario(request,id,arbitraje_id):
         permiso="rol-permitido"
 
     if request.method == 'POST':
-        print "post delete form"
         user=get_object_or_404(User,id=id)
         user.delete()
         data['status']= 200
-        message="eliminado"
-        context={
-            'user':user,
-            'tipo':"deleted",
-            'message':message,
-        }
-        data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
+        data['message']="El usuario se ha eliminado de manera exitosa."
+        # context={
+        #     'user':user,
+        #     'tipo':"deleted",
+        #     'message':message,
+        # }
+        # data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
 
     else:
         # print "get delete form"

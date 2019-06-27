@@ -734,10 +734,9 @@ var SaveAñadirPagoForm= function(){
     $('#bootstrapTableModal').on('click','.adminAddSubareas',sendSubareas);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
-    // CRUD Arbitraje
+    // CRUD Arbitraje   // CRUD Trabajos Aceptados
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
-    // CRUD Trabajos Aceptados
-    $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
+    // $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
     
 
     $(".sendValidate").click(function (e) { 
