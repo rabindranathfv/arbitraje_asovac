@@ -15,7 +15,7 @@ from django.template.loader import get_template
 
 ## Esta es la función encargada de generar una respuesta PDF para una carta de aceptacion de resumen.
 def generate_acceptation_letter(filename, context):
-        """
+    """
     Esta función requiere las siguientes variables por contexto para hacer un render en pdf correcto:
     - context["header_url"]
     - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
