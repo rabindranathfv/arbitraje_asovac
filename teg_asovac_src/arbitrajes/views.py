@@ -10,7 +10,7 @@ from django.db import connection
 
 import random, string,xlrd,os,sys,xlwt
 from autores.models import Autores_trabajos
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area,Usuario_rol_in_sistema
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
 from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
@@ -675,6 +675,9 @@ def removeArbitro(request,id):
 
         cursor = connection.cursor()
         cursor.execute(query)
+
+        # Borrar registros anteriores para evitar repeticion de registros
+        delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=sistema_asovac,usuario_asovac=user_asovac,rol=4).delete()
         
         data['status']= 200
         data['message']="El usuario se ha eliminado de manera exitosa."
