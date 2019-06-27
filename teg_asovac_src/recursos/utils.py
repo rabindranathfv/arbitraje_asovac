@@ -5,15 +5,36 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+
 
 from django.http import HttpResponse
 from django.template.loader import get_template
 
 ## Esta es la función encargada de generar una respuesta PDF para una carta de aceptacion de resumen.
 def generate_acceptation_letter(filename, context):
+        """
+    Esta función requiere las siguientes variables por contexto para hacer un render en pdf correcto:
+    - context["header_url"]
+    - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+    - context["day"] = Integer representando el día del mes de la fecha actual.
+    - context["month"] = String del nombre del mes de la fecha actual.
+    - context["year"] = Integer representando el año de la fecha actual.
+    - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta.
+    - context["full_name"] = String con el nombre completo a quien va dirigida la carta.
+    - context["roman_number"] = String representando el numero de la convención asovac.
+    - context["work_title"] = String que representa el nombre del trabajo completo.
+    - context["authors"] = Lista de Strings con nombres  de los autores del paper.
+    - context["work_code"] = String que indica el codigo del trabajo.
+    - context["start_date"] = String con la fecha de inicio de la convención asovac
+    - context["finish_date"] = String con la fecha final de la convención asovac
+    - context["convention_place"] = String con el nombre del lugar de la convención asovac
+    - context["convention_saying"] = String con el slogan o dicho de la convención actual.
+    - context["completed_work_form_link"] = String con la url del enlace de registro/actualización del trabajo
+    - context["max_info_date"] = String con la fecha máximo de aviso al autor para la presentación de su trabajo.
+    """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
@@ -21,7 +42,7 @@ def generate_acceptation_letter(filename, context):
 
     doc = SimpleDocTemplate(buffer,pagesize=letter,
                         rightMargin=72,leftMargin=72,
-                        topMargin=72,bottomMargin=18)
+                        topMargin=36,bottomMargin=18)
     Story=[]
 
     styles=getSampleStyleSheet()
@@ -29,6 +50,18 @@ def generate_acceptation_letter(filename, context):
     styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
     styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
     styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
+
+    ## Insertando el Header como imagen a partir de una URL si esta es válida
+    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
+    try:
+        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
+        im.hAlign = 'CENTER'
+        im._restrictSize(6.5 * inch, 2 * inch)
+        Story.append(im)
+        Story.append(Spacer(1, 18))
+    except:
+        pass
+
 
     ## Aquí añadimos la fecha a la derecha del documento.
     ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
@@ -101,6 +134,27 @@ def generate_acceptation_letter(filename, context):
 
 ## Esta es la función encargada de generar una respuesta PDF para una carta de aceptacion de resumen CON observaciones.
 def generate_acceptation_letter_with_observations(filename, context):
+    """
+    Esta función requiere las siguientes variables por contexto para hacer un render en pdf correcto:
+    - context["header_url"]
+    - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+    - context["day"] = Integer representando el día del mes de la fecha actual.
+    - context["month"] = String del nombre del mes de la fecha actual.
+    - context["year"] = Integer representando el año de la fecha actual.
+    - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta.
+    - context["full_name"] = String con el nombre completo a quien va dirigida la carta.
+    - context["roman_number"] = String representando el numero de la convención asovac.
+    - context["work_title"] = String que representa el nombre del trabajo completo.
+    - context["authors"] = Lista de Strings con nombres  de los autores del paper.
+    - context["work_code"] = String que indica el codigo del trabajo.
+    - context["observations"] = Lista de Strings
+    - context["start_date"] = String con la fecha de inicio de la convención asovac
+    - context["finish_date"] = String con la fecha final de la convención asovac
+    - context["convention_place"] = String con el nombre del lugar de la convención asovac
+    - context["convention_saying"] = String con el slogan o dicho de la convención actual.
+    - context["completed_work_form_link"] = String con la url del enlace de registro/actualización del trabajo
+    - context["max_info_date"] = String con la fecha máximo de aviso al autor para la presentación de su trabajo.
+    """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
@@ -108,7 +162,7 @@ def generate_acceptation_letter_with_observations(filename, context):
 
     doc = SimpleDocTemplate(buffer,pagesize=letter,
                         rightMargin=72,leftMargin=72,
-                        topMargin=72,bottomMargin=18)
+                        topMargin=36,bottomMargin=18)
     Story=[]
 
     styles=getSampleStyleSheet()
@@ -117,6 +171,18 @@ def generate_acceptation_letter_with_observations(filename, context):
     styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
     styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
     styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize = 14, bulletIndent = 96, leftIndent=110, rightIndent=24))
+
+    ## Insertando el Header como imagen a partir de una URL si esta es válida
+    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
+    try:
+        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
+        im.hAlign = 'CENTER'
+        im._restrictSize(6.5 * inch, 2 * inch)
+        Story.append(im)
+        Story.append(Spacer(1, 18))
+    except:
+        pass
+
 
     ## Aquí añadimos la fecha a la derecha del documento.
     ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
@@ -210,6 +276,22 @@ def generate_acceptation_letter_with_observations(filename, context):
 
 ## Esta es la función encargada de generar una respuesta PDF para una carta de rechazo de resumen CON observaciones.
 def generate_rejection_letter_with_observations(filename, context):
+    """
+    Esta función requiere las siguientes variables por contexto para hacer un render en pdf correcto:
+    - context["header_url"]
+    - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+    - context["day"] = Integer representando el día del mes de la fecha actual.
+    - context["month"] = String del nombre del mes de la fecha actual.
+    - context["year"] = Integer representando el año de la fecha actual.
+    - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta.
+    - context["full_name"] = String con el nombre completo a quien va dirigida la carta.
+    - context["roman_number"] = String representando el numero de la convención asovac.
+    - context["work_title"] = String que representa el nombre del trabajo completo.
+    - context["authors"] = Lista de Strings con nombres  de los autores del paper.
+    - context["deficient_areas"] = Lista de Strings con los nombres de las areas.
+    - context["work_code"] = String que indica el codigo del trabajo.
+    - context["observations"] = Lista de Strings
+    """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
@@ -217,7 +299,7 @@ def generate_rejection_letter_with_observations(filename, context):
 
     doc = SimpleDocTemplate(buffer,pagesize=letter,
                         rightMargin=72,leftMargin=72,
-                        topMargin=72,bottomMargin=18)
+                        topMargin=36,bottomMargin=18)
     Story=[]
 
     styles=getSampleStyleSheet()
@@ -226,6 +308,17 @@ def generate_rejection_letter_with_observations(filename, context):
     styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
     styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
     styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize = 14, bulletIndent = 96, leftIndent=110, rightIndent=24))
+
+    ## Insertando el Header como imagen a partir de una URL si esta es válida
+    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
+    try:
+        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
+        im.hAlign = 'CENTER'
+        im._restrictSize(6.5 * inch, 2 * inch)
+        Story.append(im)
+        Story.append(Spacer(1, 18))
+    except:
+        pass
 
     ## Aquí añadimos la fecha a la derecha del documento.
     ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])

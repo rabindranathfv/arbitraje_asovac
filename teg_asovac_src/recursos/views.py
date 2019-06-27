@@ -211,8 +211,13 @@ def get_data(request, *args, **kwargs):
 
 @login_required
 def generate_pdf(request,*args , **kwargs):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+
     filename = "AsoVAC_Carta_Aceptacion.pdf"
+
     context = {}
+    context["header_url"] = arbitraje.cabecera
     context["city"] = 'Caracas'
     context["day"] = 4
     context["month"] = 'Agosto'
