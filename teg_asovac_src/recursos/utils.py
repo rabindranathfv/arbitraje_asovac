@@ -9,9 +9,91 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
-
 from django.http import HttpResponse
 from django.template.loader import get_template
+
+
+def set_pdf_buffer_and_styles():
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=72,
+        leftMargin=72,
+        topMargin=24,
+        bottomMargin=48
+    )
+
+    styles=getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
+    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
+    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+    styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
+    styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize = 14, bulletIndent = 48, leftIndent=60, rightIndent=24))
+
+    return buffer, doc, styles
+
+
+def append_pdf_header_date_and_greetings(Story, context, styles):
+    ## Insertando el Header como imagen a partir de una URL si esta es válida
+    try:
+        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
+        im.hAlign = 'CENTER'
+        im._restrictSize(6.5 * inch, 2 * inch)
+        Story.append(im)
+        Story.append(Spacer(1, 36))
+    except:
+        pass
+
+    ## Aquí añadimos la fecha a la derecha del documento.
+    ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
+    Story.append(Paragraph(ptext, styles["Right"]))
+    Story.append(Spacer(1, 12))
+
+    # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
+    if context["sex"] == 'F':
+        ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % context["full_name"].strip()
+    else:
+        ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % context["full_name"].strip()
+    Story.append(Paragraph(ptext, styles["Normal"]))
+    Story.append(Spacer(1, 24))
+
+
+def append_pdf_paper_details_and_authors(Story, context, styles):
+    # Añadimos  el primer parrafo:
+    ptext = '<font size=10>Reciba un cordial saludo del Comité Organizador de la %s Convención Anual de AsoVAC,\
+     en ocasión de informarle que el resumen titulado:</font>' % context["roman_number"]
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 12))
+
+    # Añadimos  el título del resumen aceptado:
+    ptext = '<font size=11><b>%s</b></font>' % context["work_title"]
+    Story.append(Paragraph(ptext, styles["Work_Title"]))
+    Story.append(Spacer(1, 12))
+
+    # Añadimos los autores del resumen aceptado
+    if len(context["authors"]) > 1:
+        ptext = '<font size=10>Autores:</font>'
+    else:
+        ptext = '<font size=10>Autor:</font>'
+    Story.append(Paragraph(ptext, styles["Normal"]))
+    Story.append(Spacer(1, 8))
+
+    ptext = '<font size=11><b>%s</b></font>' % ", ".join(context["authors"])
+    Story.append(Paragraph(ptext, styles["Work_Title"]))
+    Story.append(Spacer(1, 12))
+
+
+def append_pdf_final_greetings(Story, context, styles):
+    ptext = '<font size=10>Saludos cordiales,</font>'
+    Story.append(Paragraph(ptext, styles["Justify"]))
+    Story.append(Spacer(1, 36))
+
+    ptext = '<font size=10>Comité Organizador<br/> %s Convención Anual AsoVAC</font>' % context["roman_number"]
+    Story.append(Paragraph(ptext, styles["Center"]))
+    Story.append(Spacer(1, 12))
+
 
 ## Esta es la función encargada de generar una respuesta PDF para una carta de aceptacion de resumen.
 def generate_acceptation_letter(filename, context):
@@ -38,66 +120,13 @@ def generate_acceptation_letter(filename, context):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
-    buffer = BytesIO()
+    buffer, doc, styles = set_pdf_buffer_and_styles()
 
-    doc = SimpleDocTemplate(buffer,pagesize=letter,
-                        rightMargin=72,leftMargin=72,
-                        topMargin=36,bottomMargin=18)
-    Story=[]
+    Story = []
 
-    styles=getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
-    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-    styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
+    append_pdf_header_date_and_greetings(Story, context, styles)
 
-    ## Insertando el Header como imagen a partir de una URL si esta es válida
-    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
-    try:
-        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
-        im.hAlign = 'CENTER'
-        im._restrictSize(6.5 * inch, 2 * inch)
-        Story.append(im)
-        Story.append(Spacer(1, 18))
-    except:
-        pass
-
-
-    ## Aquí añadimos la fecha a la derecha del documento.
-    ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
-    Story.append(Paragraph(ptext, styles["Right"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
-    if context["sex"] == 'F':
-        ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % context["full_name"].strip()
-    else:
-        ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % context["full_name"].strip()
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 24))
-
-    # Añadimos  el primer parrafo:
-    ptext = '<font size=10>Reciba un cordial saludo del Comité Organizador de la %s Convención Anual de AsoVAC,\
-     en ocasión de informarle que el resumen titulado:</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos  el título del resumen aceptado:
-    ptext = '<font size=11><b>%s</b></font>' % context["work_title"]
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos los autores del resumen aceptado
-    if len(context["authors"]) > 1:
-        ptext = '<font size=10>Autores:</font>'
-    else:
-        ptext = '<font size=10>Autor:</font>'
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 8))
-
-    ptext = '<font size=11><b>%s</b></font>' % ", ".join(context["authors"])
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_paper_details_and_authors(Story, context, styles)
 
     # Añadimos el resto del texto de aceptacion
     ptext = '<font size=10>Identificado con el código <b>%s</b> ha sido debidamente arbitrado y \
@@ -116,13 +145,7 @@ def generate_acceptation_letter(filename, context):
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 36))
 
-    ptext = '<font size=10>Saludos cordiales,</font>'
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 36))
-
-    ptext = '<font size=10>Comité Organizador<br/> %s Convención Anual AsoVAC</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Center"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_final_greetings(Story, context, styles)
 
     doc.build(Story)
 
@@ -158,67 +181,13 @@ def generate_acceptation_letter_with_observations(filename, context):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
-    buffer = BytesIO()
+    buffer, doc, styles = set_pdf_buffer_and_styles()
 
-    doc = SimpleDocTemplate(buffer,pagesize=letter,
-                        rightMargin=72,leftMargin=72,
-                        topMargin=36,bottomMargin=18)
-    Story=[]
+    Story = []
 
-    styles=getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
-    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-    styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
-    styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize = 14, bulletIndent = 96, leftIndent=110, rightIndent=24))
+    append_pdf_header_date_and_greetings(Story, context, styles)
 
-    ## Insertando el Header como imagen a partir de una URL si esta es válida
-    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
-    try:
-        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
-        im.hAlign = 'CENTER'
-        im._restrictSize(6.5 * inch, 2 * inch)
-        Story.append(im)
-        Story.append(Spacer(1, 18))
-    except:
-        pass
-
-
-    ## Aquí añadimos la fecha a la derecha del documento.
-    ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
-    Story.append(Paragraph(ptext, styles["Right"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
-    if context["sex"] == 'F':
-        ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % context["full_name"].strip()
-    else:
-        ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % context["full_name"].strip()
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 24))
-
-    # Añadimos  el primer parrafo:
-    ptext = '<font size=10>Reciba un cordial saludo del Comité Organizador de la %s Convención Anual de AsoVAC,\
-     en ocasión de informarle que el resumen titulado:</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos  el título del resumen aceptado:
-    ptext = '<font size=11><b>%s</b></font>' % context["work_title"]
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos los autores del resumen aceptado
-    if len(context["authors"]) > 1:
-        ptext = '<font size=10>Autores:</font>'
-    else:
-        ptext = '<font size=10>Autor:</font>'
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 8))
-
-    ptext = '<font size=11><b>%s</b></font>' % ", ".join(context["authors"])
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_paper_details_and_authors(Story, context, styles)
 
     # Añadimos el resto del texto de aceptacion
     ptext = '<font size=10>Identificado con el código <b>%s</b> ha sido debidamente arbitrado y \
@@ -258,13 +227,7 @@ def generate_acceptation_letter_with_observations(filename, context):
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 36))
 
-    ptext = '<font size=10>Saludos cordiales,</font>'
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 36))
-
-    ptext = '<font size=10>Comité Organizador<br/> %s Convención Anual AsoVAC</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Center"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_final_greetings(Story, context, styles)
 
     doc.build(Story)
 
@@ -295,66 +258,13 @@ def generate_rejection_letter_with_observations(filename, context):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename=' + filename
 
-    buffer = BytesIO()
+    buffer, doc, styles = set_pdf_buffer_and_styles()
 
-    doc = SimpleDocTemplate(buffer,pagesize=letter,
-                        rightMargin=72,leftMargin=72,
-                        topMargin=36,bottomMargin=18)
-    Story=[]
+    Story = []
 
-    styles=getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
-    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-    styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=24, rightIndent=24))
-    styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize = 14, bulletIndent = 96, leftIndent=110, rightIndent=24))
+    append_pdf_header_date_and_greetings(Story, context, styles)
 
-    ## Insertando el Header como imagen a partir de una URL si esta es válida
-    #header = ImageReader('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')
-    try:
-        im = Image(context["header_url"])#, 0.1*inch, 0.1*inch
-        im.hAlign = 'CENTER'
-        im._restrictSize(6.5 * inch, 2 * inch)
-        Story.append(im)
-        Story.append(Spacer(1, 18))
-    except:
-        pass
-
-    ## Aquí añadimos la fecha a la derecha del documento.
-    ptext = '<font size=10>%s, %s de %s de %s</font>' % (context["city"], context["day"], context["month"], context["year"])
-    Story.append(Paragraph(ptext, styles["Right"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
-    if context["sex"] == 'F':
-        ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % context["full_name"].strip()
-    else:
-        ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % context["full_name"].strip()
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 24))
-
-    # Añadimos  el primer parrafo:
-    ptext = '<font size=10>Reciba un cordial saludo del Comité Organizador de la %s Convención Anual de AsoVAC,\
-     en ocasión de informarle que el resumen titulado:</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos  el título del resumen aceptado:
-    ptext = '<font size=11><b>%s</b></font>' % context["work_title"]
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
-
-    # Añadimos los autores del resumen aceptado
-    if len(context["authors"]) > 1:
-        ptext = '<font size=10>Autores:</font>'
-    else:
-        ptext = '<font size=10>Autor:</font>'
-    Story.append(Paragraph(ptext, styles["Normal"]))
-    Story.append(Spacer(1, 8))
-
-    ptext = '<font size=11><b>%s</b></font>' % ", ".join(context["authors"])
-    Story.append(Paragraph(ptext, styles["Work_Title"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_paper_details_and_authors(Story, context, styles)
 
     # Añadimos el resto del texto de rechazo
     areas_string = ""
@@ -369,7 +279,7 @@ def generate_rejection_letter_with_observations(filename, context):
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 12))
 
-    ptext = '<font size=10>Razón por la cuel el <b>resumen No fue aceptado</b> para su presentación en la \
+    ptext = '<font size=10>Razón por la cuel el resumen <b>No fue aceptado</b> para su presentación en la \
     %s Convención Anual de AsoVAC. A continuación se indican las observaciones de los árbitros:</font>' % context["roman_number"]
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 12))
@@ -390,13 +300,7 @@ def generate_rejection_letter_with_observations(filename, context):
     Story.append(Paragraph(ptext, styles["Justify"]))
     Story.append(Spacer(1, 12))
 
-    ptext = '<font size=10>Quedando a sus órdenes, se despide.</font>'
-    Story.append(Paragraph(ptext, styles["Justify"]))
-    Story.append(Spacer(1, 36))
-
-    ptext = '<font size=10>Comité Organizador<br/> %s Convención Anual AsoVAC</font>' % context["roman_number"]
-    Story.append(Paragraph(ptext, styles["Center"]))
-    Story.append(Spacer(1, 12))
+    append_pdf_final_greetings(Story, context, styles)
 
     doc.build(Story)
 
