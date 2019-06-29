@@ -192,6 +192,8 @@ def authors_list(request):
 @login_required
 def list_authors (request):
     response = {}
+    temporal_list = []
+    total = 0
     response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
     sort= request.POST['sort']
@@ -235,14 +237,13 @@ def list_authors (request):
             print "consulta normal"
             data=Autor.objects.all().order_by(order)
 
-	actual = 0
-	total = 0
+
+	
     for item in data:
         if(Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id, usuario_asovac = item.usuario, rol = 5).exists()):	
-			if (init <= actual and actual < limit):
-				response['query'].append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
+			temporal_list.append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
 			total += 1
-			actual += 1
+	response['query'] = temporal_list[init:limit:1]
     response={
         'total': total,
         'query': response,
