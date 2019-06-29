@@ -75,7 +75,7 @@
 		function operateSesions(value, row, index) {
 			let eliminar = ""
 			let asignar_coordinadores = ""
-			if(row.eliminar)	
+			if(row.sesion_jobs == 0)	
 			{
 				let route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
 				eliminar = [
