@@ -144,18 +144,9 @@ def list_sesions (request):
                 if coordinador_sesion.co_coordinador == True:
                     co_coordinador = autor.nombres + ' ' + autor.apellidos
             
-            #Condicional para obtener el lugar de presentación
-            """
-            if item.sesion.espacio.espacio_fisico:
-                lugar = item.sesion.espacio.espacio_fisico.nombre
-            else:
-                lugar = item.sesion.espacio.espacio_virtual.url_virtual
-            """
-            if Trabajo.objects.filter(sesion = item.sesion).exists():
-                eliminar = False
-            else:
-                eliminar = True
-            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%H:%M"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%H:%M") , 'autor': coordinador, 'autor_2': co_coordinador, 'eliminar': eliminar  })
+            sesion_jobs = Autores_trabajos.objects.filter(es_autor_principal = True, trabajo__sesion = item.sesion).count()
+
+            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%H:%M"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%H:%M") , 'autor': coordinador, 'autor_2': co_coordinador, 'sesion_jobs': sesion_jobs  })
             listed.append(item.sesion.id)
 
     response={
