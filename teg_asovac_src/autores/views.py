@@ -1046,7 +1046,7 @@ def export_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1080,7 +1080,7 @@ def export_authors(request):
 			es_miembro_asovac = 'S'
 		else:
 			es_miembro_asovac = 'N'
-		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre ]
+		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
 
