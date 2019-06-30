@@ -38,7 +38,7 @@ class Universidad(models.Model):
 	nombre = models.CharField(max_length=100)
 	facultad = models.CharField(max_length=100)
 	escuela = models.CharField(max_length=100)
-	instituto_investigacion = models.CharField(max_length=100)
+	instituto_investigacion = models.CharField(max_length=100, blank = True)
 	
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
