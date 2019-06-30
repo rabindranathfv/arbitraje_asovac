@@ -1037,7 +1037,12 @@ def load_authors_modal(request):
 @login_required
 def export_authors(request):
 
-	data = Autor.objects.all()
+	arbitraje_id = request.session['arbitraje_id']
+	data = []
+	temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
+	for item in temporal_list:
+		if Autor.objects.filter(usuario = item.usuario_asovac).exists():
+			data.append(Autor.objects.get(usuario = item.usuario_asovac))
 
 	# Para definir propiedades del documento de excel
 	response = HttpResponse(content_type='application/ms-excel')
