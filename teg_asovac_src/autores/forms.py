@@ -552,6 +552,14 @@ class CreateUniversityForm(forms.ModelForm):
 		self.fields['escuela'].label = "Escuela"
 		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 
+	def clean(self):
+		nombre = self.cleaned_data['nombre']
+		facultad = self.cleaned_data['facultad']
+		escuela = self.cleaned_data['escuela']
+
+		if Universidad.objects.filter(nombre__iexact= nombre, facultad__iexact = facultad, escuela__iexact = escuela).exists():
+			raise forms.ValidationError(_("Ya existe este registro de universidad, facultad y escuela en el sistema."), code = "university_data_duplicate")
+
 
 class ImportFromExcelForm(forms.Form):
 	file = forms.FileField(label = "Archivo")
