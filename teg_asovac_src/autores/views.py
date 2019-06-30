@@ -192,8 +192,10 @@ def authors_list(request):
 @login_required
 def list_authors (request):
     response = {}
+    temporal_list = []
+    total = 0
     response['query'] = []
-
+    arbitraje_id = request.session['arbitraje_id']
     sort= request.POST['sort']
     search= request.POST['search']
     # Se verifica la existencia del parametro
@@ -203,7 +205,6 @@ def list_authors (request):
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
         limit= int(request.POST['limit'])+init
-
     # init= int(request.POST['offset'])
     # limit= int(request.POST['limit'])+init
     # print "init: ",init,"limit: ",limit
@@ -226,27 +227,23 @@ def list_authors (request):
                 order='-'+sort
 
     if search != "":
-        data=Autor.objects.all().filter( Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula_pasaporte__icontains=search) | Q(correo_electronico__icontains=search) | Q(universidad__nombre__icontains=search)).order_by(order)#[:limit]
-        total= len(data)
+        data=Autor.objects.filter( Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula_pasaporte__icontains=search) | Q(correo_electronico__icontains=search) | Q(universidad__nombre__icontains=search)).order_by(order)#[:limit]
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
             print "consulta para exportar"
             print Autor.objects.all().order_by(order).query
             data=Autor.objects.all().order_by(order)
-            total= Autor.objects.all().count()
         else:
             print "consulta normal"
-            # print Area.objects.all().order_by(order)[init:limit].query
-            test= Autor.objects.all().order_by(order)[init:limit]
-            data=Autor.objects.all().order_by(order)[init:limit]
-            total= Autor.objects.all().count()
-            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # response['total']=total
-    # print response
-    for item in data:
-        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
+            data=Autor.objects.all().order_by(order)
 
+
+	
+    for item in data:
+        if(Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id, usuario_asovac = item.usuario, rol = 5).exists()):	
+			temporal_list.append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
+			total += 1
+	response['query'] = temporal_list[init:limit:1]
     response={
         'total': total,
         'query': response,
