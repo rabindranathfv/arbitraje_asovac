@@ -690,7 +690,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
             excel_file = book.sheet_by_index(0)
 
-            if excel_file.ncols == 17:
+            if excel_file.ncols == 19:
                 data['status']=200
                 data['message']=""
 
@@ -841,9 +841,23 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['status']=400
                             data['message'] = data['message'] + "Error en la fila {0} la universidad es un campo obligatorio \n".format(fila)
 
-                        elif not Universidad.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).encode('utf-8').strip()).exists():
+						# Se verifica que el facultad no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=17) == '':
+                            data['status']=400
+                            data['message'] = data['message'] + "Error en la fila {0} la facultad es un campo obligatorio \n".format(fila)
+
+						# Se verifica que el campo escuela no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=18) == '':
+                            data['status']=400
+                            data['message'] = data['message'] + "Error en la fila {0} la escuela es un campo obligatorio \n".format(fila)
+						
+                        if excel_file.cell_value(rowx=fila, colx=16) != '' and excel_file.cell_value(rowx=fila, colx=17) != '' and excel_file.cell_value(rowx=fila, colx=18) != '' and not Universidad.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).encode('utf-8').strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).encode('utf-8').strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).encode('utf-8').strip()).exists():
 							data['status']=400
-							data['message'] = data['message'] + "Error en la fila {0}, no hay universidad con el nombre indicado \n".format(fila)
+							data['message'] = data['message'] + "Error en la fila {0}, no hay registros en el sistema con esa universidad, facultad y escuela \n".format(fila)
+
+						# Se verifica que el campo facultad no esté vacío
+
+
 
 	# Inserta los registros una vez realizada la validación correspondiente
 	if data['status'] == 200:
@@ -938,7 +952,7 @@ def create_authors(excel_file, arbitraje_id):
 					if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
 						new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
 
-					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip())
+					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).strip())
 					new_autor.universidad = universidad
 					new_autor.save()
 
