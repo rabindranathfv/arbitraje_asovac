@@ -20,7 +20,7 @@
                 <select name="university_select" class="form-control" id="university_select" required>
                     <option value="">Seleccione una universidad</option>
                     {% for universidad in universidades %}
-                        <option value="{{universidad.id}}">{{ universidad.nombre }}</option>
+                        <option value="{{universidad.id}}">{{ universidad.nombre }} - {{universidad.facultad }} - {{universidad.escuela}}</option>
                     {% endfor %}
                     <option value="-1">Añadir universidad</option>
                 </select>

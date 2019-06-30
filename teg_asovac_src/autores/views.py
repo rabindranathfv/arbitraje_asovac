@@ -192,8 +192,10 @@ def authors_list(request):
 @login_required
 def list_authors (request):
     response = {}
+    temporal_list = []
+    total = 0
     response['query'] = []
-
+    arbitraje_id = request.session['arbitraje_id']
     sort= request.POST['sort']
     search= request.POST['search']
     # Se verifica la existencia del parametro
@@ -203,7 +205,6 @@ def list_authors (request):
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
         limit= int(request.POST['limit'])+init
-
     # init= int(request.POST['offset'])
     # limit= int(request.POST['limit'])+init
     # print "init: ",init,"limit: ",limit
@@ -226,27 +227,23 @@ def list_authors (request):
                 order='-'+sort
 
     if search != "":
-        data=Autor.objects.all().filter( Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula_pasaporte__icontains=search) | Q(correo_electronico__icontains=search) | Q(universidad__nombre__icontains=search)).order_by(order)#[:limit]
-        total= len(data)
+        data=Autor.objects.filter( Q(nombres__icontains=search) | Q(apellidos__icontains=search) | Q(cedula_pasaporte__icontains=search) | Q(correo_electronico__icontains=search) | Q(universidad__nombre__icontains=search)).order_by(order)#[:limit]
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
             print "consulta para exportar"
             print Autor.objects.all().order_by(order).query
             data=Autor.objects.all().order_by(order)
-            total= Autor.objects.all().count()
         else:
             print "consulta normal"
-            # print Area.objects.all().order_by(order)[init:limit].query
-            test= Autor.objects.all().order_by(order)[init:limit]
-            data=Autor.objects.all().order_by(order)[init:limit]
-            total= Autor.objects.all().count()
-            # test=Area.objects.raw('SELECT a.*, (SELECT count(area.id) FROM main_app_area as area) FROM main_app_area as a LIMIT %s OFFSET %s',[limit,init])
-    # response['total']=total
-    # print response
-    for item in data:
-        # print("%s is %s. and total is %s" % (item.nombre, item.descripcion,item.count))
-        response['query'].append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
+            data=Autor.objects.all().order_by(order)
 
+
+	
+    for item in data:
+        if(Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id, usuario_asovac = item.usuario, rol = 5).exists()):	
+			temporal_list.append({'id':item.id, 'nombres':item.nombres,'apellidos': item.apellidos,'correo_electronico': item.correo_electronico, 'cedula_pasaporte': item.cedula_pasaporte,'universidad': item.universidad.nombre })
+			total += 1
+	response['query'] = temporal_list[init:limit:1]
     response={
         'total': total,
         'query': response,
@@ -690,7 +687,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
             excel_file = book.sheet_by_index(0)
 
-            if excel_file.ncols == 17:
+            if excel_file.ncols == 19:
                 data['status']=200
                 data['message']=""
 
@@ -841,9 +838,23 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['status']=400
                             data['message'] = data['message'] + "Error en la fila {0} la universidad es un campo obligatorio \n".format(fila)
 
-                        elif not Universidad.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).encode('utf-8').strip()).exists():
+						# Se verifica que el facultad no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=17) == '':
+                            data['status']=400
+                            data['message'] = data['message'] + "Error en la fila {0} la facultad es un campo obligatorio \n".format(fila)
+
+						# Se verifica que el campo escuela no este vacio
+                        if excel_file.cell_value(rowx=fila, colx=18) == '':
+                            data['status']=400
+                            data['message'] = data['message'] + "Error en la fila {0} la escuela es un campo obligatorio \n".format(fila)
+						
+                        if excel_file.cell_value(rowx=fila, colx=16) != '' and excel_file.cell_value(rowx=fila, colx=17) != '' and excel_file.cell_value(rowx=fila, colx=18) != '' and not Universidad.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).encode('utf-8').strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).encode('utf-8').strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).encode('utf-8').strip()).exists():
 							data['status']=400
-							data['message'] = data['message'] + "Error en la fila {0}, no hay universidad con el nombre indicado \n".format(fila)
+							data['message'] = data['message'] + "Error en la fila {0}, no hay registros en el sistema con esa universidad, facultad y escuela \n".format(fila)
+
+						# Se verifica que el campo facultad no esté vacío
+
+
 
 	# Inserta los registros una vez realizada la validación correspondiente
 	if data['status'] == 200:
@@ -938,7 +949,7 @@ def create_authors(excel_file, arbitraje_id):
 					if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
 						new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
 
-					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip())
+					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).strip())
 					new_autor.universidad = universidad
 					new_autor.save()
 
@@ -1023,7 +1034,12 @@ def load_authors_modal(request):
 @login_required
 def export_authors(request):
 
-	data = Autor.objects.all()
+	arbitraje_id = request.session['arbitraje_id']
+	data = []
+	temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
+	for item in temporal_list:
+		if Autor.objects.filter(usuario = item.usuario_asovac).exists():
+			data.append(Autor.objects.get(usuario = item.usuario_asovac))
 
 	# Para definir propiedades del documento de excel
 	response = HttpResponse(content_type='application/ms-excel')
@@ -1032,7 +1048,7 @@ def export_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1066,7 +1082,7 @@ def export_authors(request):
 			es_miembro_asovac = 'S'
 		else:
 			es_miembro_asovac = 'N'
-		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre ]
+		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
 
