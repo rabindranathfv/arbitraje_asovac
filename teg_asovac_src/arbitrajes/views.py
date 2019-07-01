@@ -13,7 +13,7 @@ from autores.models import Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area,Usuario_rol_in_sistema
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
-from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
+from trabajos.models import Trabajo,Trabajo_arbitro
 from sesiones.models import Sesion
 
 from autores.models import Autor, Autores_trabajos

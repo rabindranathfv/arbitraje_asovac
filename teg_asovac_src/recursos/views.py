@@ -18,7 +18,6 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.contrib.auth.models import User
 
-from arbitrajes.models import Arbitraje
 from autores.models import Autores_trabajos, Autor
 from main_app.models import Usuario_rol_in_sistema
 from trabajos.models import Trabajo, Trabajo_arbitro

@@ -24,8 +24,8 @@ from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 
-from .forms import TrabajoForm, EditTrabajoForm, AutorObservationsFinalVersionJobForm
-from .models import Trabajo, Detalle_version_final, Trabajo_arbitro
+from .forms import TrabajoForm, EditTrabajoForm #, AutorObservationsFinalVersionJobForm
+from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
 
@@ -471,23 +471,23 @@ def show_job_observations(request, trabajo_version_final_id):
 
 
 
-@login_required
-def autor_add_observations_to_job(request, trabajo_version_final_id):
-    data = dict()
-    trabajo = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
-    if request.method == "POST":
-        form = AutorObservationsFinalVersionJobForm(request.POST, instance = trabajo)
-        form.save()
-        messages.success(request,"La observación fue guardada con éxito.")
-        return redirect('trabajos:trabajos_resultados_autor')
-    else:
-        form = AutorObservationsFinalVersionJobForm(instance = trabajo)
-        context = {
-            'trabajo_version_final': trabajo,
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/autor_add_job_observations.html', context, request=request)
-    return JsonResponse(data)
+# @login_required
+# def autor_add_observations_to_job(request, trabajo_version_final_id):
+#     data = dict()
+#     trabajo = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
+#     if request.method == "POST":
+#         form = AutorObservationsFinalVersionJobForm(request.POST, instance = trabajo)
+#         form.save()
+#         messages.success(request,"La observación fue guardada con éxito.")
+#         return redirect('trabajos:trabajos_resultados_autor')
+#     else:
+#         form = AutorObservationsFinalVersionJobForm(instance = trabajo)
+#         context = {
+#             'trabajo_version_final': trabajo,
+#             'form':form,
+#         }
+#         data['html_form'] = render_to_string('ajax/autor_add_job_observations.html', context, request=request)
+#     return JsonResponse(data)
 
 
 

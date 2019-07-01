@@ -7,7 +7,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Trabajo, Detalle_version_final
+from .models import Trabajo #, Detalle_version_final
 
 
 #Form para introducir datos de un trabajo, sea para editar o para crear
@@ -117,20 +117,20 @@ class EditTrabajoForm(forms.ModelForm):
 		return trabajo
 
 #Form para colocar observaciones a la versión final del trabajo
-class AutorObservationsFinalVersionJobForm(forms.ModelForm):
+# class AutorObservationsFinalVersionJobForm(forms.ModelForm):
 
-	class Meta:
-		model = Detalle_version_final
-		fields = ['observaciones']
+# 	class Meta:
+# 		model = Detalle_version_final
+# 		fields = ['observaciones']
 
-	def __init__(self, *args, **kwargs):
-		super(AutorObservationsFinalVersionJobForm,self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.helper.form_id = 'job-observations-form'
-		self.helper.form_method = 'post'
-		self.helper.form_class = 'form-horizontal'
-		self.helper.label_class = 'col-sm-3'
-		self.helper.field_class = 'col-sm-8'
-		self.fields['observaciones'].label = "Observaciones"
-		self.fields['observaciones'].widget.attrs['rows'] = 4
+# 	def __init__(self, *args, **kwargs):
+# 		super(AutorObservationsFinalVersionJobForm,self).__init__(*args, **kwargs)
+# 		self.helper = FormHelper()
+# 		self.helper.form_id = 'job-observations-form'
+# 		self.helper.form_method = 'post'
+# 		self.helper.form_class = 'form-horizontal'
+# 		self.helper.label_class = 'col-sm-3'
+# 		self.helper.field_class = 'col-sm-8'
+# 		self.fields['observaciones'].label = "Observaciones"
+# 		self.fields['observaciones'].widget.attrs['rows'] = 4
 
