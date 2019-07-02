@@ -299,6 +299,7 @@ class AreaCreateForm(forms.ModelForm):
     class Meta:
         model= Area
         fields=['nombre','codigo','descripcion']
+        labels={'nombre':'Nombre','codigo':'Código','descripcion':'Descripción'}
 
 class SubareaForm(forms.ModelForm):
     class Meta:
@@ -316,4 +317,4 @@ class SubAreaRegistForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
-    file = forms.FileField(widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
