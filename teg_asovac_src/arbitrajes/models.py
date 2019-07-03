@@ -75,7 +75,7 @@ class Arbitro(models.Model):
 	clave_arbitro = models.CharField(max_length=100,blank=True)
 
 	def __str__(self):
-		return self.nombres#.encode('utf-8', errors='replace')
+		return self.nombres.encode('utf-8', errors='replace')
 
 # """""""""""""""""""""""""""
 # arbitrajes_arbitro_Sistema_asovac_id Model

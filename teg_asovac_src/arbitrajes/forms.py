@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML
@@ -6,8 +7,19 @@ from .models import Arbitro
 from trabajos.models import Trabajo_arbitro,Trabajo
 class ArbitroForm(forms.ModelForm):
     class Meta:
-        model= Arbitro
-        fields=['nombres','apellidos','genero','cedula_pasaporte','correo_electronico','titulo','linea_investigacion','telefono_oficina','telefono_habitacion_celular','institucion_trabajo','datos_institucion','observaciones']
+		model= Arbitro
+		fields=['nombres','apellidos','genero','cedula_pasaporte','correo_electronico','titulo','linea_investigacion','telefono_oficina','telefono_habitacion_celular','institucion_trabajo','datos_institucion','observaciones']
+		labels={
+				'genero':'Género',
+				'cedula_pasaporte':'Cédula/Pasaporte',
+				'correo_electronico':'Correo electrónico',
+				'titulo':'Título',
+				'linea_investigacion':'Línea de investigación',
+				'telefono_oficina':'Teléfono de oficina',
+				'telefono_habitacion_celular':'Teléfono habitación/celular',
+				'institucion_trabajo':'Institución de trabajo',
+				'datos_institucion':'Datos de la institución',
+				}
 
 class RefereeCommentForm(forms.ModelForm):
 
