@@ -20,7 +20,7 @@ from django.contrib.auth.models import User
 
 from arbitrajes.models import Arbitraje
 from autores.models import Autores_trabajos, Autor
-from main_app.models import Usuario_rol_in_sistema
+from main_app.models import Usuario_rol_in_sistema, Area
 from trabajos.models import Trabajo, Trabajo_arbitro
 
 class ChartData(APIView):
@@ -40,68 +40,43 @@ class ChartData(APIView):
         invitaciones_aceptadas = 0
         invitaciones_pendientes = 0
         
-        sociedad_fisica_aceptados = 0
-        sociedad_fisica_rechazados = 0
-        ciencias_sociales_aceptados = 0
-        ciencias_sociales_rechazados = 0
-        tecnologia_aceptados = 0
-        tecnologia_rechazados = 0
-        ciencias_exactas_aceptados = 0
-        ciencias_exactas_rechazados = 0
-        biociencias_aceptados = 0
-        biociencias_rechazados = 0
-
-        autores_sociedad_fisica = []
-        autores_ciencias_sociales = []
-        autores_tecnologia = []
-        autores_ciencias_exactas = []
-        autores_biociencias = []
-
+        areas_info = []
+        areas_list = Area.objects.all() 
+        for item in areas_list:
+            areas_info.append({
+                "id": item.id,
+                "nombre": item.nombre,
+                "trabajos_aceptados": 0,
+                "trabajos_rechazados": 0,
+                "cantidad_autores":0,
+                "autores_id": []
+                })
+        
         for autor_trabajo in autores_trabajos:
             if autor_trabajo.es_autor_principal:    
                 invitaciones_aceptadas += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = True).count()
                 invitaciones_pendientes += Trabajo_arbitro.objects.filter(trabajo = autor_trabajo.trabajo, invitacion = False, fin_arbitraje = False).count()
-            if autor_trabajo.trabajo.subareas.first().area.id == 1:
-                if not autor_trabajo.autor.id in autores_biociencias:
-                    autores_biociencias.append(autor_trabajo.autor.id)
+            for item in areas_info:
+                if autor_trabajo.trabajo.subareas.first().area.id == item["id"]:
+                    if not autor_trabajo.autor.id in item["autores_id"]:
+                        item["autores_id"].append(autor_trabajo.autor.id)
+                    
+                    if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
+                        item["trabajos_aceptados"] += 1
+                    elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal:
+                        item["trabajos_rechazados"] += 1
 
-                if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
-                    biociencias_aceptados += 1
-                elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal:
-                    biociencias_rechazados += 1
-            elif autor_trabajo.trabajo.subareas.first().area.id == 2:
-                if not autor_trabajo.autor.id in autores_ciencias_exactas:
-                    autores_ciencias_exactas.append(autor_trabajo.autor.id)
 
-                if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
-                    ciencias_exactas_aceptados += 1
-                elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal: 
-                    ciencias_exactas_rechazados += 1
-            elif autor_trabajo.trabajo.subareas.first().area.id == 3:
-                if not autor_trabajo.autor.id in autores_tecnologia:
-                    autores_tecnologia.append(autor_trabajo.autor.id)
-
-                if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
-                    tecnologia_aceptados += 1
-                elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal: 
-                    tecnologia_rechazados += 1
-            elif autor_trabajo.trabajo.subareas.first().area.id == 4:
-                if not autor_trabajo.autor.id in autores_ciencias_sociales:
-                    autores_ciencias_sociales.append(autor_trabajo.autor.id)
-
-                if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
-                    ciencias_sociales_aceptados += 1
-                elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal:
-                    ciencias_sociales_rechazados += 1
-            elif autor_trabajo.trabajo.subareas.first().area.id == 5:
-                if not autor_trabajo.autor.id in autores_sociedad_fisica:
-                    autores_sociedad_fisica.append(autor_trabajo.autor.id)
-
-                if autor_trabajo.trabajo.estatus == "Aceptado" and autor_trabajo.es_autor_principal:
-                    sociedad_fisica_aceptados += 1
-                elif autor_trabajo.trabajo.estatus == "Rechazado" and autor_trabajo.es_autor_principal:
-                    sociedad_fisica_rechazados += 1
-
+        areas_labels = []
+        areas_trabajos_aceptados = []
+        areas_trabajos_rechazados = []
+        areas_autores = []
+        for item in areas_info:
+            areas_labels.append(item["nombre"])
+            areas_trabajos_aceptados.append(item["trabajos_aceptados"])
+            areas_trabajos_rechazados.append(item["trabajos_rechazados"])
+            areas_autores.append(len(item["autores_id"]))
+            
         #El siguiente codigo es para obtener los datos necesarios para la grafica de niveles de intruccion de los autores
         usuarios_autor = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id, status = True)
         educacion_primaria = 0
@@ -129,13 +104,6 @@ class ChartData(APIView):
                 pass
 
 
-        #El siguiente codigo es para contabilizar los autores por area que listamos
-        autores_biociencias = len(autores_biociencias)
-        autores_ciencias_exactas = len(autores_ciencias_exactas)
-        autores_ciencias_sociales = len(autores_ciencias_sociales)
-        autores_sociedad_fisica = len(autores_sociedad_fisica)
-        autores_tecnologia = len(autores_tecnologia)
-
         data = {
             "trabajos": {
                 "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
@@ -150,13 +118,13 @@ class ChartData(APIView):
                 "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
             },
             "area":{
-                "labels": ['Biociencias', 'Ciencias Exactas', 'Tecnología', 'Ciencias Sociales', 'CSVF'],
-                "data_aceptados": [biociencias_aceptados, ciencias_exactas_aceptados, tecnologia_aceptados, ciencias_sociales_aceptados, sociedad_fisica_aceptados],
-                "data_rechazados": [biociencias_rechazados, ciencias_exactas_rechazados, tecnologia_rechazados, ciencias_sociales_rechazados, sociedad_fisica_rechazados]
+                "labels": areas_labels,
+                "data_aceptados": areas_trabajos_aceptados,
+                "data_rechazados": areas_trabajos_rechazados
             },
             "autoresArea":{
-                "labels": ['Biociencias', 'Ciencias Exactas', 'Tecnología', 'Ciencias Sociales', 'CSVF'],
-                "data": [autores_biociencias, autores_ciencias_exactas, autores_tecnologia, autores_ciencias_sociales, autores_sociedad_fisica],
+                "labels": areas_labels,
+                "data": areas_autores,
             },
         }   
         return Response(data)
