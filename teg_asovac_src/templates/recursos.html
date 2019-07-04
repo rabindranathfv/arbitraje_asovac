@@ -151,7 +151,7 @@
                         label: 'Información de arbitrajes',
                         data: arbitrosData.data,
                         backgroundColor: [
-                            'gray',
+                            'purple',
                             'blue',
                             'yellow',
                         ],
@@ -180,7 +180,7 @@
         function setChartAutoresNivelInstruccion(autoresData){
             var ctx = document.getElementById('autores-nivel-instruccion').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
                     labels: autoresData.labels,
                     datasets: [{
@@ -192,7 +192,7 @@
                             'yellow',
                             'blue',
                             'orange',
-                            'gray'
+                            'purple'
                         ],
                         borderColor: [
                             'rgba(255, 99, 132, 1)',
@@ -203,8 +203,13 @@
                             'rgba(255, 159, 64, 1)'
                         ],
                         borderWidth: 1
-                    }]
+                    }],
                 },
+                 options: {
+                        legend: {
+                            position: 'left'
+                        }
+                    }
             });
         }
 
@@ -238,6 +243,9 @@
                     ]
                 },
                 options: {
+                    legend: { 
+                        position: 'top'
+                    },
                     scales: {
                         yAxes: [{
                             ticks: {
