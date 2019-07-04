@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import random 
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
@@ -71,12 +73,15 @@ class ChartData(APIView):
         areas_trabajos_aceptados = []
         areas_trabajos_rechazados = []
         areas_autores = []
+        areas_colores = []
         for item in areas_info:
             areas_labels.append(item["nombre"])
             areas_trabajos_aceptados.append(item["trabajos_aceptados"])
             areas_trabajos_rechazados.append(item["trabajos_rechazados"])
             areas_autores.append(len(item["autores_id"]))
-            
+            areas_colores.append(generate_random_color())
+        
+        print(areas_colores)
         #El siguiente codigo es para obtener los datos necesarios para la grafica de niveles de intruccion de los autores
         usuarios_autor = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id, status = True)
         educacion_primaria = 0
@@ -120,15 +125,22 @@ class ChartData(APIView):
             "area":{
                 "labels": areas_labels,
                 "data_aceptados": areas_trabajos_aceptados,
-                "data_rechazados": areas_trabajos_rechazados
+                "data_rechazados": areas_trabajos_rechazados,
             },
             "autoresArea":{
                 "labels": areas_labels,
                 "data": areas_autores,
+                "colores": areas_colores
             },
         }   
         return Response(data)
 
+def generate_random_color():
+    letras = "0123456789ABCDEF"
+    color = "#"
+    for x in range(0,6):
+        color += letras[random.randint(0,15)]
+    return color
 
 # Create your views here.
 @login_required
