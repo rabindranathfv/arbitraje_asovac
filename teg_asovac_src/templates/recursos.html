@@ -219,7 +219,7 @@
         function setChartAreas(areasData){
             var ctx = document.getElementById('areas').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'horizontalBar',
+                type: 'bar',
                 data: {
                     labels: areasData.labels,
                     datasets: [{
