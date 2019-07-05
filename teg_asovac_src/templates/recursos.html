@@ -2,8 +2,9 @@
 {% block inner_content %}
 <div class="container-fluid">
 	<div class="row">
-         <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
-            <div class="panel panel-default">  
+         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
+            
+            <div class="panel panel-default col-sm-6">  
                 <div class="panel-heading">
                     <h4>
                         Autores según nivel de instrucción
@@ -17,12 +18,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+            
 
-    <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
-            <div class="panel panel-default">  
+            <div class="panel panel-default col-sm-6">  
                 <div class="panel-heading">
                     <h4>
                         Resultados según áreas
@@ -36,11 +34,15 @@
                     </div>
                 </div>
             </div>
+        
+
         </div>
     </div>
+
     <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
-            <div class="panel panel-default">  
+        <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
+            
+            <div class="panel panel-default col-sm-6">  
                 <div class="panel-heading">
                     <h4>
                         Resultados de arbitrajes
@@ -54,11 +56,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
-            <div class="panel panel-default">  
+
+            <div class="panel panel-default col-sm-6">  
                 <div class="panel-heading">
                     <h4>
                         Resultados de trabajos
@@ -72,11 +71,13 @@
                     </div>
                 </div>
             </div>
+
         </div>
-	</div>
+    </div>
 
     <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-2 col-sm-8">
+        <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
+
             <div class="panel panel-default">  
                 <div class="panel-heading">
                     <h4>
@@ -218,7 +219,7 @@
         function setChartAreas(areasData){
             var ctx = document.getElementById('areas').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'horizontalBar',
                 data: {
                     labels: areasData.labels,
                     datasets: [{
@@ -244,13 +245,14 @@
                 },
                 options: {
                     legend: { 
-                        position: 'top'
+                        position: 'top',
                     },
                     scales: {
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true
-                            }
+                            },
+                             
                         }]
                     }
                 }
@@ -260,7 +262,7 @@
         function setChartAutoresAreas(autoresAreaData){
             var ctx = document.getElementById('autores-area').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
                     labels: autoresAreaData.labels,
                     datasets: [{
@@ -273,8 +275,16 @@
                             'rgba(255, 206, 86, 1)',
                         ],
                         borderWidth: 1
-                    }]
+                    }],
                 },
+                options: {
+                    legend: { 
+                        position: 'left',
+                        labels: {
+                            fontSize: 12
+                        }
+                    },
+                }
             });
         }
     </script>
