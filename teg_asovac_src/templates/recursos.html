@@ -4,7 +4,7 @@
 	<div class="row">
          <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
             
-            <div class="panel panel-default col-sm-6">  
+            <div class="panel panel-default col-lg-6 col-sm-12">  
                 <div class="panel-heading">
                     <h4>
                         Autores según nivel de instrucción
@@ -20,21 +20,20 @@
             </div>
             
 
-            <div class="panel panel-default col-sm-6">  
+            <div class="panel panel-default col-lg-6 col-sm-12">  
                 <div class="panel-heading">
                     <h4>
-                        Resultados según áreas
+                        Resultados de trabajos
                     </h4>
                 </div>
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
-                            <canvas id="areas" heigth="100px"></canvas>
+                            <canvas id="trabajos" heigth="100px"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
-        
 
         </div>
     </div>
@@ -42,7 +41,7 @@
     <div class="row">
         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
             
-            <div class="panel panel-default col-sm-6">  
+            <div class="panel panel-default col-lg-6 col-sm-12">  
                 <div class="panel-heading">
                     <h4>
                         Resultados de arbitrajes
@@ -57,16 +56,17 @@
                 </div>
             </div>
 
-            <div class="panel panel-default col-sm-6">  
+            
+            <div class="panel panel-default col-lg-6 col-sm-12">  
                 <div class="panel-heading">
                     <h4>
-                        Resultados de trabajos
+                        Resultados según áreas
                     </h4>
                 </div>
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row middle-content">
-                            <canvas id="trabajos" heigth="100px"></canvas>
+                            <canvas id="areas" heigth="100px"></canvas>
                         </div>
                     </div>
                 </div>
@@ -139,6 +139,11 @@
                         borderWidth: 1
                     }]
                 },
+                 options: {
+                        legend: {
+                            position: 'left'
+                        }
+                    }
             });
         }
 
@@ -219,7 +224,7 @@
         function setChartAreas(areasData){
             var ctx = document.getElementById('areas').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'horizontalBar',
                 data: {
                     labels: areasData.labels,
                     datasets: [{

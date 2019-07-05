@@ -77,7 +77,7 @@ class ChartData(APIView):
         areas_labels_splited = []
         for item in areas_info:
             areas_labels.append(item["nombre"])
-            areas_labels_splited.append(item["nombre"].split(' '))
+            areas_labels_splited.append(abreviate_if_neccesary(item["nombre"]))
             areas_trabajos_aceptados.append(item["trabajos_aceptados"])
             areas_trabajos_rechazados.append(item["trabajos_rechazados"])
             areas_autores.append(len(item["autores_id"]))
@@ -142,6 +142,16 @@ def generate_random_color():
     for x in range(0,6):
         color += letras[random.randint(0,15)]
     return color
+
+def abreviate_if_neccesary(area_nombre):
+    nombre_abreviado = ""
+    if (len(area_nombre) > 20):
+        for item in area_nombre.split(" "):
+            if item[0].isupper():
+                nombre_abreviado += item[0]
+        return nombre_abreviado
+    else:
+        return area_nombre
 
 # Create your views here.
 @login_required
