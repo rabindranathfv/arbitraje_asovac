@@ -27,15 +27,15 @@ class SesionForm(forms.ModelForm):
         self.fields['hora_fin'].label = "Hora de fin"
         self.fields['portatil'].label = "Portátil"
         self.fields['fecha_sesion'].input_formats = ('%d/%m/%Y',)
-        self.fields['hora_inicio'].input_formats = ('%H:%M',)
-        self.fields['hora_fin'].input_formats = ('%H:%M',)
+        self.fields['hora_inicio'].input_formats = ('%I:%M %p',)
+        self.fields['hora_fin'].input_formats = ('%I:%M %p',)
         self.helper.layout = Layout(
             Div(
                 Field('nombre_sesion', placeholder = "Introduzca el nombre de la sesión"),
                 Field('lugar', placeholder = "Introduzca el lugar"),
                 Field('fecha_sesion', placeholder = "Formato: dd/mm/yyyy"),
-                Field('hora_inicio', placeholder = "Ejemplo: 15:00"),
-                Field('hora_fin', placeholder = "Ejemplo: 16:00"),
+                Field('hora_inicio', placeholder = "Ejemplo: 8:00 AM"),
+                Field('hora_fin', placeholder = "Ejemplo: 12:00 PM"),
                 Field('observaciones', rows = "3", placeholder = "Introduzca sus observaciones"),
                 'capacidad',
                 'proyector',

@@ -23,11 +23,11 @@
             </tr>
             <tr>
                 <th>Hora de inicio</th>
-                <td>{{ sesion.hora_inicio }}</td>
+                <td>{{ sesion.hora_inicio | date:'g:i A'}}</td>
             </tr>
             <tr>
                 <th>Hora de fin</th>
-                <td>{{ sesion.hora_fin }}</td>
+                <td>{{ sesion.hora_fin | date:'g:i A'}}</td>
             </tr>
             <tr>
                 <th>Capacidad</th>

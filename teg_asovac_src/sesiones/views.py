@@ -23,7 +23,7 @@ from django.shortcuts import render,get_object_or_404, redirect
 from .forms import SesionForm, EspacioFisicoForm, EspacioVirtualForm
 
 import datetime, operator
-
+from datetime import datetime
 # Create your views here.
 @login_required
 def sesiones_pag(request):
@@ -115,9 +115,15 @@ def list_sesions (request):
                 order='-'+sort
 
     if search != "":
+        
+        try: 
+            in_time = datetime.strptime(search, "%I:%M %p")
+            out_time = datetime.strftime(in_time, "%H:%M")
+        except:
+            out_time = search
         #data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__espacio__espacio_virtual__url_virtual__icontains = search) | Q(sesion__espacio__espacio_fisico__nombre__icontains = search) | Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__fecha_sesion__icontains=search) | Q(sesion__modalidad__icontains = search) | Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search)))).order_by(order)[init:limit]
-        data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = search) | Q(sesion__hora_fin__icontains = search)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).order_by(order)[init:limit]
-        total=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = search) | Q(sesion__hora_fin__icontains = search)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).distinct('sesion').count()
+        data=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = out_time) | Q(sesion__hora_fin__icontains = out_time)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).order_by(order)[init:limit]
+        total=Coordinadores_sesion.objects.filter( Q(sesion__sistema = arbitraje_id) & (Q(sesion__nombre_sesion__icontains=search) | Q(sesion__lugar__icontains=search) | Q(sesion__fecha_sesion__icontains = search) | Q(sesion__hora_inicio__icontains = out_time) | Q(sesion__hora_fin__icontains = out_time)| Q(autor__nombres__icontains = search) | Q(autor__apellidos__icontains = search))).distinct('sesion').count()
         
     else:
         if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
@@ -146,7 +152,7 @@ def list_sesions (request):
             
             sesion_jobs = Autores_trabajos.objects.filter(es_autor_principal = True, trabajo__sesion = item.sesion).count()
 
-            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%H:%M"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%H:%M") , 'autor': coordinador, 'autor_2': co_coordinador, 'sesion_jobs': sesion_jobs  })
+            response['query'].append({'sesion__id':item.sesion.id, 'sesion__nombre_sesion': item.sesion.nombre_sesion, 'sesion__lugar': item.sesion.lugar, 'sesion__fecha_sesion': item.sesion.fecha_sesion.strftime("%Y-%m-%d"), 'sesion__hora_inicio': item.sesion.hora_inicio.strftime("%I:%M %p"), 'sesion__hora_fin': item.sesion.hora_fin.strftime("%I:%M %p") , 'autor': coordinador, 'autor_2': co_coordinador, 'sesion_jobs': sesion_jobs  })
             listed.append(item.sesion.id)
 
     response={
@@ -472,7 +478,7 @@ def edit_sesion(request, sesion_id):
             messages.success(request, 'Sesión editada con éxito')
             return redirect('sesiones:sesions_list')
     else:
-        sesion_form = SesionForm(instance = sesion, initial = { 'hora_inicio': sesion.hora_inicio.strftime("%H:%M"), 'hora_fin': sesion.hora_fin.strftime("%H:%M")})
+        sesion_form = SesionForm(instance = sesion, initial = { 'hora_inicio': sesion.hora_inicio.strftime("%I:%M %p"), 'hora_fin': sesion.hora_fin.strftime("%I:%M %p")})
     context = {
         'nombre_vista' : 'Editar sesión',
         'main_navbar_options' : main_navbar_options,
