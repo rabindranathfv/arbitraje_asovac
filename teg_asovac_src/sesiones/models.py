@@ -78,7 +78,7 @@ class Sesion(models.Model):
 	observaciones = models.TextField(max_length=100, blank = True)
 	capacidad = models.IntegerField()
 
-	video_beam = models.BooleanField(default=False)
+	proyector = models.BooleanField(default=False)
 	portatil = models.BooleanField(default=False)
 
 	#nombre_sesion = models.CharField(max_length=50)

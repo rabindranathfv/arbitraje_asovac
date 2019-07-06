@@ -13,7 +13,7 @@ class SesionForm(forms.ModelForm):
     
     class Meta:
         model = Sesion
-        fields = ['nombre_sesion', 'lugar', 'fecha_sesion', 'hora_inicio', 'hora_fin','observaciones', 'capacidad', 'video_beam', 'portatil']
+        fields = ['nombre_sesion', 'lugar', 'fecha_sesion', 'hora_inicio', 'hora_fin','observaciones', 'capacidad', 'proyector', 'portatil']
 
     def __init__(self, *args, **kwargs):
         super(SesionForm, self).__init__(*args, **kwargs)
@@ -25,6 +25,7 @@ class SesionForm(forms.ModelForm):
         self.fields['fecha_sesion'].label = "Fecha de sesión"
         self.fields['hora_inicio'].label = "Hora de inicio"
         self.fields['hora_fin'].label = "Hora de fin"
+        self.fields['portatil'].label = "Portátil"
         self.fields['fecha_sesion'].input_formats = ('%d/%m/%Y',)
         self.fields['hora_inicio'].input_formats = ('%H:%M',)
         self.fields['hora_fin'].input_formats = ('%H:%M',)
@@ -37,7 +38,7 @@ class SesionForm(forms.ModelForm):
                 Field('hora_fin', placeholder = "Ejemplo: 16:00"),
                 Field('observaciones', rows = "3", placeholder = "Introduzca sus observaciones"),
                 'capacidad',
-                'video_beam',
+                'proyector',
                 'portatil'
             )
         ) 
