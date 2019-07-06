@@ -1,10 +1,22 @@
 {% extends "content_wrapper.html" %}
 {% block inner_content %}
 <div class="container-fluid">
+
+    <div class="row">
+        <div class="jumbotron col-sm-offset-1 col-sm-10 text-center">
+            <div class="btn-group btn-group-justified">
+                <a href="#autores-instruccion" class="btn btn-primary" title="Autores según nivel de instrucción"><i class="fa fa-graduation-cap"></i></a>
+                <a href="#resultados-trabajos" class="btn btn-primary" title="Resultados de trabajos"><i class="fa fa-file-word"></i></a>
+                <a href="#resultados-arbitrajes" class="btn btn-primary" title="Resultados de arbitrajes"><i class="fa fa-chart-bar"></i></a>
+                <a href="#resultados-areas" class="btn btn-primary"title="Resultados según áreas"><i class="fa fa-align-left"></i></a>
+                <a href="#autores-areas" class="btn btn-primary" title="Cantidad de autores por área"><i class="fa fa-chart-pie"></i></a>
+            </div>
+        </div>
+    </div>
 	<div class="row">
          <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
             
-            <div class = "col-lg-6 col-sm-12">
+            <div class = "col-lg-6 col-sm-12" id="autores-instruccion">
                 <div class="panel panel-default">  
                     <div class="panel-heading">
                         <h4>
@@ -21,7 +33,7 @@
                 </div>
             </div>
 
-            <div class = "col-lg-6 col-sm-12">
+            <div class = "col-lg-6 col-sm-12" id="resultados-trabajos">
                 <div class="panel panel-default">  
                     <div class="panel-heading">
                         <h4>
@@ -44,7 +56,7 @@
     <div class="row">
         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
             
-             <div class = "col-lg-6 col-sm-12">
+             <div class = "col-lg-6 col-sm-12" id="resultados-arbitrajes">
                 <div class="panel panel-default">  
                     <div class="panel-heading">
                         <h4>
@@ -61,7 +73,7 @@
                 </div>
              </div>
 
-            <div class = "col-lg-6 col-sm-12">
+            <div class = "col-lg-6 col-sm-12" id="resultados-areas">
                 <div class="panel panel-default">  
                     <div class="panel-heading">
                         <h4>
@@ -84,7 +96,7 @@
     <div class="row">
         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
 
-            <div class="panel panel-default">  
+            <div class="panel panel-default" id="autores-areas">  
                 <div class="panel-heading">
                     <h4>
                         Cantidad de autores por área
