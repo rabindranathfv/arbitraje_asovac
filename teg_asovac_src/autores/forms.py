@@ -43,6 +43,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
@@ -336,6 +337,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -449,6 +451,7 @@ class EditAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
