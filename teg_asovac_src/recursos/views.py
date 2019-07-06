@@ -115,7 +115,7 @@ class ChartData(APIView):
                 "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
             },
             "arbitros": {
-                "labels": ['Total rbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
+                "labels": ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
                 "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
             },
             "autores": {
