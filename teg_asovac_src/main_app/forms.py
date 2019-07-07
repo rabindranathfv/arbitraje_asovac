@@ -18,7 +18,7 @@ estados_arbitraje = (   (0,'Desactivado'),
                         (2,'En Selección y Asignación de Coordinadores de Área'),
                         (3,'En Carga de Trabajos'),
                         (4,'En Asignación de Trabajos a las Áreas'),
-                        (5,'En En Arbitraje'),
+                        (5,'En Arbitraje'),
                         (6,'En Cierre de Arbitraje'),
                         (7,'En Asignación de Secciones'),
                         (8,'En Resumen'))
