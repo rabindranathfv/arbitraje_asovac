@@ -43,14 +43,30 @@ class SesionForm(forms.ModelForm):
             )
         ) 
 
+
     def clean_hora_fin(self):
-        hora_inicio = self.cleaned_data['hora_inicio']
-        hora_fin = self.cleaned_data['hora_fin']
+        try: 
+            hora_inicio = self.cleaned_data['hora_inicio'].strftime("%H:%M")
+        except:
+            hora_inicio = "00:00"
+        
+        try:
+            hora_fin = self.cleaned_data['hora_fin'].strftime("%H:%M")
+        except:
+            hora_fin = "23:59"
+            raise forms.ValidationError(_("Formato de la hora fin es incorrecta"), code = "Hora incorrecta")
+        print(hora_inicio, hora_fin)
         if hora_inicio > hora_fin:
-			raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
+            raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
         return hora_fin
 
-
+def validate_format(hora):
+    correcto = True
+    try:
+        hora.strftime("%H:%M")
+    except:
+        correcto = False
+    return correcto
 class EspacioFisicoForm(forms.ModelForm):
     
     class Meta:
