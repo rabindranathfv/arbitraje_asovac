@@ -10,7 +10,6 @@
 				<div class="row">
 					{% include "success_messages.html" %}
 					<h2 class="text-left">Lista de Sesiones</h2>
-					<div class = "col-sm-12">
 						<!-- data table -->
 						<input type="hidden" id="listSesions" name="list" data-url="{% url 'sesiones:list_sesions' %}">
 						
@@ -25,7 +24,7 @@
 							</div>
 						</div>
 
-						<table id="table"
+						<table id="table" class="table-fixed"
 						data-toggle="table"
 						data-ajax="ajaxSesions"
 						data-side-pagination="server"
@@ -43,19 +42,19 @@
 							<thead>
 								<tr>
 									<th data-field="sesion__id" data-visible="false" data-show-columns="false">ID</th>
-									<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-2">Nombre</th>
+									<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-1">Nombre</th>
 									<th data-field="sesion__lugar" data-sortable="true" class="col-sm-1">Lugar</th>
-									<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1">Fecha Sesión</th>
-									<th data-field="sesion__hora_inicio" data-sortable="true" class="col-sm-1">Hora de inicio</th>
-									<th data-field="sesion__hora_fin" data-sortable="true" class="col-sm-1">Hora de fin</th>
-									<th data-field="autor" class="col-sm-2">Coordinador</th>
-									<th data-field="autor_2" class="col-sm-2">Co-coordinador</th>
-									<th data-field="sesion_jobs" class="col-sm-1">Trabajos asignados</th>
+									<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1">Fecha sesión</th>
+									<th data-field="sesion__hora_inicio" data-sortable="true" class="col-sm-1">Hora inicio</th>
+									<th data-field="sesion__hora_fin" data-sortable="true" class="col-sm-1">Hora fin</th>
+									<th data-field="autor" class="col-sm-1">Coordinador</th>
+									<th data-field="autor_2" class="col-sm-1">Co-coordinador</th>
+									<th data-field="sesion_jobs" class="col-sm-1">Trabajos</th>
 									<th data-field="operate" class="col-sm-1" data-events="operateEvents" data-formatter="operateSesions">Acciones</th>
 								</tr>
 							</thead>
 						</table>
-					</div>
+	
 				</div>
 			</div>
 		</div>

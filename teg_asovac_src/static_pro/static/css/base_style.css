@@ -404,6 +404,10 @@ incluso cuando el contenido de la página es muy corto */
     background-color: #DDD;
 }
 
+.table-fixed {
+    table-layout: auto;
+    word-wrap: break-word;
+}
 
 /*================= Defined margin classes =================*/
 
