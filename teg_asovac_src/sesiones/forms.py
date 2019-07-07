@@ -56,7 +56,7 @@ class SesionForm(forms.ModelForm):
             hora_fin = "23:59"
             raise forms.ValidationError(_("Formato de la hora fin es incorrecta"), code = "Hora incorrecta")
         print(hora_inicio, hora_fin)
-        if hora_inicio > hora_fin:
+        if hora_inicio >= hora_fin:
             raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
         return hora_fin
 
