@@ -409,6 +409,11 @@ incluso cuando el contenido de la página es muy corto */
     word-wrap: break-word;
 }
 
+.table-center-content > tbody > tr > td {
+    text-align: center;
+    vertical-align: middle;
+}
+
 /*================= Defined margin classes =================*/
 
 .top-margin-18 {
