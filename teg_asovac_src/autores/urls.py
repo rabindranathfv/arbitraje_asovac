@@ -46,4 +46,6 @@ urlpatterns = [
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),
     #Export de autores
     url(r'^export-authors$',views.export_authors,name='export_authors'),
+    #Formato de import de autores
+    url(r'^format-authors$',views.format_import_authors,name='format_import_authors'),
 ]
