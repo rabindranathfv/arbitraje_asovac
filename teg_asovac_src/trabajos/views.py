@@ -941,13 +941,13 @@ def selectArbitro(request,id):
     subAreaTrabajo= Trabajo.objects.get(id=id).subareas.get().id
     
     if rol_user == 1 or rol_user == 2:
-        query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-        where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '      
+        query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+        where=' WHERE sis_aso.sistema_asovac_id = %s '      
         query= query+where
     else:
         if rol_user == 3:
-            query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-            where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '
+            query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+            where=' WHERE sis_aso.sistema_asovac_id = %s '
             query= query+where
 
     
@@ -956,13 +956,13 @@ def selectArbitro(request,id):
     query= query + " ORDER BY " + order_by
     
     if rol_user == 1 or rol_user ==2 :
-        data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
-        data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+        data= Arbitro.objects.raw(query,[event_id])
+        data_count= Arbitro.objects.raw(query_count,[event_id])
     else:
         if rol_user == 3:
             area= str(user_area.id)
-            data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
-            data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+            data= Arbitro.objects.raw(query,[event_id])
+            data_count= Arbitro.objects.raw(query_count,[event_id])
 
     total=0
     datafilter= filterArbitro(data,id)
