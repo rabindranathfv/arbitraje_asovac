@@ -405,8 +405,8 @@ incluso cuando el contenido de la página es muy corto */
 }
 
 .table-fixed {
-    table-layout: auto;
-    word-wrap: break-word;
+    table-layout: fixed;
+    word-wrap: normal;
 }
 
 .table-center-content > tbody > tr > td {
