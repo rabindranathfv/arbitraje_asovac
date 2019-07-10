@@ -404,6 +404,15 @@ incluso cuando el contenido de la página es muy corto */
     background-color: #DDD;
 }
 
+.table-fixed {
+    table-layout: fixed;
+    word-wrap: normal;
+}
+
+.table-center-content > tbody > tr > td {
+    text-align: center;
+    vertical-align: middle;
+}
 
 /*================= Defined margin classes =================*/
 
