@@ -75,19 +75,19 @@ class Trabajo_arbitro (models.Model):
 """""""""""""""""""""""""""
 Detalle_version_final Model
 """""""""""""""""""""""""""
-class Detalle_version_final(models.Model):
+# class Detalle_version_final(models.Model):
 	
-	arbitraje = models.OneToOneField('arbitrajes.Arbitraje', blank = True, null = True)
-	trabajo = models.OneToOneField(Trabajo, on_delete = models.CASCADE)
+# 	arbitraje = models.OneToOneField('arbitrajes.Arbitraje', blank = True, null = True)
+# 	trabajo = models.OneToOneField(Trabajo, on_delete = models.CASCADE)
 
-	estatus_final = models.CharField(max_length=20, default="Pendiente")
-	observaciones = models.TextField(max_length=255, blank = True)
-	se_recibio_version_final_corregida = models.BooleanField(default=False)
-	fecha_envio_version_final = models.DateField(default = datetime.now)
-	se_recibio_version_final_presentacion = models.BooleanField(default=False)
-	url_version_final_presentacion = models.CharField(max_length=35)
-	fecha_envio_version_final_presentacion = models.DateField(blank = True, null = True)
+# 	estatus_final = models.CharField(max_length=20, default="Pendiente")
+# 	observaciones = models.TextField(max_length=255, blank = True)
+# 	se_recibio_version_final_corregida = models.BooleanField(default=False)
+# 	fecha_envio_version_final = models.DateField(default = datetime.now)
+# 	se_recibio_version_final_presentacion = models.BooleanField(default=False)
+# 	url_version_final_presentacion = models.CharField(max_length=35)
+# 	fecha_envio_version_final_presentacion = models.DateField(blank = True, null = True)
 
-	def __str__(self):
-		return self.trabajo.titulo_espanol#.encode('utf-8', errors='replace')
+# 	def __str__(self):
+# 		return self.trabajo.titulo_espanol#.encode('utf-8', errors='replace')
 

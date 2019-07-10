@@ -18,7 +18,7 @@ estados_arbitraje = (   (0,'Desactivado'),
                         (2,'En Selección y Asignación de Coordinadores de Área'),
                         (3,'En Carga de Trabajos'),
                         (4,'En Asignación de Trabajos a las Áreas'),
-                        (5,'En En Arbitraje'),
+                        (5,'En Arbitraje'),
                         (6,'En Cierre de Arbitraje'),
                         (7,'En Asignación de Secciones'),
                         (8,'En Resumen'))
@@ -299,6 +299,7 @@ class AreaCreateForm(forms.ModelForm):
     class Meta:
         model= Area
         fields=['nombre','codigo','descripcion']
+        labels={'nombre':'Nombre','codigo':'Código','descripcion':'Descripción'}
 
 class SubareaForm(forms.ModelForm):
     class Meta:
@@ -316,4 +317,4 @@ class SubAreaRegistForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
-    file = forms.FileField(widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))

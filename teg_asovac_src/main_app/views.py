@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from datetime import date
-import random, string,xlrd,os,sys,xlwt
+import random, string,xlrd,os,sys,xlwt,datetime
 from openpyxl import Workbook
 from django.contrib.auth.hashers import make_password
 from decouple import config
@@ -863,6 +863,8 @@ def users_list(request, arbitraje_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
+    date=datetime.datetime.now()
+    date=date.year
 
     context = {
         'nombre_vista' : 'Listado de Usuarios',
@@ -877,6 +879,7 @@ def users_list(request, arbitraje_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'date':date,
     }
     return render(request, 'main_app_users_list.html', context)
 
@@ -1354,6 +1357,8 @@ def areas_subareas(request):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
+    date=datetime.datetime.now()
+    date=date.year
 
     context = {
         'nombre_vista' : 'Áreas y Subáreas',
@@ -1367,6 +1372,7 @@ def areas_subareas(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'date':date,
     }
     return render(request, 'main_app_areas_subareas.html', context)
 

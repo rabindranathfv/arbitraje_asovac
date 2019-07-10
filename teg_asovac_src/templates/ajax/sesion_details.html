@@ -23,20 +23,20 @@
             </tr>
             <tr>
                 <th>Hora de inicio</th>
-                <td>{{ sesion.hora_inicio }}</td>
+                <td>{{ sesion.hora_inicio | date:'g:i A'}}</td>
             </tr>
             <tr>
                 <th>Hora de fin</th>
-                <td>{{ sesion.hora_fin }}</td>
+                <td>{{ sesion.hora_fin | date:'g:i A'}}</td>
             </tr>
             <tr>
                 <th>Capacidad</th>
                 <td>{{ sesion.capacidad }}</td>
             </tr>
             <tr>
-                <th>Video Beam</th>
+                <th>Proyector</th>
                 <td>
-                    {% if sesion.video_beam %}
+                    {% if sesion.proyector %}
                         Sí
                     {% else %}
                         No
@@ -44,7 +44,7 @@
                 </td>
             </tr>
             <tr>
-                <th>Portatil</th>
+                <th>Portátil</th>
                 <td>
                     {% if sesion.portatil %}
                         Sí

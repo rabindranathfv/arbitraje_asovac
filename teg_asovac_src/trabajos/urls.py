@@ -34,7 +34,7 @@ urlpatterns = [
     # Ajax
     url(r'^eliminar/(?P<trabajo_id>\d+)/$',views.delete_job , name='delete_job'),
     url(r'^resultados/observaciones/(?P<trabajo_version_final_id>\d+)/$',views.show_job_observations , name='show_job_observations'),
-    url(r'^resultados/observaciones/agregar/(?P<trabajo_version_final_id>\d+)/$',views.autor_add_observations_to_job , name='autor_add_observations_to_job'),
+    # url(r'^resultados/observaciones/agregar/(?P<trabajo_version_final_id>\d+)/$',views.autor_add_observations_to_job , name='autor_add_observations_to_job'),
     url(r'^mostrar/(?P<id>\d+)/areas$',views.show_areas_modal,name='mostrar_areas'),
     url(r'^agregar-autor/(?P<autor_trabajo_id>\d+)/$',views.add_author_to_job , name='add_author_to_job'),
     url(r'^crear-nueva-version/(?P<last_version_trabajo_id>\d+)/$',views.add_new_version_to_job , name='add_new_version_to_job'),

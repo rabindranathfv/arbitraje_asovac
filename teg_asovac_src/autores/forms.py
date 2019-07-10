@@ -43,6 +43,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
@@ -96,7 +97,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-4'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['correo'].label = "Correo"
+		self.fields['correo'].label = "Correo Electrónico"
 		self.fields['es_ponente'].label = "¿Es ponente?"
 		self.fields['es_coautor'].label = "¿Es coautor?"
 		self.helper.layout = Layout(
@@ -110,7 +111,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 	def clean_correo(self):
 		correo = self.cleaned_data['correo']
 		if not Autor.objects.filter(correo_electronico = correo).exists():
-			raise forms.ValidationError(_("No existe algún autor con el correo indicado. Verifique el correo electronico suministrado. En el caso que el coautor no tenga cuenta, debe crearse una y registrarse en la aplicacion de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
+			raise forms.ValidationError(_("No existe algún autor con el correo electrónico indicado. Verifique el correo electrónico suministrado. En el caso que el coautor no tenga cuenta en el sistema, debe crearse una y registrarse en la aplicación de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
 		if Autores_trabajos.objects.filter(autor__correo_electronico = correo, trabajo = self.autor_trabajo.trabajo):
 			raise forms.ValidationError(_("Ya el autor indicado forma parte de este trabajo."), code = "author_repeated")
 		return correo
@@ -336,6 +337,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -381,7 +383,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		correo_electronico = self.cleaned_data['correo_electronico']
 		# Si el email ya esta en uso, levantamos un error.
 		if User.objects.filter(email=correo_electronico).exists():
-			raise forms.ValidationError(_("Dirección de correo ya está en uso, por favor escoja otra."),code="invalid")
+			raise forms.ValidationError(_("Dirección de correo electrónico ya está en uso, por favor escoja otra."),code="invalid")
 		return correo_electronico
 
 	def clean_cedula_pasaporte(self):
@@ -449,6 +451,7 @@ class EditAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -495,7 +498,7 @@ class EditAutorForm(forms.ModelForm):
 		# Si el email ya esta en uso, levantamos un error.
 
 		if User.objects.filter(email=correo_electronico).exists() and self.user.email != correo_electronico:
-			raise forms.ValidationError(_("Dirección de correo ya está registrada con otro usuario, por favor escoja otra."),code="invalid")
+			raise forms.ValidationError(_("Dirección de correo electrónico ya está registrada con otro usuario, por favor escoja otra."),code="invalid")
 		return correo_electronico
 
 	def clean_cedula_pasaporte(self):

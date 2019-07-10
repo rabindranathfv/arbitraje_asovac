@@ -13,7 +13,7 @@ from django.urls import reverse
 from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago, Universidad
 from arbitrajes.models import Arbitro
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
-from trabajos.models import Detalle_version_final
+# from trabajos.models import Detalle_version_final
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 from trabajos.views import show_areas_modal
 
@@ -1048,7 +1048,7 @@ def export_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2(*)', 'Subárea3(*)', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1085,6 +1085,45 @@ def export_authors(request):
 		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
+
+	workbook.save(response)
+
+	return response
+
+
+#---------------------------------------------------------------------------------#
+#                               Format para import de Autores                     #
+#---------------------------------------------------------------------------------#
+@login_required
+def format_import_authors(request):
+
+	arbitraje_id = request.session['arbitraje_id']
+	data = []
+	temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
+	for item in temporal_list:
+		if Autor.objects.filter(usuario = item.usuario_asovac).exists():
+			data.append(Autor.objects.get(usuario = item.usuario_asovac))
+
+	# Para definir propiedades del documento de excel
+	response = HttpResponse(content_type='application/ms-excel')
+	response['Content-Disposition'] = 'attachment; filename=Formato_Autores.xls'
+	workbook = xlwt.Workbook()
+	worksheet = workbook.add_sheet("Autores")
+	# Para agregar los titulos de cada columna
+	row_num = 0
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])
+	
+	row_num += 1
+	columns = ['usuario', 'prueba', 'M', 'V9999999', 'prueba@gmail.com', '4249999999', '2129999999', 'El Valle', 'N', 'Caracas', 'Licenciado', 'X', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', '', '', 'nombre', 'facultad', 'escuela' ]
+	for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])
+
+	row_num += 1
+	columns = ['otrousuario', 'prueba', 'F', 'P9999999', 'prueba2@gmail.com', '4269999999', '2129999999', 'Altamira', 'S', 'Caracas', 'Postgrado', '', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', 'Física del Espacio', '', 'nombre', 'facultad', 'escuela' ]
+	for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])
 
 	workbook.save(response)
 
