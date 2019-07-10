@@ -741,7 +741,7 @@ def adminRemoveSubarea(request,id,subarea):
             data['message']="La subárea se ha eliminado de forma exitosa."
         else:
             data['status']= 200
-            data['message']="El árbitro debe tener almenos 1 subárea asociada."
+            data['message']="El árbitro debe tener al menos 1 subárea asociada."
 
     else:
 
