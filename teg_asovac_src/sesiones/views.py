@@ -146,9 +146,9 @@ def list_sesions (request):
             for autor in item.sesion.coordinadores.all():
                 coordinador_sesion = Coordinadores_sesion.objects.get(autor = autor, sesion = item.sesion)
                 if coordinador_sesion.coordinador == True:
-                    coordinador = autor.nombres + ' ' + autor.apellidos
+                    coordinador = autor.nombres.split(" ")[0] + ' ' + autor.apellidos.split(" ")[0]
                 if coordinador_sesion.co_coordinador == True:
-                    co_coordinador = autor.nombres + ' ' + autor.apellidos
+                    co_coordinador = autor.nombres.split(" ")[0] + ' ' + autor.apellidos.split(" ")[0]
             
             sesion_jobs = Autores_trabajos.objects.filter(es_autor_principal = True, trabajo__sesion = item.sesion).count()
 
