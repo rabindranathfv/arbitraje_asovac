@@ -461,7 +461,7 @@ var SaveAñadirPagoForm= function(){
                     }
                 }else{
                     // console.log('error en la actualizacion')
-                    $('#modal-user .modal-body').html(data.message);
+                    $('#modal-user .modal-body').html('<div class="alert alert-danger alert-dismissible" role="alert"><strong>'+data.message+'</strong></div>');
                     $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
                     // $('#modal-user').modal('hide');
                 }
