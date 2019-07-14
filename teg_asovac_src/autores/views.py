@@ -1048,7 +1048,7 @@ def export_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)', 'Instituto de investigación']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1082,7 +1082,7 @@ def export_authors(request):
 			es_miembro_asovac = 'S'
 		else:
 			es_miembro_asovac = 'N'
-		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela ]
+		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela, item.instituto_investigacion ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
 
@@ -1111,17 +1111,17 @@ def format_import_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)', 'Instituto de investigación']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 	
 	row_num += 1
-	columns = ['usuario', 'prueba', 'M', 'V9999999', 'prueba@gmail.com', '4249999999', '2129999999', 'El Valle', 'N', 'Caracas', 'Licenciado', 'X', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', '', '', 'nombre', 'facultad', 'escuela' ]
+	columns = ['usuario', 'prueba', 'M', 'V9999999', 'prueba@gmail.com', '4249999999', '2129999999', 'El Valle', 'N', 'Caracas', 'Licenciado', 'X', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', '', '', 'nombre', 'facultad', 'escuela','instituto' ]
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
 	row_num += 1
-	columns = ['otrousuario', 'prueba', 'F', 'P9999999', 'prueba2@gmail.com', '4269999999', '2129999999', 'Altamira', 'S', 'Caracas', 'Postgrado', '', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', 'Física del Espacio', '', 'nombre', 'facultad', 'escuela' ]
+	columns = ['otrousuario', 'prueba', 'F', 'P9999999', 'prueba2@gmail.com', '4269999999', '2129999999', 'Altamira', 'S', 'Caracas', 'Postgrado', '', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', 'Física del Espacio', '', 'nombre', 'facultad', 'escuela', '' ]
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 

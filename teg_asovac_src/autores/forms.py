@@ -18,7 +18,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 	class Meta:
 		model = Autor
 		fields = ['genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
-					'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
+					'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion', 'instituto_investigacion']
 		widgets = {
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
@@ -26,6 +26,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
             'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
             'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+			'instituto_investigacion': forms.TextInput(attrs = {'placeholder': 'Ejemplo: IVIC' }),
         }
 
         
@@ -44,7 +45,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
 		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
-
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
 		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
@@ -306,9 +307,9 @@ class AdminCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones', 'instituto_investigacion']
 		widgets = {
-			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
+			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique', }),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
@@ -338,6 +339,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
 		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -353,6 +355,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				'nivel_instruccion',
+				Field('instituto_investigacion', placeholder="Ejemplo: IVIC"),
 				Field('observaciones',rows='2', placeholder="Introduzca sus observaciones aquí"),
 				Div(
 	                Div(
@@ -420,7 +423,7 @@ class EditAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones', 'instituto_investigacion']
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
@@ -452,6 +455,7 @@ class EditAutorForm(forms.ModelForm):
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
 		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -467,6 +471,7 @@ class EditAutorForm(forms.ModelForm):
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				'nivel_instruccion',
+				Field('instituto_investigacion', placeholder="Ejemplo: IVIC"),
 				Field('observaciones',placeholder="Introduzca sus observaciones aquí", rows="2"),
 				Div(
 	                Div(
@@ -536,7 +541,7 @@ class CreateUniversityForm(forms.ModelForm):
 
 	class Meta:
 		model = Universidad
-		fields = ['nombre', 'facultad', 'escuela', 'instituto_investigacion']
+		fields = ['nombre', 'facultad', 'escuela']
 		widgets = {
 			'nombre': forms.TextInput(attrs={'placeholder': 'Ejemplo: Universidad Central de Venezuela'}),
 			'facultad': forms.TextInput(attrs={'placeholder': 'Ejemplo: Ciencias'}),
@@ -553,7 +558,6 @@ class CreateUniversityForm(forms.ModelForm):
 		self.fields['nombre'].label = "Nombre"
 		self.fields['facultad'].label = "Facultad"
 		self.fields['escuela'].label = "Escuela"
-		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 
 	def clean(self):
 		nombre = self.cleaned_data['nombre']
