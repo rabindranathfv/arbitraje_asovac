@@ -687,7 +687,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
             excel_file = book.sheet_by_index(0)
 
-            if excel_file.ncols == 19:
+            if excel_file.ncols == 20:
                 data['status']=200
                 data['message']=""
 
@@ -944,11 +944,11 @@ def create_authors(excel_file, arbitraje_id):
 					if excel_file.cell_value(rowx=fila, colx=9).strip() != '':
 						new_autor.capitulo_perteneciente = excel_file.cell_value(rowx=fila, colx=9).strip()
 
-					new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10).strip()
+					new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10)
 
 					if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
 						new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
-
+					new_autor.instituto_investigacion = excel_file.cell_value(rowx=fila, colx=19).strip()
 					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).strip())
 					new_autor.universidad = universidad
 					new_autor.save()
