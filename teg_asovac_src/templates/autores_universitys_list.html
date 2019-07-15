@@ -70,6 +70,19 @@
 	        var route_details="{% url 'autores:details_university' 1 %}".replace(1, row.id);
 	        var route_edit = "{% url 'autores:edit_university' 1 %}".replace(1, row.id);
 			var route_delete = "{% url 'autores:delete_university' 1 %}".replace(1, row.id);
+			let delete_html = "";
+			if(row.can_delete == 1)
+			{
+				delete_html = [
+					'<a class="show-form" data-url="',
+					route_delete,
+					' "',
+					'title="Eliminar universidad" >',
+					'<i class="fa fa-trash"></i>',
+					'</a>  ',
+				].join('');
+			}
+			
 	        return [
 	            '<a class="show-form" data-url="',
 	            route_edit,
@@ -83,12 +96,7 @@
 	            'title="Detalles de universidad" >',
 	            '<i class="far fa-eye"></i>',
 	            '</a>  ',
-				'<a class="show-form" data-url="',
-	            route_delete,
-	            ' "',
-	            'title="Eliminar universidad" >',
-	            '<i class="fa fa-trash"></i>',
-	            '</a>  ',
+				delete_html
 	        ].join('');
 			
 	    }

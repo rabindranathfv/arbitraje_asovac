@@ -285,7 +285,11 @@ def list_universitys(request):
 
 	
     for item in data:
-		response['query'].append({'id':item.id, 'nombre':item.nombre,'facultad': item.facultad,'escuela': item.escuela})
+		if Autor.objects.filter(universidad = item).exists():
+			can_delete = 0
+		else:
+			can_delete = 1
+		response['query'].append({'id':item.id, 'nombre':item.nombre,'facultad': item.facultad,'escuela': item.escuela, 'can_delete': can_delete})
     response={
         'total': total,
         'query': response,
