@@ -46,7 +46,8 @@ urlpatterns = [
     url(r'^obtener-universidades/$',views.list_universitys ,name='list_universitys'), #Esta es para obtener los datos de la bootstrap table
     url(r'^borrar-universidad/(?P<university_id>\d+)/$',views.delete_university,name='delete_university'),
     url(r'^detalles-universidad/(?P<university_id>\d+)/$',views.details_university,name='details_university'),
-    
+    url(r'^editar-universidad/(?P<university_id>\d+)/$',views.edit_university,name='edit_university'),
+   
     #Import de autores
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),
     #Export de autores

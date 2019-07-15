@@ -320,6 +320,32 @@ def details_university(request, university_id):
     data['html_form'] = render_to_string('ajax/university_details.html',context,request=request)
     return JsonResponse(data)
 
+
+@login_required
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def edit_university(request, university_id):
+	data = dict()
+	universidad = get_object_or_404(Universidad, id = university_id)
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST, instance = universidad)
+		if form.is_valid():
+			universidad = form.save()
+			messages.success(request, 'La universidad se ha editado con éxito.')
+			data['form_is_valid'] = True
+			data['url'] = reverse('autores:universitys_list')
+		else:
+			data['form_is_valid'] = False
+	else:
+		form = CreateUniversityForm(instance = universidad)
+
+	context ={
+		'form': form,
+		'creation': False,
+		'universidad': universidad
+	}
+	data['html_form'] = render_to_string('ajax/university_form.html', context, request=request)
+	return JsonResponse(data)
+
 @login_required
 def list_authors (request):
     response = {}

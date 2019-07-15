@@ -68,13 +68,13 @@
 		var $table = $('#table');
 		function operateUniversitys(value, row, index) {
 	        var route_details="{% url 'autores:details_university' 1 %}".replace(1, row.id);
-	        var route_edit = "{% url 'autores:author_edit' 1 %}".replace(1, row.id);
+	        var route_edit = "{% url 'autores:edit_university' 1 %}".replace(1, row.id);
 			var route_delete = "{% url 'autores:delete_university' 1 %}".replace(1, row.id);
 	        return [
-	            '<a class="editAuthors" href="',
+	            '<a class="show-form" data-url="',
 	            route_edit,
 	            ' "',
-	            'title="Editar" >',
+	            'title="Editar universidad" >',
 	            '<i class="far fa-edit"></i>',
 	            '</a>  ',
 	            '<a class="show-form" data-url="',
