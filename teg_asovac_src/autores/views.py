@@ -98,7 +98,7 @@ def admin_create_author(request):
 	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , event_id)
 
-	item_active = 0
+	item_active = 2
 	items = validate_rol_status(estado,rol_id,item_active,event_id)
 
 	route_conf = get_route_configuracion(estado,rol_id,event_id)
