@@ -8,8 +8,13 @@
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard ">
 				<div class="row">
-					{% include "success_messages.html" %}  
-					<h2 class="text-left">Lista de Universidades</h2>
+					{% include "success_messages.html" %}
+					<div class="col-sm-8">
+						<h2 class="text-left">Lista de universidades</h2>
+					</div>
+					<div class="col-sm-offset-2 col-sm-2">
+						<a class="btn btn-danger btn-lg col-sm-12" href="{% url 'autores:authors_list' %}">Atrás</a>
+					</div>
 					<div class = "col-sm-12">
 						<!-- data table -->
 						<input type="hidden" id="listUniversitys" name="list" data-url="{% url 'autores:list_universitys' %}">
