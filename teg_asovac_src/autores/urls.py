@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^borrar-universidad/(?P<university_id>\d+)/$',views.delete_university,name='delete_university'),
     url(r'^detalles-universidad/(?P<university_id>\d+)/$',views.details_university,name='details_university'),
     url(r'^editar-universidad/(?P<university_id>\d+)/$',views.edit_university,name='edit_university'),
+    url(r'^admin-crear-universidad/$',views.create_university,name='create_university'),
    
     #Import de autores
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),

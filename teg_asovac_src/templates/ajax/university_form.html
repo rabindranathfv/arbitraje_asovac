@@ -6,9 +6,15 @@
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
-    <h3 class="modal-title" >Editando universidad: </h3>
+    <h3 class="modal-title" >
+        {% if creation %}
+            Creando universidad:
+        {% else %}   
+            Editando universidad: 
+        {% endif %}
+    </h3>
 </div>
-<form method="POST" class="save-redirect" data-url="{% url 'autores:edit_university' universidad.id %}">
+<form method="POST" class="save-redirect" data-url="{% if creation %}{% url 'autores:create_university' %}{% else %}{% url 'autores:edit_university' universidad.id %}{% endif %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
