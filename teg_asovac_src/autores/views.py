@@ -188,6 +188,137 @@ def authors_list(request):
 	return render(request, 'autores_authors_list.html', context)
 
 
+@login_required
+def universitys_list(request):
+
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+							{'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+							{'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+							{'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+	# request.session para almacenar el item seleccionado del sidebar
+	request.session['sidebar_item'] = "Universidades"
+
+
+	# print (rol_id)
+
+	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+	estado = arbitraje.estado_arbitraje
+	rol_id=get_roles(request.user.id , arbitraje_id)
+
+	item_active = 2
+	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+	# print items
+
+	context = {
+		'nombre_vista' : 'Universidades',
+		'main_navbar_options' : main_navbar_options,
+		'estado' : estado,
+		'rol_id' : rol_id,
+		'arbitraje_id' : arbitraje_id,
+		'item_active' : item_active,
+		'items':items,
+		'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+	return render(request, 'autores_universitys_list.html', context)
+
+@login_required
+def list_universitys(request):
+    response = {}
+    response['query'] = []
+    arbitraje_id = request.session['arbitraje_id']
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.facultad':
+                order='facultad'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.facultad':
+                order='-facultad'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data = Universidad.objects.filter( Q(nombre__icontains=search) | Q(facultad__icontains=search) | Q(escuela__icontains=search)).order_by(order)[init:limit]
+        total = Universidad.objects.filter( Q(nombre__icontains=search) | Q(facultad__icontains=search) | Q(escuela__icontains=search)).count()
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            data = Universidad.objects.all().order_by(order)
+            total = Universidad.objects.all().count()
+        else:
+            print "consulta normal"
+            data = Universidad.objects.all().order_by(order)[init:limit]
+            total = Universidad.objects.all().count()
+
+
+	
+    for item in data:
+		response['query'].append({'id':item.id, 'nombre':item.nombre,'facultad': item.facultad,'escuela': item.escuela})
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+
+@login_required
+def delete_university(request, university_id):
+    
+    data = dict()
+    universidad = get_object_or_404(Universidad, id = university_id)
+    if request.method == "POST":
+        universidad.delete()
+        messages.success(request, "Universidad eliminada con éxito")
+        return redirect('autores:universitys_list') 
+    else:
+        context = {
+            'universidad':universidad,
+        }
+        data['html_form'] = render_to_string('ajax/university_delete.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def details_university(request, university_id):
+    
+    data = dict()
+    universidad = get_object_or_404(Universidad, id = university_id)
+    context = {
+		'universidad':universidad,
+	}
+    data['html_form'] = render_to_string('ajax/university_details.html',context,request=request)
+    return JsonResponse(data)
 
 @login_required
 def list_authors (request):
