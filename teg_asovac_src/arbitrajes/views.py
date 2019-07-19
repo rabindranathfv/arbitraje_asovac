@@ -766,14 +766,15 @@ def adminAddSubareas(request,id):
     subareas_user= user.sub_area.all()
     area= subareas_user.first().area
     array_subareas=[]
+    array_areas=[]
 
     for item in subareas_user:
         array_subareas.append(item.id)
+        if (item.id in array_areas) == False:
+            array_areas.append(item.area_id)
 
-    # print array_subareas
-    # print subareas[0].area_id
     # print subareas_user[0].nombre
-    # print area.id
+    print subareas_user
 
     if request.method == 'POST':
         print "El metodo es post de add"
@@ -811,6 +812,7 @@ def adminAddSubareas(request,id):
         context= {
             'tipo': 'addSubareaArbitro',
             'area': area,
+            'areas': array_areas,
             'subareas':subareas,
             'subareas_user':array_subareas,
             'user_id': id,

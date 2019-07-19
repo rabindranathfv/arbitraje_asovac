@@ -164,19 +164,20 @@
                                     <th style="text-align: center" >Asignar</th>
                                 </thead>
                                 {% for subarea in subareas %}
-                                    {% if subarea.area_id == area.id %}
-                                <tr>
-                                    <td>{{subarea.nombre}} </td>
-                                    <td>{{subarea.codigo}} </td>
-                                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
-                                    <td class="text-center" style="text-align: center">
-                                        <label class="contentCheck">
-                                                <input name="subareas_value[]" data-area="{{subarea.id}}" type="checkbox" id="{{subarea.id}}" >
-                                                <span class="checkmark"></span>
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
+                                
+                                        {% if subarea.area_id in areas %} 
+                                            <tr>
+                                                <td>{{subarea.nombre}} </td>
+                                                <td>{{subarea.codigo}} </td>
+                                                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                                                <td class="text-center" style="text-align: center">
+                                                    <label class="contentCheck">
+                                                        <input name="subareas_value[]" data-area="{{subarea.id}}" type="checkbox" id="{{subarea.id}}" >
+                                                        <span class="checkmark"></span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        {% endif %} 
                                 {% endfor %}
                             </table>
 
