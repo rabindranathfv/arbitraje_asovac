@@ -820,7 +820,7 @@ def adminAddSubareas(request,id):
     return JsonResponse(data)
 
 @login_required
-def adminChangeAreas(request,id):
+def adminAddareas(request,id):
     print "ID recibido para agregar areas",id
     data= dict()
     user= get_object_or_404(User,id=id)
@@ -839,12 +839,70 @@ def adminChangeAreas(request,id):
         # print (id)
         usuario_asovac= Usuario_asovac.objects.get(id=id)
         # print usuario_asovac.id
-        # # Para eliminar registros viejos
-        query= "DELETE FROM main_app_usuario_asovac_sub_area "
-        where="WHERE usuario_asovac_id={}".format(usuario_asovac.id)
+        
+        array_subareas=subareas_post
+        
+        # # Para agregar nuevos registros
+        for item in array_subareas:
+            query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
+            values="({0},{1})".format(id,item)
+            
+            query= query+values
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+        data['status']=200
+        data['message']= "Se han actualizado las subáreas de forma exitosa."
+
+    else:
+
+        context= {
+            'tipo': 'addAreaArbitro',
+            'areas': areas,
+            'subareas':subareas,
+            'user_id': id,
+        }
+        data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
+
+    return JsonResponse(data)
+
+@login_required
+def adminChangeAreas(request,id):
+    print "ID recibido para agregar areas",id
+    print request
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    auth_user=user    
+    user= Usuario_asovac.objects.get(usuario_id=id)
+    
+    subareas= Sub_area.objects.all()
+    areas= Area.objects.all()
+
+    if request.method == 'POST':
+        print "El metodo es post para cambiar de area"
+        subareas_post= request.POST.getlist("subareas_value")
+        # print (subareas_post)
+        # print request.POST.getlist("areas_value")
+        # print request.POST.getlist("subareas_value")
+        # print request.POST.getlist("originArea")
+        originArea=request.POST.getlist("originArea")
+        usuario_asovac= Usuario_asovac.objects.get(id=id)
+        # print usuario_asovac.id
+        # Para obtener registros a eliminar 
+        query= "SELECT main_app_usuario_asovac_sub_area.id,main_app_usuario_asovac_sub_area.usuario_asovac_id,main_app_usuario_asovac_sub_area.sub_area_id FROM main_app_usuario_asovac_sub_area INNER JOIN main_app_sub_area on main_app_sub_area.id = main_app_usuario_asovac_sub_area.sub_area_id INNER JOIN main_app_area on main_app_area.id= main_app_sub_area.area_id "
+        where="WHERE main_app_area.id={} AND main_app_usuario_asovac_sub_area.usuario_asovac_id={}".format(originArea[0],id)
         query= query+where
-        cursor = connection.cursor()
-        cursor.execute(query)
+        subareasDelete=Area.objects.raw(query)
+        
+        # # Para eliminar registros viejos
+        for subarea in subareasDelete:
+            # print subarea.usuario_asovac_id
+            # print subarea.sub_area_id
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE usuario_asovac_id={} and sub_area_id={}".format(subarea.usuario_asovac_id,subarea.sub_area_id)
+            query= query+where
+            cursor = connection.cursor()
+            cursor.execute(query)
         
         array_subareas=subareas_post
         
