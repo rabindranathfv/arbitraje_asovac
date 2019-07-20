@@ -1,0 +1,18 @@
+{% load crispy_forms_tags %}
+<form method="post" class="delete-university-form" action="{% url 'autores:delete_university' universidad.id %}">
+    {% csrf_token %}
+    
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="modal-title" >Eliminar Universidad</h3>
+    </div>
+    <div class="modal-body text-center">
+        <p> <strong>¿Está seguro que desea eliminar la universidad '{{ universidad.nombre}}', facultad '{{ universidad.facultad }}' y escuela '{{ universidad.escuela}}'?</strong></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Eliminar</button>
+    </div>
+</form>
