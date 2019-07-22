@@ -14,19 +14,19 @@
                     </div>
                     <div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
                         <div class="btn-group">
-                            <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
+                            <button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
                                 <li>
                                     <a class="showAreasForm" href="#" data-url="{% url 'main_app:load_areas' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Áreas</a>
                                 </li>
                                 <li>
-                                    <a class="Descargar" href="/media/cargamasiva/areas.xls" title="Descargar ejemplo para áreas" download=""> <i class="fas fa-file-download"></i> Ejemplo Áreas</a>
+                                    <a class="Descargar" href="/media/cargamasiva/areas.xlsx" title="Descargar áreas" download="convencion_asovac_{{date}}_areas.xlsx"> <i class="fas fa-file-download"></i> Descargar Áreas</a>
                                 </li>
                                 <li>
                                     <a class="showSubAreasForm" href="#" data-url="{% url 'main_app:load_subareas' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Subáreas</a>
                                 </li>
                                 <li>
-                                    <a class="Descargar" href="/media/cargamasiva/subareas.xls" title="Descargar ejemplo para áreas" download=""> <i class="fas fa-file-download"></i> Ejemplo Subáreas</a>
+                                    <a class="Descargar" href="/media/cargamasiva/subareas.xlsx" title="Descargar áreas" download="convencion_asovac_{{date}}_subareas.xlsx"> <i class="fas fa-file-download"></i> Descargar Subáreas</a>
                                 </li>
                             </ul>
                         </div>
@@ -48,8 +48,12 @@
                         <input type="hidden" id="listAreas" name="list" data-url="{% url 'main_app:list' %}">
 
                         <div id="toolbar">
+                                <!-- <div class="form-group">
+                                    <a href="" class="btn btn-default"><i
+                                            class="fas fa-download"></i></a>
+                                </div> -->
                         </div>
-                        <table id="table" data-toggle="table" data-ajax="ajaxAreas" data-side-pagination="server" data-show-export="true" data-toolbar="#toolbar" data-pagination="true" data-page-size="5" data-page-list="[0,5,10,25,50,100, 200]" data-show-refresh="true" data-search="true"
+                        <table id="table" data-toggle="table" data-ajax="ajaxAreas" data-side-pagination="server" data-show-export="false" data-toolbar="#toolbar" data-pagination="true" data-page-size="5" data-page-list="[0,5,10,25,50,100, 200]" data-show-refresh="true" data-search="true"
                             data-sort-name="pk" data-show-toggle="true" data-show-columns="true">
                             <thead>
                                 <tr>
@@ -82,8 +86,11 @@
                         <input type="hidden" id="listSubareas" name="list" data-url="{% url 'main_app:list_subareas' %}">
 
                         <div id="toolbar">
+                            <!-- <div class="form-group">
+                                <a href="" class="btn btn-default"><i class="fas fa-download"></i></a>
+                            </div> -->
                         </div>
-                        <table id="table2" data-toggle="table" data-ajax="ajaxSubareas" data-side-pagination="server" data-show-export="true" data-toolbar="#toolbar" data-pagination="true" data-page-size="5" data-page-list="[0,5,10,25,50,100, 200]" data-show-refresh="true" data-search="true"
+                        <table id="table2" data-toggle="table" data-ajax="ajaxSubareas" data-side-pagination="server" data-show-export="false" data-toolbar="#toolbar" data-pagination="true" data-page-size="5" data-page-list="[0,5,10,25,50,100, 200]" data-show-refresh="true" data-search="true"
                             data-sort-name="pk" data-show-toggle="true" data-show-columns="true">
                             <thead>
                                 <tr>

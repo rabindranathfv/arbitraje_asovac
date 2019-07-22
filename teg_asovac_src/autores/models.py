@@ -38,7 +38,6 @@ class Universidad(models.Model):
 	nombre = models.CharField(max_length=100)
 	facultad = models.CharField(max_length=100)
 	escuela = models.CharField(max_length=100)
-	instituto_investigacion = models.CharField(max_length=100)
 	
 	def __str__(self):
 		return self.nombre.encode('utf-8', errors='replace')
@@ -67,7 +66,8 @@ class Autor(models.Model):
 	capitulo_perteneciente = models.CharField(max_length=20,blank=True)
 	nivel_instruccion = models.CharField(max_length=50, choices = CHOICES_NIVELES_ESTUDIO)
 	observaciones = models.TextField(max_length=255, blank = True)
-	
+	instituto_investigacion = models.CharField(max_length=100, blank = True)
+
 	def __str__(self):
 		return self.nombres.encode('utf-8', errors='replace')
 

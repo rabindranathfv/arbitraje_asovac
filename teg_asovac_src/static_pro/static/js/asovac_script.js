@@ -417,7 +417,11 @@ var SaveAñadirPagoForm= function(){
             success: function(data){
                 // console.log(data);
                 if(data.status == 200 ){
-                    console.log('actualizacion exitosa');
+                    console.log('redirect');
+                    if(data.redirect == 1)
+                    {
+                        window.location.replace(data.url)
+                    }
                     // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
                     // $('#modal-user').modal('hide');
                 }else{
@@ -436,7 +440,8 @@ var SaveAñadirPagoForm= function(){
         //console.log("File Seleccionado : ", input.files[0]);
 
         var form= $(this).parent().parent();
-        var formData = new FormData(form);
+        // var formData = new FormData(form);
+        var formData = new FormData();
         formData.append('file',input.files[0]);
 
         $.ajax({
@@ -722,17 +727,16 @@ var SaveAñadirPagoForm= function(){
     // CRUD Usuarios
     $('#bootstrapTableModal').on('submit','.editarUsuario',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarUsuario',bootstrapTableForm);
-    $('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
+    //$('#bootstrapTableModal').on('submit','.cambiarRol',bootstrapTableForm);
     // CRUD Árbitros
     $('#bootstrapTableModal').on('submit','.editarArbitro',bootstrapTableForm);
     $('#bootstrapTableModal').on('submit','.eliminarArbitro',bootstrapTableForm);
     $('#bootstrapTableModal').on('click','.adminAddSubareas',sendSubareas);
     // CRUD Trabajos
     $('#bootstrapTableModal').on('click','.sendForm',modalSelectArbitro);
-    // CRUD Arbitraje
+    // CRUD Arbitraje   // CRUD Trabajos Aceptados
     $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
-    // CRUD Trabajos Aceptados
-    $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
+    // $('#bootstrapTableModal').on('click','.sendGenericForm',processGenericForm);
     
 
     $(".sendValidate").click(function (e) { 

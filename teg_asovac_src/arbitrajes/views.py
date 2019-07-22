@@ -10,10 +10,10 @@ from django.db import connection
 
 import random, string,xlrd,os,sys,xlwt
 from autores.models import Autores_trabajos
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area
+from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area,Usuario_rol_in_sistema
 from trabajos.models import Trabajo_arbitro, Trabajo
 from .models import Arbitro
-from trabajos.models import Trabajo, Detalle_version_final,Trabajo_arbitro
+from trabajos.models import Trabajo,Trabajo_arbitro
 from sesiones.models import Sesion
 
 from autores.models import Autor, Autores_trabajos
@@ -657,7 +657,7 @@ def editArbitro(request,id):
 @login_required
 def removeArbitro(request,id):
 
-    print "eliminar arbitro"
+    # print "eliminar arbitro"
     data= dict()
 
     user=User.objects.get(id=id)
@@ -666,16 +666,28 @@ def removeArbitro(request,id):
     sistema_asovac= request.session['arbitraje_id']
 
     if request.method == 'POST':
-        # print "post delete form"
         arbitro=Arbitro.objects.get(usuario=user_asovac,Sistema_asovac=sistema_asovac)
-        arbitro.Sistema_asovac.remove(sistema_asovac)
+        # arbitro.Sistema_asovac.remove(sistema_asovac)
+        # Para eliminar relacion sistema arbitro
+        query= "DELETE FROM "+'"arbitrajes_arbitro_Sistema_asovac"'
+        where="WHERE arbitro_id={} AND sistema_asovac_id={}".format(arbitro.id,sistema_asovac)
+        query= query+where
 
+        cursor = connection.cursor()
+        cursor.execute(query)
+
+        # Borrar registros anteriores para evitar repeticion de registros
+        delete=Usuario_rol_in_sistema.objects.filter(sistema_asovac=sistema_asovac,usuario_asovac=user_asovac,rol=4).delete()
+        
         data['status']= 200
-        context={
-            'arbitro':arbitro,
-            'tipo':"deleted",
-        }
-        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+        data['message']="El usuario se ha eliminado de manera exitosa."
+        
+        # data['status']= 200
+        # context={
+        #     'arbitro':arbitro,
+        #     'tipo':"deleted",
+        # }
+        # data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
 
     else:
         # print "get delete form"
@@ -729,7 +741,7 @@ def adminRemoveSubarea(request,id,subarea):
             data['message']="La subárea se ha eliminado de forma exitosa."
         else:
             data['status']= 200
-            data['message']="El árbitro debe tener almenos 1 subárea asociada."
+            data['message']="El árbitro debe tener al menos 1 subárea asociada."
 
     else:
 

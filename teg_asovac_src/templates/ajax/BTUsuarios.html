@@ -27,7 +27,7 @@
                     <td>{{user.username}}</td>
                 </tr>
                 <tr>
-                    <th>Correo Electronico</th>
+                    <th>Correo Electrónico</th>
                     <td>{{user.email}}</td>
                 </tr>
             </tbody>
@@ -61,7 +61,7 @@
         </form>
     {% else %}
         {% if tipo == "delete" and permiso == "rol-permitido" %}
-        <form method="post" id="eliminarSubarea" class="eliminarSubarea" data-url="{% url 'main_app:eliminarUsuario' arbitraje_id user.id %}">
+        <form method="post" id="eliminarUsuario" class="" data-url="{% url 'main_app:eliminarUsuario' arbitraje_id user.id %}">
             {% csrf_token %}
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -77,7 +77,7 @@
         
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-lg"  data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-danger btn-lg" >Eliminar</button>
+                <button type="button" class="btn btn-danger btn-lg sendGenericForm" >Eliminar</button>
             </div>
         </form>
         {% else %}
@@ -101,7 +101,7 @@
                 {% if tipo == "rol" and permiso == "rol-permitido" %}
                     {% load crispy_forms_tags %}
                     {% include "errors_form.html" %}
-                    <form method="post" class="cambiarRol" data-url="{% url 'main_app:cambiarRol' arbitraje_id user.id %}">
+                    <form method="post" class="cambiarRol" action="{% url 'main_app:cambiarRol' arbitraje_id user.id %}">
                         {% csrf_token %}
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -116,7 +116,7 @@
                                         
                                         <div class="checkbox_{{ rol.id }}">
                                             <label class="" for="id_rol_{{ rol.id }}">
-                                                <input type="checkbox" class="rol_{{ user.id }}" name="rol" id="id_rol_{{ rol.id }}" value="{{ rol.id }}">{{ rol.nombre }}
+                                                <input type="checkbox" class="rol_{{ user.id }}" name="rol" id="id_rol_{{ rol.id }}" value="{{ rol.id }}"> {{ rol.nombre }}
                                             </label>
                                         </div>
                                         {% endfor %}

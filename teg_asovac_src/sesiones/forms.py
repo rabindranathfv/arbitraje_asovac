@@ -13,7 +13,7 @@ class SesionForm(forms.ModelForm):
     
     class Meta:
         model = Sesion
-        fields = ['nombre_sesion', 'lugar', 'fecha_sesion', 'hora_inicio', 'hora_fin','observaciones', 'capacidad', 'video_beam', 'portatil']
+        fields = ['nombre_sesion', 'lugar', 'fecha_sesion', 'hora_inicio', 'hora_fin','observaciones', 'capacidad', 'proyector', 'portatil']
 
     def __init__(self, *args, **kwargs):
         super(SesionForm, self).__init__(*args, **kwargs)
@@ -25,31 +25,48 @@ class SesionForm(forms.ModelForm):
         self.fields['fecha_sesion'].label = "Fecha de sesión"
         self.fields['hora_inicio'].label = "Hora de inicio"
         self.fields['hora_fin'].label = "Hora de fin"
+        self.fields['portatil'].label = "Portátil"
         self.fields['fecha_sesion'].input_formats = ('%d/%m/%Y',)
-        self.fields['hora_inicio'].input_formats = ('%H:%M',)
-        self.fields['hora_fin'].input_formats = ('%H:%M',)
+        self.fields['hora_inicio'].input_formats = ('%I:%M %p',)
+        self.fields['hora_fin'].input_formats = ('%I:%M %p',)
         self.helper.layout = Layout(
             Div(
                 Field('nombre_sesion', placeholder = "Introduzca el nombre de la sesión"),
                 Field('lugar', placeholder = "Introduzca el lugar"),
                 Field('fecha_sesion', placeholder = "Formato: dd/mm/yyyy"),
-                Field('hora_inicio', placeholder = "Ejemplo: 15:00"),
-                Field('hora_fin', placeholder = "Ejemplo: 16:00"),
+                Field('hora_inicio', placeholder = "Ejemplo: 8:00 AM"),
+                Field('hora_fin', placeholder = "Ejemplo: 12:00 PM"),
                 Field('observaciones', rows = "3", placeholder = "Introduzca sus observaciones"),
                 'capacidad',
-                'video_beam',
+                'proyector',
                 'portatil'
             )
         ) 
 
+
     def clean_hora_fin(self):
-        hora_inicio = self.cleaned_data['hora_inicio']
-        hora_fin = self.cleaned_data['hora_fin']
-        if hora_inicio > hora_fin:
-			raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
+        try: 
+            hora_inicio = self.cleaned_data['hora_inicio'].strftime("%H:%M")
+        except:
+            hora_inicio = "00:00"
+        
+        try:
+            hora_fin = self.cleaned_data['hora_fin'].strftime("%H:%M")
+        except:
+            hora_fin = "23:59"
+            raise forms.ValidationError(_("Formato de la hora fin es incorrecta"), code = "Hora incorrecta")
+        print(hora_inicio, hora_fin)
+        if hora_inicio >= hora_fin:
+            raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
         return hora_fin
 
-
+def validate_format(hora):
+    correcto = True
+    try:
+        hora.strftime("%H:%M")
+    except:
+        correcto = False
+    return correcto
 class EspacioFisicoForm(forms.ModelForm):
     
     class Meta:
