@@ -1348,7 +1348,23 @@ def get_area(user_id):
     subarea=usuario_asovac.sub_area.first()
     # subarea=usuario_asovac.sub_area.get()
     area= subarea.area
-    return area
+    # Para contar las areas a las que pertenece el usuario
+    subareas_usuario_asovac= usuario_asovac.sub_area.all()
+    array_areas=[]
+    areas=''
+    cont=0
+    for item in subareas_usuario_asovac:
+        # print (item.area_id in array_areas)
+        # print "{} {}".format(item.area_id,array_areas) 
+        if (item.area_id in array_areas) == False:
+            if cont == 0:
+                areas= areas+str(item.area_id)
+                cont=cont+1
+            else:
+                areas= areas+","+str(item.area_id)
+            array_areas.append(item.area_id)
+    
+    return areas
 
 
 
