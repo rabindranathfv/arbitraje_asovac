@@ -324,6 +324,8 @@ def list_arbitros(request):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
+    arbitraje_id = request.session['arbitraje_id']
+    area= user_area
 
     # print "El rol del usuario logueado es: ",rol_user
     response = {}
@@ -356,35 +358,39 @@ def list_arbitros(request):
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
-            query_count=query
+            group_by='group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular'
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id "
             search= search+'%'
-            where=' WHERE arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s '
-            # where=' WHERE au.first_name LIKE %s'
-            query= query+where
+            where="WHERE asa.sistema_asovac_id=%s and (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) "
+            query= query+where+group_by
+            query_count=query+group_by
+        
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
+                group_by='group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular'
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id "
                 search= search+'%'
-                where=' WHERE (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) and a.id= %s '
+                # where=' WHERE (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) and a.id= %s '
+                where="WHERE asa.sistema_asovac_id=%s and a.id in ({}) and  (arb.nombres like %s or arb.apellidos like %s or arb.genero like %s or arb.correo_electronico like %s or arb.titulo like %s or arb.cedula_pasaporte like %s or arb.linea_investigacion like %s) ".format(area)
                 # where=' WHERE au.first_name LIKE %s'
-                query= query+where
-                query_count=query
+                query_count=query+group_by
+                query= query+where+group_by
+                print query_count
 
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
         query= query + " ORDER BY " + order_by
+        print area
         if rol_user == 1 or rol_user ==2 :
-            data= User.objects.raw(query,[search,search,search,search,search,search,search])
-            data_count= User.objects.raw(query,[search,search,search,search,search,search,search])
-            # data_count= User.objects.raw(query_count)
+            data= User.objects.raw(query,[arbitraje_id,search,search,search,search,search,search,search])
+            data_count= User.objects.raw(query,[arbitraje_id,search,search,search,search,search,search,search])
+            
         else:
             if rol_user == 3:
-                area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,search,search,area])
-                data_count= User.objects.raw(query_count,[search,search,search,search,search,search,search,area])
+                data= User.objects.raw(query,[arbitraje_id,search,search,search,search,search,search,search])
+                data_count= User.objects.raw(query_count,[arbitraje_id,search,search,search,search,search,search,search])
 
         total=0
-
+        
         for item in data_count:
             total=total+1
     else:
@@ -396,18 +402,20 @@ def list_arbitros(request):
         else:
             print "Consulta Normal"
             arbitraje_id = request.session['arbitraje_id']
+            area= user_area
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
             # data=User.objects.all().order_by('pk')[init:limit].query
-
+            print arbitraje_id
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
-                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
+                where="WHERE asa.sistema_asovac_id={} ".format(arbitraje_id)
+                query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id {} group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular ".format(where)
+        
             else:
                 if rol_user == 3:
-                    query= "SELECT DISTINCT arb.id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id"
-                    where=' WHERE a.id=  %s '
-                    query= query+where
+                    where=' WHERE a.id in ({}) AND asa.sistema_asovac_id={} '.format(area,arbitraje_id)
+                    query= "SELECT DISTINCT arb.id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id {} group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular,arb.id ".format(where)
 
             order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
             query_count=query
@@ -418,9 +426,8 @@ def list_arbitros(request):
                 data_count= Arbitro.objects.raw(query_count)
             else:
                 if rol_user == 3:
-                    area= str(user_area.id)
-                    data= Arbitro.objects.raw(query,area)
-                    data_count= Arbitro.objects.raw(query_count,area)
+                    data= Arbitro.objects.raw(query)
+                    data_count= Arbitro.objects.raw(query_count)
 
             total=0
             for item in data_count:
@@ -428,7 +435,7 @@ def list_arbitros(request):
 
             # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
             # total= len(data)
-
+            # print data
     # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
         # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
@@ -766,14 +773,15 @@ def adminAddSubareas(request,id):
     subareas_user= user.sub_area.all()
     area= subareas_user.first().area
     array_subareas=[]
+    array_areas=[]
 
     for item in subareas_user:
         array_subareas.append(item.id)
+        if (item.id in array_areas) == False:
+            array_areas.append(item.area_id)
 
-    # print array_subareas
-    # print subareas[0].area_id
     # print subareas_user[0].nombre
-    # print area.id
+    print subareas_user
 
     if request.method == 'POST':
         print "El metodo es post de add"
@@ -811,6 +819,7 @@ def adminAddSubareas(request,id):
         context= {
             'tipo': 'addSubareaArbitro',
             'area': area,
+            'areas': array_areas,
             'subareas':subareas,
             'subareas_user':array_subareas,
             'user_id': id,
@@ -820,8 +829,8 @@ def adminAddSubareas(request,id):
     return JsonResponse(data)
 
 @login_required
-def adminChangeAreas(request,id):
-    print "ID recibido para agregar areas",id
+def adminAddareas(request,id):
+    # print "ID recibido para agregar areas",id
     data= dict()
     user= get_object_or_404(User,id=id)
     auth_user=user    
@@ -831,7 +840,7 @@ def adminChangeAreas(request,id):
     areas= Area.objects.all()
 
     if request.method == 'POST':
-        print "El metodo es post para cambiar de area"
+        # print "El metodo es post para cambiar de area"
         subareas_post= request.POST.getlist("subareas_value")
         # print (subareas_post)
         print request.POST.getlist("areas_value")
@@ -839,12 +848,70 @@ def adminChangeAreas(request,id):
         # print (id)
         usuario_asovac= Usuario_asovac.objects.get(id=id)
         # print usuario_asovac.id
-        # # Para eliminar registros viejos
-        query= "DELETE FROM main_app_usuario_asovac_sub_area "
-        where="WHERE usuario_asovac_id={}".format(usuario_asovac.id)
+        
+        array_subareas=subareas_post
+        
+        # # Para agregar nuevos registros
+        for item in array_subareas:
+            query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
+            values="({0},{1})".format(id,item)
+            
+            query= query+values
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+        data['status']=200
+        data['message']= "Se han actualizado las subáreas de forma exitosa."
+
+    else:
+
+        context= {
+            'tipo': 'addAreaArbitro',
+            'areas': areas,
+            'subareas':subareas,
+            'user_id': id,
+        }
+        data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
+
+    return JsonResponse(data)
+
+@login_required
+def adminChangeAreas(request,id):
+    # print "ID recibido para agregar areas",id
+    # print request
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    auth_user=user    
+    user= Usuario_asovac.objects.get(usuario_id=id)
+    
+    subareas= Sub_area.objects.all()
+    areas= Area.objects.all()
+
+    if request.method == 'POST':
+        # print "El metodo es post para cambiar de area"
+        subareas_post= request.POST.getlist("subareas_value")
+        # print (subareas_post)
+        # print request.POST.getlist("areas_value")
+        # print request.POST.getlist("subareas_value")
+        # print request.POST.getlist("originArea")
+        originArea=request.POST.getlist("originArea")
+        usuario_asovac= Usuario_asovac.objects.get(id=id)
+        # print usuario_asovac.id
+        # Para obtener registros a eliminar 
+        query= "SELECT main_app_usuario_asovac_sub_area.id,main_app_usuario_asovac_sub_area.usuario_asovac_id,main_app_usuario_asovac_sub_area.sub_area_id FROM main_app_usuario_asovac_sub_area INNER JOIN main_app_sub_area on main_app_sub_area.id = main_app_usuario_asovac_sub_area.sub_area_id INNER JOIN main_app_area on main_app_area.id= main_app_sub_area.area_id "
+        where="WHERE main_app_area.id={} AND main_app_usuario_asovac_sub_area.usuario_asovac_id={}".format(originArea[0],id)
         query= query+where
-        cursor = connection.cursor()
-        cursor.execute(query)
+        subareasDelete=Area.objects.raw(query)
+        
+        # # Para eliminar registros viejos
+        for subarea in subareasDelete:
+            # print subarea.usuario_asovac_id
+            # print subarea.sub_area_id
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE usuario_asovac_id={} and sub_area_id={}".format(subarea.usuario_asovac_id,subarea.sub_area_id)
+            query= query+where
+            cursor = connection.cursor()
+            cursor.execute(query)
         
         array_subareas=subareas_post
         
@@ -919,7 +986,7 @@ def adminArea(request,id):
 
 @login_required
 def getSubareas(request,id):
-    print "Área seleccionada",id
+    # print "Área seleccionada",id
     
     data= dict()
     subareas= Sub_area.objects.all().filter(area=id)
@@ -1163,7 +1230,7 @@ def viewArbitraje(request, id):
 def changeStatus(request, id):
     
     response= dict()
-    print "Cambio de estatus del trabajo"
+    # print "Cambio de estatus del trabajo"
     # Detalle del trabajo
     trabajo = Trabajo.objects.get( id = id)
     area=trabajo.subareas.all()[0].area.nombre
