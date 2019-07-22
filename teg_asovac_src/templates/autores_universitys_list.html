@@ -1,0 +1,137 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard ">
+				<div class="row">
+					{% include "success_messages.html" %}
+					<div class="col-sm-8">
+						<h2 class="text-left">Lista de universidades</h2>
+					</div>
+					<div class="col-sm-offset-2 col-sm-2">
+						<a class="btn btn-danger btn-lg col-sm-12" href="{% url 'autores:authors_list' %}">Atrás</a>
+					</div>
+					<div class = "col-sm-12">
+						<!-- data table -->
+						<input type="hidden" id="listUniversitys" name="list" data-url="{% url 'autores:list_universitys' %}">
+						
+						<div id ="toolbar">
+							<div class="btn-group">
+								<button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+									<li>
+										<a data-url="{% url 'autores:create_university' %}" class="show-form" type="button"><i class="fa fa-user" style="color:black"></i> Crear Universidad</a>
+									</li>				
+								</ul>
+							</div>
+						</div>
+
+						<table id="table"
+						data-toggle="table"
+						data-ajax="ajaxUniversitys"
+						data-side-pagination="server"
+						data-toolbar="#toolbar"
+						data-toolbar-align="right"
+						data-pagination="true"
+						data-page-size="5"
+						data-page-list="[1,5,10,25,50,100, 200]"
+						data-show-refresh="true"
+						data-search="true"
+						data-sort-name="nombre"
+						data-show-toggle="true"
+						data-show-columns="true"
+						>
+							<thead>
+								<tr>
+									<th data-field="id" data-visible="false" data-show-columns="false">ID</th>
+									<th data-field="nombre" data-sortable="true">Nombre</th>
+									<th data-field="facultad" data-sortable="true">Facultad</th>
+									<th data-field="escuela" data-sortable="true">Escuela</th>
+									<th data-field="operate" data-events="operateEvents" data-formatter="operateUniversitys" data-align="center">Acciones</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+{% load static %}
+	<!-- js extra -->
+	<script src="{% static 'js/grid.js' %}">
+	</script>
+	<script>
+		var $table = $('#table');
+		function operateUniversitys(value, row, index) {
+	        var route_details="{% url 'autores:details_university' 1 %}".replace(1, row.id);
+	        var route_edit = "{% url 'autores:edit_university' 1 %}".replace(1, row.id);
+			var route_delete = "{% url 'autores:delete_university' 1 %}".replace(1, row.id);
+			let delete_html = "";
+			if(row.can_delete == 1)
+			{
+				delete_html = [
+					'<a class="show-form" data-url="',
+					route_delete,
+					' "',
+					'title="Eliminar universidad" >',
+					'<i class="fa fa-trash"></i>',
+					'</a>  ',
+				].join('');
+			}
+			
+	        return [
+	            '<a class="show-form" data-url="',
+	            route_edit,
+	            ' "',
+	            'title="Editar universidad" >',
+	            '<i class="far fa-edit"></i>',
+	            '</a>  ',
+	            '<a class="show-form" data-url="',
+	            route_details,
+	            ' "',
+	            'title="Detalles de universidad" >',
+	            '<i class="far fa-eye"></i>',
+	            '</a>  ',
+				delete_html
+	        ].join('');
+			
+	    }
+
+	    // your custom ajax request here
+		function ajaxUniversitys(params) {
+			var route= $("#listUniversitys").attr("data-url");
+			// console.log (route);
+			//  console.log("llamada a ajax request");
+			console.log(params.data);
+
+			 $.ajax({
+				 type: "post",
+				 url: route,
+				 data: params.data,
+				 dataType: 'json',
+				 success: function (data) {
+					// console.log(data);
+					// console.log(data.total)
+					// console.log(data.query.query)
+					params.success({
+					total: data.total,
+					rows: data.query.query
+					});
+
+				 }
+			 });
+		}
+
+
+	</script> 
+
+{% endblock %}
