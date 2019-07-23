@@ -5,12 +5,11 @@
 	{% include "toggle_title.html" %}
 
 	<div class="row">
-		<div class="col-sm-12">
-			<div class="jumbotron RLcard">
+		<div class="">
+			<div class="jumbotron RLcard col-sm-12">
 				<div class="row">
 					{% include "success_messages.html" %}
 					<h2 class="text-left">Lista de Sesiones</h2>
-					<div class = "col-sm-12">
 						<!-- data table -->
 						<input type="hidden" id="listSesions" name="list" data-url="{% url 'sesiones:list_sesions' %}">
 						
@@ -25,11 +24,10 @@
 							</div>
 						</div>
 
-						<table id="table"
+						<table id="table" class="table-fixed table-center-content"
 						data-toggle="table"
 						data-ajax="ajaxSesions"
 						data-side-pagination="server"
-						data-show-export="true"
 						data-toolbar="#toolbar"
 						data-toolbar-align="right"
 						data-pagination="true"
@@ -44,18 +42,19 @@
 							<thead>
 								<tr>
 									<th data-field="sesion__id" data-visible="false" data-show-columns="false">ID</th>
-									<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-2">Nombre</th>
-									<th data-field="sesion__lugar" data-sortable="true" class="col-sm-1">Lugar</th>
-									<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1">Fecha Sesión</th>
-									<th data-field="sesion__hora_inicio" data-sortable="true" class="col-sm-1">Hora de inicio</th>
-									<th data-field="sesion__hora_fin" data-sortable="true" class="col-sm-1">Hora de fin</th>
-									<th data-field="autor" class="col-sm-2">Coordinador</th>
-									<th data-field="autor_2" class="col-sm-2">Co-coordinador</th>
-									<th data-field="operate" data-events="operateEvents" data-formatter="operateSesions" data-align="center" class="col-sm-2">Acciones</th>
+									<th data-field="sesion__nombre_sesion" data-sortable="true" class="col-sm-1" title="Nombre">Nombre</th>
+									<th data-field="sesion__lugar" data-sortable="true" class="col-sm-1" title="Lugar">Lugar</th>
+									<th data-field="sesion__fecha_sesion" data-sortable="true" class="col-sm-1" title="Fecha">Fecha</th>
+									<th data-field="sesion__hora_inicio" data-sortable="true" class="col-sm-1" title="Hora Inicio">Hora Inicio</th>
+									<th data-field="sesion__hora_fin" data-sortable="true" class="col-sm-1" title="Hora Fin">Hora Fin</th>
+									<th data-field="autor" class="col-sm-1" title="Coordinador">Coordinador</th>
+									<th data-field="autor_2" class="col-sm-1" title="Co-Coordinador">Co-coordinador</th>
+									<th data-field="sesion_jobs" data-visible="false" data-show-columns="false" class="col-sm-1" title="Trabajos">Trabajos</th>
+									<th data-field="operate" class="col-sm-1" data-events="operateEvents" data-formatter="operateSesions" title="Acciones">Acciones</th>
 								</tr>
 							</thead>
 						</table>
-					</div>
+	
 				</div>
 			</div>
 		</div>
@@ -74,7 +73,7 @@
 		function operateSesions(value, row, index) {
 			let eliminar = ""
 			let asignar_coordinadores = ""
-			if(row.eliminar)	
+			if(row.sesion_jobs == 0)	
 			{
 				let route_delete ="{% url 'sesiones:delete_sesion' 1 %}".replace(1, row.sesion__id);
 				eliminar = [

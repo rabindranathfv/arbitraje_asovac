@@ -20,13 +20,14 @@
                         <!-- data table -->
                         <input type="hidden" id="listAreas" name="list" data-url="{% url 'arbitrajes:list_areas_arbitros' user_id %}">
                       
-                        <!-- <div id="toolbar">
-                        </div> -->
+                        <div id="toolbar">
+                                <a data-url="{% url 'arbitrajes:adminAddAreas' user_id %}" id="addArea" class="btn btn-default"><i class="fas fa-plus-circle"></i> Agregar Área</a>
+                        </div>
                         <table  id="table" 
                                 data-toggle="table" 
                                 data-ajax="ajaxAreas" 
                                 data-side-pagination="server" 
-                                data-show-export="true" 
+                                data-show-export="false" 
                                 data-toolbar="#toolbar" 
                                 data-pagination="true" 
                                 data-page-size="5" 
@@ -60,7 +61,7 @@
                                 data-toggle="table" 
                                 data-ajax="ajaxSubareas" 
                                 data-side-pagination="server" 
-                                data-show-export="true" 
+                                data-show-export="false" 
                                 data-toolbar="#toolbar2" 
                                 data-pagination="true" 
                                 data-page-size="5" 

@@ -8,8 +8,8 @@
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard ">
 				<div class="row">
-					{% include "success_messages.html" %}  
-					<h2 class="text-left">Lista de Autores</h2>
+					{% include "success_messages.html" %}
+					<h2 class="text-left">Lista de autores</h2>
 					<div class = "col-sm-12">
 						<!-- data table -->
 						<input type="hidden" id="listAuthors" name="list" data-url="{% url 'autores:list_authors' %}">
@@ -26,7 +26,13 @@
 									</li>
 									<li>
 										<a href ="{% url 'autores:export_authors' %}" type="button"  id="export-excel"><i class="fa fa-file-excel" id="menu-toggle-icon" style="color:black"></i> Exportar autores en Excel</a>
-									</li>					
+									</li>	
+									<li>
+										<a href ="{% url 'autores:format_import_authors' %}" type="button"  id="export-excel"><i class="fa fa-file-download" id="menu-toggle-icon" style="color:black"></i> Descargar formato autores</a>
+									</li>
+									<li>
+										<a href ="{% url 'autores:universitys_list' %}" type="button" ><i class="fa fa-graduation-cap" id="menu-toggle-icon" style="color:black"></i> Lista de universidades</a>
+									</li>									
 								</ul>
 							</div>
 						</div>
@@ -35,7 +41,6 @@
 						data-toggle="table"
 						data-ajax="ajaxAuthors"
 						data-side-pagination="server"
-						data-show-export="true"
 						data-toolbar="#toolbar"
 						data-toolbar-align="right"
 						data-pagination="true"

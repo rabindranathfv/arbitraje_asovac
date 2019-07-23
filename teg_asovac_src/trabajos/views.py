@@ -24,8 +24,8 @@ from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 
-from .forms import TrabajoForm, EditTrabajoForm, AutorObservationsFinalVersionJobForm
-from .models import Trabajo, Detalle_version_final, Trabajo_arbitro
+from .forms import TrabajoForm, EditTrabajoForm #, AutorObservationsFinalVersionJobForm
+from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
 
@@ -471,23 +471,23 @@ def show_job_observations(request, trabajo_version_final_id):
 
 
 
-@login_required
-def autor_add_observations_to_job(request, trabajo_version_final_id):
-    data = dict()
-    trabajo = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
-    if request.method == "POST":
-        form = AutorObservationsFinalVersionJobForm(request.POST, instance = trabajo)
-        form.save()
-        messages.success(request,"La observación fue guardada con éxito.")
-        return redirect('trabajos:trabajos_resultados_autor')
-    else:
-        form = AutorObservationsFinalVersionJobForm(instance = trabajo)
-        context = {
-            'trabajo_version_final': trabajo,
-            'form':form,
-        }
-        data['html_form'] = render_to_string('ajax/autor_add_job_observations.html', context, request=request)
-    return JsonResponse(data)
+# @login_required
+# def autor_add_observations_to_job(request, trabajo_version_final_id):
+#     data = dict()
+#     trabajo = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
+#     if request.method == "POST":
+#         form = AutorObservationsFinalVersionJobForm(request.POST, instance = trabajo)
+#         form.save()
+#         messages.success(request,"La observación fue guardada con éxito.")
+#         return redirect('trabajos:trabajos_resultados_autor')
+#     else:
+#         form = AutorObservationsFinalVersionJobForm(instance = trabajo)
+#         context = {
+#             'trabajo_version_final': trabajo,
+#             'form':form,
+#         }
+#         data['html_form'] = render_to_string('ajax/autor_add_job_observations.html', context, request=request)
+#     return JsonResponse(data)
 
 
 
@@ -941,13 +941,13 @@ def selectArbitro(request,id):
     subAreaTrabajo= Trabajo.objects.get(id=id).subareas.get().id
     
     if rol_user == 1 or rol_user == 2:
-        query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-        where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '      
+        query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+        where=' WHERE sis_aso.sistema_asovac_id = %s '      
         query= query+where
     else:
         if rol_user == 3:
-            query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id INNER JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-            where=' WHERE usu_sub_a.sub_area_id= %s AND sis_aso.sistema_asovac_id = %s '
+            query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
+            where=' WHERE sis_aso.sistema_asovac_id = %s '
             query= query+where
 
     
@@ -956,13 +956,13 @@ def selectArbitro(request,id):
     query= query + " ORDER BY " + order_by
     
     if rol_user == 1 or rol_user ==2 :
-        data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
-        data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+        data= Arbitro.objects.raw(query,[event_id])
+        data_count= Arbitro.objects.raw(query_count,[event_id])
     else:
         if rol_user == 3:
             area= str(user_area.id)
-            data= Arbitro.objects.raw(query,[subAreaTrabajo,event_id])
-            data_count= Arbitro.objects.raw(query_count,[subAreaTrabajo,event_id])
+            data= Arbitro.objects.raw(query,[event_id])
+            data_count= Arbitro.objects.raw(query_count,[event_id])
 
     total=0
     datafilter= filterArbitro(data,id)

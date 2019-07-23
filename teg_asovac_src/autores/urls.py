@@ -41,9 +41,18 @@ urlpatterns = [
 
     url(r'^postular-trabajo/detalles-pago/(?P<pagador_id>\d+)/$', views.detalles_pago, name= 'detalles_pago'),
 
-
+    #CRUD Universidades
+    url(r'^listar-universidades/$',views.universitys_list,name='universitys_list'),
+    url(r'^obtener-universidades/$',views.list_universitys ,name='list_universitys'), #Esta es para obtener los datos de la bootstrap table
+    url(r'^borrar-universidad/(?P<university_id>\d+)/$',views.delete_university,name='delete_university'),
+    url(r'^detalles-universidad/(?P<university_id>\d+)/$',views.details_university,name='details_university'),
+    url(r'^editar-universidad/(?P<university_id>\d+)/$',views.edit_university,name='edit_university'),
+    url(r'^admin-crear-universidad/$',views.create_university,name='create_university'),
+   
     #Import de autores
     url(r'^load-authors-data$',views.list_authors,name='list_authors'),
     #Export de autores
     url(r'^export-authors$',views.export_authors,name='export_authors'),
+    #Formato de import de autores
+    url(r'^format-authors$',views.format_import_authors,name='format_import_authors'),
 ]

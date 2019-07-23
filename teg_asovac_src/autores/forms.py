@@ -18,7 +18,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
 	class Meta:
 		model = Autor
 		fields = ['genero', 'cedula_pasaporte', 'telefono_oficina', 'telefono_habitacion_celular',
-					'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion']
+					'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion', 'instituto_investigacion']
 		widgets = {
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
@@ -26,6 +26,7 @@ class AuthorCreateAutorForm(forms.ModelForm):
             'telefono_oficina': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5821299999999.'}),
             'telefono_habitacion_celular': forms.TextInput(attrs={'placeholder': 'Ejemplo: 5842499999999.'}),
             'capitulo_perteneciente': forms.TextInput(attrs={'placeholder': 'Ejemplo: Caracas'}),
+			'instituto_investigacion': forms.TextInput(attrs = {'placeholder': 'Ejemplo: IVIC' }),
         }
 
         
@@ -43,7 +44,8 @@ class AuthorCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
-
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 	def clean_cedula_pasaporte(self):
 		cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
 		if Autor.objects.filter(cedula_pasaporte = cedula_pasaporte).exists():
@@ -96,7 +98,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 		self.helper.form_class = 'form-horizontal'
 		self.helper.label_class = 'col-sm-4'
 		self.helper.field_class = 'col-sm-8'
-		self.fields['correo'].label = "Correo"
+		self.fields['correo'].label = "Correo Electrónico"
 		self.fields['es_ponente'].label = "¿Es ponente?"
 		self.fields['es_coautor'].label = "¿Es coautor?"
 		self.helper.layout = Layout(
@@ -110,7 +112,7 @@ class AddAuthorToJobForm(forms.ModelForm):
 	def clean_correo(self):
 		correo = self.cleaned_data['correo']
 		if not Autor.objects.filter(correo_electronico = correo).exists():
-			raise forms.ValidationError(_("No existe algún autor con el correo indicado. Verifique el correo electronico suministrado. En el caso que el coautor no tenga cuenta, debe crearse una y registrarse en la aplicacion de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
+			raise forms.ValidationError(_("No existe algún autor con el correo electrónico indicado. Verifique el correo electrónico suministrado. En el caso que el coautor no tenga cuenta en el sistema, debe crearse una y registrarse en la aplicación de arbitrajes para poder añadirlo como coautor."), code = "email_with_no_user")
 		if Autores_trabajos.objects.filter(autor__correo_electronico = correo, trabajo = self.autor_trabajo.trabajo):
 			raise forms.ValidationError(_("Ya el autor indicado forma parte de este trabajo."), code = "author_repeated")
 		return correo
@@ -305,9 +307,9 @@ class AdminCreateAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad','nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones', 'instituto_investigacion']
 		widgets = {
-			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
+			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique', }),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
 			'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
             'direccion_envio_correspondencia': forms.Textarea(attrs={'placeholder': 'Introduzca su direccion aquí',
@@ -336,6 +338,8 @@ class AdminCreateAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -351,6 +355,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				'nivel_instruccion',
+				Field('instituto_investigacion', placeholder="Ejemplo: IVIC"),
 				Field('observaciones',rows='2', placeholder="Introduzca sus observaciones aquí"),
 				Div(
 	                Div(
@@ -381,7 +386,7 @@ class AdminCreateAutorForm(forms.ModelForm):
 		correo_electronico = self.cleaned_data['correo_electronico']
 		# Si el email ya esta en uso, levantamos un error.
 		if User.objects.filter(email=correo_electronico).exists():
-			raise forms.ValidationError(_("Dirección de correo ya está en uso, por favor escoja otra."),code="invalid")
+			raise forms.ValidationError(_("Dirección de correo electrónico ya está en uso, por favor escoja otra."),code="invalid")
 		return correo_electronico
 
 	def clean_cedula_pasaporte(self):
@@ -418,7 +423,7 @@ class EditAutorForm(forms.ModelForm):
 
 	class Meta:
 		model = Autor
-		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones']
+		fields = ['universidad', 'nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico', 'telefono_oficina', 'telefono_habitacion_celular', 'constancia_estudio', 'direccion_envio_correspondencia', 'es_miembro_asovac', 'capitulo_perteneciente', 'nivel_instruccion','observaciones', 'instituto_investigacion']
 		widgets = {
 			'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique'}),
 			'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
@@ -449,6 +454,8 @@ class EditAutorForm(forms.ModelForm):
 		self.fields['direccion_envio_correspondencia'].label = "Dirección de envío de correspondencia"
 		self.fields['capitulo_perteneciente'].label = "Capítulo perteneciente"
 		self.fields['nivel_instruccion'].label = "Nivel de instrucción"
+		self.fields['es_miembro_asovac'].label = "Es miembro AsoVAC"
+		self.fields['instituto_investigacion'].label = "Instituto de investigación"
 		self.helper.layout = Layout(
 			Div(
 				'universidad',
@@ -464,6 +471,7 @@ class EditAutorForm(forms.ModelForm):
 				'es_miembro_asovac',
 				Field('capitulo_perteneciente',placeholder="Ejemplo: Caracas"),
 				'nivel_instruccion',
+				Field('instituto_investigacion', placeholder="Ejemplo: IVIC"),
 				Field('observaciones',placeholder="Introduzca sus observaciones aquí", rows="2"),
 				Div(
 	                Div(
@@ -495,7 +503,7 @@ class EditAutorForm(forms.ModelForm):
 		# Si el email ya esta en uso, levantamos un error.
 
 		if User.objects.filter(email=correo_electronico).exists() and self.user.email != correo_electronico:
-			raise forms.ValidationError(_("Dirección de correo ya está registrada con otro usuario, por favor escoja otra."),code="invalid")
+			raise forms.ValidationError(_("Dirección de correo electrónico ya está registrada con otro usuario, por favor escoja otra."),code="invalid")
 		return correo_electronico
 
 	def clean_cedula_pasaporte(self):
@@ -533,7 +541,7 @@ class CreateUniversityForm(forms.ModelForm):
 
 	class Meta:
 		model = Universidad
-		fields = ['nombre', 'facultad', 'escuela', 'instituto_investigacion']
+		fields = ['nombre', 'facultad', 'escuela']
 		widgets = {
 			'nombre': forms.TextInput(attrs={'placeholder': 'Ejemplo: Universidad Central de Venezuela'}),
 			'facultad': forms.TextInput(attrs={'placeholder': 'Ejemplo: Ciencias'}),
@@ -550,7 +558,14 @@ class CreateUniversityForm(forms.ModelForm):
 		self.fields['nombre'].label = "Nombre"
 		self.fields['facultad'].label = "Facultad"
 		self.fields['escuela'].label = "Escuela"
-		self.fields['instituto_investigacion'].label = "Instituto de investigación"
+
+	def clean(self):
+		nombre = self.cleaned_data['nombre']
+		facultad = self.cleaned_data['facultad']
+		escuela = self.cleaned_data['escuela']
+
+		if Universidad.objects.filter(nombre__iexact= nombre, facultad__iexact = facultad, escuela__iexact = escuela).exists():
+			raise forms.ValidationError(_("Ya existe este registro de universidad, facultad y escuela en el sistema."), code = "university_data_duplicate")
 
 
 class ImportFromExcelForm(forms.Form):
