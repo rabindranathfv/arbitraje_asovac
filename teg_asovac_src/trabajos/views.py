@@ -606,6 +606,8 @@ def list_trabajos(request):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
+    arbitraje_id = request.session['arbitraje_id']
+    area= user_area
 
     # print "El rol del usuario logueado es: ",rol_user
     response = {}
@@ -648,7 +650,7 @@ def list_trabajos(request):
                 query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
-                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s or trab.confirmacion_pago like %s ) AND sis_aso.id= %s AND main_a.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s or trab.confirmacion_pago like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                 query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -661,9 +663,8 @@ def list_trabajos(request):
             # data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
-                area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,search,search,event_id,area])
-                data_count= User.objects.raw(query,[search,search,search,search,search,search,search,event_id,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,search,event_id])
+                data_count= User.objects.raw(query,[search,search,search,search,search,search,search,event_id])
 
         total=0
 
@@ -689,7 +690,7 @@ def list_trabajos(request):
             else:
                 if rol_user == 3:
                     query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                    where=' WHERE sis_aso.id= %s AND main_a.id = %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                    where=' WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                     query= query+where
             
             if sort=="nombre":
@@ -704,9 +705,8 @@ def list_trabajos(request):
                 data_count= User.objects.raw(query_count,event_id)
             else:
                 if rol_user == 3:
-                    area= str(user_area.id)
-                    data= User.objects.raw(query,[event_id,area])
-                    data_count= User.objects.raw(query_count,[event_id,area])
+                    data= User.objects.raw(query,[event_id])
+                    data_count= User.objects.raw(query_count,[event_id])
            
             total=0
             for item in data_count:
@@ -942,12 +942,12 @@ def selectArbitro(request,id):
     
     if rol_user == 1 or rol_user == 2:
         query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-        where=' WHERE sis_aso.sistema_asovac_id = %s '      
+        where=' WHERE sis_aso.sistema_asovac_id = %s and usu_sub_a.sub_area_id= {}'.format(subAreaTrabajo)      
         query= query+where
     else:
         if rol_user == 3:
             query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-            where=' WHERE sis_aso.sistema_asovac_id = %s '
+            where=' WHERE sis_aso.sistema_asovac_id = %s and usu_sub_a.sub_area_id= {}'.format(subAreaTrabajo)  
             query= query+where
 
     
@@ -960,7 +960,6 @@ def selectArbitro(request,id):
         data_count= Arbitro.objects.raw(query_count,[event_id])
     else:
         if rol_user == 3:
-            area= str(user_area.id)
             data= Arbitro.objects.raw(query,[event_id])
             data_count= Arbitro.objects.raw(query_count,[event_id])
 
@@ -1170,6 +1169,8 @@ def generate_report(request,tipo):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
+    arbitraje_id = request.session['arbitraje_id']
+    area= user_area
     # Para exportar información de Arbitro 
     if tipo == '1':
         
@@ -1181,7 +1182,7 @@ def generate_report(request,tipo):
         else:
             if rol_user == 3:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                where=' WHERE sis_aso.id= %s AND main_a.id = %s '
+                where=' WHERE sis_aso.id= %s AND main_a.id in ({}) '.format(area)
                 query= query+where
         
     
@@ -1194,9 +1195,8 @@ def generate_report(request,tipo):
             data_count= User.objects.raw(query_count,event_id)
         else:
             if rol_user == 3:
-                area= str(user_area.id)
-                data= User.objects.raw(query,[event_id,area])
-                data_count= User.objects.raw(query_count,[event_id,area])
+                data= User.objects.raw(query,[event_id])
+                data_count= User.objects.raw(query_count,[event_id])
         
         total=0
         for item in data_count:
