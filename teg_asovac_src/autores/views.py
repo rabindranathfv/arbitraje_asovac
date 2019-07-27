@@ -664,12 +664,49 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			datos_pagador_form = DatosPagadorForm(request.POST)
 			factura_form = FacturaForm()
 			pago_form = PagoForm()
+		elif(step == '2'):
+			datos_pagador_form = DatosPagadorForm(request.POST)
+			factura_form = FacturaForm(request.POST)
+			pago_form = PagoForm()
+		elif(step == '3'):
+			datos_pagador_form = DatosPagadorForm(request.POST)
+			factura_form = FacturaForm(request.POST)
+			pago_form = PagoForm(request.POST, request.FILES)
 		else:
 			datos_pagador_form = DatosPagadorForm()
 			factura_form = FacturaForm()
 			pago_form = PagoForm()
 		if datos_pagador_form.is_valid() and step == "1":
 			step = "2"
+		elif datos_pagador_form.is_valid() and factura_form.is_valid() and step =="2":
+			step = "3"
+		elif datos_pagador_form.is_valid() and factura_form.is_valid() and pago_form.is_valid() and step =="3":
+			datos_pagador = datos_pagador_form.save()
+			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
+			pagador.save()
+			pago = pago_form.save(commit=False)
+			pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
+			pago.save()
+			factura = factura_form.save(commit=False)
+			factura.pagador = pagador
+			factura.pago = pago
+			factura.iva = factura.monto_total * autor_trabajo.sistema_asovac.porcentaje_iva / 100
+			factura.monto_subtotal = factura.monto_total - factura.iva
+			factura.save()
+			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
+			if autor_trabajo.monto_total <= 0:
+				autor_trabajo.pagado = True
+			autor_trabajo.save()
+			#Código para actualizar estados de las otras instancias de autor_trabajo
+			autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo.trabajo)
+			for autor_trabajo_to_update in autores_trabajo_list:
+				autor_trabajo_to_update.monto_total = autor_trabajo.monto_total
+				autor_trabajo_to_update.pagado = autor_trabajo.pagado
+				autor_trabajo_to_update.save()
+			messages.success(request, 'Pago añadido con éxito.')
+			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
+			data['form_is_valid'] = True
+		
 
 	else:
 		datos_pagador_form = DatosPagadorForm()

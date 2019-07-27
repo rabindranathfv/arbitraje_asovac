@@ -5,7 +5,7 @@
     </button>
     <h3 class="modal-title" >Datos del pagador del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
 </div>
-<form method="POST" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id step %}" novalidate>
+<form method="POST" enctype="multipart/form-data" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id step %}" novalidate>
     <div class="modal-body">
         {% csrf_token %}
         <div id="datos_pagador">
@@ -25,7 +25,7 @@
 </form>
 
 <script>
-    if({{ step }} == 1)
+    if({{ step }} != 2 &&  {{step}} != 3)
     {
         $("#factura").hide();
         $("#pagador").hide();
@@ -34,6 +34,11 @@
     {
         $("#datos_pagador").hide();
         $("#pagador").hide();
+    }
+    else if({{step}} == 3)
+    {
+        $("#datos_pagador").hide();
+        $("#factura").hide();
     }
     $( function(){
         $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
