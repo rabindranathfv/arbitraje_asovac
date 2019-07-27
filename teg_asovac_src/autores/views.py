@@ -658,7 +658,9 @@ def postular_trabajo(request, trabajo_id):
 def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 	data = dict()
 	autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
-
+	datos_pagador_form = DatosPagadorForm()
+	factura_form = FacturaForm()
+	pago_form = PagoForm()
 	if request.method == "POST":
 		if(step == '1'):	
 			datos_pagador_form = DatosPagadorForm(request.POST)
@@ -672,10 +674,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			datos_pagador_form = DatosPagadorForm(request.POST)
 			factura_form = FacturaForm(request.POST)
 			pago_form = PagoForm(request.POST, request.FILES)
-		else:
-			datos_pagador_form = DatosPagadorForm()
-			factura_form = FacturaForm()
-			pago_form = PagoForm()
+			
 		if datos_pagador_form.is_valid() and step == "1":
 			step = "2"
 		elif datos_pagador_form.is_valid() and factura_form.is_valid() and step =="2":
@@ -706,12 +705,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			messages.success(request, 'Pago añadido con éxito.')
 			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
 			data['form_is_valid'] = True
-		
-
 	else:
-		datos_pagador_form = DatosPagadorForm()
-		factura_form = FacturaForm()
-		pago_form = PagoForm()
 		step = 1
 	context ={
 		'datos_pagador_form': datos_pagador_form,
@@ -723,88 +717,6 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
 	return JsonResponse(data)
 
-
-
-@login_required
-#Modal para crear datos de la factura
-def postular_trabajo_factura_modal(request, autor_trabajo_id):
-	data = dict()
-	autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
-
-	if request.method == "POST":
-		form = FacturaForm(request.POST)
-		if form.is_valid():
-			iva = form.cleaned_data['monto_total'] * autor_trabajo.sistema_asovac.porcentaje_iva / 100
-			monto_subtotal = form.cleaned_data['monto_total'] - iva
-			factura = {
-				'monto_subtotal': monto_subtotal,
-				'iva': iva,
-				'monto_total': form.cleaned_data['monto_total'],
-				'fecha_emision': str(form.cleaned_data['fecha_emision']), }
-			request.session['factura'] = factura
-			data['url'] = reverse('autores:postular_trabajo_pago_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['form_is_valid'] = True
-		else:
-			data['form_is_valid'] = False
-
-	else:
-		form =	FacturaForm()
-
-	context ={
-		'form': form,
-		'autor_trabajo': autor_trabajo,
-	}
-	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_factura.html', context, request=request)
-	return JsonResponse(data)
-
-
-
-@login_required
-#Modal para crear datos de la factura
-def postular_trabajo_pago_modal(request, autor_trabajo_id):
-	data = dict()
-	autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
-
-	if request.method == "POST":
-		form = PagoForm(request.POST, request.FILES)
-		print(form.is_valid())
-		if form.is_valid():
-			datos_pagador = Datos_pagador(cedula = request.session['datos_pagador']['cedula'], nombres = request.session['datos_pagador']['nombres'], apellidos = request.session['datos_pagador']['apellidos'], pasaporte_rif = request.session['datos_pagador']['pasaporte_rif'], telefono_oficina = request.session['datos_pagador']['telefono_oficina'], telefono_habitacion_celular = request.session['datos_pagador']['telefono_habitacion_celular'], direccion_fiscal = request.session['datos_pagador']['direccion_fiscal'], categorias_pago = request.session['datos_pagador']['categorias_pago'])
-			datos_pagador.save()
-			pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
-			pagador.save()
-			pago = form.save(commit=False)
-			pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
-			pago.save()
-			factura = Factura(pagador = pagador, pago = pago, monto_subtotal = request.session['factura']['monto_subtotal'], iva = request.session['factura']['iva'], monto_total = request.session['factura']['monto_total'], fecha_emision = request.session['factura']['fecha_emision'])
-			factura.save()
-			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
-			if autor_trabajo.monto_total <= 0:
-				autor_trabajo.pagado = True
-			autor_trabajo.save()
-			#Código para actualizar estados de las otras instancias de autor_trabajo
-			autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo.trabajo)
-			for autor_trabajo_to_update in autores_trabajo_list:
-				autor_trabajo_to_update.monto_total = autor_trabajo.monto_total
-				autor_trabajo_to_update.pagado = autor_trabajo.pagado
-				autor_trabajo_to_update.save()
-
-			print(request.session['factura']['monto_total'])
-			print(request.session['datos_pagador']['nombres'])
-			
-			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
-			data['form_is_valid'] = True
-		else:
-			data['form_is_valid'] = False
-	else:
-		form =	PagoForm()
-
-	context ={
-		'form': form,
-		'autor_trabajo': autor_trabajo,
-	}
-	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pago.html', context, request=request)
-	return JsonResponse(data)
 
 #Modal para ver los detalles del pago para postular un trabajo
 @login_required
