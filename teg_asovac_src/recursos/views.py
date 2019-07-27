@@ -6,23 +6,23 @@ import random
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render,redirect
 from django.template.loader import get_template
 
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
-
-from .utils import render_to_pdf
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
-from django.contrib.auth.models import User
 
 from autores.models import Autores_trabajos, Autor
-from main_app.models import Usuario_rol_in_sistema, Area
+
+from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac
+from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+
 from trabajos.models import Trabajo, Trabajo_arbitro
+
+from .utils import generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -203,21 +203,41 @@ def get_data(request, *args, **kwargs):
 
 @login_required
 def generate_pdf(request,*args , **kwargs):
-    #obtener el template
-    template = get_template('pdf/modelo_pdf.html')
-    # hacer querysets
-    
-    # Data a renderizar en el template
-    context = {}
-    # render template
-    html = template.render(context)
-    # to download in pdf
-    pdf = render_to_pdf('pdf/modelo_pdf.html',context)
-    #respuesta del pdf en el navegador
-    if pdf:
-        return HttpResponse(pdf, content_type='application/pdf')
-    return HttpResponse("Crear pagina de Error 404")
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
 
+    filename = "AsoVAC_Carta_Aceptacion.pdf"
+
+    context = {}
+    context["header_url"] = arbitraje.cabecera
+    context["city"] = 'Caracas'
+    context["day"] = 4
+    context["month"] = 'Agosto'
+    context["year"] = 2018
+    context["sex"] = 'F'
+    context["full_name"] = 'Karla Calo'
+    context["roman_number"] = 'LXVII'
+    context["work_title"] = 'ESCALAMIENTO A ESCALA INDUSTRIAL DE UNA CREMA AZUFRADA OPTIMIZADA MEDIANTE\
+    UN DISEÑO EXPERIMENTAL'
+    context["work_code"] = 'BC-24'
+    context["start_date"] = '29 de Noviembre'
+    context["finish_date"] = '1 de Diciembre de 2018'
+    context["convention_place"] = "Universidad Metropolintana (UNIMET) y la Universidad Central de Venezuela (UCV)"
+    context["convention_saying"] = '"Ciencia, Tecnología e Innovación en Democracia"'
+    context["authors"] = ['Karla Calo', 'Luis Henríquez']
+    context["max_info_date"] = '15 de Noviembre'
+    context["observations"] =   ['El resumen no cumple con el formato indicado en la normativa de la Convención y el modelo enviado.',
+                                'No se cumple con lo solicitado para el formato de nombres y apellidos de los autores completos, separados por coma.',
+                                'La ventaja evidente del consumo de edulcorantes no calóricos es reducir el aporte calórico proveniente de sacarosa y \
+                                otros endulzantes que sí aportan carbohidratos, pero ningún edulcorante conocido tiene poder hipoglicemiante. Tampoco tiene \
+                                poder adelgazante per sé. Todo depende del resto del aporte de macronutrientes y otras condiciones de gasto calórico V/S requerimiento.',
+                                'No están claros los porcentajes de ingesta definidos para los tres grupos.',
+                                'Falta señalar cuantitativamente la reducción ponderal y en cuánto tiempo además de expresarlo con significancia y análisis estadístico.',
+                                'Es conocido el after taste de la Stevia, sería interesante informar si los animales mostraron alguna preferencia o rechazo por las tres opciones propuestas.']
+    context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
+    context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
+
+    return generate_acceptation_letter_with_observations(filename, context)
 
 
 @login_required
@@ -470,3 +490,4 @@ def resources_arbitration(request):
         'route_resultados': route_resultados,
     }
     return render(request, 'main_app_resources_arbitrations.html', context)
+

@@ -98,7 +98,7 @@ def admin_create_author(request):
 	estado = arbitraje.estado_arbitraje
 	rol_id=get_roles(request.user.id , event_id)
 
-	item_active = 0
+	item_active = 2
 	items = validate_rol_status(estado,rol_id,item_active,event_id)
 
 	route_conf = get_route_configuracion(estado,rol_id,event_id)
@@ -188,6 +188,190 @@ def authors_list(request):
 	return render(request, 'autores_authors_list.html', context)
 
 
+@login_required
+def universitys_list(request):
+
+	main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
+							{'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
+							{'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+							{'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
+	# request.session para almacenar el item seleccionado del sidebar
+	request.session['sidebar_item'] = "Universidades"
+
+
+	# print (rol_id)
+
+	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+	estado = arbitraje.estado_arbitraje
+	rol_id=get_roles(request.user.id , arbitraje_id)
+
+	item_active = 2
+	items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+	route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+	route_seg= get_route_seguimiento(estado,rol_id)
+	route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+	route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+	route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+	# print items
+
+	context = {
+		'nombre_vista' : 'Universidades',
+		'main_navbar_options' : main_navbar_options,
+		'estado' : estado,
+		'rol_id' : rol_id,
+		'arbitraje_id' : arbitraje_id,
+		'item_active' : item_active,
+		'items':items,
+		'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+	return render(request, 'autores_universitys_list.html', context)
+
+@login_required
+def list_universitys(request):
+    response = {}
+    response['query'] = []
+    arbitraje_id = request.session['arbitraje_id']
+    sort= request.POST['sort']
+    search= request.POST['search']
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        limit= int(request.POST['limit'])+init
+    # init= int(request.POST['offset'])
+    # limit= int(request.POST['limit'])+init
+    # print "init: ",init,"limit: ",limit
+
+    if request.POST['order'] == 'asc':
+        if sort == 'fields.nombre':
+            order='nombre'
+        else:
+            if sort == 'fields.facultad':
+                order='facultad'
+            else:
+                order=sort
+    else:
+        if sort == 'fields.nombre':
+            order='-nombre'
+        else:
+            if sort == 'fields.facultad':
+                order='-facultad'
+            else:
+                order='-'+sort
+
+    if search != "":
+        data = Universidad.objects.filter( Q(nombre__icontains=search) | Q(facultad__icontains=search) | Q(escuela__icontains=search)).order_by(order)[init:limit]
+        total = Universidad.objects.filter( Q(nombre__icontains=search) | Q(facultad__icontains=search) | Q(escuela__icontains=search)).count()
+    else:
+        if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
+            print "consulta para exportar"
+            data = Universidad.objects.all().order_by(order)
+            total = Universidad.objects.all().count()
+        else:
+            print "consulta normal"
+            data = Universidad.objects.all().order_by(order)[init:limit]
+            total = Universidad.objects.all().count()
+
+
+	
+    for item in data:
+		if Autor.objects.filter(universidad = item).exists():
+			can_delete = 0
+		else:
+			can_delete = 1
+		response['query'].append({'id':item.id, 'nombre':item.nombre,'facultad': item.facultad,'escuela': item.escuela, 'can_delete': can_delete})
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+
+@login_required
+def delete_university(request, university_id):
+    
+    data = dict()
+    universidad = get_object_or_404(Universidad, id = university_id)
+    if request.method == "POST":
+        universidad.delete()
+        messages.success(request, "Universidad eliminada con éxito")
+        return redirect('autores:universitys_list') 
+    else:
+        context = {
+            'universidad':universidad,
+        }
+        data['html_form'] = render_to_string('ajax/university_delete.html',context,request=request)
+    return JsonResponse(data)
+
+@login_required
+def details_university(request, university_id):
+    
+    data = dict()
+    universidad = get_object_or_404(Universidad, id = university_id)
+    context = {
+		'universidad':universidad,
+	}
+    data['html_form'] = render_to_string('ajax/university_details.html',context,request=request)
+    return JsonResponse(data)
+
+
+@login_required
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def edit_university(request, university_id):
+	data = dict()
+	universidad = get_object_or_404(Universidad, id = university_id)
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST, instance = universidad)
+		if form.is_valid():
+			universidad = form.save()
+			messages.success(request, 'La universidad se ha editado con éxito.')
+			data['form_is_valid'] = True
+			data['url'] = reverse('autores:universitys_list')
+		else:
+			data['form_is_valid'] = False
+	else:
+		form = CreateUniversityForm(instance = universidad)
+
+	context ={
+		'form': form,
+		'creation': False,
+		'universidad': universidad
+	}
+	data['html_form'] = render_to_string('ajax/university_form.html', context, request=request)
+	return JsonResponse(data)
+
+@login_required
+#Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
+def create_university(request):
+	data = dict()
+	if request.method == "POST":
+		form = CreateUniversityForm(request.POST)
+		if form.is_valid():
+			universidad = form.save()
+			messages.success(request, 'La universidad se ha creado con éxito.')
+			data['form_is_valid'] = True
+			data['url'] = reverse('autores:universitys_list')
+		else:
+			data['form_is_valid'] = False
+	else:
+		form = CreateUniversityForm()
+
+	context ={
+		'form': form,
+		'creation': True, 
+	}
+	data['html_form'] = render_to_string('ajax/university_form.html', context, request=request)
+	return JsonResponse(data)
 
 @login_required
 def list_authors (request):
@@ -687,7 +871,7 @@ def validate_load_users(filename,extension,arbitraje_id):
 
             excel_file = book.sheet_by_index(0)
 
-            if excel_file.ncols == 19:
+            if excel_file.ncols == 20:
                 data['status']=200
                 data['message']=""
 
@@ -944,11 +1128,11 @@ def create_authors(excel_file, arbitraje_id):
 					if excel_file.cell_value(rowx=fila, colx=9).strip() != '':
 						new_autor.capitulo_perteneciente = excel_file.cell_value(rowx=fila, colx=9).strip()
 
-					new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10).strip()
+					new_autor.nivel_instruccion = excel_file.cell_value(rowx=fila, colx=10)
 
 					if excel_file.cell_value(rowx=fila, colx=11).strip() != '':
 						new_autor.observaciones = excel_file.cell_value(rowx=fila, colx=11).strip()
-
+					new_autor.instituto_investigacion = excel_file.cell_value(rowx=fila, colx=19).strip()
 					universidad = Universidad.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=16).strip(), facultad__iexact = excel_file.cell_value(rowx=fila, colx=17).strip(), escuela__iexact = excel_file.cell_value(rowx=fila, colx=18).strip())
 					new_autor.universidad = universidad
 					new_autor.save()
@@ -1048,7 +1232,7 @@ def export_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)', 'Instituto de investigación']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1082,7 +1266,7 @@ def export_authors(request):
 			es_miembro_asovac = 'S'
 		else:
 			es_miembro_asovac = 'N'
-		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela ]
+		row = [item.nombres, item.apellidos, genero, item.cedula_pasaporte, item.correo_electronico, item.telefono_oficina, item.telefono_habitacion_celular, item.direccion_envio_correspondencia, es_miembro_asovac, item.capitulo_perteneciente, item.nivel_instruccion, item.observaciones, area, subarea1, subarea2, subarea3, item.universidad.nombre, item.universidad.facultad, item.universidad.escuela, item.instituto_investigacion ]
 		for col_num in range(len(row)):
 			worksheet.write(row_num, col_num, row[col_num])
 
@@ -1111,17 +1295,17 @@ def format_import_authors(request):
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
 	row_num = 0
-	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)']
+	columns = ['Nombres (*)', 'Apellidos (*)','Género M/F (*)', 'Cédula/Pasaporte(*)','Correo Electrónico (*)', 'Teléfono de oficina(*)', 'Teléfono de habitación/celular(*)', 'Dirección de correspondencia', 'Es miembro asovac? S/N (*)', 'Capítulo perteneciente', 'Nivel de instrucción(*)', 'Observaciones','Área(*)','Subárea1(*)', 'Subárea2', 'Subárea3', 'Universidad(*)', 'Facultad(*)', 'Escuela(*)', 'Instituto de investigación']
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 	
 	row_num += 1
-	columns = ['usuario', 'prueba', 'M', 'V9999999', 'prueba@gmail.com', '4249999999', '2129999999', 'El Valle', 'N', 'Caracas', 'Licenciado', 'X', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', '', '', 'nombre', 'facultad', 'escuela' ]
+	columns = ['usuario', 'prueba', 'M', 'V9999999', 'prueba@gmail.com', '4249999999', '2129999999', 'El Valle', 'N', 'Caracas', 'Licenciado', 'X', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', '', '', 'nombre', 'facultad', 'escuela','instituto' ]
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 
 	row_num += 1
-	columns = ['otrousuario', 'prueba', 'F', 'P9999999', 'prueba2@gmail.com', '4269999999', '2129999999', 'Altamira', 'S', 'Caracas', 'Postgrado', '', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', 'Física del Espacio', '', 'nombre', 'facultad', 'escuela' ]
+	columns = ['otrousuario', 'prueba', 'F', 'P9999999', 'prueba2@gmail.com', '4269999999', '2129999999', 'Altamira', 'S', 'Caracas', 'Postgrado', '', 'Congreso de la Sociedad Venezolana de Física', 'Física de los Materiales', 'Física del Espacio', '', 'nombre', 'facultad', 'escuela', '' ]
 	for col_num in range(len(columns)):
 		worksheet.write(row_num, col_num, columns[col_num])
 

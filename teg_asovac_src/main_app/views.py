@@ -21,6 +21,7 @@ from django.urls import reverse
 import json
 from django.db.models import Q
 from django.db.models import Count
+from django.db import transaction
 from django.utils.crypto import get_random_string
 
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
@@ -323,6 +324,20 @@ def save_file(request,type_load):
         # Permite guardar el archivo y asignarle un nombre
         handle_uploaded_file(request.FILES['file'], file_name)
         route= "upload/"+file_name
+    else:
+        if type_load == "areas":   
+            extension = name.split('.')        	
+            file_name= "cargaAreas."+extension[1]
+            # Permite guardar el archivo y asignarle un nombre
+            handle_uploaded_file(request.FILES['file'], file_name)
+            route= "upload/"+file_name
+        else:
+            if type_load == "subareas":   
+                extension = name.split('.')        	
+                file_name= "cargaSubareas."+extension[1]
+                # Permite guardar el archivo y asignarle un nombre
+                handle_uploaded_file(request.FILES['file'], file_name)
+                route= "upload/"+file_name
     # print "Ruta del archivo: ",route
     return route
 
@@ -1333,7 +1348,23 @@ def get_area(user_id):
     subarea=usuario_asovac.sub_area.first()
     # subarea=usuario_asovac.sub_area.get()
     area= subarea.area
-    return area
+    # Para contar las areas a las que pertenece el usuario
+    subareas_usuario_asovac= usuario_asovac.sub_area.all()
+    array_areas=[]
+    areas=''
+    cont=0
+    for item in subareas_usuario_asovac:
+        # print (item.area_id in array_areas)
+        # print "{} {}".format(item.area_id,array_areas) 
+        if (item.area_id in array_areas) == False:
+            if cont == 0:
+                areas= areas+str(item.area_id)
+                cont=cont+1
+            else:
+                areas= areas+","+str(item.area_id)
+            array_areas.append(item.area_id)
+    
+    return areas
 
 
 
@@ -1474,17 +1505,35 @@ def process_subareas_modal(request,form,template_name):
 #---------------------------------------------------------------------------------#
 @login_required
 def load_areas_modal(request):
+    data=dict()
     if request.method == 'POST':
         print 'el metodo es post'
         form= UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            print request.FILES
-            return process_areas_modal(request,form,'ajax/modal_succes.html')
+            # print request.FILES
+            # return process_areas_modal(request,form,'ajax/modal_succes.html')
+    
+            # Para guardar el archivo de forma local
+            file_name= save_file(request,"areas")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo 
+            response= validate_load_areas(file_name, extension)
+
+            context={
+                'title': "Cargar Áreas",
+                'response': response['message'],
+                'status': response['status'],
+            }
+            data['form_is_valid']=response['status'] == 200
+            data['message']=response['message']
+            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
+            return JsonResponse(data)  
+
         else:
             form= UploadFileForm(request.POST, request.FILES)
             return process_areas_modal(request,form,'ajax/load_areas.html')
     else:
-        print 'el metodo es get'
         form= UploadFileForm()
 
     return process_areas_modal(request,form,'ajax/load_areas.html')
@@ -1496,12 +1545,30 @@ def load_areas_modal(request):
 #---------------------------------------------------------------------------------#
 @login_required
 def load_subareas_modal(request):
+    data=dict()
     if request.method == 'POST':
         print 'el metodo es post'
         form= UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             print request.FILES
-            return process_subareas_modal(request,form,'ajax/modal_succes.html')
+            print "El formulario es valido"
+            # return process_subareas_modal(request,form,'ajax/modal_succes.html')
+            # Para guardar el archivo de forma local
+            file_name= save_file(request,"subareas")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo 
+            response= validate_load_subareas(file_name, extension)
+
+            context={
+                'title': "Cargar Subáreas",
+                'response': response['message'],
+                'status': response['status'],
+            }
+            data['form_is_valid']=response['status'] == 200
+            data['message']=response['message']
+            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
+            return JsonResponse(data)
         else:
             form= UploadFileForm(request.POST, request.FILES)
             return process_subareas_modal(request,form,'ajax/load_subareas.html')
@@ -1562,7 +1629,172 @@ def load_users_modal(request,arbitraje_id,rol):
         data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
         return JsonResponse(data) 
 
+#---------------------------------------------------------------------------------#
+#                 Valida el contenido del excel para cargar áreas                 #
+#---------------------------------------------------------------------------------#
+def validate_load_areas(filename,extension):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
 
+    if extension == "xlsx" or extension == "xls":
+        book = xlrd.open_workbook(filename)   
+
+        if book.nsheets > 0:
+            sh = book.sheet_by_index(0)
+
+            if sh.ncols == 3:
+                data['status']=200
+                data['message']="Las áreas se han cargado de manera exitosa"
+                
+                for fila in range(sh.nrows):
+                    # Para no buscar los titulos 
+                    
+                    if fila > 0:
+                        area_exist=exist_area(sh.cell_value(rowx=fila, colx=0).strip())
+                        code_exist=exist_code(sh.cell_value(rowx=fila, colx=2).strip())
+
+                        # Se verifica que el campo  área no este vacio
+                        if sh.cell_value(rowx=fila, colx=0) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo  descripción no este vacio
+                        if sh.cell_value(rowx=fila, colx=1) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la descripción es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo  descripción no este vacio
+                        if sh.cell_value(rowx=fila, colx=2) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} código es un campo obligatorio".format(fila)
+                            break
+
+                        if area_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el área {1} ya se encuentra registrada".format(fila,sh.cell_value(rowx=fila, colx=0))
+                            break
+
+                        if code_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el código {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            break
+
+                # Inserta los registros una vez realizada la validación correspondiente
+                if data['status'] == 200:
+                    try:
+                        for fila in range(sh.nrows):
+                            area= Area()
+                            area.nombre=sh.cell_value(rowx=fila, colx=0).strip()
+                            area.descripcion=sh.cell_value(rowx=fila, colx=1).strip()
+                            area.codigo=sh.cell_value(rowx=fila, colx=2).strip()
+                            area.save()
+                    except:
+                        transaction.rollback()
+                        data['status']=400
+                        data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
+    
+    return data
+
+#---------------------------------------------------------------------------------#
+#                 Valida el contenido del excel para cargar subáreas                 #
+#---------------------------------------------------------------------------------#
+def validate_load_subareas(filename,extension):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
+    
+    if extension == "xlsx" or extension == "xls":
+        book = xlrd.open_workbook(filename)   
+
+        if book.nsheets > 0:
+            sh = book.sheet_by_index(0)
+
+            if sh.ncols == 4:
+                data['status']=200
+                data['message']="Las subáreas se han cargado de manera exitosa"
+                
+                for fila in range(sh.nrows):
+                    # Para no buscar los titulos 
+                    
+                    if fila > 0:
+                        subarea_exist=exist_subarea_nombre(sh.cell_value(rowx=fila, colx=0).strip())
+                        subarea_code_exist=exist_subarea_code(sh.cell_value(rowx=fila, colx=3).strip())
+                        
+                        if sh.cell_value(rowx=fila, colx=2) != '':
+                            area_id=exist_area_id(int(sh.cell_value(rowx=fila, colx=2)))
+                        
+                        # Se verifica que el campo  área no este vacio
+                        if sh.cell_value(rowx=fila, colx=0) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el nombre de la subárea es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo  descripción no este vacio
+                        if sh.cell_value(rowx=fila, colx=1) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la descripción es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo  area_id no este vacio
+                        if sh.cell_value(rowx=fila, colx=2) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} Id del área es un campo obligatorio".format(fila)
+                            break
+                        
+                        # Se verifica que el campo  código no este vacio
+                        if sh.cell_value(rowx=fila, colx=2) == '':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} código es un campo obligatorio".format(fila)
+                            break
+
+                        if subarea_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} la subárea {1} ya se encuentra registrada".format(fila,sh.cell_value(rowx=fila, colx=0))
+                            break
+
+                        if subarea_code_exist == True:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el código {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            break
+                        if area_id == False:
+                            # print "Error en la fila {0} el usuario {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=2))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el Id del área {1} no se encuentra registrado".format(fila,int(sh.cell_value(rowx=fila, colx=2)))
+                            break
+
+                # Inserta los registros una vez realizada la validación correspondiente
+                if data['status'] == 200:
+                    try:
+                        for fila in range(sh.nrows):
+                            if fila > 0:
+                                # print int(sh.cell_value(rowx=fila, colx=2))
+                                area=Area.objects.filter(id=int(sh.cell_value(rowx=fila, colx=2)))
+                                subarea= Sub_area()
+                                subarea.nombre=sh.cell_value(rowx=fila, colx=0).strip()
+                                subarea.descripcion=sh.cell_value(rowx=fila, colx=1).strip()
+                                subarea.area_id=int(sh.cell_value(rowx=fila, colx=2))
+                                subarea.codigo=sh.cell_value(rowx=fila, colx=3).strip()
+                                subarea.save()
+                    except:
+                        transaction.rollback()
+                        data['status']=400
+                        data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
+    
+    return data
 
 #---------------------------------------------------------------------------------#
 #                Valida el contenido del excel para cargar usuarios               #
@@ -1619,7 +1851,7 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                         if sh.cell_value(rowx=fila, colx=3) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
-                            data['message']="Error en la fila {0} el correo es un campo obligatorio".format(fila)
+                            data['message']="Error en la fila {0} el correo electrónico es un campo obligatorio".format(fila)
                             break
                         
                         # Se verifica que el campo genero no este vacio
@@ -1764,6 +1996,21 @@ def exist_area(area):
     exist= Area.objects.filter(nombre=area).exists()
     return exist
 
+def exist_subarea_nombre(subarea):
+    exist= Sub_area.objects.filter(nombre=subarea).exists()
+    return exist
+
+def exist_subarea_code(code):
+    exist= Sub_area.objects.filter(codigo=code).exists()
+    return exist
+
+def exist_area_id(id):
+    exist= Area.objects.filter(id=id).exists()
+    return exist
+
+def exist_code(code):
+    exist= Area.objects.filter(codigo=code).exists()
+    return exist
 
 
 def exist_subarea(area, subarea):
