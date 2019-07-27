@@ -655,25 +655,33 @@ def postular_trabajo(request, trabajo_id):
 
 @login_required
 #Modal para crear datos del pagador
-def postular_trabajo_pagador_modal(request, autor_trabajo_id):
+def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 	data = dict()
 	autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
 
 	if request.method == "POST":
-		form = DatosPagadorForm(request.POST)
-		if form.is_valid():
-			request.session['datos_pagador'] = form.cleaned_data
-			data['url'] = reverse('autores:postular_trabajo_factura_modal', kwargs={'autor_trabajo_id':autor_trabajo_id})
-			data['form_is_valid'] = True
+		if(step == '1'):	
+			datos_pagador_form = DatosPagadorForm(request.POST)
+			factura_form = FacturaForm()
+			pago_form = PagoForm()
 		else:
-			data['form_is_valid'] = False
+			datos_pagador_form = DatosPagadorForm()
+			factura_form = FacturaForm()
+			pago_form = PagoForm()
+		if datos_pagador_form.is_valid() and step == "1":
+			step = "2"
 
-		print(data['form_is_valid'])
 	else:
-		form = DatosPagadorForm()
+		datos_pagador_form = DatosPagadorForm()
+		factura_form = FacturaForm()
+		pago_form = PagoForm()
+		step = 1
 	context ={
-		'form': form,
+		'datos_pagador_form': datos_pagador_form,
+		'factura_form': factura_form,
+		'pago_form': pago_form,
 		'autor_trabajo': autor_trabajo,
+		'step': step
 	}
 	data['html_form'] = render_to_string('ajax/postular_trabajo_datos_pagador.html', context, request=request)
 	return JsonResponse(data)
