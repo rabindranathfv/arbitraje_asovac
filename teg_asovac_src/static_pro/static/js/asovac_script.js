@@ -691,8 +691,6 @@ var SaveAñadirPagoForm= function(){
 
     // Añadir pago a un trabajo
     $('#modal-user').on('submit','.create-datos-pagador',saveFileFormAndRedirect);
-    $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
-    $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
 
     //show areas
     $('.show_areas').click(ShowForm);
