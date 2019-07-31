@@ -22,7 +22,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 
 from trabajos.models import Trabajo, Trabajo_arbitro
 
-from .utils import generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations
+from .utils import generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations, generate_authors_certificate
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -206,7 +206,7 @@ def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
 
-    filename = "AsoVAC_Carta_Aceptacion.pdf"
+    filename = "AsoVAC_Certificado_Autores.pdf"
 
     context = {}
     context["header_url"] = arbitraje.cabecera
@@ -217,14 +217,15 @@ def generate_pdf(request,*args , **kwargs):
     context["sex"] = 'F'
     context["full_name"] = 'Karla Calo'
     context["roman_number"] = 'LXVII'
-    context["work_title"] = 'ESCALAMIENTO A ESCALA INDUSTRIAL DE UNA CREMA AZUFRADA OPTIMIZADA MEDIANTE\
-    UN DISEÑO EXPERIMENTAL'
+    context["work_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX ODORATA)\
+     EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
     context["work_code"] = 'BC-24'
     context["start_date"] = '29 de Noviembre'
     context["finish_date"] = '1 de Diciembre de 2018'
     context["convention_place"] = "Universidad Metropolintana (UNIMET) y la Universidad Central de Venezuela (UCV)"
     context["convention_saying"] = '"Ciencia, Tecnología e Innovación en Democracia"'
-    context["authors"] = ['Karla Calo', 'Luis Henríquez']
+    context["authors"] = ['Rabindranath Ferreira'] * 5
+    #['Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres', 'Yoleida Soto Anes','Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres']
     context["max_info_date"] = '15 de Noviembre'
     context["observations"] =   ['El resumen no cumple con el formato indicado en la normativa de la Convención y el modelo enviado.',
                                 'No se cumple con lo solicitado para el formato de nombres y apellidos de los autores completos, separados por coma.',
@@ -237,7 +238,7 @@ def generate_pdf(request,*args , **kwargs):
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
 
-    return generate_acceptation_letter_with_observations(filename, context)
+    return generate_authors_certificate(filename, context)
 
 
 @login_required
@@ -246,8 +247,6 @@ def resources_author(request):
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
