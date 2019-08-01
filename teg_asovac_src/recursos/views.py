@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random 
+import os
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render,redirect
-from django.template.loader import get_template
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.timezone import now as timezone_now
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,9 +18,12 @@ from autores.models import Autores_trabajos, Autor
 from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
-from trabajos.models import Trabajo, Trabajo_arbitro
+from trabajos.models import Trabajo_arbitro
 
-from .utils import generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations, generate_authors_certificate
+from .utils import CertificateGenerator, generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations#, generate_authors_certificate
+
+MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -238,8 +239,39 @@ def generate_pdf(request,*args , **kwargs):
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
 
-    return generate_authors_certificate(filename, context)
+    certificate_gen = CertificateGenerator(filename, context)
 
+    return certificate_gen.get_authors_certificate()
+
+@login_required
+def create_authors_certificates(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+
+    filename = "AsoVAC_Certificado_Autores.pdf"
+
+    now = timezone_now()
+    now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
+    path1 = arbitraje.firma1.url.replace('/media/', '')
+    path2 = arbitraje.firma2.url.replace('/media/', '')
+    path_logo = arbitraje.logo.url.replace('/media/', '')
+    context = {}
+    context["city"] = 'Caracas'
+    context["header_url"] = arbitraje.cabecera
+    context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
+    context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
+    context["authority2_info"] = arbitraje.autoridad2.replace(',', '<br/>')
+    context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
+    context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
+    context['date_string'] = now_date_string
+
+    context["work_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX ODORATA)\
+     EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    context["authors"] = ['Rabindranath Ferreira'] * 5
+
+    certificate_gen = CertificateGenerator()
+
+    return certificate_gen.get_authors_certificate(context, filename)
 
 @login_required
 def resources_author(request):

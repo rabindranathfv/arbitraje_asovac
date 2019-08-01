@@ -15,7 +15,6 @@ from django.conf import settings
 from django.http import HttpResponse
 
 
-
 def get_image(path, width=1*inch):
     img = utils.ImageReader(path)
     iw, ih = img.getSize()
@@ -46,33 +45,6 @@ def set_letter_pdf_buffer_and_styles():
 
     return buffer, doc, styles
 
-
-def set_certificate_pdf_buffer_and_styles():
-    buffer = BytesIO()
-
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=landscape(letter),
-        rightMargin=30,
-        leftMargin=30,
-        topMargin=30,
-        bottomMargin=30
-    )
-
-    styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='Simple', alignment=TA_LEFT, leftIndent=48))
-    styles.add(ParagraphStyle(name='DocType', alignment=TA_LEFT, leftIndent=48, fontName='Times-Roman'))
-    styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
-    styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
-    styles.add(ParagraphStyle(name='Authors', alignment=TA_CENTER, leftIndent=24, rightIndent=24,
-                              fontSize=22, leading=28, textColor=ReportLabBlue))
-    styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=60, rightIndent=60,
-                              fontSize=20, leading=24,))
-    styles.add(ParagraphStyle(name='IdentedBullets', alignment=TA_JUSTIFY, bulletFontSize=14,
-                              bulletIndent=48, leftIndent=60, rightIndent=24))
-
-    return buffer, doc, styles
 
 
 def append_pdf_header_date_and_greetings(story, context, styles):
@@ -353,101 +325,143 @@ def generate_rejection_letter_with_observations(filename, context):
 
     return response
 
-## Esta es la función encargada de generar una respuesta PDF para un certificado de autores.
-def generate_authors_certificate(filename, context):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename=' + filename
+# Esta clase permite generar certificados dado un contexto.
+class CertificateGenerator:
 
-    buffer, doc, styles = set_certificate_pdf_buffer_and_styles()
+    def __init__(self):
+        self.styles = None
+        self.context = None
 
-    story = []
+    def _set_buffer_and_styles(self):
+        my_buffer = BytesIO()
 
-    #doc.showBoundary = 1
+        doc = SimpleDocTemplate(
+            my_buffer,
+            pagesize=landscape(letter),
+            rightMargin=30,
+            leftMargin=30,
+            topMargin=30,
+            bottomMargin=30
+        )
 
-    try:
-        im = get_image(context["header_url"], width=10*inch)
-        #im = Image(context["header_url"], width=10*inch)#, 0.1*inch, 0.1*inch
-        im.hAlign = 'CENTER'
-        story.append(im)
-        story.append(Spacer(1, 24))
-    except:
-        pass
+        self.styles = getSampleStyleSheet()
+        self.styles.add(ParagraphStyle(name='Simple', alignment=TA_LEFT, leftIndent=48))
+        self.styles.add(ParagraphStyle(name='DocType', alignment=TA_LEFT, leftIndent=48, fontName='Times-Roman'))
+        self.styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
+        self.styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
+        self.styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+        self.styles.add(ParagraphStyle(name='Authors', alignment=TA_CENTER, leftIndent=24, rightIndent=24,
+                                       fontSize=22, leading=28, textColor=ReportLabBlue))
+        self.styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=60, rightIndent=60,
+                                       fontSize=20, leading=24,))
+        self.styles.add(ParagraphStyle(name='IdentedBullets', alignment=TA_JUSTIFY, bulletFontSize=14,
+                                       bulletIndent=48, leftIndent=60, rightIndent=24))
 
-    ## Primera línea del certificado.
-    ptext = '<font size=15>La Asociación Venezolana para el Avance de la Ciencia (AsoVAC) otorga el presente</font>'
-    story.append(Paragraph(ptext, styles["Simple"]))
-    story.append(Spacer(1, 12))
+        return my_buffer, doc
 
-    ## Tipo de Documento
-    ptext = '<font size=36><b>CERTIFICADO</b> a:</font>'
-    story.append(Paragraph(ptext, styles["DocType"]))
-    story.append(Spacer(1, 40))
+    ## Esta es la función encargada de generar una respuesta PDF para un certificado de autores.
+    def get_authors_certificate(self, context, filename):
+        """
+        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
+        - context["header_url"]
+        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+        - context["authority1_info"] = Informacion formateada de la autoridad1
+        - context["signature1_path"] = Camino local de la imagen de la firma1
+        - context["authority2_info"] = Informacion formateada de la autoridad2
+        - context["signature2_path"] = Camino local de la imagen de la firma2
+        - context["logo_path"] = Camino local de la imagen del logo
+        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        - context["work_title"] = String que representa el nombre del trabajo completo.
+        - context["authors"] = Lista de Strings con nombres  de los autores del paper.
 
-    ## Autores del paper.
-    ptext = '<font><b>%s</b></font>' % ", ".join(context["authors"])
-    story.append(Paragraph(ptext, styles["Authors"]))
-    story.append(Spacer(1, 16))
+        """
+        self.context = context
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename=' + filename
 
-    ## Presentando y colocando el titulo del paper
-    ptext = '<font size=15>Por la presentación de la ponencia del trabajo libre:</font>'
-    story.append(Paragraph(ptext, styles["Simple"]))
-    story.append(Spacer(1, 12))
+        my_buffer, doc = self._set_buffer_and_styles()
 
-    ptext = '<font><b>%s</b></font>' % context["work_title"]
-    story.append(Paragraph(ptext, styles["Work_Title"]))
-    story.append(Spacer(1, 12))
+        story = []
 
-    doc.build(story, onFirstPage=canvas_footer_editing)
+        try:
+            header_img = get_image(self.context["header_url"], width=10*inch)
+            header_img.hAlign = 'CENTER'
+            story.append(header_img)
+            story.append(Spacer(1, 24))
+        except:
+            pass
 
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
+        ## Primera línea del certificado.
+        ptext = '<font size=15>La Asociación Venezolana para el Avance de la Ciencia (AsoVAC) otorga el presente</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
 
-    return response
+        ## Tipo de Documento
+        ptext = '<font size=36><b>CERTIFICADO</b> a:</font>'
+        story.append(Paragraph(ptext, self.styles["DocType"]))
+        story.append(Spacer(1, 40))
 
-def canvas_footer_editing(canvas, doc):
+        ## Autores del paper.
+        ptext = '<font><b>%s</b></font>' % ", ".join(self.context["authors"])
+        story.append(Paragraph(ptext, self.styles["Authors"]))
+        story.append(Spacer(1, 16))
 
-    logo_path = os.path.join(settings.STATIC_ROOT, "img", "AsoVac_Logo.jpg")
-    signature_path = 'http://help.itc.ihu.edu.gr/pki/ds/dg_img/signature_sample.jpg'
-    footer_height = 55
-    page_width, page_height = landscape(letter)
-    signature_width = 2*inch
-    logo_width = 1.2*inch
+        ## Presentando y colocando el titulo del paper
+        ptext = '<font size=15>Por la presentación de la ponencia del trabajo libre:</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
 
-    default_styles = getSampleStyleSheet()
-    default_styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
-    default_styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+        ptext = '<font><b>%s</b></font>' % self.context["work_title"]
+        story.append(Paragraph(ptext, self.styles["Work_Title"]))
+        story.append(Spacer(1, 12))
 
-    canvas.saveState()
-    #Agregar borde del certificado
-    canvas.rect(30, 30, 732, 552, stroke=1, fill=0)
-    # Primera autoridad y su firma
-    signature1 = get_image(signature_path, width=signature_width)
-    # Se ubica a un cuarto del documento a partir del margen
-    x_coord = (page_width / 5) + 30 - (signature_width / 2)
-    y_coord = footer_height + 20
-    signature1.drawOn(canvas, x_coord, y_coord)
+        doc.build(story, onFirstPage=self.canvas_footer_editing)
 
-    paragraph = Paragraph("""<font size=12>Dr. Rafael Arturo Vasquez Balza<br/>Secretario General<br/>AsoVAC Capítulo Caracas</font>""",
-                          default_styles['Right'])
-    paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 90, footer_height)
+        pdf = my_buffer.getvalue()
+        my_buffer.close()
+        response.write(pdf)
 
-    # Segunda autoridad y su firma
-    signature2 = get_image(signature_path, width=signature_width)
-    x_coord = (3 * page_width / 4) + 30 - (signature_width / 2)
-    signature2.drawOn(canvas, x_coord, y_coord)
-    paragraph = Paragraph("""<font size=12>Dra. Marisol Aguilera Meneses<br/>Presidente<br/>AsoVAC</font>""",
-                          default_styles['Normal'])
-    paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 510, footer_height)
+        return response
 
-    # Fecha y Sello de AsoVAC
-    asovac_logo = get_image(logo_path, width=logo_width)
-    asovac_logo.drawOn(canvas, 350, footer_height)
-    paragraph = Paragraph("""<font size=10>Caracas 30 de Diciembre de 2017</font>""",
-                          default_styles['Center'])
-    paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 295, footer_height-18)
+    def canvas_footer_editing(self, canvas, doc):
+        # En esta funcion, se dibuja el borde y los elementos del
+        # footer del certificado utilizando el canvas del documento.
+        footer_height = 55
+        page_width, page_height = landscape(letter)
+        signature_width = 2*inch
+        logo_width = 1.2*inch
 
-    canvas.restoreState()
+        canvas.saveState()
+        #Agregar borde del certificado
+        canvas.rect(30, 30, 732, 552, stroke=1, fill=0)
+        # Primera autoridad y su firma
+        signature1 = get_image(self.context["signature1_path"], width=signature_width)
+        # Se ubica a un quinto del documento a partir del margen
+        x_coord = (page_width / 5) + 50 - (signature_width / 2)
+        y_coord = footer_height + 20
+        signature1.drawOn(canvas, x_coord, y_coord)
+
+        paragraph = Paragraph("""<font size=12>%s</font>""" % self.context["authority1_info"],
+                              self.styles['Right'])
+        paragraph.wrapOn(canvas, 200, 50)
+        paragraph.drawOn(canvas, 90, footer_height)
+
+        # Segunda autoridad y su firma
+        signature2 = get_image(self.context["signature2_path"], width=signature_width)
+        # Se ubica a tres cuartos del documento a partir del margen
+        x_coord = (3 * page_width / 4) + 30 - (signature_width / 2)
+        signature2.drawOn(canvas, x_coord, y_coord)
+        paragraph = Paragraph("""<font size=12>%s</font>""" % self.context["authority2_info"],
+                              self.styles['Normal'])
+        paragraph.wrapOn(canvas, 200, 50)
+        paragraph.drawOn(canvas, 510, footer_height)
+
+        # Fecha y Sello de AsoVAC
+        asovac_logo = get_image(self.context["logo_path"], width=logo_width)
+        asovac_logo.drawOn(canvas, 350, footer_height)
+        paragraph = Paragraph("""<font size=10>%s %s</font>""" % (self.context["city"], self.context["date_string"]),
+                              self.styles['Center'])
+        paragraph.wrapOn(canvas, 200, 50)
+        paragraph.drawOn(canvas, 295, footer_height-18)
+
+        canvas.restoreState()
