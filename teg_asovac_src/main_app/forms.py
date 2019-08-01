@@ -87,7 +87,12 @@ class DataBasicForm(forms.ModelForm):
             'fecha_fin_arbitraje',
             'cabecera',
             'color_fondo_pie',
-            'color_letras_pie'
+            'color_letras_pie',
+            'autoridad1',
+            'firma1',
+            'autoridad2',
+            'firma2',
+            'logo'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
@@ -100,6 +105,10 @@ class DataBasicForm(forms.ModelForm):
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
+        }
+        help_texts = {
+            'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
+            'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
         }
 
     def __init__(self, *args, **kwargs):
@@ -141,6 +150,36 @@ class DataBasicForm(forms.ModelForm):
                 ,),
                 css_class="row",
                 style="padding-left: 15px;"
+            ),
+            HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
+            'autoridad1',
+            'firma1',
+            Div(
+                HTML("""{% if form.instance.firma1 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 1</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma1 %}<img src="{{ form.instance.firma1.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'autoridad2',
+            'firma2',
+            Div(
+                HTML("""{% if form.instance.firma2 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 2</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma2 %}<img src="{{ form.instance.firma2.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'logo',
+            Div(
+                HTML("""{% if form.instance.logo.url %}<label class="control-label col-sm-3">Imagen de Logo</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.logo.url %}<img src="{{ form.instance.logo.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
             ),
             Div(
                 Div(
