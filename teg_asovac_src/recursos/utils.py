@@ -19,6 +19,7 @@ from django.http import HttpResponse
 def get_image(path, width=1*inch):
     img = utils.ImageReader(path)
     iw, ih = img.getSize()
+    print (iw, ih)
     aspect = ih / float(iw)
     return Image(path, width=width, height=(width * aspect))
 
@@ -68,7 +69,7 @@ def set_certificate_pdf_buffer_and_styles():
                               fontSize=22, leading=28, textColor=ReportLabBlue))
     styles.add(ParagraphStyle(name='Work_Title', alignment=TA_CENTER, leftIndent=60, rightIndent=60,
                               fontSize=20, leading=24,))
-    styles.add(ParagraphStyle(name='IdentedBullets',  alignment=TA_JUSTIFY, bulletFontSize=14,
+    styles.add(ParagraphStyle(name='IdentedBullets', alignment=TA_JUSTIFY, bulletFontSize=14,
                               bulletIndent=48, leftIndent=60, rightIndent=24))
 
     return buffer, doc, styles
@@ -406,39 +407,47 @@ def generate_authors_certificate(filename, context):
 
 def canvas_footer_editing(canvas, doc):
 
+    logo_path = os.path.join(settings.STATIC_ROOT, "img", "AsoVac_Logo.jpg")
+    signature_path = 'http://help.itc.ihu.edu.gr/pki/ds/dg_img/signature_sample.jpg'
+    footer_height = 55
+    page_width, page_height = landscape(letter)
+    signature_width = 2*inch
+    logo_width = 1.2*inch
+
     default_styles = getSampleStyleSheet()
     default_styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
     default_styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
 
     canvas.saveState()
-    footerHeight = 55
-
     #Agregar borde del certificado
     canvas.rect(30, 30, 732, 552, stroke=1, fill=0)
+    # Primera autoridad y su firma
+    signature1 = get_image(signature_path, width=signature_width)
+    # Se ubica a un cuarto del documento a partir del margen
+    x_coord = (page_width / 5) + 30 - (signature_width / 2)
+    y_coord = footer_height + 20
+    signature1.drawOn(canvas, x_coord, y_coord)
 
-    # Primera autoridad y su firma http://help.itc.ihu.edu.gr/pki/ds/dg_img/signature_sample.jpg
-    im = get_image('http://help.itc.ihu.edu.gr/pki/ds/dg_img/signature_sample.jpg', width=2*inch)
-    im.drawOn(canvas, 130, footerHeight + 20)
-    paragraph = Paragraph("""<font size=12>Dr. Ernesto Fuenmayor Di Prisco<br/>Secretario General<br/>AsoVAC Capítulo Caracas</font>""",
-                  default_styles['Right'])
+    paragraph = Paragraph("""<font size=12>Dr. Rafael Arturo Vasquez Balza<br/>Secretario General<br/>AsoVAC Capítulo Caracas</font>""",
+                          default_styles['Right'])
     paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 90, footerHeight)
+    paragraph.drawOn(canvas, 90, footer_height)
 
     # Segunda autoridad y su firma
-    im = get_image('http://help.itc.ihu.edu.gr/pki/ds/dg_img/signature_sample.jpg', width=2*inch)
-    im.drawOn(canvas, 520, footerHeight + 20)
+    signature2 = get_image(signature_path, width=signature_width)
+    x_coord = (3 * page_width / 4) + 30 - (signature_width / 2)
+    signature2.drawOn(canvas, x_coord, y_coord)
     paragraph = Paragraph("""<font size=12>Dra. Marisol Aguilera Meneses<br/>Presidente<br/>AsoVAC</font>""",
-                  default_styles['Normal'])
+                          default_styles['Normal'])
     paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 510, footerHeight)
+    paragraph.drawOn(canvas, 510, footer_height)
 
     # Fecha y Sello de AsoVAC
-    logo_path = os.path.join(settings.STATIC_ROOT, "img", "AsoVac_Logo.jpg")
-    im = get_image(logo_path, width=1.2*inch)
-    im.drawOn(canvas, 350, footerHeight)
+    asovac_logo = get_image(logo_path, width=logo_width)
+    asovac_logo.drawOn(canvas, 350, footer_height)
     paragraph = Paragraph("""<font size=10>Caracas 30 de Diciembre de 2017</font>""",
-                  default_styles['Center'])
+                          default_styles['Center'])
     paragraph.wrapOn(canvas, 200, 50)
-    paragraph.drawOn(canvas, 295, footerHeight-18)
+    paragraph.drawOn(canvas, 295, footer_height-18)
 
     canvas.restoreState()
