@@ -629,7 +629,7 @@ def postular_trabajo(request, trabajo_id):
 	sistema_asovac = Sistema_asovac.objects.get(id = event_id)
 	autor_trabajo = Autores_trabajos.objects.get(autor = autor, sistema_asovac = sistema_asovac, trabajo = trabajo_id )
 
-	facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = trabajo_id)
+	facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = trabajo_id, postulacion_numero = autor_trabajo.numero_postulacion)
 
 	print facturas
 	context = {
@@ -691,16 +691,19 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			factura.pago = pago
 			factura.iva = factura.monto_total * autor_trabajo.sistema_asovac.porcentaje_iva / 100
 			factura.monto_subtotal = factura.monto_total - factura.iva
+			factura.postulacion_numero = autor_trabajo.numero_postulacion
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
 			if autor_trabajo.monto_total <= 0:
 				autor_trabajo.pagado = True
+				autor_trabajo.esperando_modificacion_pago = False
 			autor_trabajo.save()
 			#Código para actualizar estados de las otras instancias de autor_trabajo
 			autores_trabajo_list = Autores_trabajos.objects.filter(trabajo = autor_trabajo.trabajo)
 			for autor_trabajo_to_update in autores_trabajo_list:
 				autor_trabajo_to_update.monto_total = autor_trabajo.monto_total
 				autor_trabajo_to_update.pagado = autor_trabajo.pagado
+				autor_trabajo_to_update.esperando_modificacion_pago = autor_trabajo.esperando_modificacion_pago
 				autor_trabajo_to_update.save()
 			messages.success(request, 'Pago añadido con éxito.')
 			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
