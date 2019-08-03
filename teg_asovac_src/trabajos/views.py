@@ -24,7 +24,7 @@ from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 
-from .forms import TrabajoForm, EditTrabajoForm #, AutorObservationsFinalVersionJobForm
+from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
 from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
@@ -1288,4 +1288,54 @@ def view_referee_observation(request, trabajo_id):
         'trabajo': trabajo,
     }
     data['html_form'] = render_to_string('ajax/referee_job_observations.html', context, request=request)
+    return JsonResponse(data)
+
+
+@login_required
+def request_new_pay(request, trabajo_id):
+    data = dict()
+    autores_trabajo = Autores_trabajos.objects.filter(trabajo__id = trabajo_id)
+    if request.method == "POST":
+        emails_list = []
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            razones_rechazo = form.cleaned_data['motivo_rechazo']
+            sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+            for autor_trabajo in autores_trabajo:   
+                emails_list.append(autor_trabajo.autor.correo_electronico)
+                autor_trabajo.pagado = False
+                autor_trabajo.esperando_modificacion_pago =  True
+                autor_trabajo.monto_total = sistema.monto_pagar_trabajo
+                autor_trabajo.numero_postulacion += 1
+                autor_trabajo.save()
+            autores_trabajo.first().trabajo.confirmacion_pago = "Pago Pendiente"
+            context = {
+            'sistema': sistema.nombre,
+            'trabajo': autores_trabajo.first().trabajo,
+            'razones_rechazo': razones_rechazo
+            }
+            msg_plain = render_to_string('../templates/email_templates/request_new_pay.txt', context)
+            msg_html = render_to_string('../templates/email_templates/request_new_pay.html', context)
+
+            value = send_mail(
+                'Error en pagos de postular trabajo',           #titulo
+                msg_plain,                                      #mensaje txt
+                config('EMAIL_HOST_USER'),                      #email de envio
+                emails_list,                                    #destinatario
+                html_message=msg_html,                          #mensaje en html
+            )
+            if value == 1:
+                messages.success(request, "Se han solicitado los nuevos pagos con éxito.")
+            else:
+                messages.success(request, "Hubo un error en el envío de correos, por favor pongase en contacto con los autores del trabajo.")
+
+            return redirect('trabajos:checkPago', id = trabajo_id)
+    else:
+        form = MessageForm()
+    
+    context = {
+        'form':form,
+        'trabajo': autores_trabajo.first().trabajo
+    }
+    data['html_form'] = render_to_string('ajax/message_form_modal.html', context, request=request)
     return JsonResponse(data)
