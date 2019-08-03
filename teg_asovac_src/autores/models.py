@@ -89,6 +89,7 @@ class Autores_trabajos(models.Model):
 	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
 	numero_postulacion = models.SmallIntegerField(default = 1)
+	esperando_modificacion_pago = models.BooleanField(default=False) #Este nuevo campo se utilizará para saber si la postulación tuvo un error en el pago y requiere que se suba de nuevo para ser arbitrado
 
 	def __str__(self):
 		return "{} - {}".format(self.autor.nombres, self.trabajo.titulo_espanol)#.encode('utf-8', errors='replace')
