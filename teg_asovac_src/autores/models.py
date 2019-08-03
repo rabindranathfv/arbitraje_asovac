@@ -88,6 +88,7 @@ class Autores_trabajos(models.Model):
 	es_coautor = models.BooleanField(default=False)
 	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
+	numero_postulacion = models.SmallIntegerField(default = 1)
 
 	def __str__(self):
 		return "{} - {}".format(self.autor.nombres, self.trabajo.titulo_espanol)#.encode('utf-8', errors='replace')
@@ -180,7 +181,8 @@ class Factura(models.Model):
 	fecha_emision = models.DateField()
 	iva = models.FloatField()
 	monto_total = models.FloatField()
-	
+	postulacion_numero = models.SmallIntegerField()
+
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
 	#def __str__(self):
