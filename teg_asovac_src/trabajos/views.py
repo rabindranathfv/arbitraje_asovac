@@ -1298,6 +1298,7 @@ def request_new_pay(request, trabajo_id):
     if request.method == "POST":
         emails_list = []
         form = MessageForm(request.POST)
+        autor_principal = Autores_trabajos.objects.get(trabajo__id = trabajo_id, es_autor_principal = True)
         if form.is_valid():
             razones_rechazo = form.cleaned_data['motivo_rechazo']
             sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
@@ -1308,7 +1309,7 @@ def request_new_pay(request, trabajo_id):
                 autor_trabajo.monto_total = sistema.monto_pagar_trabajo
                 autor_trabajo.numero_postulacion += 1
                 autor_trabajo.save()
-            autores_trabajo.first().trabajo.confirmacion_pago = "Pago Pendiente"
+
             context = {
             'sistema': sistema.nombre,
             'trabajo': autores_trabajo.first().trabajo,
@@ -1327,9 +1328,10 @@ def request_new_pay(request, trabajo_id):
             if value == 1:
                 messages.success(request, "Se han solicitado los nuevos pagos con éxito.")
             else:
-                messages.success(request, "Hubo un error en el envío de correos, por favor pongase en contacto con los autores del trabajo.")
+                message = "Hubo un error en el envío de correos, por favor pongase en contacto con el autor principal del trabajo, este es su correo electrónico: " + autor_principal.autor.correo_electronico 
+                messages.success(request, message)
 
-            return redirect('trabajos:checkPago', id = trabajo_id)
+            return redirect('trabajos:jobs_list')
     else:
         form = MessageForm()
     
