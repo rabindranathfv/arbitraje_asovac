@@ -234,10 +234,13 @@ class PagoForm(forms.ModelForm):
 
 	def clean_numero_cuenta_origen(self):
 		numero_cuenta_origen = self.cleaned_data['numero_cuenta_origen']
-		if(numero_cuenta_origen[4] != '-' or numero_cuenta_origen[9] != '-' or numero_cuenta_origen[14] != '-' or numero_cuenta_origen[19] != '-'):
-			raise forms.ValidationError(_("Formato incorrecto, debe ser de la siguiente forma: XXXX-XXXX-XXXX-XXXX-XXXX (incluyendo guiones)"),code="invalid")
-		if(not numero_cuenta_origen[:4].isdigit() or not numero_cuenta_origen[5:9].isdigit() or not numero_cuenta_origen[10:14].isdigit() or not numero_cuenta_origen[15:19].isdigit() or not numero_cuenta_origen[20:].isdigit()):
-			raise forms.ValidationError(_("El número de cuenta no puede tener letras o espacios."), code="invalid")
+		if(len(numero_cuenta_origen) == 24):
+			if(numero_cuenta_origen[4] != '-' or numero_cuenta_origen[9] != '-' or numero_cuenta_origen[14] != '-' or numero_cuenta_origen[19] != '-'):
+				raise forms.ValidationError(_("Formato incorrecto, debe ser de la siguiente forma: XXXX-XXXX-XXXX-XXXX-XXXX (incluyendo guiones)"),code="invalid")
+			if(not numero_cuenta_origen[:4].isdigit() or not numero_cuenta_origen[5:9].isdigit() or not numero_cuenta_origen[10:14].isdigit() or not numero_cuenta_origen[15:19].isdigit() or not numero_cuenta_origen[20:].isdigit()):
+				raise forms.ValidationError(_("El número de cuenta no puede tener letras o espacios."), code="invalid")
+		else:
+			raise forms.ValidationError(_("Formato o cantidad de números incorrectos"), code="invalid")
 		return numero_cuenta_origen
 
 	def clean_numero_transferencia(self):
