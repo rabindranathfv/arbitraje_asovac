@@ -2654,7 +2654,6 @@ def list_usuarios(request):
   
             # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
             # total= len(data)
-
     # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
         # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
@@ -2689,19 +2688,25 @@ def generate_report(request,tipo):
     # Para exportar información de usuarios 
     if tipo == '1':
         # consulta para obtener informacion de los usuarios
-        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        sort="id"
+        order='first_name'
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        order_by=" ORDER BY au.first_name asc "
         query_count=query
-        query= query
+        query= query + order_by
         
         data= User.objects.raw(query)
         data_count= User.objects.raw(query_count)
+        # Fecha
+        date=datetime.datetime.now()
+        date=date.year
         total=0
         for item in data_count:
             total=total+1
 
         # Para definir propiedades del documento de excel
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=Usuarios.xls'
+        response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_listado_de_usuarios.xls'.format(date)
         workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet("Usuarios")
         # Para agregar los titulos de cada columna

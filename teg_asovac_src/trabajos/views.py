@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from decouple import config
-import json, random, string, xlrd, os, sys, xlwt
+from datetime import date
+import json, random, string, xlrd, os, sys, xlwt,datetime
 
 from django.conf import settings
 from django.core.mail import EmailMessage, send_mail
@@ -707,7 +708,7 @@ def list_trabajos(request):
                 if rol_user == 3:
                     data= User.objects.raw(query,[event_id])
                     data_count= User.objects.raw(query_count,[event_id])
-           
+
             total=0
             for item in data_count:
                 total=total+1
@@ -1165,30 +1166,32 @@ def viewEstatus(request,id):
 #---------------------------------------------------------------------------------#
 @login_required
 def generate_report(request,tipo):
-    print "Excel para arbitros"
+    print "Excel para trabajos"
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
     arbitraje_id = request.session['arbitraje_id']
     area= user_area
-    # Para exportar información de Arbitro 
+    # Fecha
+    date=datetime.datetime.now()
+    date=date.year
+    
+    # Para exportar información de los trabajos
     if tipo == '1':
-        
-        # consulta mas completa
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-            where=' WHERE sis_aso.id= %s '
-            query= query+where
+                query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                query= query+where
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                where=' WHERE sis_aso.id= %s AND main_a.id in ({}) '.format(area)
+                query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                 query= query+where
         
-    
-        order_by="trab.estatus"
+        
+        order_by=" ORDER BY trab.id asc"
         query_count=query
-        query= query + " ORDER BY " + order_by
+        query= query + order_by
         
         if rol_user == 1 or rol_user ==2 :
             data= User.objects.raw(query,event_id)
@@ -1197,29 +1200,144 @@ def generate_report(request,tipo):
             if rol_user == 3:
                 data= User.objects.raw(query,[event_id])
                 data_count= User.objects.raw(query_count,[event_id])
-        
+
         total=0
         for item in data_count:
             total=total+1
 
         # Para definir propiedades del documento de excel
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=Trabajos.xls'
+        response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_lista_de_trabajos.xls'.format(date)
         workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet("Usuarios")
         # Para agregar los titulos de cada columna
         row_num = 0
-        columns = ['Estatus', 'Área', 'Título','Presentación','Observaciones']
+        columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Pago','Observaciones']
         for col_num in range(len(columns)):
             worksheet.write(row_num, col_num, columns[col_num])     
         
         for item in data:
             row_num += 1
-            row = [item.estatus ,item.nombre ,item.titulo_espanol ,item.forma_presentacion,item.observaciones]
+            row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,item.confirmacion_pago,item.observaciones]
             for col_num in range(len(row)):
                 worksheet.write(row_num, col_num, row[col_num])
         
         workbook.save(response)
+
+    else:
+        if tipo== '2':
+            print "Estatus del arbitraje"
+            if rol_user == 1 or rol_user == 2:
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' "
+                query= query+where
+            else:
+                if rol_user == 3:
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(area)
+                    query= query+where
+
+            order_by=" ORDER BY trab.id asc"
+            query_count=query
+            query= query + order_by
+
+            if rol_user == 1 or rol_user ==2 :
+                data= User.objects.raw(query,event_id)
+                data_count= User.objects.raw(query_count,event_id)
+            else:
+                if rol_user == 3:
+                    data= User.objects.raw(query,[event_id])
+                    data_count= User.objects.raw(query_count,[event_id])
+           
+            total=0
+            for item in data_count:
+                total=total+1
+
+            # Para definir propiedades del documento de excel
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_estatus_de_trabajos.xls'.format(date)
+            workbook = xlwt.Workbook()
+            worksheet = workbook.add_sheet("Usuarios")
+            # Para agregar los titulos de cada columna
+            row_num = 0
+            columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Version','Observaciones']
+            for col_num in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[col_num])     
+            
+            for item in data:
+                if item.requiere_arbitraje == False and item.estatus == "Aceptado":
+                    revision="Final"
+                else:
+                    if item.estatus == "Pendiente":
+                        revision="Sin revisar"
+                    else:
+                        if item.estatus == "Rechazado":
+                            revision="Final"
+                        else:
+                            revision="Con correcciones"
+                row_num += 1
+                row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,revision,item.observaciones]
+                for col_num in range(len(row)):
+                    worksheet.write(row_num, col_num, row[col_num])
+            
+            workbook.save(response)
+        else:
+            # print "tipo 3"
+            if tipo== '3':
+                if rol_user == 1 or rol_user == 2:
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' "
+                    query= query+where
+                else:
+                    if rol_user == 3:
+                        query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                        where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(area)
+                        query= query+where
+
+                order_by=" ORDER BY trab.id asc"
+                query_count=query
+                query= query + order_by
+                
+                if rol_user == 1 or rol_user ==2 :
+                    data= User.objects.raw(query,event_id)
+                    data_count= User.objects.raw(query_count,event_id)
+                else:
+                    if rol_user == 3:
+                        data= User.objects.raw(query,[event_id])
+                        data_count= User.objects.raw(query_count,[event_id])
+
+                total=0
+                for item in data_count:
+                    total=total+1
+
+                # Para definir propiedades del documento de excel
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_trabajos_aceptados.xls'.format(date)
+                workbook = xlwt.Workbook()
+                worksheet = workbook.add_sheet("Usuarios")
+                # Para agregar los titulos de cada columna
+                row_num = 0
+                columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Version','Observaciones']
+                for col_num in range(len(columns)):
+                    worksheet.write(row_num, col_num, columns[col_num])     
+                
+                for item in data:
+                    if item.requiere_arbitraje == False and item.estatus == "Aceptado":
+                        revision="Final"
+                    else:
+                        if item.estatus == "Pendiente":
+                            revision="Sin revisar"
+                        else:
+                            if item.estatus == "Rechazado":
+                                revision="Final"
+                            else:
+                                revision="Con correcciones"
+                    row_num += 1
+                    row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,revision,item.observaciones]
+                    for col_num in range(len(row)):
+                        worksheet.write(row_num, col_num, row[col_num])
+            
+                workbook.save(response)
 
     return response
 
