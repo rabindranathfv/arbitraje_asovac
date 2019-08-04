@@ -658,22 +658,23 @@ def postular_trabajo(request, trabajo_id):
 def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 	data = dict()
 	autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
+	sistema = request.session['arbitraje_id']
 	datos_pagador_form = DatosPagadorForm()
-	factura_form = FacturaForm()
-	pago_form = PagoForm()
+	factura_form = FacturaForm(sistema_id = sistema)
+	pago_form = PagoForm(sistema_id = sistema)
 	if request.method == "POST":
 		if(step == '1'):	
 			datos_pagador_form = DatosPagadorForm(request.POST)
-			factura_form = FacturaForm()
-			pago_form = PagoForm()
+			factura_form = FacturaForm(sistema_id = sistema)
+			pago_form = PagoForm(sistema_id = sistema)
 		elif(step == '2'):
 			datos_pagador_form = DatosPagadorForm(request.POST)
-			factura_form = FacturaForm(request.POST)
-			pago_form = PagoForm()
+			factura_form = FacturaForm(request.POST, sistema_id = sistema)
+			pago_form = PagoForm(sistema_id = sistema)
 		elif(step == '3'):
 			datos_pagador_form = DatosPagadorForm(request.POST)
-			factura_form = FacturaForm(request.POST)
-			pago_form = PagoForm(request.POST, request.FILES)
+			factura_form = FacturaForm(request.POST, sistema_id = sistema)
+			pago_form = PagoForm(request.POST, request.FILES, sistema_id = sistema)
 			
 		if datos_pagador_form.is_valid() and step == "1":
 			step = "2"
