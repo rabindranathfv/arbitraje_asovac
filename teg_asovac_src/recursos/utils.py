@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
 from io import BytesIO
 from reportlab.lib import utils
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_RIGHT, TA_CENTER
@@ -11,7 +10,6 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
-from django.conf import settings
 from django.http import HttpResponse
 
 
@@ -22,7 +20,6 @@ def get_image(path, width=1*inch):
     return Image(path, width=width, height=(width * aspect))
 
 
-# Esta clase permite generar cartas dado un contexto.
 class LetterGenerator:
 
     def __init__(self):
@@ -37,8 +34,8 @@ class LetterGenerator:
             pagesize=letter,
             rightMargin=72,
             leftMargin=72,
-            topMargin=24,
-            bottomMargin=48
+            topMargin=36 + 1.1*inch,
+            bottomMargin=10 + 1*inch
         )
 
         self.styles = getSampleStyleSheet()
@@ -54,15 +51,16 @@ class LetterGenerator:
 
     def _add_header_date_and_greetings(self, story):
         ## Insertando el Header como imagen a partir de una URL si esta es válida
-        try:
-            im = get_image(self.context["header_url"], width=6.5*inch)
-            im.hAlign = 'CENTER'
-            story.append(im)
-            story.append(Spacer(1, 36))
-        except:
-            pass
+        # try:
+        #     im = get_image(self.context["header_url"], width=6.5*inch)
+        #     im.hAlign = 'CENTER'
+        #     story.append(im)
+        #     story.append(Spacer(1, 36))
+        # except:
+        #     pass
 
         ## Aquí añadimos la fecha a la derecha del documento.
+        story.append(Spacer(1, 36))
         ptext = '<font size=10>%s, %s de %s de %s</font>' % (self.context["city"], self.context["day"],
                                                              self.context["month"], self.context["year"])
         story.append(Paragraph(ptext, self.styles["Right"]))
@@ -108,6 +106,25 @@ class LetterGenerator:
         ptext = '<font size=10>Comité Organizador<br/> %s Convención Anual AsoVAC</font>' % self.context["roman_number"]
         story.append(Paragraph(ptext, self.styles["Center"]))
         story.append(Spacer(1, 12))
+
+    ## En esta funcion, se agrega el header y los elementos del
+    ## footer de la carta utilizando el canvas del documento.
+    def _add_canvas_header_footer(self, canvas, doc):
+        canvas.saveState()
+        ## Header
+        try:
+            header_content = get_image(self.context["header_url"], width=6.5*inch)
+            header_content.wrap(doc.width, doc.topMargin)
+            header_content.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - 10)
+        except:
+            pass
+
+        # Footer
+        footer = Paragraph('<font size=8>%s</font>' % self.context["footer_content"], self.styles['Right'])
+        width, height = footer.wrap(doc.width, doc.bottomMargin)
+        footer.drawOn(canvas, doc.leftMargin, height + 10)
+
+        canvas.restoreState()
 
 
     ## Esta es la función encargada de generar una respuesta PDF para una
@@ -168,7 +185,7 @@ class LetterGenerator:
 
         self._add_final_greeting(story)
 
-        doc.build(story)
+        doc.build(story, onFirstPage=self._add_canvas_header_footer, onLaterPages=self._add_canvas_header_footer)
 
         pdf = my_buffer.getvalue()
         my_buffer.close()
@@ -258,7 +275,7 @@ class LetterGenerator:
 
         self._add_final_greeting(story)
 
-        doc.build(story)
+        doc.build(story, onFirstPage=self._add_canvas_header_footer, onLaterPages=self._add_canvas_header_footer)
 
         pdf = my_buffer.getvalue()
         my_buffer.close()
@@ -266,7 +283,8 @@ class LetterGenerator:
 
         return response
 
-    ## Esta es la función encargada de generar una respuesta PDF para una carta de rechazo de resumen CON observaciones.
+    ## Esta es la función encargada de generar una respuesta PDF para una carta de rechazo de
+    ## resumen CON observaciones.
     def get_rejection_letter_w_obs(self, filename, context):
         """
         Esta función requiere las siguientes variables por contexto para hacer un render en pdf correcto:
@@ -336,7 +354,7 @@ class LetterGenerator:
 
         self._add_final_greeting(story)
 
-        doc.build(story)
+        doc.build(story, onFirstPage=self._add_canvas_header_footer, onLaterPages=self._add_canvas_header_footer)
 
         pdf = my_buffer.getvalue()
         my_buffer.close()
@@ -345,7 +363,6 @@ class LetterGenerator:
         return response
 
 
-# Esta clase permite generar certificados dado un contexto.
 class CertificateGenerator:
 
     def __init__(self):
@@ -445,9 +462,9 @@ class CertificateGenerator:
 
         return response
 
+    ## En esta funcion, se dibuja el borde y los elementos del
+    ## footer del certificado utilizando el canvas del documento.
     def canvas_footer_editing(self, canvas, doc):
-        # En esta funcion, se dibuja el borde y los elementos del
-        # footer del certificado utilizando el canvas del documento.
         footer_height = 55
         page_width, page_height = landscape(letter)
         signature_width = 2*inch
