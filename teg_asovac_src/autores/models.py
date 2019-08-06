@@ -88,7 +88,6 @@ class Autores_trabajos(models.Model):
 	es_coautor = models.BooleanField(default=False)
 	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
-	numero_postulacion = models.SmallIntegerField(default = 1)
 	esperando_modificacion_pago = models.BooleanField(default=False) #Este nuevo campo se utilizará para saber si la postulación tuvo un error en el pago y requiere que se suba de nuevo para ser arbitrado
 
 	def __str__(self):
@@ -182,7 +181,7 @@ class Factura(models.Model):
 	fecha_emision = models.DateField()
 	iva = models.FloatField()
 	monto_total = models.FloatField()
-	postulacion_numero = models.SmallIntegerField()
+	status =  models.CharField(max_length=15, default = 'Pendiente')
 
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
