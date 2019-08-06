@@ -85,5 +85,28 @@
     </table>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+    {% if review_mode %}
+        <a class="Descargar" href="/media/{{factura.pago.comprobante_pago}}" title="Descargar comprobante" style="color:white;" download>
+            <div class="col-md-4 btn btn-info btn-lg">  
+                <i class="fas fa-file-download"></i> 
+                Comprobante
+            </div>
+        </a>  
+        <div class="col-md-4">
+            <form  method="post" class="" action=".">
+                {% csrf_token %}
+                <button type="button" class="btn btn-danger btn-lg btn-block" > Rechazar</button> 
+                <input type="hidden" name="statusPago" value="Rechazado">
+            </form>
+        </div>
+        <div class="col-md-4">
+                <form  method="post" class="" action=".">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-primary btn-lg btn-block" > Aceptar</button> 
+                <input type="hidden" name="statusPago" value="Aceptado">
+            </form>
+        </div> 
+    {% else %}
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
+    {% endif %}
 </div>

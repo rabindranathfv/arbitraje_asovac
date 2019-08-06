@@ -133,6 +133,16 @@
             html.push(fin);
             return html.join('');
 		}
+		function operatePagos(value, row, index) {
+		let route_review_pay = "{% url 'trabajos:review_pay' 1 %}".replace(1,row.id)
+        return [
+            '<a class="show-form" data-url="',
+			route_review_pay,
+			'"title="Revisar factura"> ',
+            '<i class="fas fa-door-open"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
 	
 	</script> 
 

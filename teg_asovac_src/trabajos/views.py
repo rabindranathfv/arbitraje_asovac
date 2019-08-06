@@ -797,7 +797,7 @@ def list_pagos(request,id):
     
     # consulta mas completa
     
-    query= "SELECT aut_trab.id, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
+    query= "SELECT aut_fac.id, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
     where=' WHERE aut_trab.trabajo_id= %s'
     query= query+where
     
@@ -813,7 +813,6 @@ def list_pagos(request,id):
   
     for item in data:
         # estatus= item.estatus 
-
         pagador = item.nombres+" "+item.apellidos
         cedula=item.cedula
         comprobante= item.comprobante_pago
@@ -929,6 +928,19 @@ def validatePago(request,id):
         trabajo.save()
 
     return JsonResponse(response)
+
+@login_required
+def review_pay(request, factura_id):
+	data = dict()
+	event_id = request.session['arbitraje_id']
+	factura = get_object_or_404(Factura, id = factura_id)
+	autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+	context ={
+		'factura': factura,
+        'review_mode': True
+	}
+	data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+	return JsonResponse(data)
 
 @login_required
 def selectArbitro(request,id):
