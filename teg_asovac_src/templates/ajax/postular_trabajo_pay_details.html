@@ -86,12 +86,11 @@
 </div>
 <div class="modal-footer">
     {% if review_mode %}
-        <a class="Descargar" href="/media/{{factura.pago.comprobante_pago}}" title="Descargar comprobante" style="color:white;" download>
-            <div class="col-md-4 btn btn-info btn-lg">  
-                <i class="fas fa-file-download"></i> 
-                Comprobante
-            </div>
-        </a>  
+        <div class="col-md-4">
+            <a class="btn btn-info btn-lg btn-block" href="/media/{{factura.pago.comprobante_pago}}" title="Descargar comprobante" style="color:white;" download> 
+                <i class="fas fa-file-download"></i> Comprobante
+            </a>       
+        </div>
         <div class="col-md-4">
             <form  method="post" class="" action=".">
                 {% csrf_token %}
