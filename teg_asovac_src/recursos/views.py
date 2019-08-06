@@ -20,7 +20,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 
 from trabajos.models import Trabajo_arbitro
 
-from .utils import CertificateGenerator, generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations#, generate_authors_certificate
+from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -239,9 +239,15 @@ def generate_pdf(request,*args , **kwargs):
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
 
-    certificate_gen = CertificateGenerator(filename, context)
+    letters_gen = LetterGenerator()
 
-    return certificate_gen.get_authors_certificate()
+    return letters_gen.get_rejection_letter_w_obs(filename, context)
+
+
+@login_required
+def create_approval_letters(request):
+    pass
+
 
 @login_required
 def create_authors_certificates(request):
