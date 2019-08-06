@@ -931,16 +931,24 @@ def validatePago(request,id):
 
 @login_required
 def review_pay(request, factura_id):
-	data = dict()
-	event_id = request.session['arbitraje_id']
-	factura = get_object_or_404(Factura, id = factura_id)
-	autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
-	context ={
+    data = dict()
+    event_id = request.session['arbitraje_id']
+    factura = get_object_or_404(Factura, id = factura_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+
+    if request.method =='POST':
+        print("hi")
+        pago = request.POST.get("statusPago")
+        factura.status = pago
+        factura.save()
+        messages.success(request,"Se ha cambiado el status del pago con éxito.")
+        return redirect('trabajos:checkPago', id = autor_trabajo.id)
+    context ={
 		'factura': factura,
         'review_mode': True
 	}
-	data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
-	return JsonResponse(data)
+    data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+    return JsonResponse(data)
 
 @login_required
 def selectArbitro(request,id):

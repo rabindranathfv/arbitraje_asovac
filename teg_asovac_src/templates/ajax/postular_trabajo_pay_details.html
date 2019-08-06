@@ -92,16 +92,16 @@
             </a>       
         </div>
         <div class="col-md-4">
-            <form  method="post" class="" action=".">
+            <form  method="post" action="{% url 'trabajos:review_pay' factura.id %}">
                 {% csrf_token %}
-                <button type="button" class="btn btn-danger btn-lg btn-block" > Rechazar</button> 
+                <button type="submit" class="btn btn-danger btn-lg btn-block" > Rechazar</button> 
                 <input type="hidden" name="statusPago" value="Rechazado">
             </form>
         </div>
         <div class="col-md-4">
-                <form  method="post" class="" action=".">
-                    {% csrf_token %}
-                    <button type="button" class="btn btn-primary btn-lg btn-block" > Aceptar</button> 
+            <form  method="post" action="{% url 'trabajos:review_pay' factura.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-primary btn-lg btn-block" > Aceptar</button> 
                 <input type="hidden" name="statusPago" value="Aceptado">
             </form>
         </div> 
