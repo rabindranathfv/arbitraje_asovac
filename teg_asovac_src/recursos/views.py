@@ -136,12 +136,39 @@ class ChartData(APIView):
         }   
         return Response(data)
 
+
 def generate_random_color():
     letras = "0123456789ABCDEF"
     color = "#"
     for x in range(0,6):
         color += letras[random.randint(0,15)]
     return color
+
+
+def create_certificate_context(arbitraje):
+    now = timezone_now()
+    now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
+    path1 = arbitraje.firma1.url.replace('/media/', '')
+    path2 = arbitraje.firma2.url.replace('/media/', '')
+    path_logo = arbitraje.logo.url.replace('/media/', '')
+
+    context = {}
+    context["recipient_name"] = 'Rabindranath Ferreira'
+    context["city"] = 'Caracas'
+    context["header_url"] = arbitraje.cabecera
+    context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
+    context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
+    context["authority2_info"] = arbitraje.autoridad2.replace(',', '<br/>')
+    context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
+    context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
+    context['date_string'] = now_date_string
+    context["roman_number"] = 'LXVII'
+    context["work_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
+     ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    context["authors"] = ['Rabindranath Ferreira'] * 5
+
+    return context
+
 
 def abreviate_if_neccesary(area_nombre):
     nombre_abreviado = ""
@@ -152,6 +179,7 @@ def abreviate_if_neccesary(area_nombre):
         return nombre_abreviado
     else:
         return area_nombre
+
 
 # Create your views here.
 @login_required
@@ -254,30 +282,12 @@ def create_authors_certificates(request):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
 
-    filename = "AsoVAC_Certificado_Autores.pdf"
-
-    now = timezone_now()
-    now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
-    path1 = arbitraje.firma1.url.replace('/media/', '')
-    path2 = arbitraje.firma2.url.replace('/media/', '')
-    path_logo = arbitraje.logo.url.replace('/media/', '')
-    context = {}
-    context["city"] = 'Caracas'
-    context["header_url"] = arbitraje.cabecera
-    context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
-    context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
-    context["authority2_info"] = arbitraje.autoridad2.replace(',', '<br/>')
-    context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
-    context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
-    context['date_string'] = now_date_string
-
-    context["work_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX ODORATA)\
-     EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    context["authors"] = ['Rabindranath Ferreira'] * 5
+    context = create_certificate_context(arbitraje)
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_authors_certificate(context, filename)
+    return certificate_gen.get_authors_certificate(context)
+
 
 @login_required
 def resources_author(request):

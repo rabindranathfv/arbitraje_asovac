@@ -398,7 +398,7 @@ class CertificateGenerator:
         return my_buffer, doc
 
     ## Esta es la función encargada de generar una respuesta PDF para un certificado de autores.
-    def get_authors_certificate(self, context, filename):
+    def get_authors_certificate(self, context):
         """
         Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
         - context["header_url"]
@@ -415,6 +415,9 @@ class CertificateGenerator:
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
+        name = self.context["recipient_name"].split(' ')
+        name = '_'.join(name)
+        filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, self.context["roman_number"])
         response['Content-Disposition'] = 'inline; filename=' + filename
 
         my_buffer, doc = self._set_buffer_and_styles()
