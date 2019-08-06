@@ -390,6 +390,8 @@ class CertificateGenerator:
         self.styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
         self.styles.add(ParagraphStyle(name='People names', alignment=TA_CENTER, leftIndent=24,
                                        rightIndent=24, fontSize=22, leading=28, textColor=ReportLabBlue))
+        self.styles.add(ParagraphStyle(name='People names BIG', alignment=TA_CENTER, leftIndent=24,
+                                       rightIndent=24, fontSize=26, leading=30, textColor=ReportLabBlue))
         self.styles.add(ParagraphStyle(name='People ids', alignment=TA_CENTER, leftIndent=24,
                                        rightIndent=24, fontSize=20, leading=22))
         self.styles.add(ParagraphStyle(name='Subject title', alignment=TA_CENTER, leftIndent=60,
@@ -492,12 +494,12 @@ class CertificateGenerator:
 
         self._add_people_header(story)
 
-        ## Autores del paper.
+        ## Nombre(s) de los reconocido(s)
         ptext = '<font><b>%s</b></font>' % ", ".join(self.context["people_names"])
         story.append(Paragraph(ptext, self.styles["People names"]))
         story.append(Spacer(1, 16))
 
-        ## Presentando y colocando el titulo del paper
+        ## Presentando y colocando la razon del certificado
         ptext = '<font size=15>Por la presentación de la ponencia del trabajo libre:</font>'
         story.append(Paragraph(ptext, self.styles["Simple"]))
         story.append(Spacer(1, 12))
@@ -525,9 +527,9 @@ class CertificateGenerator:
         - context["signature2_path"] = Camino local de la imagen de la firma2
         - context["logo_path"] = Camino local de la imagen del logo
         - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["subject_title"] = String que representa el nombre del evento asovac.
         - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
-        - context["roman_number"] = Numero romano de la convencion
+        - context["roman_number"] = Numero romano de la convencion.
+        - context["peoples_id"] = Cedula de identidad de las personas.
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
@@ -542,22 +544,130 @@ class CertificateGenerator:
 
         self._add_people_header(story, 48)
 
-        ## Autores del paper.
+        ## Nombre(s) de los reconocido(s)
         story.append(Spacer(1, 12))
         ptext = '<font><b>%s</b></font>' % ", ".join(self.context["people_names"])
-        story.append(Paragraph(ptext, self.styles["People names"]))
+        story.append(Paragraph(ptext, self.styles["People names BIG"]))
         story.append(Spacer(1, 6))
-        ## Autores del paper.
+        ## ID
         ptext = '<font><b>C.I.: %s</b></font>' % self.context["peoples_id"]
         story.append(Paragraph(ptext, self.styles["People ids"]))
         story.append(Spacer(1, 16))
         story.append(Spacer(1, 12))
-        ## Presentando y colocando el titulo del paper
+        ## Presentando y colocando la razon del certificado
         ptext = '<font size=15>Por su participación como <b>Árbitro</b> en la</font>'
         story.append(Paragraph(ptext, self.styles["Simple"]))
         story.append(Spacer(1, 12))
 
-        ptext = '<font><b>%s</b></font>' % self.context["subject_title"]
+        ptext = '<font><b>Comisión Académica de la %s Convencion Anual AsoVAC</b></font>' % self.context["roman_number"]
+        story.append(Paragraph(ptext, self.styles["Subject title"]))
+        story.append(Spacer(1, 12))
+
+        doc.build(story, onFirstPage=self._canvas_footer_editing)
+
+        pdf = my_buffer.getvalue()
+        my_buffer.close()
+        response.write(pdf)
+
+        return response
+
+    def get_logistics_certificate(self, context):
+        """
+        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
+        - context["header_url"]
+        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+        - context["authority1_info"] = Informacion formateada de la autoridad1
+        - context["signature1_path"] = Camino local de la imagen de la firma1
+        - context["authority2_info"] = Informacion formateada de la autoridad2
+        - context["signature2_path"] = Camino local de la imagen de la firma2
+        - context["logo_path"] = Camino local de la imagen del logo
+        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        - context["subject_title"] = String que representa el nombre del evento asovac.
+        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        - context["roman_number"] = Numero romano de la convencion
+        """
+        self.context = context
+        response = HttpResponse(content_type='application/pdf')
+        name = self.context["recipient_name"].split(' ')
+        name = '_'.join(name)
+        filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name, self.context["roman_number"])
+        response['Content-Disposition'] = 'inline; filename=' + filename
+
+        my_buffer, doc = self._set_buffer_and_styles()
+
+        story = []
+
+        self._add_people_header(story, 48)
+
+        ## Nombre(s) de los reconocido(s)
+        story.append(Spacer(1, 12))
+        ptext = '<font><b>%s</b></font>' % ", ".join(self.context["people_names"])
+        story.append(Paragraph(ptext, self.styles["People names BIG"]))
+        story.append(Spacer(1, 6))
+        # ptext = '<font><b>C.I.: %s</b></font>' % self.context["peoples_id"]
+        # story.append(Paragraph(ptext, self.styles["People ids"]))
+        story.append(Spacer(1, 24))
+        # story.append(Spacer(1, 12))
+        ## Presentando y colocando el titulo del paper
+        ptext = '<font size=15>Por su participación en la</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
+
+        ptext = '<font><b>Comisión Logística de la %s Convencion Anual AsoVAC</b></font>' % self.context["roman_number"]
+        story.append(Paragraph(ptext, self.styles["Subject title"]))
+        story.append(Spacer(1, 12))
+
+        doc.build(story, onFirstPage=self._canvas_footer_editing)
+
+        pdf = my_buffer.getvalue()
+        my_buffer.close()
+        response.write(pdf)
+
+        return response
+
+    def get_comitee_certificate(self, context):
+        """
+        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
+        - context["header_url"]
+        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+        - context["authority1_info"] = Informacion formateada de la autoridad1
+        - context["signature1_path"] = Camino local de la imagen de la firma1
+        - context["authority2_info"] = Informacion formateada de la autoridad2
+        - context["signature2_path"] = Camino local de la imagen de la firma2
+        - context["logo_path"] = Camino local de la imagen del logo
+        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        - context["subject_title"] = String que representa el nombre del evento asovac.
+        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        - context["roman_number"] = Numero romano de la convencion
+        """
+        self.context = context
+        response = HttpResponse(content_type='application/pdf')
+        name = self.context["recipient_name"].split(' ')
+        name = '_'.join(name)
+        filename = "CertificadoComite_Organizador_Convencion_Asovac_%s.pdf" % self.context["roman_number"]
+        response['Content-Disposition'] = 'inline; filename=' + filename
+
+        my_buffer, doc = self._set_buffer_and_styles()
+
+        story = []
+
+        self._add_people_header(story, 48)
+
+        ## Nombre(s) de los reconocido(s)
+        story.append(Spacer(1, 12))
+        ptext = '<font><b>%s</b></font>' % ", ".join(self.context["people_names"])
+        story.append(Paragraph(ptext, self.styles["People names BIG"]))
+        story.append(Spacer(1, 6))
+        # ptext = '<font><b>C.I.: %s</b></font>' % self.context["peoples_id"]
+        # story.append(Paragraph(ptext, self.styles["People ids"]))
+        story.append(Spacer(1, 24))
+        # story.append(Spacer(1, 12))
+        ## Presentando y colocando el titulo del paper
+        ptext = '<font size=15>Por su participación en la</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
+
+        ptext = '<font><b>Comisión Organizadora de la %s Convencion Anual AsoVAC</b></font>' % self.context["roman_number"]
         story.append(Paragraph(ptext, self.styles["Subject title"]))
         story.append(Spacer(1, 12))
 

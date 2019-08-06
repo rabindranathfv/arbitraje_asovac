@@ -163,7 +163,7 @@ def create_certificate_context(arbitraje):
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
     context["roman_number"] = 'LXVII'
-    context["subject_title"] = 'Comision Academica de la LXVII Convencion Anual AsoVAC'
+    context["subject_title"] = 'Comisión Organizadora de la LXVII Convencion Anual AsoVAC'
     context["people_names"] = ['Rabindranath Ferreira']
     context["peoples_id"] = 'V-6.186.871'
 
@@ -286,7 +286,7 @@ def create_authors_certificates(request):
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_referees_certificate(context)
+    return certificate_gen.get_comitee_certificate(context)
 
 
 @login_required
