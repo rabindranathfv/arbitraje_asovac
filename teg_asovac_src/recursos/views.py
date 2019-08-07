@@ -162,8 +162,11 @@ def create_certificate_context(arbitraje):
     context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
+    context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
+    context['event_date_string'] = now_date_string
+    context['date_string'] = now_date_string
     context["roman_number"] = 'LXVII'
-    context["subject_title"] = 'Comisión Organizadora de la LXVII Convencion Anual AsoVAC'
+    context["subject_title"] = 'Charla interesante acerca de un paper mas interesante'
     context["people_names"] = ['Rabindranath Ferreira']
     context["peoples_id"] = 'V-6.186.871'
 
@@ -172,13 +175,12 @@ def create_certificate_context(arbitraje):
 
 def abreviate_if_neccesary(area_nombre):
     nombre_abreviado = ""
-    if (len(area_nombre) > 20):
+    if len(area_nombre) > 20:
         for item in area_nombre.split(" "):
             if item[0].isupper():
                 nombre_abreviado += item[0]
         return nombre_abreviado
-    else:
-        return area_nombre
+    return area_nombre
 
 
 # Create your views here.
@@ -286,7 +288,7 @@ def create_authors_certificates(request):
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_comitee_certificate(context)
+    return certificate_gen.get_session_coord_certificate(context)
 
 
 @login_required
