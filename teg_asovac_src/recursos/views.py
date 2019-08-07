@@ -288,7 +288,7 @@ def create_authors_certificates(request):
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_session_coord_certificate(context)
+    return certificate_gen.get_organizer_certificate(context)
 
 
 @login_required
