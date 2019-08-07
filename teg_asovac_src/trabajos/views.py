@@ -1323,15 +1323,26 @@ def request_new_pay(request, trabajo_id):
         emails_list = []
         form = MessageForm(request.POST)
         autor_principal = Autores_trabajos.objects.get(trabajo__id = trabajo_id, es_autor_principal = True)
-        if form.is_valid():
+        if form.is_valid() and not Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id, status__iexact = "pendiente"):
+            monto_deuda = 0
+            facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id)
+            for factura in facturas:
+                if factura.status.lower() == "rechazado":
+                    pago = factura.pago
+                    pagador = factura.pagador
+                    datos_pagador = pagador.datos_pagador
+                    monto_deuda += factura.monto_total
+                    pago.delete()
+                    pagador.delete()
+                    datos_pagador.delete()
+                    factura.delete()
             razones_rechazo = form.cleaned_data['motivo_rechazo']
             sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             for autor_trabajo in autores_trabajo:   
                 emails_list.append(autor_trabajo.autor.correo_electronico)
                 autor_trabajo.pagado = False
                 autor_trabajo.esperando_modificacion_pago =  True
-                autor_trabajo.monto_total = sistema.monto_pagar_trabajo
-                autor_trabajo.numero_postulacion += 1
+                autor_trabajo.monto_total += monto_deuda
                 autor_trabajo.save()
 
             context = {
@@ -1356,6 +1367,9 @@ def request_new_pay(request, trabajo_id):
                 messages.success(request, message)
 
             return redirect('trabajos:jobs_list')
+        else:
+            messages.error(request, "No puede enviar solicitud de pago, todavía tiene pagos pendientes por revisar")
+            return redirect('trabajos:checkPago', id = autor_principal.trabajo.id)
     else:
         form = MessageForm()
     
