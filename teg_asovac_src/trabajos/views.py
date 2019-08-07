@@ -797,7 +797,7 @@ def list_pagos(request,id):
     
     # consulta mas completa
     
-    query= "SELECT aut_fac.id, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
+    query= "SELECT aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
     where=' WHERE aut_trab.trabajo_id= %s'
     query= query+where
     
@@ -819,8 +819,13 @@ def list_pagos(request,id):
         fecha_pago= item.fecha_pago
         telefono_oficina=item.telefono_oficina
         telefono_habitacion_celular=item.telefono_habitacion_celular
-       
-        response['query'].append({'id':item.id,"pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
+        if item.status == "Aceptado":
+            status= '<span class="label label-success">'+item.status +'</span>'
+        elif item.status == "Rechazado":
+            status= '<span class="label label-danger">'+item.status +'</span>'
+        else:
+            status= '<span class="label label-warning">'+item.status +'</span>'
+        response['query'].append({'id':item.id, 'status':status, "pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
     
     response={
         'total': total,
@@ -937,7 +942,6 @@ def review_pay(request, factura_id):
     autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
 
     if request.method =='POST':
-        print("hi")
         pago = request.POST.get("statusPago")
         factura.status = pago
         factura.save()
