@@ -166,8 +166,9 @@ def create_certificate_context(arbitraje):
     context['event_date_string'] = now_date_string
     context['date_string'] = now_date_string
     context["roman_number"] = 'LXVII'
-    context["subject_title"] = 'Charla interesante acerca de un paper mas interesante'
-    context["people_names"] = ['Rabindranath Ferreira']
+    context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
+     ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    context["people_names"] = ['Rabindranath Ferreira'] * 3
     context["peoples_id"] = 'V-6.186.871'
 
     return context
@@ -288,7 +289,7 @@ def create_authors_certificates(request):
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_organizer_certificate(context)
+    return certificate_gen.get_paper_certificate(context)
 
 
 @login_required

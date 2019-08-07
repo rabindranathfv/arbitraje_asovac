@@ -389,6 +389,9 @@ class CertificateGenerator:
         self.styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, firstLineIndent=48))
         self.styles.add(ParagraphStyle(name='Right', alignment=TA_RIGHT))
         self.styles.add(ParagraphStyle(name='Center', alignment=TA_CENTER))
+        self.styles.add(ParagraphStyle(name='People names SMALL', alignment=TA_CENTER, leftIndent=24,
+                                       rightIndent=24, fontSize=18, leading=20,
+                                       textColor=ReportLabBlue))
         self.styles.add(ParagraphStyle(name='People names', alignment=TA_CENTER, leftIndent=24,
                                        rightIndent=24, fontSize=22, leading=28,
                                        textColor=ReportLabBlue))
@@ -405,7 +408,7 @@ class CertificateGenerator:
 
         return my_buffer, doc
 
-    def _add_people_header(self, story, space=24):
+    def _add_people_header(self, story, space=24, paper=False):
         try:
             header_img = get_image(self.context["header_url"], width=10*inch)
             header_img.hAlign = 'CENTER'
@@ -421,7 +424,10 @@ class CertificateGenerator:
         story.append(Spacer(1, 12))
 
         ## Tipo de Documento
-        ptext = '<font size=36><b>CERTIFICADO</b> a:</font>'
+        if not paper:
+            ptext = '<font size=36><b>CERTIFICADO</b> a:</font>'
+        else:
+            ptext = '<font size=36><b>CERTIFICADO</b></font>'
         story.append(Paragraph(ptext, self.styles["DocType"]))
         story.append(Spacer(1, 30))
 
@@ -841,6 +847,61 @@ class CertificateGenerator:
         ptext = '<font size=15>Realizada el <b>%s</b></font>' % self.context['event_date_string']
         story.append(Paragraph(ptext, self.styles["Simple"]))
         story.append(Spacer(1, 12))
+
+        doc.build(story, onFirstPage=self._canvas_footer_editing)
+
+        pdf = my_buffer.getvalue()
+        my_buffer.close()
+        response.write(pdf)
+
+        return response
+
+    def get_paper_certificate(self, context):
+        """
+        TRABAJO
+        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
+        - context["header_url"]
+        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+        - context["authority1_info"] = Informacion formateada de la autoridad1
+        - context["signature1_path"] = Camino local de la imagen de la firma1
+        - context["authority2_info"] = Informacion formateada de la autoridad2
+        - context["signature2_path"] = Camino local de la imagen de la firma2
+        - context["logo_path"] = Camino local de la imagen del logo
+        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        - context["subject_title"] = String que representa el nombre del evento asovac.
+        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        - context["roman_number"] = Numero romano de la convencion
+        """
+        self.context = context
+        response = HttpResponse(content_type='application/pdf')
+        filename = "Certificado_Trabajo_Convencion_Asovac_%s.pdf" % self.context["roman_number"]
+        response['Content-Disposition'] = 'inline; filename=' + filename
+
+        my_buffer, doc = self._set_buffer_and_styles()
+
+        story = []
+
+        self._add_people_header(story, 24, paper=True)
+
+        ## Presentando y colocando el titulo del paper
+        story.append(Spacer(1, 12))
+        ptext = '<font size=15>Al trabajo:</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
+
+        ## Nombre de paper o trabajo reconocido
+        ptext = '<font><b>%s</b></font>' % self.context["subject_title"]
+        story.append(Paragraph(ptext, self.styles["People names SMALL"]))
+        story.append(Spacer(1, 16))
+
+        ## Presentando y colocando el titulo del paper
+        ptext = '<font size=15>Realizado por:</font>'
+        story.append(Paragraph(ptext, self.styles["Simple"]))
+        story.append(Spacer(1, 12))
+
+        ptext = '<font size=16><b>%s</b></font>' % ", ".join(self.context["people_names"])
+        story.append(Paragraph(ptext, self.styles["Center"]))
+        story.append(Spacer(1, 24))
 
         doc.build(story, onFirstPage=self._canvas_footer_editing)
 
