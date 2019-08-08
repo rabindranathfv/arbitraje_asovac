@@ -1584,50 +1584,61 @@ def load_subareas_modal(request):
 #                            Carga de usuarios via files                          #
 #---------------------------------------------------------------------------------#
 @login_required
-def load_users_modal(request,arbitraje_id,rol):
-    data=dict()
+def load_users_modal(request, arbitraje_id, rol):
+    data = dict()
+    # Crear titulo del modal en base al rol indicado.
+    if rol == '2':
+        modal_title = 'Cargar Coordinadores Generales'
+    elif rol == '3':
+        modal_title = 'Cargar Coordinadores de Áreas'
+    elif rol == '4':
+        modal_title = 'Cargar Árbitros'
+    elif rol == '5':
+        modal_title = 'Cargar Autores'
+    else:
+        modal_title = 'Cargar Usuarios'
 
     if request.method == 'POST':
-        print 'el metodo es post'
-        form= UploadFileForm(request.POST, request.FILES)
+        #print 'el metodo es post'
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
 
             # Para guardar el archivo de forma local
-            file_name= save_file(request,"usuarios")
-            extension= get_extension_file(file_name)
+            file_name = save_file(request, "usuarios")
+            extension = get_extension_file(file_name)
 
-            #Valida el contenido del archivo 
-            response= validate_load_users(file_name, extension,arbitraje_id,rol)
-            print response
+            #Valida el contenido del archivo
+            response = validate_load_users(file_name, extension, arbitraje_id, rol)
+            #print response
 
-            context={
-                'title': "Cargar Usuarios",
+            context = {
+                'title': modal_title,
                 'response': response['message'],
                 'status': response['status'],
             }
 
-            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
-            return JsonResponse(data) 
-        else:
-            form= UploadFileForm(request.POST, request.FILES)
-            context={
-            'form': form,
-            'arbitraje_id': arbitraje_id,
-            'rol': rol,
-            }
-            data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-            return JsonResponse(data) 
-    else:
-        print 'el metodo es get'
-        form= UploadFileForm()
-
-        context={
+            data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+            return JsonResponse(data)
+        # Si el formulario no es valido regresarlo con errores.
+        context = {
+            'title': modal_title,
             'form': form,
             'arbitraje_id': arbitraje_id,
             'rol': rol,
         }
-        data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-        return JsonResponse(data) 
+        data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+        return JsonResponse(data)
+
+    #print 'el metodo es get'
+    form = UploadFileForm()
+    context = {
+        'title': modal_title,
+        'form': form,
+        'arbitraje_id': arbitraje_id,
+        'rol': rol
+    }
+    data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+    return JsonResponse(data)
 
 #---------------------------------------------------------------------------------#
 #                 Valida el contenido del excel para cargar áreas                 #
