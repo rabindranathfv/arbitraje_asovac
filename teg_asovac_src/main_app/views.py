@@ -993,10 +993,18 @@ def coord_general(request, arbitraje_id):
 
     # Preparamos el formulario y el proceso de este para asignar coordinador general.
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
-    form = ArbitrajeAssignCoordGenForm(request.POST or None, instance = arbitraje)
+    form = ArbitrajeAssignCoordGenForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            coordinador_general_id = form.cleaned_data['coordinador_general'].id
+            if Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists(): #El rol del coordinador general es 2
+                coordinador_general = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, rol = 2)
+                coordinador_general.usuario_asovac.id = coordinador_general_id
+            else:
+                coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac_id = coordinador_general_id  )
+            coordinador_general.save()
+            messages.success(request, "Se ha asignado al coordinador general con éxito")
+
 
     context = {
         'nombre_vista' : 'Asignar Coordinador General',
