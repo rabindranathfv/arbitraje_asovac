@@ -37,7 +37,9 @@
 
 				<div id="toolbar">
 					<div class="form-inline" role="form">
-						<a href="{% url 'trabajos:generar_reporte' 3 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+						<a href="{% url 'trabajos:generar_reporte' 3 %}" class="btn btn-default" data-toggle="tooltip" title="Descargar Archivo .XLS">
+							<i class="fas fa-download"></i>
+						</a>
 					</div>
 				</div>
 					<table id="table"
