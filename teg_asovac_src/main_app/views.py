@@ -1003,6 +1003,21 @@ def coord_general(request, arbitraje_id):
             else:
                 coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac = coordinador_general_form  )
             coordinador_general.save()
+
+            context = {
+                    'sistema': arbitraje,
+                    'usuario': coordinador_general.usuario_asovac
+            }
+            msg_plain = render_to_string('../templates/email_templates/assign_general_coordinator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/assign_general_coordinator.html', context)
+
+            send_mail(
+                'Asignado como coordinador general',              #titulo
+                msg_plain,                                          #mensaje txt
+                config('EMAIL_HOST_USER'),                          #email de envio
+                [coordinador_general.usuario_asovac.usuario.email],                       #destinatario
+                html_message=msg_html,                              #mensaje en html
+                )
             messages.success(request, "Se ha asignado al coordinador general con éxito")
 
 
