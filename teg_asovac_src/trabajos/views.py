@@ -897,6 +897,10 @@ def checkPago(request,id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    
+    pending_review  = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='pendiente').exists()
+
+    rejected_pay = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='rechazado').exists()
 
     context = {
         'nombre_vista' : 'Detalle del pago',
@@ -912,6 +916,8 @@ def checkPago(request,id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo_id':id,
+        'pending_review': pending_review,
+        'rejected_pay': rejected_pay
     }
     return render(request,"trabajos_trabajo_pago.html",context)
 
@@ -940,7 +946,7 @@ def review_pay(request, factura_id):
     data = dict()
     event_id = request.session['arbitraje_id']
     factura = get_object_or_404(Factura, id = factura_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+    autor_trabajo = get_object_or_404(Autores_trabajos, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo, es_autor_principal = True)
 
     if request.method =='POST':
         pago = request.POST.get("statusPago")

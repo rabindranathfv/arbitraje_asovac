@@ -117,7 +117,7 @@ class EditTrabajoForm(forms.ModelForm):
 		return trabajo
 
 class MessageForm(forms.Form):
-    motivo_rechazo = forms.CharField(label='Motivos del rechazo', widget = forms.Textarea, max_length=100)
+    motivo_rechazo = forms.CharField(label='Motivos del rechazo', widget = forms.Textarea(attrs={'placeholder': 'Indique TODOS los motivos por los cuáles fueron rechazados algunos pagos.'}), max_length=100)
     def __init__(self, *args, **kwargs):
 		super(MessageForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()

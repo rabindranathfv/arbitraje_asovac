@@ -14,23 +14,27 @@
             <div class="jumbotron RLcard">
 
                 <div class="row">
-                    <div class="col-md-4">
-                        <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
-                            {% csrf_token %}
-                            <button type="button" class="sendValidate btn btn-danger btn-lg btn-block" > Rechazar</button> 
-                            <input type="hidden" name="statusPago" value="Rechazado">
-                        </form>
-                    </div>
-					<div class="col-md-4">
-                        <a data-url="{% url 'trabajos:request_new_pay' trabajo_id %}" class="show-form btn btn-warning btn-lg btn-block">Enviar solicitud de pago</a>
-                    </div>
-                    <div class="col-md-4">
-                            <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
-                                {% csrf_token %}
-                                <button type="button" class="sendValidate btn btn-primary btn-lg btn-block" > Aceptar</button> 
-                            <input type="hidden" name="statusPago" value="Aceptado">
-                        </form>
-                    </div>
+					{% if not pending_review %}
+						<div class="col-md-4">
+							<form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+								{% csrf_token %}
+								<button type="button" class="sendValidate btn btn-danger btn-lg btn-block" > Rechazar</button> 
+								<input type="hidden" name="statusPago" value="Rechazado">
+							</form>
+						</div>
+						{% if rejected_pay %}
+							<div class="col-md-4">
+								<a data-url="{% url 'trabajos:request_new_pay' trabajo_id %}" class="show-form btn btn-warning btn-lg btn-block">Enviar solicitud de pago</a>
+							</div>
+						{% endif %}
+						<div class="col-md-4">
+								<form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+									{% csrf_token %}
+									<button type="button" class="sendValidate btn btn-primary btn-lg btn-block" > Aceptar</button> 
+								<input type="hidden" name="statusPago" value="Aceptado">
+							</form>
+						</div>
+					{% endif %}
                 </div>
                 <br>
                 
