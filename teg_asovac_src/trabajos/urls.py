@@ -26,7 +26,8 @@ urlpatterns = [
     url(r'^invitacion/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.invitacion, name='invitacion'),
     url(r'^listar-trabajos/validatePago/(?P<id>\d+)/$',views.validatePago,name='validatePago'),
-
+    url(r'^listar-trabajos/solicitad-nuevo-pago/(?P<trabajo_id>\d+)/$',views.request_new_pay,name='request_new_pay'),
+    url(r'^listar-trabajos/review_pay/(?P<factura_id>\d+)/$',views.review_pay,name='review_pay'),
 
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
