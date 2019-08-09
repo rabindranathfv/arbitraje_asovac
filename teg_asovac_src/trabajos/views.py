@@ -939,14 +939,14 @@ def review_pay(request, factura_id):
     data = dict()
     event_id = request.session['arbitraje_id']
     factura = get_object_or_404(Factura, id = factura_id)
-    autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+    autor_trabajo = get_object_or_404(Autores_trabajos, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
 
     if request.method =='POST':
         pago = request.POST.get("statusPago")
         factura.status = pago
         factura.save()
         messages.success(request,"Se ha cambiado el status del pago con éxito.")
-        return redirect('trabajos:checkPago', id = autor_trabajo.id)
+        return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
     context ={
 		'factura': factura,
         'review_mode': True
