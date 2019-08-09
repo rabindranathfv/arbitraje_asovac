@@ -9,26 +9,10 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				<div class="col-sm-6">
-					<h2 class="text-left">Lista de Árbitros</h2>
-				</div>
-
-				<!-- Bootstrap table -->
 				<div class="row">
-					<!-- <div class="col-md-8">
-					</div> -->
-					<!-- <div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
-						<div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span
-								class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button"
-									data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
-								</li>
-							</ul>
-						</div>
-					</div> -->
+					<div class="col-sm-6">
+						<h2 class="text-left">Lista de Árbitros</h2>
+					</div>
 				</div>
 
 				<input type="hidden" id="listArbitros" name="list" data-url="{% url 'arbitrajes:list_arbitros' %}">
@@ -36,7 +20,9 @@
 				<div id="toolbar">
 					<div class="form-inline" role="form">
 						<div class="form-group">
-							<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+							<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default" data-toggle="tooltip" title="Descargar Archivo .XLS">
+								<i class="fas fa-download"></i>
+							</a>
 						</div>
 						<div class="btn-group">
 							<button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones
@@ -51,37 +37,37 @@
 							</ul>
 						</div>
 					</div>
-
 				</div>
-					<table id="table"
-							data-toggle="table"
-							data-ajax="ajaxArbitros"
-							data-side-pagination="server"
-							data-show-export="false"
-							data-toolbar="#toolbar"
-							data-pagination="true"
-							data-page-size="5"
-							data-page-list="[0,5,10,25,50,100, 200]"
-							data-show-refresh="true"
-							data-search="true"
-							data-sort-name="pk"
-							data-show-toggle="true"
-							data-show-columns="true"
-							data-detail-view="true"
-							data-detail-formatter="detailFormatter"
-							>
-							<thead>
-								<tr>
-									<th data-field="first_name" data-sortable="true">Nombres</th>
-									<th data-field="last_name" data-sortable="true">Apellidos </th>
-									<th data-field="genero" data-sortable="true">Género</th>
-									<th data-field="email" data-sortable="true">Correo electrónico</th>
-									<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
-								</tr>
-						</thead>
-					</table>
+
+				<table id="table"
+						data-toggle="table"
+						data-ajax="ajaxArbitros"
+						data-side-pagination="server"
+						data-show-export="false"
+						data-toolbar="#toolbar"
+						data-pagination="true"
+						data-page-size="5"
+						data-page-list="[0,5,10,25,50,100, 200]"
+						data-show-refresh="true"
+						data-search="true"
+						data-sort-name="pk"
+						data-show-toggle="true"
+						data-show-columns="true"
+						data-detail-view="true"
+						data-detail-formatter="detailFormatter"
+						>
+						<thead>
+							<tr>
+								<th data-field="first_name" data-sortable="true">Nombres</th>
+								<th data-field="last_name" data-sortable="true">Apellidos </th>
+								<th data-field="genero" data-sortable="true">Género</th>
+								<th data-field="email" data-sortable="true">Correo electrónico</th>
+								<th data-field="operate" data-events="operateEvents" data-formatter="operateArbitros" data-align="center">Acciones</th>
+							</tr>
+					</thead>
+				</table>
 				<!-- End Bootstrap table -->
-		
+
 			</div>
 		</div>
 	</div>
