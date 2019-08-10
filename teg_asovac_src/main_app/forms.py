@@ -253,18 +253,11 @@ class AssingRolForm(forms.ModelForm):
         # widgets = {'rol': CheckboxSelectMultiple()}
 
 
-class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+class ArbitrajeAssignCoordGenForm(forms.Form):
+    coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
-                                                        # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
-        self.fields['coordinador_general'].required = True
-
-    class Meta:
-        model = Sistema_asovac
-        fields = ['coordinador_general']
-        widgets = {'coordinador_general': forms.Select(attrs={'class': 'form-control'})}
-
+        self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

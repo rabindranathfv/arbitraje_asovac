@@ -993,10 +993,33 @@ def coord_general(request, arbitraje_id):
 
     # Preparamos el formulario y el proceso de este para asignar coordinador general.
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
-    form = ArbitrajeAssignCoordGenForm(request.POST or None, instance = arbitraje)
+    form = ArbitrajeAssignCoordGenForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            coordinador_general_form = form.cleaned_data['coordinador_general']
+            if Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists(): #El rol del coordinador general es 2
+                coordinador_general = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, rol = 2)
+                coordinador_general.usuario_asovac = coordinador_general_form
+            else:
+                coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac = coordinador_general_form  )
+            coordinador_general.save()
+
+            context = {
+                    'sistema': arbitraje,
+                    'usuario': coordinador_general.usuario_asovac
+            }
+            msg_plain = render_to_string('../templates/email_templates/assign_general_coordinator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/assign_general_coordinator.html', context)
+
+            send_mail(
+                'Asignado como coordinador general',              #titulo
+                msg_plain,                                          #mensaje txt
+                config('EMAIL_HOST_USER'),                          #email de envio
+                [coordinador_general.usuario_asovac.usuario.email],                       #destinatario
+                html_message=msg_html,                              #mensaje en html
+                )
+            messages.success(request, "Se ha asignado al coordinador general con éxito")
+
 
     context = {
         'nombre_vista' : 'Asignar Coordinador General',
@@ -1584,50 +1607,61 @@ def load_subareas_modal(request):
 #                            Carga de usuarios via files                          #
 #---------------------------------------------------------------------------------#
 @login_required
-def load_users_modal(request,arbitraje_id,rol):
-    data=dict()
+def load_users_modal(request, arbitraje_id, rol):
+    data = dict()
+    # Crear titulo del modal en base al rol indicado.
+    if rol == '2':
+        modal_title = 'Cargar Coordinadores Generales'
+    elif rol == '3':
+        modal_title = 'Cargar Coordinadores de Áreas'
+    elif rol == '4':
+        modal_title = 'Cargar Árbitros'
+    elif rol == '5':
+        modal_title = 'Cargar Autores'
+    else:
+        modal_title = 'Cargar Usuarios'
 
     if request.method == 'POST':
-        print 'el metodo es post'
-        form= UploadFileForm(request.POST, request.FILES)
+        #print 'el metodo es post'
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
 
             # Para guardar el archivo de forma local
-            file_name= save_file(request,"usuarios")
-            extension= get_extension_file(file_name)
+            file_name = save_file(request, "usuarios")
+            extension = get_extension_file(file_name)
 
-            #Valida el contenido del archivo 
-            response= validate_load_users(file_name, extension,arbitraje_id,rol)
-            print response
+            #Valida el contenido del archivo
+            response = validate_load_users(file_name, extension, arbitraje_id, rol)
+            #print response
 
-            context={
-                'title': "Cargar Usuarios",
+            context = {
+                'title': modal_title,
                 'response': response['message'],
                 'status': response['status'],
             }
 
-            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
-            return JsonResponse(data) 
-        else:
-            form= UploadFileForm(request.POST, request.FILES)
-            context={
-            'form': form,
-            'arbitraje_id': arbitraje_id,
-            'rol': rol,
-            }
-            data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-            return JsonResponse(data) 
-    else:
-        print 'el metodo es get'
-        form= UploadFileForm()
-
-        context={
+            data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+            return JsonResponse(data)
+        # Si el formulario no es valido regresarlo con errores.
+        context = {
+            'title': modal_title,
             'form': form,
             'arbitraje_id': arbitraje_id,
             'rol': rol,
         }
-        data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-        return JsonResponse(data) 
+        data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+        return JsonResponse(data)
+
+    #print 'el metodo es get'
+    form = UploadFileForm()
+    context = {
+        'title': modal_title,
+        'form': form,
+        'arbitraje_id': arbitraje_id,
+        'rol': rol
+    }
+    data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+    return JsonResponse(data)
 
 #---------------------------------------------------------------------------------#
 #                 Valida el contenido del excel para cargar áreas                 #

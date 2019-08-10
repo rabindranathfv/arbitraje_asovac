@@ -46,6 +46,7 @@
     $("#div_id_numero_transferencia").hide();
     $("#div_id_numero_cheque").hide();
     // Para manejar la seleccion modalidad
+    pay = $('#id_tipo_pago').val('')
     $('#id_tipo_pago').change(function(){
         var tipo_pago = $(this).val();
         if (tipo_pago == "T")
