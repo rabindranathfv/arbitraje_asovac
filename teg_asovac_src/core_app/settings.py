@@ -67,7 +67,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core_app.middleware.AuthenticationMiddleware', 
 ]
+
+AUTO_LOGOUT_DELAY = 30 #Tiempo en minutos
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 
 ROOT_URLCONF = 'core_app.urls'
 
@@ -185,4 +190,4 @@ MESSAGE_TAGS = {
 }
 
 # Session time out settings
-SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)
+# SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)

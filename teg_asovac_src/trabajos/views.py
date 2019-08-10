@@ -25,7 +25,7 @@ from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 
-from .forms import TrabajoForm, EditTrabajoForm #, AutorObservationsFinalVersionJobForm
+from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
 from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
@@ -798,8 +798,8 @@ def list_pagos(request,id):
     
     # consulta mas completa
     
-    query= "SELECT aut_trab.id, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
-    where=' WHERE aut_trab.trabajo_id= %s '
+    query= "SELECT aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
+    where=' WHERE aut_trab.trabajo_id= %s'
     query= query+where
     
     query_count=query
@@ -814,15 +814,19 @@ def list_pagos(request,id):
   
     for item in data:
         # estatus= item.estatus 
-
         pagador = item.nombres+" "+item.apellidos
         cedula=item.cedula
         comprobante= item.comprobante_pago
         fecha_pago= item.fecha_pago
         telefono_oficina=item.telefono_oficina
         telefono_habitacion_celular=item.telefono_habitacion_celular
-       
-        response['query'].append({'id':item.id,"pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
+        if item.status == "Aceptado":
+            status= '<span class="label label-success">'+item.status +'</span>'
+        elif item.status == "Rechazado":
+            status= '<span class="label label-danger">'+item.status +'</span>'
+        else:
+            status= '<span class="label label-warning">'+item.status +'</span>'
+        response['query'].append({'id':item.id, 'status':status, "pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
     
     response={
         'total': total,
@@ -893,6 +897,10 @@ def checkPago(request,id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    
+    pending_review  = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='pendiente').exists()
+
+    rejected_pay = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='rechazado').exists()
 
     context = {
         'nombre_vista' : 'Detalle del pago',
@@ -908,6 +916,8 @@ def checkPago(request,id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo_id':id,
+        'pending_review': pending_review,
+        'rejected_pay': rejected_pay
     }
     return render(request,"trabajos_trabajo_pago.html",context)
 
@@ -930,6 +940,26 @@ def validatePago(request,id):
         trabajo.save()
 
     return JsonResponse(response)
+
+@login_required
+def review_pay(request, factura_id):
+    data = dict()
+    event_id = request.session['arbitraje_id']
+    factura = get_object_or_404(Factura, id = factura_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo, es_autor_principal = True)
+
+    if request.method =='POST':
+        pago = request.POST.get("statusPago")
+        factura.status = pago
+        factura.save()
+        messages.success(request,"Se ha cambiado el status del pago con éxito.")
+        return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
+    context ={
+		'factura': factura,
+        'review_mode': True
+	}
+    data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+    return JsonResponse(data)
 
 @login_required
 def selectArbitro(request,id):
@@ -1406,4 +1436,70 @@ def view_referee_observation(request, trabajo_id):
         'trabajo': trabajo,
     }
     data['html_form'] = render_to_string('ajax/referee_job_observations.html', context, request=request)
+    return JsonResponse(data)
+
+
+@login_required
+def request_new_pay(request, trabajo_id):
+    data = dict()
+    autores_trabajo = Autores_trabajos.objects.filter(trabajo__id = trabajo_id)
+    if request.method == "POST":
+        emails_list = []
+        form = MessageForm(request.POST)
+        autor_principal = Autores_trabajos.objects.get(trabajo__id = trabajo_id, es_autor_principal = True)
+        if form.is_valid() and not Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id, status__iexact = "pendiente"):
+            monto_deuda = 0
+            facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id)
+            for factura in facturas:
+                if factura.status.lower() == "rechazado":
+                    pago = factura.pago
+                    pagador = factura.pagador
+                    datos_pagador = pagador.datos_pagador
+                    monto_deuda += factura.monto_total
+                    pago.delete()
+                    pagador.delete()
+                    datos_pagador.delete()
+                    factura.delete()
+            razones_rechazo = form.cleaned_data['motivo_rechazo']
+            sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+            for autor_trabajo in autores_trabajo:   
+                emails_list.append(autor_trabajo.autor.correo_electronico)
+                autor_trabajo.pagado = False
+                autor_trabajo.esperando_modificacion_pago =  True
+                autor_trabajo.monto_total += monto_deuda
+                autor_trabajo.save()
+
+            context = {
+            'sistema': sistema.nombre,
+            'trabajo': autores_trabajo.first().trabajo,
+            'razones_rechazo': razones_rechazo
+            }
+            msg_plain = render_to_string('../templates/email_templates/request_new_pay.txt', context)
+            msg_html = render_to_string('../templates/email_templates/request_new_pay.html', context)
+
+            value = send_mail(
+                'Error en pagos de postular trabajo',           #titulo
+                msg_plain,                                      #mensaje txt
+                config('EMAIL_HOST_USER'),                      #email de envio
+                emails_list,                                    #destinatario
+                html_message=msg_html,                          #mensaje en html
+            )
+            if value == 1:
+                messages.success(request, "Se han solicitado los nuevos pagos con éxito.")
+            else:
+                message = "Hubo un error en el envío de correos, por favor pongase en contacto con el autor principal del trabajo, este es su correo electrónico: " + autor_principal.autor.correo_electronico 
+                messages.success(request, message)
+
+            return redirect('trabajos:jobs_list')
+        else:
+            messages.error(request, "No puede enviar solicitud de pago, todavía tiene pagos pendientes por revisar")
+            return redirect('trabajos:checkPago', id = autor_principal.trabajo.id)
+    else:
+        form = MessageForm()
+    
+    context = {
+        'form':form,
+        'trabajo': autores_trabajo.first().trabajo
+    }
+    data['html_form'] = render_to_string('ajax/message_form_modal.html', context, request=request)
     return JsonResponse(data)

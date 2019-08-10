@@ -21,7 +21,9 @@
 				<div id="toolbar">
 					<div class="form-inline" role="form">
 						<div class="form-group">
-							<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default"><i class="fas fa-download"></i></a>
+							<a href="{% url 'arbitrajes:generar_reporte' 1 %}" class="btn btn-default" data-toggle="tooltip" title="Descargar Archivo .XLS">
+								<i class="fas fa-download"></i>
+							</a>
 						</div>
 						<div class="btn-group">
 							<button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones
