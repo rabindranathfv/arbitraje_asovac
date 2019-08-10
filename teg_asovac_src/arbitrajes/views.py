@@ -942,27 +942,26 @@ def adminChangeAreas(request,id):
 
 
 @login_required
-def adminArea(request,id):
-    main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+def adminArea(request, id):
+    main_navbar_options = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
+                           {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
+                           {'title':'Resultados', 'icon': 'fa-chart-area', 'active': False},
+                           {'title':'Administración', 'icon': 'fa-archive', 'active': False}]
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id,arbitraje_id)
+    rol_id = get_roles(request.user.id, arbitraje_id)
 
     item_active = 2
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+    items = validate_rol_status(estado, rol_id, item_active, arbitraje_id)
 
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    route_conf = get_route_configuracion(estado, rol_id, arbitraje_id)
+    route_seg = get_route_seguimiento(estado, rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado, rol_id, item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado, rol_id)
+    route_resultados = get_route_resultados(estado, rol_id, arbitraje_id)
 
-    
 
     context = {
         'nombre_vista' : 'Área árbitro',
@@ -979,7 +978,7 @@ def adminArea(request,id):
         'route_resultados': route_resultados,
         'user_id':id,
     }
-    return render(request,"arbitrajes_admin_areas.html",context)
+    return render(request, "arbitrajes_admin_areas.html", context)
 
 #---------------------------------------------------------------------------------#
 #                            Carga la lista de subareas                           #

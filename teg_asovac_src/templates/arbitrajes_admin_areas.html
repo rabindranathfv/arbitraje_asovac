@@ -3,19 +3,22 @@
 
     {% include "toggle_title.html" %}
 
-
     <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
 
-                <div class="row">      
-                    
+                <div class="row">
                     <div class="col-sm-6">
                         <h2 class="text-left">Área del árbitro</h2>
                     </div>
-
+                    <div class="col-sm-offset-4 col-sm-2">
+                        <a href="{% url 'arbitrajes:referee_list' %}" class="btn btn-warning btn-lg btn-block">
+                            <i class="fas fa-arrow-circle-left"></i> Regresar
+                        </a>
+                    </div>
+                </div>
                     <!-- Lista de areas -->
-
+                <div class="row">
                     <div class="col-md-12">
                         <!-- data table -->
                         <input type="hidden" id="listAreas" name="list" data-url="{% url 'arbitrajes:list_areas_arbitros' user_id %}">
@@ -84,9 +87,7 @@
                     </div>
                 <!-- Fin lista de subareas -->
 
-
                 </div>
-
             </div>
         </div>
     </div>
