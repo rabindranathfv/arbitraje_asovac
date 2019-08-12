@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -18,11 +18,14 @@ from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.http import is_safe_url
 import json
 from django.db.models import Q
 from django.db.models import Count
 from django.db import transaction
 from django.utils.crypto import get_random_string
+from django.views.decorators.debug import sensitive_post_parameters
+
 
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
@@ -356,11 +359,28 @@ def compute_progress_bar(state):
 #---------------------------------------------------------------------------------#
 #                            VIEWS BACKEND                                        #
 #---------------------------------------------------------------------------------#
-def login(request):
-    form = MyLoginForm()
+@sensitive_post_parameters()
+def login_view(request):
+    if request.method == 'POST':   
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            # Redirect to a success page.
+            next_url = request.GET.get('next')
+            next_url_is_safe = is_safe_url(
+                url=next_url,
+                allowed_hosts=request.get_host(),
+            )
+            return redirect(next_url) if next_url_is_safe else redirect('main_app:home')
+        else:
+            messages.error(request, "Usuario o contraseña inválida.")
+    else:
+        if request.user.is_authenticated:
+                logout(request)
     context = {
         'nombre_vista' : 'Login',
-        'form' : form,
     }
     return render(request, 'main_app_login.html', context)
 
