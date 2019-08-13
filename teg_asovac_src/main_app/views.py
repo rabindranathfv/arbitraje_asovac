@@ -116,7 +116,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if (1 >= rol_id and item_active == 2) or ((estado == 4 or estado ==7) and (2 >= rol_id or 3 >= rol_id) and item_active == 2):
         sidebar_options.append("session_arbitration")
     # verify_arbitraje_option
-    if (1 >= rol_id and item_active == 2) or (estado ==6 and (2 >= rol_id) and item_active == 2):
+    if (1 >= rol_id and item_active == 2) or (estado in [5,6] and (3 >= rol_id) and item_active == 2):
         sidebar_options.append("arbitrations")
     # verify_eventos_sidebar_full & verify_espacio_option (same condition)
     if (1 >= rol_id and item_active == 4):
