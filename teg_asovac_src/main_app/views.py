@@ -807,7 +807,7 @@ def state_arbitration(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
     form = ArbitrajeStateChangeForm(request.POST or None, instance = arbitraje)
     if request.method == 'POST':
-        if form.is_valid():
+        if form.is_valid() and Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2, status = True).exists():
             state = form.save()
             #Codigo para enviar correo electronico
             if state.estado_arbitraje == 8:
@@ -837,9 +837,8 @@ def state_arbitration(request, arbitraje_id):
                             [autor_trabajo_principal.autor.correo_electronico],               #destinatario
                             html_message=msg_html,              #mensaje en html
                             )
-                
         else:
-            print (form.errors)
+            messages.error(request, 'El sistema no tiene un coordinador general asignado, por favor asigne uno para poder cambiar de estado.')
         #estado = request.POST['estadoArbitraje']
         #print(estado)
         #request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
