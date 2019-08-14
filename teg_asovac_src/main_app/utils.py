@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from .models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac
 
+
 class DashboardCharts(APIView):
     authentication_classes = ()
     permission_classes = ()
@@ -23,12 +24,25 @@ class DashboardCharts(APIView):
         author_count = Usuario_rol_in_sistema.objects.filter(rol=5,
                                                              sistema_asovac=arbitraje_id,
                                                              status=True).count()
-
+        #El siguiente codigo es para obtener los datos necesarios para la grafica de genero
+        #de los autores
+        women_count = Usuario_rol_in_sistema.objects.filter(rol=5,
+                                                            usuario_asovac__autor__genero=1,
+                                                            sistema_asovac=arbitraje_id,
+                                                            status=True).count()
+        men_count = Usuario_rol_in_sistema.objects.filter(rol=5,
+                                                          usuario_asovac__autor__genero=0,
+                                                          sistema_asovac=arbitraje_id,
+                                                          status=True).count()
 
         data = {
             "usuarios": {
                 "labels": ["Coordinadores de Área", "Árbitros", "Autores"],
                 "data": [coord_area_count, referee_count, author_count]
+            },
+            "generos": {
+                "labels": ["Mujeres", "Hombres"],
+                "data": [women_count, men_count]
             },
             # "arbitros": {
             #     "labels": ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
