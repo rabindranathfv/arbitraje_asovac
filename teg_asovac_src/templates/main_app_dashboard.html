@@ -73,7 +73,7 @@
 			<div class="jumbotron RLcard">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h4>Distribución de Género de Usuarios</h4>
+						<h4>Distribución de Género de Autores</h4>
 					</div>
 					<div class="panel-body">
 						<div class="container-fluid">
@@ -90,18 +90,32 @@
 {% endblock %}
 
 {% block js_extra %}
+{% load static %}
 <script>
-
+	var endpoint = "{% url 'main_app:dashboard_chart_data' %}"
+	console.log(endpoint);
+	$.ajax({
+		method: "GET",
+		url: endpoint,
+		success: function(data){
+			console.log(data);
+			setChartRoleCount(data.usuarios);
+		},
+		error: function(error_data){
+			console.log("Error:");
+			console.log(error_data);
+		}
+	})
 	// Grafico de numero de autores, arbitros y coordinadores de area.
 	function setChartRoleCount(usersData){
 		var ctx = document.getElementById('role-count').getContext('2d');
 		var myChart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: users.labels,
+				labels: usersData.labels,
 				datasets: [{
 					label: 'Cantidad de Usuarios por Rol',
-					data: users.data,
+					data: usersData.data,
 					backgroundColor: [
 						'green',
 						'blue',
@@ -126,7 +140,7 @@
 		});
 	}
 
-	// Grafico de distribucion entre mujeres y hombres de autores, arbitros y coordinadores de area.
+	// Grafico de distribucion entre mujeres y hombres de autores.
 	function setSexCount(sexData){
 		var ctx = document.getElementById('sex-count').getContext('2d');
 		var myChart = new Chart(ctx, {
@@ -134,7 +148,7 @@
 			data: {
 				labels: sexData.labels,
 				datasets: [{
-					label: 'Distribución de Género de Usuarios',
+					label: 'Distribución de Género de Autores',
 					data: sexData.data,
 					backgroundColor: [
 						'red',
