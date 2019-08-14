@@ -55,24 +55,116 @@
 	<div class="row row-eq-height">
 		<div class="col-sm-6">
 			<div class="jumbotron RLcard">
-				<h3>Half Card</h3>
-				<p>Esto es un ejemplo de una carta pequeña para anuncios o graficos que no requieran de todo el ancho de la pagina web.</p>
-				<p>
-					<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs</a>
-				</p>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4>Cantidad de Usuarios por Rol</h4>
+					</div>
+					<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row middle-content">
+								<canvas id="role-count" heigth="100px"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="col-sm-6">
 			<div class="jumbotron RLcard">
-				<h3>Half Card</h3>
-				<p>
-					Este es otro ejemplo de una carta de tamaño pequeño para colocar información puntual.
-				</p>
-				<p>
-					<a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-				</p>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4>Distribución de Género de Usuarios</h4>
+					</div>
+					<div class="panel-body">
+						<div class="container-fluid">
+							<div class="row middle-content">
+								<canvas id="sex-count" heigth="100px"></canvas>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block js_extra %}
+<script>
+
+	// Grafico de numero de autores, arbitros y coordinadores de area.
+	function setChartRoleCount(usersData){
+		var ctx = document.getElementById('role-count').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'pie',
+			data: {
+				labels: users.labels,
+				datasets: [{
+					label: 'Cantidad de Usuarios por Rol',
+					data: users.data,
+					backgroundColor: [
+						'green',
+						'blue',
+						'orange',
+					],
+					borderColor: [
+						'rgba(255, 99, 132, 1)',
+						'rgba(54, 162, 235, 1)',
+						'rgba(255, 206, 86, 1)',
+					],
+					borderWidth: 1
+				}],
+			},
+			options: {
+				legend: {
+					position: 'left',
+					labels: {
+						fontSize: 14
+					}
+				}
+			}
+		});
+	}
+
+	// Grafico de distribucion entre mujeres y hombres de autores, arbitros y coordinadores de area.
+	function setSexCount(sexData){
+		var ctx = document.getElementById('sex-count').getContext('2d');
+		var myChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: sexData.labels,
+				datasets: [{
+					label: 'Distribución de Género de Usuarios',
+					data: sexData.data,
+					backgroundColor: [
+						'red',
+						'blue',
+					],
+					borderColor: [
+						'rgba(255, 99, 132, 1)',
+						'rgba(75, 192, 192, 1)',
+					],
+					borderWidth: 1
+				}]
+			},
+			options: {
+				legend:{
+					labels: {
+						fontSize: 14
+					}
+				},
+				scales: {
+					xAxes: [{
+						barPercentage: 0.35,
+					}],
+					yAxes: [{
+						ticks: {
+							beginAtZero: true
+						}
+					}]
+				}
+			}
+		});
+	}
+</script>
 {% endblock %}
