@@ -216,6 +216,7 @@ class PagoForm(forms.ModelForm):
             'observaciones': forms.TextInput(attrs={'placeholder': 'Introduzca sus observaciones'}),
         }
 	def __init__(self, *args, **kwargs):
+		self.sistema_id = kwargs.pop('sistema_id')
 		super(PagoForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'pago-form'
@@ -232,12 +233,22 @@ class PagoForm(forms.ModelForm):
 		self.fields['observaciones'].label = "Observaciones"
 		self.fields['comprobante_pago'].label = "Comprobante de pago"
 
+	def clean_fecha_pago(self):
+		sistema = Sistema_asovac.objects.get(id = self.sistema_id)
+		fecha_pago = self.cleaned_data['fecha_pago']
+		if  fecha_pago < sistema.fecha_inicio_arbitraje:
+			raise forms.ValidationError(_("La fecha del pago debe haber sido después del inicio del sistema."), code = "invalid_date")
+		return fecha_pago
+
 	def clean_numero_cuenta_origen(self):
 		numero_cuenta_origen = self.cleaned_data['numero_cuenta_origen']
-		if(numero_cuenta_origen[4] != '-' or numero_cuenta_origen[9] != '-' or numero_cuenta_origen[14] != '-' or numero_cuenta_origen[19] != '-'):
-			raise forms.ValidationError(_("Formato incorrecto, debe ser de la siguiente forma: XXXX-XXXX-XXXX-XXXX-XXXX (incluyendo guiones)"),code="invalid")
-		if(not numero_cuenta_origen[:4].isdigit() or not numero_cuenta_origen[5:9].isdigit() or not numero_cuenta_origen[10:14].isdigit() or not numero_cuenta_origen[15:19].isdigit() or not numero_cuenta_origen[20:].isdigit()):
-			raise forms.ValidationError(_("El número de cuenta no puede tener letras o espacios."), code="invalid")
+		if(len(numero_cuenta_origen) == 24):
+			if(numero_cuenta_origen[4] != '-' or numero_cuenta_origen[9] != '-' or numero_cuenta_origen[14] != '-' or numero_cuenta_origen[19] != '-'):
+				raise forms.ValidationError(_("Formato incorrecto, debe ser de la siguiente forma: XXXX-XXXX-XXXX-XXXX-XXXX (incluyendo guiones)"),code="invalid")
+			if(not numero_cuenta_origen[:4].isdigit() or not numero_cuenta_origen[5:9].isdigit() or not numero_cuenta_origen[10:14].isdigit() or not numero_cuenta_origen[15:19].isdigit() or not numero_cuenta_origen[20:].isdigit()):
+				raise forms.ValidationError(_("El número de cuenta no puede tener letras o espacios."), code="invalid")
+		else:
+			raise forms.ValidationError(_("Formato o cantidad de números incorrectos"), code="invalid")
 		return numero_cuenta_origen
 
 	def clean_numero_transferencia(self):
@@ -285,6 +296,7 @@ class FacturaForm(forms.ModelForm):
             'fecha_emision': forms.DateInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
         }
 	def __init__(self, *args, **kwargs):
+		self.sistema_id = kwargs.pop('sistema_id')
 		super(FacturaForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.fields['monto_total'].widget.attrs['placeholder'] = 'Ejemplo: 100.50'
@@ -301,6 +313,13 @@ class FacturaForm(forms.ModelForm):
 		if monto_total <= 0:
 			raise forms.ValidationError(_("El monto debe ser mayor que 0."),code = "invalid_monto_total")
 		return monto_total
+	
+	def clean_fecha_emision(self):
+		sistema = Sistema_asovac.objects.get(id = self.sistema_id)
+		fecha_emision = self.cleaned_data['fecha_emision']
+		if  fecha_emision < sistema.fecha_inicio_arbitraje:
+			raise forms.ValidationError(_("La fecha de emisión debe haber sido después del inicio del sistema."), code = "invalid_date")
+		return fecha_emision
 
 #Form para que el admin o coordinador general cree un autor
 class AdminCreateAutorForm(forms.ModelForm):

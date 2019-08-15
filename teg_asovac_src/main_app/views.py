@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -18,11 +18,14 @@ from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.http import is_safe_url
 import json
 from django.db.models import Q
 from django.db.models import Count
 from django.db import transaction
 from django.utils.crypto import get_random_string
+from django.views.decorators.debug import sensitive_post_parameters
+
 
 from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
@@ -113,7 +116,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if (1 >= rol_id and item_active == 2) or ((estado == 4 or estado ==7) and (2 >= rol_id or 3 >= rol_id) and item_active == 2):
         sidebar_options.append("session_arbitration")
     # verify_arbitraje_option
-    if (1 >= rol_id and item_active == 2) or (estado ==6 and (2 >= rol_id) and item_active == 2):
+    if (1 >= rol_id and item_active == 2) or (estado in [5,6] and (3 >= rol_id) and item_active == 2):
         sidebar_options.append("arbitrations")
     # verify_eventos_sidebar_full & verify_espacio_option (same condition)
     if (1 >= rol_id and item_active == 4):
@@ -356,11 +359,28 @@ def compute_progress_bar(state):
 #---------------------------------------------------------------------------------#
 #                            VIEWS BACKEND                                        #
 #---------------------------------------------------------------------------------#
-def login(request):
-    form = MyLoginForm()
+@sensitive_post_parameters()
+def login_view(request):
+    if request.method == 'POST':   
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            # Redirect to a success page.
+            next_url = request.GET.get('next')
+            next_url_is_safe = is_safe_url(
+                url=next_url,
+                allowed_hosts=request.get_host(),
+            )
+            return redirect(next_url) if next_url_is_safe else redirect('main_app:home')
+        else:
+            messages.error(request, "Usuario o contraseña inválida.")
+    else:
+        if request.user.is_authenticated:
+                logout(request)
     context = {
         'nombre_vista' : 'Login',
-        'form' : form,
     }
     return render(request, 'main_app_login.html', context)
 
@@ -784,7 +804,7 @@ def state_arbitration(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
     form = ArbitrajeStateChangeForm(request.POST or None, instance = arbitraje)
     if request.method == 'POST':
-        if form.is_valid():
+        if form.is_valid() and Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2, status = True).exists():
             state = form.save()
             #Codigo para enviar correo electronico
             if state.estado_arbitraje == 8:
@@ -814,9 +834,8 @@ def state_arbitration(request, arbitraje_id):
                             [autor_trabajo_principal.autor.correo_electronico],               #destinatario
                             html_message=msg_html,              #mensaje en html
                             )
-                
         else:
-            print (form.errors)
+            messages.error(request, 'El sistema no tiene un coordinador general asignado, por favor asigne uno para poder cambiar de estado.')
         #estado = request.POST['estadoArbitraje']
         #print(estado)
         #request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
@@ -990,10 +1009,33 @@ def coord_general(request, arbitraje_id):
 
     # Preparamos el formulario y el proceso de este para asignar coordinador general.
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
-    form = ArbitrajeAssignCoordGenForm(request.POST or None, instance = arbitraje)
+    form = ArbitrajeAssignCoordGenForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
+            coordinador_general_form = form.cleaned_data['coordinador_general']
+            if Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists(): #El rol del coordinador general es 2
+                coordinador_general = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, rol = 2)
+                coordinador_general.usuario_asovac = coordinador_general_form
+            else:
+                coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac = coordinador_general_form  )
+            coordinador_general.save()
+
+            context = {
+                    'sistema': arbitraje,
+                    'usuario': coordinador_general.usuario_asovac
+            }
+            msg_plain = render_to_string('../templates/email_templates/assign_general_coordinator.txt', context)
+            msg_html = render_to_string('../templates/email_templates/assign_general_coordinator.html', context)
+
+            send_mail(
+                'Asignado como coordinador general',              #titulo
+                msg_plain,                                          #mensaje txt
+                config('EMAIL_HOST_USER'),                          #email de envio
+                [coordinador_general.usuario_asovac.usuario.email],                       #destinatario
+                html_message=msg_html,                              #mensaje en html
+                )
+            messages.success(request, "Se ha asignado al coordinador general con éxito")
+
 
     context = {
         'nombre_vista' : 'Asignar Coordinador General',
@@ -1581,50 +1623,61 @@ def load_subareas_modal(request):
 #                            Carga de usuarios via files                          #
 #---------------------------------------------------------------------------------#
 @login_required
-def load_users_modal(request,arbitraje_id,rol):
-    data=dict()
+def load_users_modal(request, arbitraje_id, rol):
+    data = dict()
+    # Crear titulo del modal en base al rol indicado.
+    if rol == '2':
+        modal_title = 'Cargar Coordinadores Generales'
+    elif rol == '3':
+        modal_title = 'Cargar Coordinadores de Áreas'
+    elif rol == '4':
+        modal_title = 'Cargar Árbitros'
+    elif rol == '5':
+        modal_title = 'Cargar Autores'
+    else:
+        modal_title = 'Cargar Usuarios'
 
     if request.method == 'POST':
-        print 'el metodo es post'
-        form= UploadFileForm(request.POST, request.FILES)
+        #print 'el metodo es post'
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
 
             # Para guardar el archivo de forma local
-            file_name= save_file(request,"usuarios")
-            extension= get_extension_file(file_name)
+            file_name = save_file(request, "usuarios")
+            extension = get_extension_file(file_name)
 
-            #Valida el contenido del archivo 
-            response= validate_load_users(file_name, extension,arbitraje_id,rol)
-            print response
+            #Valida el contenido del archivo
+            response = validate_load_users(file_name, extension, arbitraje_id, rol)
+            #print response
 
-            context={
-                'title': "Cargar Usuarios",
+            context = {
+                'title': modal_title,
                 'response': response['message'],
                 'status': response['status'],
             }
 
-            data['html_form']= render_to_string('ajax/modal_succes.html',context, request=request)
-            return JsonResponse(data) 
-        else:
-            form= UploadFileForm(request.POST, request.FILES)
-            context={
-            'form': form,
-            'arbitraje_id': arbitraje_id,
-            'rol': rol,
-            }
-            data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-            return JsonResponse(data) 
-    else:
-        print 'el metodo es get'
-        form= UploadFileForm()
-
-        context={
+            data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+            return JsonResponse(data)
+        # Si el formulario no es valido regresarlo con errores.
+        context = {
+            'title': modal_title,
             'form': form,
             'arbitraje_id': arbitraje_id,
             'rol': rol,
         }
-        data['html_form']= render_to_string('ajax/load_users.html',context, request=request)
-        return JsonResponse(data) 
+        data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+        return JsonResponse(data)
+
+    #print 'el metodo es get'
+    form = UploadFileForm()
+    context = {
+        'title': modal_title,
+        'form': form,
+        'arbitraje_id': arbitraje_id,
+        'rol': rol
+    }
+    data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+    return JsonResponse(data)
 
 #---------------------------------------------------------------------------------#
 #                 Valida el contenido del excel para cargar áreas                 #
@@ -2651,7 +2704,6 @@ def list_usuarios(request):
   
             # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( id=27).order_by(order)
             # total= len(data)
-
     # for item in data:
         # print("%s is %s. and total is %s" % (item.username, item.first_name,item.last_name, item.email))
         # response['query'].append({'id':item.id,'first_name': item.first_name,'last_name':item.last_name,'username': item.username,'email':item.email})
@@ -2686,19 +2738,25 @@ def generate_report(request,tipo):
     # Para exportar información de usuarios 
     if tipo == '1':
         # consulta para obtener informacion de los usuarios
-        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"
+        sort="id"
+        order='first_name'
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        order_by=" ORDER BY au.first_name asc "
         query_count=query
-        query= query
+        query= query + order_by
         
         data= User.objects.raw(query)
         data_count= User.objects.raw(query_count)
+        # Fecha
+        date=datetime.datetime.now()
+        date=date.year
         total=0
         for item in data_count:
             total=total+1
 
         # Para definir propiedades del documento de excel
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=Usuarios.xls'
+        response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_listado_de_usuarios.xls'.format(date)
         workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet("Usuarios")
         # Para agregar los titulos de cada columna

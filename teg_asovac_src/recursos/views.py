@@ -15,7 +15,7 @@ from rest_framework import authentication, permissions
 
 from autores.models import Autores_trabajos, Autor
 
-from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac
+from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from trabajos.models import Trabajo_arbitro

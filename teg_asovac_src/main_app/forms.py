@@ -292,36 +292,24 @@ class AssingRolForm(forms.ModelForm):
         # widgets = {'rol': CheckboxSelectMultiple()}
 
 
-class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+class ArbitrajeAssignCoordGenForm(forms.Form):
+    coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
-                                                        # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
-        self.fields['coordinador_general'].required = True
-
-    class Meta:
-        model = Sistema_asovac
-        fields = ['coordinador_general']
-        widgets = {'coordinador_general': forms.Select(attrs={'class': 'form-control'})}
-
+        self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeStateChangeForm, self).__init__(*args, **kwargs)
         self.fields['estado_arbitraje'].required = True
+        self.fields['estado_arbitraje'].label=''
 
     class Meta:
         model = Sistema_asovac
-        fields = ['coordinador_general', 'estado_arbitraje']
-        widgets = {'coordinador_general': forms.HiddenInput(),
-                'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
+        fields = ['estado_arbitraje']
+        widgets = {'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
 
-    def clean_coordinador_general(self):
-        data = self.cleaned_data['coordinador_general']
-        if data is None:
-            print ('Raising form error of estado!')
-            raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
-        return data
+
 
 """
 class RolForm(forms.ModelForm):

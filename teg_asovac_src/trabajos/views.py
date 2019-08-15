@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from decouple import config
-import json, random, string, xlrd, os, sys, xlwt
+from datetime import date
+import json, random, string, xlrd, os, sys, xlwt,datetime
 
 from django.conf import settings
 from django.core.mail import EmailMessage, send_mail
@@ -24,7 +25,7 @@ from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
 
-from .forms import TrabajoForm, EditTrabajoForm #, AutorObservationsFinalVersionJobForm
+from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
 from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
@@ -606,6 +607,8 @@ def list_trabajos(request):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
+    arbitraje_id = request.session['arbitraje_id']
+    area= user_area
 
     # print "El rol del usuario logueado es: ",rol_user
     response = {}
@@ -648,7 +651,7 @@ def list_trabajos(request):
                 query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
-                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s or trab.confirmacion_pago like %s ) AND sis_aso.id= %s AND main_a.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s or trab.confirmacion_pago like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                 query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -661,9 +664,8 @@ def list_trabajos(request):
             # data_count= User.objects.raw(query_count)
         else:
             if rol_user == 3:
-                area= str(user_area.id)
-                data= User.objects.raw(query,[search,search,search,search,search,search,search,event_id,area])
-                data_count= User.objects.raw(query,[search,search,search,search,search,search,search,event_id,area])
+                data= User.objects.raw(query,[search,search,search,search,search,search,search,event_id])
+                data_count= User.objects.raw(query,[search,search,search,search,search,search,search,event_id])
 
         total=0
 
@@ -689,7 +691,7 @@ def list_trabajos(request):
             else:
                 if rol_user == 3:
                     query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                    where=' WHERE sis_aso.id= %s AND main_a.id = %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                    where=' WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                     query= query+where
             
             if sort=="nombre":
@@ -704,10 +706,9 @@ def list_trabajos(request):
                 data_count= User.objects.raw(query_count,event_id)
             else:
                 if rol_user == 3:
-                    area= str(user_area.id)
-                    data= User.objects.raw(query,[event_id,area])
-                    data_count= User.objects.raw(query_count,[event_id,area])
-           
+                    data= User.objects.raw(query,[event_id])
+                    data_count= User.objects.raw(query_count,[event_id])
+
             total=0
             for item in data_count:
                 total=total+1
@@ -797,8 +798,8 @@ def list_pagos(request,id):
     
     # consulta mas completa
     
-    query= "SELECT aut_trab.id, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
-    where=' WHERE aut_trab.trabajo_id= %s '
+    query= "SELECT aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
+    where=' WHERE aut_trab.trabajo_id= %s'
     query= query+where
     
     query_count=query
@@ -813,15 +814,19 @@ def list_pagos(request,id):
   
     for item in data:
         # estatus= item.estatus 
-
         pagador = item.nombres+" "+item.apellidos
         cedula=item.cedula
         comprobante= item.comprobante_pago
         fecha_pago= item.fecha_pago
         telefono_oficina=item.telefono_oficina
         telefono_habitacion_celular=item.telefono_habitacion_celular
-       
-        response['query'].append({'id':item.id,"pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
+        if item.status == "Aceptado":
+            status= '<span class="label label-success">'+item.status +'</span>'
+        elif item.status == "Rechazado":
+            status= '<span class="label label-danger">'+item.status +'</span>'
+        else:
+            status= '<span class="label label-warning">'+item.status +'</span>'
+        response['query'].append({'id':item.id, 'status':status, "pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
     
     response={
         'total': total,
@@ -892,6 +897,10 @@ def checkPago(request,id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    
+    pending_review  = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='pendiente').exists()
+
+    rejected_pay = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='rechazado').exists()
 
     context = {
         'nombre_vista' : 'Detalle del pago',
@@ -907,6 +916,8 @@ def checkPago(request,id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'trabajo_id':id,
+        'pending_review': pending_review,
+        'rejected_pay': rejected_pay
     }
     return render(request,"trabajos_trabajo_pago.html",context)
 
@@ -931,6 +942,26 @@ def validatePago(request,id):
     return JsonResponse(response)
 
 @login_required
+def review_pay(request, factura_id):
+    data = dict()
+    event_id = request.session['arbitraje_id']
+    factura = get_object_or_404(Factura, id = factura_id)
+    autor_trabajo = get_object_or_404(Autores_trabajos, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo, es_autor_principal = True)
+
+    if request.method =='POST':
+        pago = request.POST.get("statusPago")
+        factura.status = pago
+        factura.save()
+        messages.success(request,"Se ha cambiado el status del pago con éxito.")
+        return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
+    context ={
+		'factura': factura,
+        'review_mode': True
+	}
+    data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+    return JsonResponse(data)
+
+@login_required
 def selectArbitro(request,id):
     # print "Trabajo id: ",id
 
@@ -942,12 +973,12 @@ def selectArbitro(request,id):
     
     if rol_user == 1 or rol_user == 2:
         query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-        where=' WHERE sis_aso.sistema_asovac_id = %s '      
+        where=' WHERE sis_aso.sistema_asovac_id = %s and usu_sub_a.sub_area_id= {}'.format(subAreaTrabajo)      
         query= query+where
     else:
         if rol_user == 3:
             query= "SELECT DISTINCT (arb.nombres),arb.apellidos,arb.id,arb_trab.trabajo_id, arb.correo_electronico FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso ON sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso ON usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a ON usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a ON sub_a.id = usu_sub_a.sub_area_id LEFT JOIN trabajos_trabajo_subareas AS trab_sub_a ON trab_sub_a.sub_area_id = sub_a.id LEFT JOIN trabajos_trabajo_arbitro AS arb_trab on arb.id = arb_trab.arbitro_id"
-            where=' WHERE sis_aso.sistema_asovac_id = %s '
+            where=' WHERE sis_aso.sistema_asovac_id = %s and usu_sub_a.sub_area_id= {}'.format(subAreaTrabajo)  
             query= query+where
 
     
@@ -960,7 +991,6 @@ def selectArbitro(request,id):
         data_count= Arbitro.objects.raw(query_count,[event_id])
     else:
         if rol_user == 3:
-            area= str(user_area.id)
             data= Arbitro.objects.raw(query,[event_id])
             data_count= Arbitro.objects.raw(query_count,[event_id])
 
@@ -1166,60 +1196,178 @@ def viewEstatus(request,id):
 #---------------------------------------------------------------------------------#
 @login_required
 def generate_report(request,tipo):
-    print "Excel para arbitros"
+    print "Excel para trabajos"
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
-    # Para exportar información de Arbitro 
+    arbitraje_id = request.session['arbitraje_id']
+    area= user_area
+    # Fecha
+    date=datetime.datetime.now()
+    date=date.year
+    
+    # Para exportar información de los trabajos
     if tipo == '1':
-        
-        # consulta mas completa
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-            where=' WHERE sis_aso.id= %s '
-            query= query+where
+                query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '
+                query= query+where
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                where=' WHERE sis_aso.id= %s AND main_a.id = %s '
+                query= "SELECT DISTINCT(trab.id),trab.confirmacion_pago,trab.estatus,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=' WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true '.format(area)
                 query= query+where
         
-    
-        order_by="trab.estatus"
+        
+        order_by=" ORDER BY trab.id asc"
         query_count=query
-        query= query + " ORDER BY " + order_by
+        query= query + order_by
         
         if rol_user == 1 or rol_user ==2 :
             data= User.objects.raw(query,event_id)
             data_count= User.objects.raw(query_count,event_id)
         else:
             if rol_user == 3:
-                area= str(user_area.id)
-                data= User.objects.raw(query,[event_id,area])
-                data_count= User.objects.raw(query_count,[event_id,area])
-        
+                data= User.objects.raw(query,[event_id])
+                data_count= User.objects.raw(query_count,[event_id])
+
         total=0
         for item in data_count:
             total=total+1
 
         # Para definir propiedades del documento de excel
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=Trabajos.xls'
+        response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_lista_de_trabajos.xls'.format(date)
         workbook = xlwt.Workbook()
         worksheet = workbook.add_sheet("Usuarios")
         # Para agregar los titulos de cada columna
         row_num = 0
-        columns = ['Estatus', 'Área', 'Título','Presentación','Observaciones']
+        columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Pago','Observaciones']
         for col_num in range(len(columns)):
             worksheet.write(row_num, col_num, columns[col_num])     
         
         for item in data:
             row_num += 1
-            row = [item.estatus ,item.nombre ,item.titulo_espanol ,item.forma_presentacion,item.observaciones]
+            row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,item.confirmacion_pago,item.observaciones]
             for col_num in range(len(row)):
                 worksheet.write(row_num, col_num, row[col_num])
         
         workbook.save(response)
+
+    else:
+        if tipo== '2':
+            print "Estatus del arbitraje"
+            if rol_user == 1 or rol_user == 2:
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
+                query= query+where
+            else:
+                if rol_user == 3:
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' ".format(area)
+                    query= query+where
+
+            order_by=" ORDER BY trab.id asc"
+            query_count=query
+            query= query + order_by
+
+            if rol_user == 1 or rol_user ==2 :
+                data= User.objects.raw(query,event_id)
+                data_count= User.objects.raw(query_count,event_id)
+            else:
+                if rol_user == 3:
+                    data= User.objects.raw(query,[event_id])
+                    data_count= User.objects.raw(query_count,[event_id])
+           
+            total=0
+            for item in data_count:
+                total=total+1
+
+            # Para definir propiedades del documento de excel
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_estatus_de_trabajos.xls'.format(date)
+            workbook = xlwt.Workbook()
+            worksheet = workbook.add_sheet("Usuarios")
+            # Para agregar los titulos de cada columna
+            row_num = 0
+            columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Version','Observaciones']
+            for col_num in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[col_num])     
+            
+            for item in data:
+                if item.requiere_arbitraje == False and item.estatus == "Aceptado":
+                    revision="Final"
+                else:
+                    if item.estatus == "Pendiente":
+                        revision="Sin revisar"
+                    else:
+                        if item.estatus == "Rechazado":
+                            revision="Final"
+                        else:
+                            revision="Con correcciones"
+                row_num += 1
+                row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,revision,item.observaciones]
+                for col_num in range(len(row)):
+                    worksheet.write(row_num, col_num, row[col_num])
+            
+            workbook.save(response)
+        else:
+            # print "tipo 3"
+            if tipo== '3':
+                if rol_user == 1 or rol_user == 2:
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' "
+                    query= query+where
+                else:
+                    if rol_user == 3:
+                        query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                        where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(area)
+                        query= query+where
+
+                order_by=" ORDER BY trab.id asc"
+                query_count=query
+                query= query + order_by
+                
+                if rol_user == 1 or rol_user ==2 :
+                    data= User.objects.raw(query,event_id)
+                    data_count= User.objects.raw(query_count,event_id)
+                else:
+                    if rol_user == 3:
+                        data= User.objects.raw(query,[event_id])
+                        data_count= User.objects.raw(query_count,[event_id])
+
+                total=0
+                for item in data_count:
+                    total=total+1
+
+                # Para definir propiedades del documento de excel
+                response = HttpResponse(content_type='application/ms-excel')
+                response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{}_trabajos_aceptados.xls'.format(date)
+                workbook = xlwt.Workbook()
+                worksheet = workbook.add_sheet("Usuarios")
+                # Para agregar los titulos de cada columna
+                row_num = 0
+                columns = ['Estatus', 'Área','Subárea', 'Título','Presentación','Version','Observaciones']
+                for col_num in range(len(columns)):
+                    worksheet.write(row_num, col_num, columns[col_num])     
+                
+                for item in data:
+                    if item.requiere_arbitraje == False and item.estatus == "Aceptado":
+                        revision="Final"
+                    else:
+                        if item.estatus == "Pendiente":
+                            revision="Sin revisar"
+                        else:
+                            if item.estatus == "Rechazado":
+                                revision="Final"
+                            else:
+                                revision="Con correcciones"
+                    row_num += 1
+                    row = [item.estatus ,item.nombre,item.subarea ,item.titulo_espanol ,item.forma_presentacion,revision,item.observaciones]
+                    for col_num in range(len(row)):
+                        worksheet.write(row_num, col_num, row[col_num])
+            
+                workbook.save(response)
 
     return response
 
@@ -1288,4 +1436,70 @@ def view_referee_observation(request, trabajo_id):
         'trabajo': trabajo,
     }
     data['html_form'] = render_to_string('ajax/referee_job_observations.html', context, request=request)
+    return JsonResponse(data)
+
+
+@login_required
+def request_new_pay(request, trabajo_id):
+    data = dict()
+    autores_trabajo = Autores_trabajos.objects.filter(trabajo__id = trabajo_id)
+    if request.method == "POST":
+        emails_list = []
+        form = MessageForm(request.POST)
+        autor_principal = Autores_trabajos.objects.get(trabajo__id = trabajo_id, es_autor_principal = True)
+        if form.is_valid() and not Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id, status__iexact = "pendiente"):
+            monto_deuda = 0
+            facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id)
+            for factura in facturas:
+                if factura.status.lower() == "rechazado":
+                    pago = factura.pago
+                    pagador = factura.pagador
+                    datos_pagador = pagador.datos_pagador
+                    monto_deuda += factura.monto_total
+                    pago.delete()
+                    pagador.delete()
+                    datos_pagador.delete()
+                    factura.delete()
+            razones_rechazo = form.cleaned_data['motivo_rechazo']
+            sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
+            for autor_trabajo in autores_trabajo:   
+                emails_list.append(autor_trabajo.autor.correo_electronico)
+                autor_trabajo.pagado = False
+                autor_trabajo.esperando_modificacion_pago =  True
+                autor_trabajo.monto_total += monto_deuda
+                autor_trabajo.save()
+
+            context = {
+            'sistema': sistema.nombre,
+            'trabajo': autores_trabajo.first().trabajo,
+            'razones_rechazo': razones_rechazo
+            }
+            msg_plain = render_to_string('../templates/email_templates/request_new_pay.txt', context)
+            msg_html = render_to_string('../templates/email_templates/request_new_pay.html', context)
+
+            value = send_mail(
+                'Error en pagos de postular trabajo',           #titulo
+                msg_plain,                                      #mensaje txt
+                config('EMAIL_HOST_USER'),                      #email de envio
+                emails_list,                                    #destinatario
+                html_message=msg_html,                          #mensaje en html
+            )
+            if value == 1:
+                messages.success(request, "Se han solicitado los nuevos pagos con éxito.")
+            else:
+                message = "Hubo un error en el envío de correos, por favor pongase en contacto con el autor principal del trabajo, este es su correo electrónico: " + autor_principal.autor.correo_electronico 
+                messages.success(request, message)
+
+            return redirect('trabajos:jobs_list')
+        else:
+            messages.error(request, "No puede enviar solicitud de pago, todavía tiene pagos pendientes por revisar")
+            return redirect('trabajos:checkPago', id = autor_principal.trabajo.id)
+    else:
+        form = MessageForm()
+    
+    context = {
+        'form':form,
+        'trabajo': autores_trabajo.first().trabajo
+    }
+    data['html_form'] = render_to_string('ajax/message_form_modal.html', context, request=request)
     return JsonResponse(data)
