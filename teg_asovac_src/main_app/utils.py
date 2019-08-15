@@ -44,23 +44,5 @@ class DashboardCharts(APIView):
                 "labels": ["Mujeres", "Hombres"],
                 "data": [women_count, men_count]
             },
-            # "arbitros": {
-            #     "labels": ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
-            #     "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
-            # },
-            # "autores": {
-            #     "labels": ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado'],
-            #     "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
-            # },
-            # "area":{
-            #     "labels": areas_labels_splited,
-            #     "data_aceptados": areas_trabajos_aceptados,
-            #     "data_rechazados": areas_trabajos_rechazados,
-            # },
-            # "autoresArea":{
-            #     "labels": areas_labels,
-            #     "data": areas_autores,
-            #     "colores": areas_colores
-            # },
         }
         return Response(data)

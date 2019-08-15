@@ -100,8 +100,16 @@
 		url: endpoint,
 		success: function(data){
 			console.log(data);
-			setChartRoleCount(data.usuarios);
-			setSexCount(data.generos);
+			if (data.usuarios.data.reduce((a, b) => a + b, 0) > 1){
+				setChartRoleCount(data.usuarios);
+			}else{
+				notEnoughData('role-count');
+			}
+			if (data.generos.data.reduce((a, b) => a + b, 0) > 1){
+				setSexCount(data.generos);
+			}else{
+				notEnoughData('sex-count');
+			}
 		},
 		error: function(error_data){
 			console.log("Error:");
@@ -179,6 +187,15 @@
 				}
 			}
 		});
+	}
+
+	function notEnoughData(elementId){
+		var elem = document.getElementById(elementId);
+		var target = elem.parentNode;
+		var text = document.createElement("h4");
+		text.innerHTML = "No hay suficientes usuarios para generar un gráfico por el momento."
+		target.appendChild(text);
+		target.removeChild(elem);
 	}
 </script>
 {% endblock %}
