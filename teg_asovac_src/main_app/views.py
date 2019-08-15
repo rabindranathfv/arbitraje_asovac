@@ -620,18 +620,17 @@ def data_basic(request, arbitraje_id):
 
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id =get_roles(request.user.id,arbitraje_id)
-    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
 
-    form = DataBasicForm(request.POST or None, instance=arbitraje)
-    if request.method == 'POST':
-        print('Request es POST')
+    if request.method == 'GET':
+        form = DataBasicForm(instance=arbitraje)
+    elif request.method == 'POST':
+        form = DataBasicForm(request.POST, request.FILES, instance=arbitraje)
         if form.is_valid():
-            print('formulario es valido')
             form.save()
             messages.success(request, 'Los datos del arbitraje han sido guardados con éxito.')
             return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
-        print(form.errors)
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active,arbitraje_id)
@@ -640,9 +639,7 @@ def data_basic(request, arbitraje_id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-    permiso_clave_AS = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 4).exists()
-    permiso_clave_COA = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 3).exists()
-    permiso_clave_COG = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists()
+
     context = {
         'nombre_vista' : 'Editar Configuración General',
         'form': form,
@@ -657,9 +654,9 @@ def data_basic(request, arbitraje_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'permiso_clave_AS': permiso_clave_AS,
-        'permiso_clave_COA': permiso_clave_COA,
-        'permiso_clave_COG': permiso_clave_COG,
+        'permiso_clave_AS': Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 4).exists(),
+        'permiso_clave_COA': Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 3).exists(),
+        'permiso_clave_COG': Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists(),
     }
     return render(request, 'main_app_data_basic.html', context)
 

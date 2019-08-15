@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random 
+import os
+import random
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render,redirect
-from django.template.loader import get_template
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.timezone import now as timezone_now
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,9 +19,12 @@ from autores.models import Autores_trabajos, Autor
 from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
-from trabajos.models import Trabajo, Trabajo_arbitro
+from trabajos.models import Trabajo_arbitro
 
-from .utils import generate_acceptation_letter, generate_acceptation_letter_with_observations, generate_rejection_letter_with_observations
+from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
+
+MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+               'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -135,6 +137,7 @@ class ChartData(APIView):
         }   
         return Response(data)
 
+
 def generate_random_color():
     letras = "0123456789ABCDEF"
     color = "#"
@@ -142,15 +145,45 @@ def generate_random_color():
         color += letras[random.randint(0,15)]
     return color
 
+
+def create_certificate_context(arbitraje):
+    now = timezone_now()
+    now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
+    path1 = arbitraje.firma1.url.replace('/media/', '')
+    path2 = arbitraje.firma2.url.replace('/media/', '')
+    path_logo = arbitraje.logo.url.replace('/media/', '')
+
+    context = {}
+    context["recipient_name"] = 'Rabindranath Ferreira'
+    context["city"] = 'Caracas'
+    context["header_url"] = arbitraje.cabecera
+    context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
+    context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
+    context["authority2_info"] = arbitraje.autoridad2.replace(',', '<br/>')
+    context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
+    context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
+    context['date_string'] = now_date_string
+    context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
+    context['event_date_string'] = now_date_string
+    context['date_string'] = now_date_string
+    context["roman_number"] = 'LXVII'
+    context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
+     ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    context["people_names"] = ['Rabindranath Ferreira'] * 5
+    context["peoples_id"] = 'V-6.186.871'
+
+    return context
+
+
 def abreviate_if_neccesary(area_nombre):
     nombre_abreviado = ""
-    if (len(area_nombre) > 20):
+    if len(area_nombre) > 20:
         for item in area_nombre.split(" "):
             if item[0].isupper():
                 nombre_abreviado += item[0]
         return nombre_abreviado
-    else:
-        return area_nombre
+    return area_nombre
+
 
 # Create your views here.
 @login_required
@@ -206,7 +239,7 @@ def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
 
-    filename = "AsoVAC_Carta_Aceptacion.pdf"
+    filename = "AsoVAC_Certificado_Autores.pdf"
 
     context = {}
     context["header_url"] = arbitraje.cabecera
@@ -217,14 +250,15 @@ def generate_pdf(request,*args , **kwargs):
     context["sex"] = 'F'
     context["full_name"] = 'Karla Calo'
     context["roman_number"] = 'LXVII'
-    context["work_title"] = 'ESCALAMIENTO A ESCALA INDUSTRIAL DE UNA CREMA AZUFRADA OPTIMIZADA MEDIANTE\
-    UN DISEÑO EXPERIMENTAL'
+    context["work_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX ODORATA)\
+     EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
     context["work_code"] = 'BC-24'
     context["start_date"] = '29 de Noviembre'
     context["finish_date"] = '1 de Diciembre de 2018'
     context["convention_place"] = "Universidad Metropolintana (UNIMET) y la Universidad Central de Venezuela (UCV)"
     context["convention_saying"] = '"Ciencia, Tecnología e Innovación en Democracia"'
-    context["authors"] = ['Karla Calo', 'Luis Henríquez']
+    context["authors"] = ['Rabindranath Ferreira'] * 5
+    #['Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres', 'Yoleida Soto Anes','Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres']
     context["max_info_date"] = '15 de Noviembre'
     context["observations"] =   ['El resumen no cumple con el formato indicado en la normativa de la Convención y el modelo enviado.',
                                 'No se cumple con lo solicitado para el formato de nombres y apellidos de los autores completos, separados por coma.',
@@ -236,8 +270,27 @@ def generate_pdf(request,*args , **kwargs):
                                 'Es conocido el after taste de la Stevia, sería interesante informar si los animales mostraron alguna preferencia o rechazo por las tres opciones propuestas.']
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
+    context["footer_content"] = """http://www.asovac.org/lxvii-convencion-anual-de-asovac https://www.facebook.com/ConvencionAsovac2017<br/>(0212)753-5802 asovac.convencion2017@gmail.com"""
+    letters_gen = LetterGenerator()
 
-    return generate_acceptation_letter_with_observations(filename, context)
+    return letters_gen.get_rejection_letter_w_obs(filename, context)
+
+
+@login_required
+def create_approval_letters(request):
+    pass
+
+
+@login_required
+def create_authors_certificates(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+
+    context = create_certificate_context(arbitraje)
+
+    certificate_gen = CertificateGenerator()
+
+    return certificate_gen.get_authors_certificate(context)
 
 
 @login_required
@@ -246,8 +299,6 @@ def resources_author(request):
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
