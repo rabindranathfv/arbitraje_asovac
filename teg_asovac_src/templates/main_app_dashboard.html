@@ -1,7 +1,7 @@
 {% extends "content_wrapper_with_sidebar.html" %}
 
 {% block inner_content %}
-<div class="container-fluid" id="content-wrapper">
+<div class="container" id="content-wrapper">
 
 	{% include "toggle_title.html" %}
 
@@ -52,7 +52,7 @@
 	</div>
 
 	<!-- Second Row -->
-	<div class="row row-eq-height">
+	<div class="row">
 		<div class="col-sm-6">
 			<div class="jumbotron RLcard">
 				<div class="panel panel-default">
@@ -69,6 +69,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="col-sm-6">
 			<div class="jumbotron RLcard">
 				<div class="panel panel-default">
@@ -163,10 +164,8 @@
 				}]
 			},
 			options: {
-				legend:{
-					labels: {
-						fontSize: 14
-					}
+				legend: {
+					display: false
 				},
 				scales: {
 					xAxes: [{
