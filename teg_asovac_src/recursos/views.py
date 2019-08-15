@@ -168,7 +168,7 @@ def create_certificate_context(arbitraje):
     context["roman_number"] = 'LXVII'
     context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
      ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    context["people_names"] = ['Rabindranath Ferreira'] * 3
+    context["people_names"] = ['Rabindranath Ferreira'] * 5
     context["peoples_id"] = 'V-6.186.871'
 
     return context
@@ -289,7 +289,7 @@ def create_authors_certificates(request):
 
     certificate_gen = CertificateGenerator()
 
-    return certificate_gen.get_paper_certificate(context)
+    return certificate_gen.get_authors_certificate(context)
 
 
 @login_required

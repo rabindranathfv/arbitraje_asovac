@@ -364,7 +364,18 @@ class LetterGenerator:
 
 
 class CertificateGenerator:
-
+    '''
+    Todas las funciones de generacion de certificados de esta clase requieren obligatoriamente
+    de un diccionario de contexto con las siguientes claves y valores:
+    - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
+    - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+    - context["authority1_info"] = String con informacion formateada de la autoridad1
+    - context["signature1_path"] = Camino local de la imagen de la firma1
+    - context["authority2_info"] = String con informacion formateada de la autoridad2
+    - context["signature2_path"] = Camino local de la imagen de la firma2
+    - context["logo_path"] = Camino local de la imagen del logo
+    - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+    '''
     def __init__(self):
         self.styles = None
         self.context = None
@@ -478,18 +489,13 @@ class CertificateGenerator:
     ## Esta es la función encargada de generar una respuesta PDF para un certificado de autores.
     def get_authors_certificate(self, context):
         """
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        Esta función requiere las siguientes variables adicionales por contexto para hacer render
+        pdf correctamente:
+        - context["recipient_name"] = String con el nombre y apellido separado por espacio del
+            receptor del certificado.
+        - context["roman_number"] = Numero romano de la convencion
         - context["subject_title"] = String que representa el nombre del trabajo completo.
         - context["people_names"] = Lista de Strings con nombres  de los autores del paper.
-        - context["roman_number"] = Numero romano de la convencion
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
@@ -528,19 +534,14 @@ class CertificateGenerator:
 
     def get_referees_certificate(self, context):
         """
-        ARBITROS
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
-        - context["roman_number"] = Numero romano de la convencion.
-        - context["peoples_id"] = Cedula de identidad de las personas.
+        Un Certificado para Un unico arbitro
+        Esta función requiere las siguientes variables adicionales por contexto para hacer render
+        del pdf correctamente:
+        - context["recipient_name"] = String con el nombre y apellido separado por espacio del
+            receptor del certificado.
+        - context["roman_number"] = Numero romano de la convencion
+        - context["people_names"] = Lista de Strings con el solo el nombre del arbitro a certificar.
+        - context["peoples_id"] = Cedula de identidad dedel arbitro
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
@@ -586,20 +587,18 @@ class CertificateGenerator:
     def get_logistics_certificate(self, context):
         """
         LOGISTICA
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        Esta función requiere las siguientes variables adicionales por contexto para hacer render
+        del pdf correctamente:
+        - context["recipient_name"] = String con el nombre y apellido separado por espacio del
+            receptor del certificado.
         - context["roman_number"] = Numero romano de la convencion
+        - context["subject_title"] = String que representa el nombre del evento asovac.
+        - context["people_names"] = Lista de Strings con el nombre del miembro del comite de
+            logistica a certificar.
         """
         self.context = context
+        name = self.context["recipient_name"].split(' ')
+        name = '_'.join(name)
         response = HttpResponse(content_type='application/pdf')
         filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name, self.context["roman_number"])
         response['Content-Disposition'] = 'inline; filename=' + filename
@@ -639,17 +638,11 @@ class CertificateGenerator:
     def get_comitee_certificate(self, context):
         """
         COMITE ORGANIZADOR
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        Esta función requiere las siguientes variables por contexto para hacer render
+        del pdf correctamente:
         - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        - context["people_names"] = Lista de Strings con el nombre del integrante del comite
+             organizador a certificar.
         - context["roman_number"] = Numero romano de la convencion
         """
         self.context = context
@@ -692,20 +685,13 @@ class CertificateGenerator:
     def get_lecturer_certificate(self, context):
         """
         CONFERENCISTA
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        Esta función requiere las siguientes variables adicionales por contexto para hacer render
+        del pdf correctamente:
+        - context["subject_title"] = String que representa el titulo de la conferencia ofrecida.
+        - context["people_names"] = Lista de Strings con el nombre del conferencista a certificar.
         - context["roman_number"] = Numero romano de la convencion
-        - context['event_name_string']
-        - context['event_date_string']
+        - context['event_name_string'] = Nombre del evento por el que se certifica al conferencista
+        - context['event_date_string'] = Fecha en string del evento por el que se certifica al conferencista
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
@@ -749,18 +735,9 @@ class CertificateGenerator:
     def get_session_coord_certificate(self, context):
         """
         COORDINADOR DE SESION
-        Esta función requiere las siguientes variables por contexto para hacer render
-        pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        Esta función requiere las siguientes variables adicionales por contexto para hacer render
+        del pdf correctamente:
+        - context["people_names"] = Lista de Strings con el nombre del coordinador de sesion a certificar.
         - context["roman_number"] = Numero romano de la convencion
         """
         self.context = context
@@ -803,20 +780,14 @@ class CertificateGenerator:
     def get_organizer_certificate(self, context):
         """
         ORGANIZADOR EVENTO
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+        Esta función requiere las siguientes variables por contexto para hacer render
+        del pdf correctamente:
         - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        - context["people_names"] = Lista de Strings con el nombre del organizador del
+            evento a certificar.
         - context["roman_number"] = Numero romano de la convencion
-        - context['event_name_string']
-        - context['event_date_string']
+        - context['event_name_string'] = Nombre del evento por el que se certifica al organizador
+        - context['event_date_string'] = Fecha en string del evento por el que se certifica al organizador
         """
         self.context = context
         response = HttpResponse(content_type='application/pdf')
@@ -859,17 +830,10 @@ class CertificateGenerator:
     def get_paper_certificate(self, context):
         """
         TRABAJO
-        Esta función requiere las siguientes variables por contexto para hacer render pdf correctamente:
-        - context["header_url"]
-        - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-        - context["authority1_info"] = Informacion formateada de la autoridad1
-        - context["signature1_path"] = Camino local de la imagen de la firma1
-        - context["authority2_info"] = Informacion formateada de la autoridad2
-        - context["signature2_path"] = Camino local de la imagen de la firma2
-        - context["logo_path"] = Camino local de la imagen del logo
-        - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-        - context["subject_title"] = String que representa el nombre del evento asovac.
-        - context["people_names"] = Lista de Strings con el nombre del arbitro a certificar.
+        Esta función requiere las siguientes variables por contexto para hacer render
+        del pdf correctamente:
+        - context["subject_title"] = String que representa el nombre del trabajo certificado.
+        - context["people_names"] = Lista de Strings con los nombres de los autores del trabajo.
         - context["roman_number"] = Numero romano de la convencion
         """
         self.context = context
