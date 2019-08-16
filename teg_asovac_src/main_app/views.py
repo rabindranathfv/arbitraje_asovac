@@ -2562,7 +2562,11 @@ def register_user_in_sistema(request, arbitraje_id):
         arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
         rol = Rol.objects.get(id = 5)
 
-        new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+        if Usuario_rol_in_sistema.objects.filter(rol = rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac).exists():
+            new_usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.get(rol= rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
+            new_usuario_rol_in_sistema.status = True
+        else:
+            new_usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
         new_usuario_rol_in_sistema.save()
 
         rol_id = get_roles(request.user.id , arbitraje.id)
