@@ -87,7 +87,12 @@ class DataBasicForm(forms.ModelForm):
             'fecha_fin_arbitraje',
             'cabecera',
             'color_fondo_pie',
-            'color_letras_pie'
+            'color_letras_pie',
+            'autoridad1',
+            'firma1',
+            'autoridad2',
+            'firma2',
+            'logo'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
@@ -100,6 +105,10 @@ class DataBasicForm(forms.ModelForm):
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
+        }
+        help_texts = {
+            'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
+            'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
         }
 
     def __init__(self, *args, **kwargs):
@@ -141,6 +150,36 @@ class DataBasicForm(forms.ModelForm):
                 ,),
                 css_class="row",
                 style="padding-left: 15px;"
+            ),
+            HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
+            'autoridad1',
+            'firma1',
+            Div(
+                HTML("""{% if form.instance.firma1 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 1</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma1 %}<img src="{{ form.instance.firma1.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'autoridad2',
+            'firma2',
+            Div(
+                HTML("""{% if form.instance.firma2 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 2</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma2 %}<img src="{{ form.instance.firma2.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'logo',
+            Div(
+                HTML("""{% if form.instance.logo.url %}<label class="control-label col-sm-3">Imagen de Logo</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.logo.url %}<img src="{{ form.instance.logo.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
             ),
             Div(
                 Div(
@@ -253,36 +292,24 @@ class AssingRolForm(forms.ModelForm):
         # widgets = {'rol': CheckboxSelectMultiple()}
 
 
-class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+class ArbitrajeAssignCoordGenForm(forms.Form):
+    coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
     def __init__(self, *args, **kwargs):
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
-                                                        # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
-        self.fields['coordinador_general'].required = True
-
-    class Meta:
-        model = Sistema_asovac
-        fields = ['coordinador_general']
-        widgets = {'coordinador_general': forms.Select(attrs={'class': 'form-control'})}
-
+        self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeStateChangeForm, self).__init__(*args, **kwargs)
         self.fields['estado_arbitraje'].required = True
+        self.fields['estado_arbitraje'].label=''
 
     class Meta:
         model = Sistema_asovac
-        fields = ['coordinador_general', 'estado_arbitraje']
-        widgets = {'coordinador_general': forms.HiddenInput(),
-                'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
+        fields = ['estado_arbitraje']
+        widgets = {'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
 
-    def clean_coordinador_general(self):
-        data = self.cleaned_data['coordinador_general']
-        if data is None:
-            print ('Raising form error of estado!')
-            raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
-        return data
+
 
 """
 class RolForm(forms.ModelForm):

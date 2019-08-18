@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import uuid
-
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.utils.encoding import smart_unicode
+from django.utils.timezone import now as timezone_now
+
 
 # Create your models here.
 
@@ -22,6 +20,13 @@ estados_arbitraje = {	'0':'Desactivado',
 						'6':'En Cierre de Arbitraje',
 						'7':'En Asignación de Sesiones',
 						'8':'En Resumen'}
+
+def upload_to(instance, filename):
+	now = timezone_now()
+	filename_list = filename.split('.')
+	ext = filename_list[-1].lower()
+	path = "sistemas_asovac/%s/%s.%s" % (instance.id, now.strftime('%Y%m%d%H%M%S'), ext)
+	return path
 
 """""""""""""""""""""""""""
 Rol Model
@@ -82,6 +87,11 @@ class Sistema_asovac(models.Model):
 	cabecera = models.CharField('URL Imagen de Cabecera', max_length=255, default='https://i.imgur.com/G1PXYZU.jpg')
 	color_fondo_pie = models.CharField(max_length=7, default='#222', validators=[RegexValidator(r'^(\#[a-fA-F0-9]{6}|\#[a-fA-F0-9]{3})?$', 'Este es un código de color inválido. Debe ser un código de color hexadecimal html ej. #000000')])
 	color_letras_pie = models.CharField(max_length=7, default='#FFF', validators=[RegexValidator(r'^(\#[a-fA-F0-9]{6}|\#[a-fA-F0-9]{3})?$', 'Este es un código de color inválido. Debe ser un código de color hexadecimal html ej. #000000')])
+	autoridad1 = models.CharField(max_length=100, default = 'Nombre Autoridad1,Título en Organización,Nombre Organización')
+	firma1 = models.ImageField(upload_to=upload_to, default = 'default/signature_sample.jpg')
+	autoridad2 = models.CharField(max_length=100, default = 'Nombre Autoridad2,Título en Organización,Nombre Organización')
+	firma2 = models.ImageField(upload_to=upload_to, default = 'default/signature_sample.jpg')
+	logo = models.ImageField(upload_to=upload_to, default = 'default/AsoVac_Logo.jpg')
 
 
 	def __str__(self):
