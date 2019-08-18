@@ -61,8 +61,12 @@
 					</div>
 					<div class="panel-body">
 						<div class="container-fluid">
+							<div class='no-info-error hidden'>
+								<h2 class="text-center"><i class="fa fa-info-circle" aria-hidden="true"></i></h2>
+								<h4 class="text-center">No hay sufienciente información.</h4>
+							</div>
 							<div class="row middle-content">
-								<canvas id="role-count" heigth="100px"></canvas>
+								<canvas id="role-count" ></canvas>
 							</div>
 						</div>
 					</div>
@@ -78,6 +82,10 @@
 					</div>
 					<div class="panel-body">
 						<div class="container-fluid">
+							<div class='no-info-error hidden'>
+								<h2 class="text-center"><i class="fa fa-info-circle" aria-hidden="true"></i></h2>
+								<h4 class="text-center">No hay sufienciente información.</h4>
+							</div>
 							<div class="row middle-content">
 								<canvas id="sex-count" heigth="100px"></canvas>
 							</div>
@@ -99,7 +107,6 @@
 		method: "GET",
 		url: endpoint,
 		success: function(data){
-			console.log(data);
 			if (data.usuarios.data.reduce((a, b) => a + b, 0) > 1){
 				setChartRoleCount(data.usuarios);
 			}else{
@@ -132,7 +139,7 @@
 						'orange',
 					],
 					borderColor: [
-						'rgba(255, 99, 132, 1)',
+						'rgba(255, 255, 255, 1)',
 						'rgba(54, 162, 235, 1)',
 						'rgba(255, 206, 86, 1)',
 					],
@@ -141,7 +148,7 @@
 			},
 			options: {
 				legend: {
-					position: 'left',
+					position: 'top',
 					labels: {
 						fontSize: 14
 					}
@@ -190,12 +197,10 @@
 	}
 
 	function notEnoughData(elementId){
-		var elem = document.getElementById(elementId);
-		var target = elem.parentNode;
-		var text = document.createElement("h4");
-		text.innerHTML = "No hay suficientes usuarios para generar un gráfico por el momento."
-		target.appendChild(text);
-		target.removeChild(elem);
+		var $elem = $('#'+elementId);
+		var $error = $elem.closest('div').siblings('.no-info-error').first();
+		$elem.hide();
+		$error.removeClass('hidden');
 	}
 </script>
 {% endblock %}
