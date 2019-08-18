@@ -986,7 +986,9 @@ def adminArea(request, id):
 
 @login_required
 def getSubareas(request,id):
+
     # print "Área seleccionada",id
+
     
     data= dict()
     subareas= Sub_area.objects.all().filter(area=id)
@@ -1564,6 +1566,7 @@ def editPresentacion(request,id):
 
 @login_required
 def asigSesion(request,id):
+
     # print "Asignar sesión"
     data= dict()
     arbitraje = request.session['arbitraje_id']
