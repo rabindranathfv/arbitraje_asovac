@@ -1,40 +1,31 @@
 {% extends "content_wrapper_with_sidebar.html" %} {% block inner_content %}
 <div class="container" id="content-wrapper">
-	{% include "errors_form.html" %}
-    {% include "success_messages.html" %}
-	<div class="col-md-9">
-    	{% include "toggle_title.html" %}
-	</div>
-	<div class="col-md-3">
-		<a href="{% url 'trabajos:jobs_list' %}" class="btn btn-danger btn-lg btn-block"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a>
-	</div>
+
+    {% include "toggle_title.html" %}
+
 
     <div class="row">
         <div class="col-sm-12">
             <div class="jumbotron RLcard">
 
                 <div class="row">
-					{% if not pending_review %}
-						<div class="col-md-4">
-							<form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
-								{% csrf_token %}
-								<button type="button" class="sendValidate btn btn-danger btn-lg btn-block" > Rechazar</button> 
-								<input type="hidden" name="statusPago" value="Rechazado">
-							</form>
-						</div>
-						{% if rejected_pay %}
-							<div class="col-md-4">
-								<a data-url="{% url 'trabajos:request_new_pay' trabajo_id %}" class="show-form btn btn-warning btn-lg btn-block">Enviar solicitud de pago</a>
-							</div>
-						{% endif %}
-						<div class="col-md-4">
-								<form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
-									{% csrf_token %}
-									<button type="button" class="sendValidate btn btn-primary btn-lg btn-block" > Aceptar</button> 
-								<input type="hidden" name="statusPago" value="Aceptado">
-							</form>
-						</div>
-					{% endif %}
+                    <div class="col-md-4">
+                        <a href="{% url 'trabajos:jobs_list' %}" class="btn btn-warning btn-lg btn-block"><i class="fas fa-arrow-alt-circle-left"></i> Regresar</a>
+                    </div>
+                    <div class="col-md-4">
+                        <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+                            {% csrf_token %}
+                            <button type="button" class="sendValidate btn btn-danger btn-lg btn-block" > Rechazar</button> 
+                            <input type="hidden" name="statusPago" value="Rechazado">
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                            <form  method="post" class="" data-url="{% url 'trabajos:validatePago' trabajo_id %}">
+                                {% csrf_token %}
+                                <button type="button" class="sendValidate btn btn-primary btn-lg btn-block" > Aceptar</button> 
+                            <input type="hidden" name="statusPago" value="Aceptado">
+                        </form>
+                    </div>
                 </div>
                 <br>
                 
@@ -42,7 +33,7 @@
                     
                     <div class="col-md-12">
                         <input type="hidden" id="listPagos" name="list" data-url="{% url 'trabajos:list_pagos' trabajo_id %}">
-                        <input type="hidden" id="trabajo_id" name="trabajo_id" value="{{trabajo_id}}">
+                        <input type="hidden" id="trabajo_id" name="trabajo_id" value="{{trabajo_id}}"">
                         <table id="table"
 							data-toggle="table"
 							data-ajax="ajaxPagos"
@@ -65,8 +56,7 @@
 									<th data-field="pagador" data-sortable="true">Pagador</th>
 									<th data-field="cedula" data-sortable="true">Cédula</th>
 									<th data-field="fecha_pago" data-sortable="true">Fecha</th>
-									<th data-field="status" data-sortable="true">Estatus</th>
-									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operatePagos" data-align="center">Detalles del pago</th>
+									<th data-width="11%"  data-field="operate" data-events="operateEvents" data-formatter="operatePagos" data-align="center">Acciones</th>
 								</tr>
 						</thead>
 					</table>
@@ -138,16 +128,6 @@
             html.push(fin);
             return html.join('');
 		}
-		function operatePagos(value, row, index) {
-		let route_review_pay = "{% url 'trabajos:review_pay' 1 %}".replace(1,row.id)
-        return [
-            '<a class="show-form" data-url="',
-			route_review_pay,
-			'"title="Revisar factura"> ',
-            '<i class="fas fa-door-open"></i>',
-            '</a>  ' ,
-        ].join('');
-    }
 	
 	</script> 
 

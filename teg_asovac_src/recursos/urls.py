@@ -13,20 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url,include
+from django.contrib import admin
+
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.recursos_pag, name='recursos'),
-    url(r'^pdf/$', views.create_authors_certificates, name='generate_pdf'),#generate_pdf  #create_authors_certificates
-    url(r'^certificado/autor-certificado/$', views.resources_author, name='resources_author'),
-    url(r'^certificado/arbitro-certificado/$', views.resources_referee, name='resources_referee'),
-    url(r'^certificado/evento-certificado/$', views.resources_event, name='resources_event'),
-    url(r'^certificado/arbitraje-certificado/$', views.resources_arbitration, name='resources_arbitration'),
-    url(r'^certificado/sesion-certificado/$', views.resources_sesion, name='resources_sesion'),
-    url(r'^certificado/asovac-certificado/$', views.resources_asovac, name='resources_asovac'),
+    url(r'^$', views.recursos_pag, name= 'recursos'),
+    url(r'^pdf/$', views.generate_pdf, name= 'generate_pdf'),
+    url(r'^certificado/autor-certificado/$',views.resources_author,name='resources_author'),
+    url(r'^certificado/arbitro-certificado/$',views.resources_referee,name='resources_referee'),
+    url(r'^certificado/evento-certificado/$',views.resources_event,name='resources_event'),
+    url(r'^certificado/arbitraje-certificado/$',views.resources_arbitration,name='resources_arbitration'),
+    url(r'^certificado/sesion-certificado/$',views.resources_sesion,name='resources_sesion'),
+    url(r'^certificado/asovac-certificado/$',views.resources_asovac,name='resources_asovac'),
 
     #Ajax
-    url(r'^api/data/$', views.get_data, name='get_data'),
-    url(r'^api/chart/data/$', views.ChartData.as_view(), name='chart_data'),
+    url(r'^api/data/$', views.get_data, name= 'get_data'),
+    url(r'^api/chart/data/$', views.ChartData.as_view(), name = 'chart_data'),
+
 ]

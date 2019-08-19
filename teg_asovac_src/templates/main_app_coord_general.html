@@ -9,15 +9,14 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				{% include "errors_form.html" %}
-                {% include "success_messages.html" %}
+
 				<h2 class="text-left">Seleccione un Coordinador General</h2>
 
 				<div class="row top-margin-36">
 					<div class="col-sm-8 col-sm-offset-2">
 						<form method="POST">
 							{% csrf_token %}
-							{{ form }}
+							{{ form.coordinador_general }}
 							<div class="row top-margin-36">
 								<div class="col-sm-4 col-sm-offset-4">
 									<button type="submit" class="btn btn-success btn-block">Asignar</button>

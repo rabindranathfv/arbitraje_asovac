@@ -25,8 +25,8 @@ from django.core.mail import send_mail
 from django.conf.urls import include
 #import para collect static y usar media
 from django.conf.urls.static import static
-from django.contrib.auth.views import logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
-from main_app.views import login_view
+from django.contrib.auth.views import login, logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
@@ -42,7 +42,7 @@ urlpatterns = [
      ## password and login 
 
     url(r'^logout/', logout_then_login, name='logout'),
-    url(r'^$',login_view, name = 'login'),
+    url(r'^$',login,{'template_name':'main_app_login.html'},name='login'),
 
     #url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
     

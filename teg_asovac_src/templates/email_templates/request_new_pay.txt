@@ -1,5 +1,0 @@
-Sistema ASOVAC: Error en pagos de postular trabajo '{{sistema}}'
-
-Se le notifica que los pagos de la postulación del trabajo con título '{{ trabajo.titulo_espanol}}' han sido rechazados porque se han encontrado errores que señalaremos a continuación, por favor ingrese al sistema y en la lista de trabajos tendrá desbloqueada la opción para subir los pagos de nuevo.
-
-Se requiere que envíe los pagos de nuevo por los siguientes motivos:  {{ razones_rechazo }}

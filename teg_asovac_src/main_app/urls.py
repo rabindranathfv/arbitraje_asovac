@@ -29,7 +29,7 @@ from django.contrib.auth.views import login, logout_then_login, password_reset, 
 
 
 from . import views
-from . import utils as utilsViews
+from main_app.views import register
 
 urlpatterns = [
     # url(r'^$',views.login,name='login'),
@@ -94,7 +94,4 @@ urlpatterns = [
     # Generar Reportes
     url(r'^generar_reporte/(?P<tipo>\d+)$',views.generate_report,name='generar_reporte'),
 
-    # API de Graficos de Dashboard
-    url(r'^dashboard/chart/data/$',
-        utilsViews.DashboardCharts.as_view(), name='dashboard_chart_data'),
 ]

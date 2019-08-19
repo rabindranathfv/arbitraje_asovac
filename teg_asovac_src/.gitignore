@@ -5,4 +5,3 @@ __pycache__
 *.pdf
 static_env/media_root/comprobantes_de_pago/
 static_env/media_root/trabajos/
-static_env/media_root/sistemas_asovac/

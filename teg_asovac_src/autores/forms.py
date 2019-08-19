@@ -216,7 +216,6 @@ class PagoForm(forms.ModelForm):
             'observaciones': forms.TextInput(attrs={'placeholder': 'Introduzca sus observaciones'}),
         }
 	def __init__(self, *args, **kwargs):
-		self.sistema_id = kwargs.pop('sistema_id')
 		super(PagoForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'pago-form'
@@ -232,13 +231,6 @@ class PagoForm(forms.ModelForm):
 		self.fields['fecha_pago'].label = "Fecha del pago"
 		self.fields['observaciones'].label = "Observaciones"
 		self.fields['comprobante_pago'].label = "Comprobante de pago"
-
-	def clean_fecha_pago(self):
-		sistema = Sistema_asovac.objects.get(id = self.sistema_id)
-		fecha_pago = self.cleaned_data['fecha_pago']
-		if  fecha_pago < sistema.fecha_inicio_arbitraje:
-			raise forms.ValidationError(_("La fecha del pago debe haber sido después del inicio del sistema."), code = "invalid_date")
-		return fecha_pago
 
 	def clean_numero_cuenta_origen(self):
 		numero_cuenta_origen = self.cleaned_data['numero_cuenta_origen']
@@ -296,7 +288,6 @@ class FacturaForm(forms.ModelForm):
             'fecha_emision': forms.DateInput(attrs={'placeholder': 'Formato: DD/MM/AAAA'}),
         }
 	def __init__(self, *args, **kwargs):
-		self.sistema_id = kwargs.pop('sistema_id')
 		super(FacturaForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.fields['monto_total'].widget.attrs['placeholder'] = 'Ejemplo: 100.50'
@@ -313,13 +304,6 @@ class FacturaForm(forms.ModelForm):
 		if monto_total <= 0:
 			raise forms.ValidationError(_("El monto debe ser mayor que 0."),code = "invalid_monto_total")
 		return monto_total
-	
-	def clean_fecha_emision(self):
-		sistema = Sistema_asovac.objects.get(id = self.sistema_id)
-		fecha_emision = self.cleaned_data['fecha_emision']
-		if  fecha_emision < sistema.fecha_inicio_arbitraje:
-			raise forms.ValidationError(_("La fecha de emisión debe haber sido después del inicio del sistema."), code = "invalid_date")
-		return fecha_emision
 
 #Form para que el admin o coordinador general cree un autor
 class AdminCreateAutorForm(forms.ModelForm):

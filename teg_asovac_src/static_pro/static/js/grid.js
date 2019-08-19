@@ -168,6 +168,13 @@ $.ajaxSetup({
         ].join('');
     }
 
+    function operatePagos(value, row, index) {
+        return [
+            '<a class="Descargar" href="/media/'+row.comprobante+'" title="Descargar comprobante" download> ',
+            '<i class="fas fa-file-download"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
     function operateAdminAreas(value, row, index) {
         return [
             '<a class="changeAreaArbitro" href="javascript:void(0)" title="Cambiar Área">',
