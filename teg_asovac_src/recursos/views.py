@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 
+from arbitrajes.models import Arbitro
 from autores.models import Autores_trabajos, Autor
 
 from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
@@ -362,11 +363,37 @@ def resources_referee(request):
         form = CertificateToRefereeForm(request.POST, sistema_id = arbitraje.id)
         if form.is_valid():
             print (form.cleaned_data['arbitros'][0])
-            context = create_certificate_context(arbitraje)
-            certificate_gen = CertificateGenerator()
-            certificate = certificate_gen.get_authors_certificate(context)
-            print(certificate['Content-type'])
-            return certificate
+            for arbitro_id in form.cleaned_data['arbitros']:
+                arbitro = Arbitro.objects.get(id = arbitro_id)
+                """
+                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
+                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+                - context["authority1_info"] = String con informacion formateada de la autoridad1
+                - context["signature1_path"] = Camino local de la imagen de la firma1
+                - context["authority2_info"] = String con informacion formateada de la autoridad2
+                - context["signature2_path"] = Camino local de la imagen de la firma2
+                - context["logo_path"] = Camino local de la imagen del logo
+                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+                """
+                context = {
+                    'header_url': arbitraje.cabecera,
+                    'city': 'Caracas',
+                    'authority1_info': arbitraje.autoridad1,
+                    'signature1_path': arbitraje.firma1,
+                    'authority2_info': arbitraje.autoridad2,
+                    'signature2_path': arbitraje.firma2,
+                    'logo_path': arbitraje.logo,
+                    'date_string': 'holi',
+                    'recipient_name': arbitro.nombres + ' ' + arbitro.apellidos,
+                    'roman_number': 'LXVIII',
+                    'people_names': arbitro.nombres + ' ' + arbitro.apellidos,
+                    'peoples_id': arbitro.cedula_pasaporte
+                }
+                certificate_gen = CertificateGenerator()
+                certificate = certificate_gen.get_referees_certificate(context)
+                print(certificate)
+                return certificate
+
     else:
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
