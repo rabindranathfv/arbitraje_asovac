@@ -7,23 +7,21 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 from django import forms
 
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from main_app.models import Usuario_asovac
+from main_app.models import Usuario_asovac, Usuario_rol_in_sistema, Sistema_asovac
+from arbitrajes.models import Arbitro
 class CertificateToRefereeForm(forms.Form):
-    arbitros = forms.ModelMultipleChoiceField(queryset=Usuario_asovac.objects.all(),
-                                                required=True,
-                                                widget=FilteredSelectMultiple("arbitros", is_stacked=False))
+    
     def __init__(self, *args, **kwargs):
+        self.sistema_id = kwargs.pop('sistema_id')
         super(CertificateToRefereeForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Div('arbitros', ),
-            Submit('submit', 'Save Genes',
-                   css_class="save btn btn-success")
-        )
-        
+        usuarios_arbitros_in_sistema = Usuario_rol_in_sistema.objects.filter(rol = 4, sistema_asovac = self.sistema_id, status = True)
+        arbitros = []
+        for usuario_arbitro_in_sistema in usuarios_arbitros_in_sistema:
+            arbitro = Arbitro.objects.get(usuario = usuario_arbitro_in_sistema.usuario_asovac)
+            arbitros.append((arbitro.id, arbitro.nombres))
+        self.fields['arbitros'] = forms.MultipleChoiceField(  choices = arbitros,
+                                                required=True,
+                                                label="",
+                                                widget=FilteredSelectMultiple("Arbitros", is_stacked=False))
 
-    class Media:
-        css = {'all': ('/static/admin/css/widgets.css',
-               '/static/css/adminoverrides.css', ), } # custom css
-
-        js = ('admin/js/vendor/jquery/jquery.js', 'admin/js/jquery.init.js','/static/jsi18n.js' )
+    

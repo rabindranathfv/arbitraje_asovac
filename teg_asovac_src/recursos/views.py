@@ -358,7 +358,17 @@ def resources_referee(request):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    form = CertificateToRefereeForm()
+    if request.method == 'POST':
+        form = CertificateToRefereeForm(request.POST, sistema_id = arbitraje.id)
+        if form.is_valid():
+            print (form.cleaned_data['arbitros'][0])
+            context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            certificate = certificate_gen.get_authors_certificate(context)
+            print(certificate['Content-type'])
+            return certificate
+    else:
+        form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
         'nombre_vista' : 'Recursos',
         'main_navbar_options' : main_navbar_options,

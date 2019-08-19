@@ -30,7 +30,7 @@
 				</div>
 				<br><br><br>
 				<div class="row">
-					<div class="col-md-8 col-sm-offset-2">
+					<div class="col-sm-10 col-sm-offset-1">
 						<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
 						<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
 						<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
@@ -49,9 +49,33 @@
 							<div class="row">	
 								{{form}}
 							</div>
-							<br><br><br>
+							<br>
 							<div class ="row">
-								<button type="SUBMIT">Submit</button>
+								<div class="col-sm-3 col-sm-offset-5">
+									<button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">
+										Enviar certificado
+									</button>
+								</div>
+			
+								<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+									<div class="modal-dialog modal-dialog-centered" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+												<h3 class="modal-title" id="ModalLongTitle">Enviar certificado de arbitros</h3>
+											</div>
+											<div class="modal-body text-center content-modal">
+												¿Está seguro que desea enviar el certificado de arbitro a los arbitros seleccionados?
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+												<button type="submit" class="btn btn-lg btn-primary">Confirmar</button>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</form>
 					</div>
