@@ -27,7 +27,11 @@ from django.conf.urls import include
 from django.conf.urls.static import static
 from django.contrib.auth.views import logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 from main_app.views import login_view
+from django.views.i18n import JavaScriptCatalog
+
+
 urlpatterns = [
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
     url(r'^administracion/', include('main_app.urls', namespace='main_app')),

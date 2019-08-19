@@ -1,4 +1,10 @@
 {% extends "content_wrapper_with_sidebar.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block jquery %}
+	<script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+{% endblock %}
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
@@ -14,13 +20,6 @@
 
 				<div class="row">
 					<div class="col-md-8 col-sm-offset-2">
-						<div class="col-md-6">
-							<form class="form-inline">
-								<input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar">
-								<button class="btn btn-primary" type="submit">Buscar</button>
-							</form>
-						</div>
-						<br><br><br>
 						<div class="col-md-12">
 							<select class="form-control">
 								<option>Seleccione un tipo de documento</option>
@@ -29,38 +28,33 @@
 						</div>
 					</div>
 				</div>
-
+				<br><br><br>
 				<div class="row">
 					<div class="col-md-8 col-sm-offset-2">
-						<h3 class="text-center">
-							Documento a generar
-						</h3>
-						
-						<table class="table table-bordered">
-							<thead>
-								<tr>
-									<th>Nombres</th>
-									<th>Apellidos</th>
-									<th>Correo electrónico</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Pedro Manuel</td>
-									<td>Camacho Rodriguez</td>
-									<td>CamachoR@gmail.com</td>
-								</tr>
-								
-							</tbody>
-						</table>
+						<script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+						<script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+						<script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
+						<script type="text/javascript" src="{% static 'admin/js/actions.js' %}"></script>
+						<script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script>
+						<script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script>
+						<script type="text/javascript" src="{% static 'jsi18n.js' %}"></script>
+						<link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+						<link rel="stylesheet" type="text/css" href="{% static 'css/adminoverrides.css' %}">
+						<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+						<link href="{% static 'css/base_style.css' %}" rel="stylesheet">
+						<link href="{% static 'css/bootstrap-select.css' %}" rel="stylesheet">
+						<link href="{% static 'css/bootstrap-table.css' %}" rel="stylesheet">
+						<form action="." method="POST">
+							{% csrf_token %}
+							<div class="row">	
+								{{form}}
+							</div>
+							<br><br><br>
+							<div class ="row">
+								<button type="SUBMIT">Submit</button>
+							</div>
+						</form>
 					</div>
-				</div>
-
-				<div class="form-group col-sm-3 col-sm-offset-6">
-					<a href="" class="btn btn-block btn-danger" role="button">Cancelar</a>
-				</div>
-				<div class="form-group col-sm-3 ">
-					<a href="" class="btn btn-block btn-success" role="button">Generar</a>
 				</div>
 
 				<br><br>

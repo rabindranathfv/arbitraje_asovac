@@ -22,6 +22,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
+from .forms import CertificateToRefereeForm
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -357,7 +358,7 @@ def resources_referee(request):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-
+    form = CertificateToRefereeForm()
     context = {
         'nombre_vista' : 'Recursos',
         'main_navbar_options' : main_navbar_options,
@@ -371,6 +372,7 @@ def resources_referee(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'form': form,
     }
     return render(request, 'main_app_resources_referee.html', context)
 
