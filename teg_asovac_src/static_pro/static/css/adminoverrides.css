@@ -1,6 +1,15 @@
 /* overrides to default admin styles */
 
 /* SELECTOR (FILTER INTERFACE) */
+.selector {
+    width:100%;
+    height:100%;
+    display:box;
+    box-orient:horizontal;
+    box-pack:center;
+    box-align:center;
+}
+
 .selector .selector-filter {
     border: 0px solid #ccc;
     border-width: 0 0px;
@@ -81,3 +90,6 @@ a.selector-chooseall {
 a.selector-clearall {
     padding: 0px 0 3px 20px;
 }
+
+
+    

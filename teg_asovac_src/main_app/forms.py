@@ -92,7 +92,9 @@ class DataBasicForm(forms.ModelForm):
             'firma1',
             'autoridad2',
             'firma2',
-            'logo'
+            'logo',
+            'ciudad',
+            'numero_romano'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
@@ -105,10 +107,13 @@ class DataBasicForm(forms.ModelForm):
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
+            'ciudad': 'Ciudad',
+            'numero_romano': 'Número Romano',
         }
         help_texts = {
             'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
             'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
+            'numero_romano': 'Número de la convención en números romanos para desplegar en cartas y certificados',
         }
 
     def __init__(self, *args, **kwargs):
@@ -152,6 +157,8 @@ class DataBasicForm(forms.ModelForm):
                 style="padding-left: 15px;"
             ),
             HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
+            'ciudad',
+            'numero_romano',
             'autoridad1',
             'firma1',
             Div(
