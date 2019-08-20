@@ -1,11 +1,6 @@
 {% extends "content_wrapper_with_sidebar.html" %}
 {% load crispy_forms_tags %}
 {% load static %}
-{% block jquery %}
-	<script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
-	<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
-{% endblock %}
-
 {% block inner_content %}
 <div class="container" id="content-wrapper">
 
@@ -14,7 +9,8 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				
+				{% include "errors_form.html" %}
+                {% include "success_messages.html" %}
 				<h2 class="text-left">Documentos digitales para árbitros</h2>
 				<br>
 				<br>

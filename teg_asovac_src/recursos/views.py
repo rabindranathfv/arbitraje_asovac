@@ -6,6 +6,7 @@ import random
 
 from decouple import config
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.http import JsonResponse
@@ -413,6 +414,8 @@ def resources_referee(request):
                 email_msg.attach(filename, certificate.content, 'application/pdf')
                 email_msg.attach_alternative(msg_html, "text/html")
                 email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados a los arbitros seleccionados con éxito.')
     else:
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
