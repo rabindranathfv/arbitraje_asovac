@@ -437,6 +437,12 @@ def resources_event(request):
     context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos_event_certificates.html', context)
 
+@login_required
+def create_logistics_certificates(request):
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    return render(request, 'recursos_event_logistics_certificate.html', context)
+
 
 
 @login_required
