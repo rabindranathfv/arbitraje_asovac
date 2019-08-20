@@ -649,6 +649,13 @@ var SaveAñadirPagoForm= function(){
         });
         return false;
       };
+    
+    var countSelectedReferee = function(){
+        let tamano = $('#id_arbitros_to > option').length;
+        $("#selectedCount").text(tamano);
+        console.log(tamano);
+    };
+    $('#enviar-certificado').click(countSelectedReferee);
 
     // Show modal
     $('.show-form').click(ShowForm);

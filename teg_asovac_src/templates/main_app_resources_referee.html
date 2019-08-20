@@ -37,7 +37,7 @@
 							<br>
 							<div class ="row">
 								<div class="col-sm-3 col-sm-offset-5">
-									<button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter">
+									<button type="button" class="btn btn-primary btn-success btn-lg btn-block" data-toggle="modal" data-target="#ModalCenter" id="enviar-certificado">
 										Enviar certificado
 									</button>
 								</div>
@@ -52,7 +52,7 @@
 												<h3 class="modal-title" id="ModalLongTitle">Enviar certificado de arbitros</h3>
 											</div>
 											<div class="modal-body text-center content-modal">
-												¿Está seguro que desea enviar el certificado de arbitro a los arbitros seleccionados?
+												¿Está seguro que desea enviar el certificado de arbitro a los <span id = "selectedCount"></span> arbitro(s) seleccionados?
 											</div>
 											<div class="modal-footer">
 												<button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
@@ -72,4 +72,12 @@
 		</div>
 	</div>
 </div>
+<script>
+	;(function($){
+        // your code
+		
+    })(jQuery);
+	
+</script>
 {% endblock %}
+
