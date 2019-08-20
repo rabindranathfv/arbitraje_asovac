@@ -20,9 +20,11 @@ def get_user(request):
 class AuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         route= dict()
-        route= {'next':"/administracion/home/"}
-        request.GET = route
-        # print request.GET
+        if 'next' in request.GET:
+            # print request.GET['next']
+            route= {'next':"/administracion/home/"}
+            request.GET = route
+        
         if not request.user.is_authenticated() :
             # return redirect(reverse('login'))
           #Can't log out if not logged in
