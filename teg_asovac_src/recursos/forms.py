@@ -7,8 +7,11 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 from django import forms
 
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from main_app.models import Usuario_asovac, Usuario_rol_in_sistema, Sistema_asovac
+
 from arbitrajes.models import Arbitro
+from autores.models import Autores_trabajos
+from main_app.models import Usuario_asovac, Usuario_rol_in_sistema, Sistema_asovac
+
 class CertificateToRefereeForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
@@ -20,6 +23,21 @@ class CertificateToRefereeForm(forms.Form):
             arbitro = Arbitro.objects.get(usuario = usuario_arbitro_in_sistema.usuario_asovac)
             arbitros.append((arbitro.id, arbitro.nombres))
         self.fields['arbitros'] = forms.MultipleChoiceField(  choices = arbitros,
+                                                required=True,
+                                                label="",
+                                                widget=FilteredSelectMultiple("Arbitros", is_stacked=False))
+
+
+class CertificateToAuthorsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        self.sistema_id = kwargs.pop('sistema_id')
+        super(CertificateToAuthorsForm,self).__init__(*args, **kwargs)
+        autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = self.sistema_id, es_autor_principal = True, pagado = True, trabajo__estatus__iexact="aceptado")
+        trabajos = []
+        for autor_trabajo in autores_trabajos:
+            trabajo.append((autor_trabajo.trabajo.id, autor_trabajo.trabajo.titulo_espanol))
+        self.fields['trabajos'] = forms.MultipleChoiceField(  choices = trabajos,
                                                 required=True,
                                                 label="",
                                                 widget=FilteredSelectMultiple("Arbitros", is_stacked=False))
