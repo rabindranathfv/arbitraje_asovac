@@ -433,10 +433,9 @@ def resources_referee(request):
 
 @login_required
 def resources_event(request):
-
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
-    return render(request, 'main_app_resources_event.html', context)
+    return render(request, 'recursos_event_certificates.html', context)
 
 
 

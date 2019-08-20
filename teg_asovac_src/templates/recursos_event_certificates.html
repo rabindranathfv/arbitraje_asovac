@@ -1,0 +1,38 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-center">Documentos Digitales para Eventos</h2>
+				<br>
+				<h4>Seleccione el tipo de documento a generar:</h4>
+				<div class="row" style="margin-bottom: 50px; margin-top: 30px">
+					<div class="col-sm-4 col-sm-offset-1">
+						<a href="#" class="btn btn-block btn-lg well-lg btn-primary">
+							<div class="row text-center" style="margin-bottom: 15px">
+								<i class="fa fa-envelope fa-lg"></i>
+							</div>
+							Certificados de Comisión Logística
+						</a>
+					</div>
+					<div href="#" class="col-sm-4 col-sm-offset-1">
+						<a class="btn btn-block btn-lg well-lg btn-primary">
+							<div class="row text-center" style="margin-bottom: 15px">
+								<i class="fa fa-envelope fa-lg"></i>
+							</div>
+							Certificados de Conferencista Evento
+						</a>
+					</div>
+					<!-- <option>Certificado de expositor de evento</option> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
