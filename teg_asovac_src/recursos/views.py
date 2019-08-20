@@ -149,6 +149,37 @@ class ChartData(APIView):
         return Response(data)
 
 
+# Funcion de ayuda que genera un contexto comun para todas las vistas/views
+def create_common_context(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    item_active = 1
+    items = validate_rol_status(estado, rol_id, item_active, arbitraje_id)
+    route_conf = get_route_configuracion(estado, rol_id, arbitraje_id)
+    route_seg = get_route_seguimiento(estado, rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado, rol_id, item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado, rol_id)
+    route_resultados = get_route_resultados(estado, rol_id, arbitraje_id)
+
+    context = {
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+
+    return context
+
+
 def generate_random_color():
     letras = "0123456789ABCDEF"
     color = "#"
@@ -199,37 +230,8 @@ def abreviate_if_neccesary(area_nombre):
 # Create your views here.
 @login_required
 def recursos_pag(request):
-
-    # print (rol_id)
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos.html', context)
 
 def get_data(request, *args, **kwargs):
@@ -432,36 +434,8 @@ def resources_referee(request):
 @login_required
 def resources_event(request):
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_event.html', context)
 
 
@@ -469,36 +443,8 @@ def resources_event(request):
 @login_required
 def resources_sesion(request):
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_sesion.html', context)
 
 
@@ -506,36 +452,8 @@ def resources_sesion(request):
 @login_required
 def resources_asovac(request):
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_asovac.html', context)
 
 
@@ -543,35 +461,7 @@ def resources_asovac(request):
 @login_required
 def resources_arbitration(request):
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_arbitrations.html', context)
 
