@@ -378,6 +378,8 @@ def resources_referee(request):
                 - context["logo_path"] = Camino local de la imagen del logo
                 - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
                 """
+                now = timezone_now()
+                now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
                 context = {
                     'header_url': arbitraje.cabecera,
                     'city': 'Caracas',
@@ -386,14 +388,19 @@ def resources_referee(request):
                     'authority2_info': arbitraje.autoridad2,
                     'signature2_path': arbitraje.firma2,
                     'logo_path': arbitraje.logo,
-                    'date_string': 'holi',
-                    'recipient_name': arbitro.nombres + ' ' + arbitro.apellidos,
+                    'date_string': now_date_string,
+                    'recipient_name': arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0],
                     'roman_number': 'LXVIII',
-                    'people_names': arbitro.nombres + ' ' + arbitro.apellidos,
+                    'people_names': [arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0]],
                     'peoples_id': arbitro.cedula_pasaporte
                 }
+
                 certificate_gen = CertificateGenerator()
                 certificate = certificate_gen.get_referees_certificate(context)
+
+                name = context["recipient_name"].split(' ')
+                name = '_'.join(name)
+                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, context["roman_number"])
 
                 context_email = {
                     'sistema': arbitraje,
@@ -403,7 +410,7 @@ def resources_referee(request):
                 msg_html = render_to_string('../templates/email_templates/certificate_referee.html', context_email)
 
                 email_msg = EmailMultiAlternatives('Certificado de árbitro', msg_plain, config('EMAIL_HOST_USER'), [arbitro.correo_electronico])
-                email_msg.attach('prueba.pdf', certificate.content, 'application/pdf')
+                email_msg.attach(filename, certificate.content, 'application/pdf')
                 email_msg.attach_alternative(msg_html, "text/html")
                 email_msg.send()
     else:
