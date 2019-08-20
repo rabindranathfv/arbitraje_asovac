@@ -32,6 +32,11 @@ from .forms import CertificateToRefereeForm
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
+TOP_NAVBAR_OPTIONS = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
 class ChartData(APIView):
     authentication_classes = ()
     permission_classes = ()
@@ -194,11 +199,6 @@ def abreviate_if_neccesary(area_nombre):
 # Create your views here.
 @login_required
 def recursos_pag(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
 
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -218,7 +218,7 @@ def recursos_pag(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -301,10 +301,7 @@ def create_authors_certificates(request):
 
 @login_required
 def resources_author(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -323,7 +320,7 @@ def resources_author(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -341,12 +338,6 @@ def resources_author(request):
 
 @login_required
 def resources_referee(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -421,7 +412,7 @@ def resources_referee(request):
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -440,17 +431,12 @@ def resources_referee(request):
 
 @login_required
 def resources_event(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
-        
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -464,7 +450,7 @@ def resources_event(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -482,11 +468,6 @@ def resources_event(request):
 
 @login_required
 def resources_sesion(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -506,7 +487,7 @@ def resources_sesion(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -524,11 +505,6 @@ def resources_sesion(request):
 
 @login_required
 def resources_asovac(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -548,7 +524,7 @@ def resources_asovac(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -566,11 +542,6 @@ def resources_asovac(request):
 
 @login_required
 def resources_arbitration(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -590,7 +561,7 @@ def resources_arbitration(request):
 
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
