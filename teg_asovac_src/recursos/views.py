@@ -405,7 +405,8 @@ def resources_referee(request):
 
                 context_email = {
                     'sistema': arbitraje,
-                    'arbitro': arbitro
+                    'usuario': arbitro,
+                    'rol': 'árbitro de subárea'
                 }
                 msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
                 msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
