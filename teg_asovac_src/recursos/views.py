@@ -27,7 +27,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
-from .forms import CertificateToRefereeForm
+from .forms import CertificateToRefereeForm, MultipleRecipientsForm
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -437,10 +437,17 @@ def resources_event(request):
     context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos_event_certificates.html', context)
 
+
 @login_required
 def create_logistics_certificates(request):
+    form = MultipleRecipientsForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            print form.cleaned_data['recipients_names']
+            print form.cleaned_data['recipients_emails']
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
+    context['form'] = form
     return render(request, 'recursos_event_logistics_certificate.html', context)
 
 
