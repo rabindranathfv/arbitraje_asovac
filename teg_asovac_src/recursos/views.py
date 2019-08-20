@@ -4,10 +4,13 @@ from __future__ import unicode_literals
 import os
 import random
 
+from decouple import config
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMultiAlternatives
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
 
 from rest_framework.views import APIView
@@ -391,9 +394,18 @@ def resources_referee(request):
                 }
                 certificate_gen = CertificateGenerator()
                 certificate = certificate_gen.get_referees_certificate(context)
-                print(certificate)
-                return certificate
 
+                context_email = {
+                    'sistema': arbitraje,
+                    'arbitro': arbitro
+                }
+                msg_plain = render_to_string('../templates/email_templates/certificate_referee.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate_referee.html', context_email)
+
+                email_msg = EmailMultiAlternatives('Certificado de árbitro', msg_plain, config('EMAIL_HOST_USER'), [arbitro.correo_electronico])
+                email_msg.attach('prueba.pdf', certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
     else:
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
