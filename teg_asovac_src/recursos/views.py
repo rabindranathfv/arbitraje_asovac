@@ -407,8 +407,8 @@ def resources_referee(request):
                     'sistema': arbitraje,
                     'arbitro': arbitro
                 }
-                msg_plain = render_to_string('../templates/email_templates/certificate_referee.txt', context_email)
-                msg_html = render_to_string('../templates/email_templates/certificate_referee.html', context_email)
+                msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
 
                 email_msg = EmailMultiAlternatives('Certificado de árbitro', msg_plain, config('EMAIL_HOST_USER'), [arbitro.correo_electronico])
                 email_msg.attach(filename, certificate.content, 'application/pdf')
