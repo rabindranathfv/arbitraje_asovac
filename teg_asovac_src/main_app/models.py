@@ -179,6 +179,14 @@ class Sistema_asovac(models.Model):
         upload_to=upload_to,
         default='default/AsoVac_Logo.jpg'
     )
+    ciudad = models.CharField(
+        max_length=50,
+        default='Caracas'
+    )
+    numero_romano = models.CharField(
+        max_length=15,
+        default='LXVII'
+    )
 
     def __str__(self):
         return self.nombre.encode('utf-8', errors='replace')
