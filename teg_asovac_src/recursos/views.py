@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
 
@@ -366,7 +366,6 @@ def resources_referee(request):
     if request.method == 'POST':
         form = CertificateToRefereeForm(request.POST, sistema_id = arbitraje.id)
         if form.is_valid():
-            print (form.cleaned_data['arbitros'][0])
             for arbitro_id in form.cleaned_data['arbitros']:
                 arbitro = Arbitro.objects.get(id = arbitro_id)
                 """
@@ -417,6 +416,7 @@ def resources_referee(request):
                 email_msg.send()
 
             messages.success(request, 'Se han enviado los certificados a los arbitros seleccionados con éxito.')
+            return redirect('recursos:resources_referee')
     else:
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {

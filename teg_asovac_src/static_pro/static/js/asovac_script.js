@@ -655,7 +655,14 @@ var SaveAñadirPagoForm= function(){
         $("#selectedCount").text(tamano);
         console.log(tamano);
     };
+    $("#form-loading").submit(function(e) {
+        $("#question").hide();
+        $("#confirm-button").hide();
+        $("#cancel-button").hide();
+        $("#loading").show();
+    });
     $('#enviar-certificado').click(countSelectedFiltered);
+
 
     // Show modal
     $('.show-form').click(ShowForm);
