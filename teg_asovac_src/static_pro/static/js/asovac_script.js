@@ -650,12 +650,12 @@ var SaveAñadirPagoForm= function(){
         return false;
       };
     
-    var countSelectedReferee = function(){
-        let tamano = $('#id_arbitros_to > option').length;
+    var countSelectedFiltered = function(){
+        let tamano = $('.selector-chosen > select  > option').length;
         $("#selectedCount").text(tamano);
         console.log(tamano);
     };
-    $('#enviar-certificado').click(countSelectedReferee);
+    $('#enviar-certificado').click(countSelectedFiltered);
 
     // Show modal
     $('.show-form').click(ShowForm);
