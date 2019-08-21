@@ -21,7 +21,7 @@ class CertificateToRefereeForm(forms.Form):
         arbitros = []
         for usuario_arbitro_in_sistema in usuarios_arbitros_in_sistema:
             arbitro = Arbitro.objects.get(usuario = usuario_arbitro_in_sistema.usuario_asovac)
-            arbitros.append((arbitro.id, arbitro.nombres))
+            arbitros.append((arbitro.id, arbitro.nombres +' '+ arbitro.apellidos))
         self.fields['arbitros'] = forms.MultipleChoiceField(  choices = arbitros,
                                                 required=True,
                                                 label="",
