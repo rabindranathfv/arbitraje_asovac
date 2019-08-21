@@ -41,18 +41,19 @@ class MultipleRecipientsForm(forms.Form):
         self.fields[field1_name] = forms.CharField(
             required=False,
             widget=forms.TextInput(attrs={'placeholder':'Nombre completo',
-                                          'class':'form-control'})
+                                          'class':'form-control new-list-item'})
         )
         # create a new recipients_email blank field
         field2_name = 'recipients_email_0'
         self.fields[field2_name] = forms.EmailField(
             required=False,
-            widget= forms.EmailInput(attrs={'placeholder':'Correo Electrónico',
-                                            'class':'form-control'})
+            widget=forms.EmailInput(attrs={'placeholder':'Correo Electrónico',
+                                            'class':'form-control new-list-item'})
         )
 
     def clean(self):
         cleaned_data = super(MultipleRecipientsForm, self).clean()
+        print cleaned_data
         recipients_names = list()
         recipients_emails = list()
         i = 0
@@ -61,11 +62,11 @@ class MultipleRecipientsForm(forms.Form):
         while self.cleaned_data.get(field1_name):
             recipients_name = cleaned_data.get(field1_name)
             recipients_email = cleaned_data.get(field2_name)
-            # Si existe un destinatario sin su email asociado
+            # Si existe un destinatario sin su email asociado o viceversa
             # Se levanta un error de validacion:
-            if recipients_name and not recipients_email:
+            if not (recipients_name and recipients_email):
                 raise forms.ValidationError(
-                    "Todos los destinatarios deben poseer un email asociado."
+                    "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
                 )
             else:
                 recipients_names.append(recipients_name)

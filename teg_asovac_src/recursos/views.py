@@ -5,10 +5,12 @@ import os
 import random
 
 from decouple import config
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
+from django.forms import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
@@ -196,8 +198,7 @@ def create_certificate_context(arbitraje):
     path_logo = arbitraje.logo.url.replace('/media/', '')
 
     context = {}
-    context["recipient_name"] = 'Rabindranath Ferreira'
-    context["city"] = 'Caracas'
+    context["city"] = arbitraje.ciudad
     context["header_url"] = arbitraje.cabecera
     context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
     context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
@@ -205,14 +206,16 @@ def create_certificate_context(arbitraje):
     context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
-    context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
-    context['event_date_string'] = now_date_string
-    context['date_string'] = now_date_string
-    context["roman_number"] = 'LXVII'
-    context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
-     ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    context["people_names"] = ['Rabindranath Ferreira'] * 5
-    context["peoples_id"] = 'V-6.186.871'
+    context["roman_number"] = arbitraje.numero_romano
+
+    # context["recipient_name"] = 'Rabindranath Ferreira'
+    # context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
+    # context['event_date_string'] = now_date_string
+    # context['date_string'] = now_date_string
+    # context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
+    #  ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    # context["people_names"] = ['Rabindranath Ferreira'] * 5
+    # context["peoples_id"] = 'V-6.186.871'
 
     return context
 
@@ -442,9 +445,63 @@ def resources_event(request):
 def create_logistics_certificates(request):
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
-        if form.is_valid():
-            print form.cleaned_data['recipients_names']
-            print form.cleaned_data['recipients_emails']
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+
+        arbitraje_id = request.session['arbitraje_id']
+        arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+        cert_context = create_certificate_context(arbitraje)
+        certificate_gen = CertificateGenerator()
+        for r_name, r_email in recipients_tuples:
+            instance_context = {
+                "recipient_name": r_name,
+                "people_names": [r_name],
+            }
+            instance_context.update(cert_context)
+            certificate = certificate_gen.get_logistics_certificate(instance_context)
+            name = r_name.split(' ')
+            name = '_'.join(name)
+            filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                             cert_context["roman_number"])
+            context_email = {
+                'sistema': arbitraje,
+                'usuario': r_name,
+                'rol': 'miembro de la comisión de logística'
+            }
+            msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                         context_email)
+            msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                        context_email)
+
+            email_msg = EmailMultiAlternatives(
+                'Certificado de Comisión Logística',
+                msg_plain,
+                config('EMAIL_HOST_USER'),
+                [r_email]
+            )
+            email_msg.attach(filename, certificate.content, 'application/pdf')
+            email_msg.attach_alternative(msg_html, "text/html")
+            email_msg.send()
+
+        messages.success(request, 'Se han enviado los certificados \
+            a los destinatarios listados con éxito.')
+        return redirect('recursos:create_logistics_certificates')
+
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     context['form'] = form
