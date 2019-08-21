@@ -12,7 +12,7 @@
 				{% include "errors_form.html" %}
                 {% include "success_messages.html" %}
 				<div class="row">
-					<h2 class="col-sm-offset-1">Documentos digitales para autores</h2>
+					<h2 class="col-sm-offset-1">Documentos digitales para autores {% if paper %}por trabajo{% endif %}</h2>
 				</div>
 				<br>
 				<br>
@@ -48,11 +48,11 @@
 									<div class="modal-dialog modal-dialog-centered" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
-												<h3 class="modal-title" id="ModalLongTitle">Enviar certificado de autores</h3>
+												<h3 class="modal-title" id="ModalLongTitle">Enviar certificado</h3>
 											</div>
 											<div class="modal-body text-center content-modal">
 												<div id="question">	
-													¿Está seguro que desea enviar el certificado de autores a los <span id = "selectedCount"></span> trabajo(s) seleccionados?
+													¿Está seguro que desea enviar el certificado {% if paper %}de trabajo a los autores de(los) {% else %}de autores a los {% endif %}<span id = "selectedCount"></span> trabajo(s) seleccionados?
 												</div>
 												<div id="loading" style="display:none;">
 													<p>Enviando certificados, por favor espere...</p>

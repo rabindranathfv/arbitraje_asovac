@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^certificado/arbitraje-certificado/$', views.resources_arbitration, name='resources_arbitration'),
     url(r'^certificado/sesion-certificado/$', views.resources_sesion, name='resources_sesion'),
     url(r'^certificado/asovac-certificado/$', views.resources_asovac, name='resources_asovac'),
+    url(r'^certificado/trabajo-certificado/$', views.resources_paper, name='resources_paper'),
 
     #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),
