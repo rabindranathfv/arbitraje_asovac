@@ -36,10 +36,10 @@ class CertificateToAuthorsForm(forms.Form):
         autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = self.sistema_id, es_autor_principal = True, pagado = True, trabajo__estatus__iexact="aceptado")
         trabajos = []
         for autor_trabajo in autores_trabajos:
-            trabajo.append((autor_trabajo.trabajo.id, autor_trabajo.trabajo.titulo_espanol))
+            trabajos.append((autor_trabajo.trabajo.id, autor_trabajo.trabajo.titulo_espanol))
         self.fields['trabajos'] = forms.MultipleChoiceField(  choices = trabajos,
                                                 required=True,
                                                 label="",
-                                                widget=FilteredSelectMultiple("Arbitros", is_stacked=False))
+                                                widget=FilteredSelectMultiple("Trabajos", is_stacked=False))
 
     
