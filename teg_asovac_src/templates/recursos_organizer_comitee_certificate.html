@@ -1,0 +1,58 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-left">Miembros de la Comisión Organizadora a Certificar</h2>
+				<br>
+				<h4>
+					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los miembros
+					de la comisión organizadora a los que se les enviarán sus certificados.
+				</h4>
+				<br>
+				<h5><b>Lista de destinatarios:</b></h5>
+				<div class="row" style="margin-top: 30px; margin-bottom: 50px">
+					<div class="col-sm-12">
+						{% include "success_messages.html" %}
+						{% include "errors_form.html" %}
+						<form method="POST">
+							{% csrf_token %}
+							<div class="container" id="form-container">
+								<div class="row">
+									<div class="col-sm-6 form-group">
+										<div class="controls">
+											{{ form.recipients_name_0 }}
+										</div>
+									</div>
+									<div class="col-sm-6 form-group">
+										<div class="controls">
+											{{ form.recipients_email_0 }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-2 col-sm-offset-10">
+									<input type="submit" name="submit" value="Generar" class="btn btn-success btn-lg btn-block" id="btn-modal-success">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+<script type="text/javascript" src="{% static 'js/multiple_recipients_dynamic_form.js' %}"></script>
+{% endblock %}

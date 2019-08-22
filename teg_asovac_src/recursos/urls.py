@@ -21,13 +21,15 @@ urlpatterns = [
     url(r'^pdf/$', views.create_authors_certificates, name='generate_pdf'),#generate_pdf  #create_authors_certificates
     url(r'^certificado/autor-certificado/$', views.resources_author, name='resources_author'),
     url(r'^certificado/arbitro-certificado/$', views.resources_referee, name='resources_referee'),
-    url(r'^certificado/documentos-evento/$', views.resources_event, name='resources_event'),
-    url(r'^certificado/documentos-evento/logistica$',
+    url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
+    url(r'^documentos/eventos/comision-logistica$',
         views.create_logistics_certificates, name='create_logistics_certificates'),
     url(r'^certificado/arbitraje-certificado/$',
         views.resources_arbitration, name='resources_arbitration'),
     url(r'^certificado/sesion-certificado/$', views.resources_sesion, name='resources_sesion'),
-    url(r'^certificado/asovac-certificado/$', views.resources_asovac, name='resources_asovac'),
+    url(r'^documentos/asovac/$', views.resources_asovac, name='resources_asovac'),
+    url(r'^documentos/asovac/comision-organizadora$',
+        views.create_organizer_comitee_certificates, name='create_organizer_comitee_certificates'),
 
     #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),
