@@ -43,10 +43,10 @@ estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
                       'En Selección y Asignación de Coordinadores de Área',
                       'En Carga de Trabajos',
-                      'En Asignación de Trabajos a las Áreas',
+                      'En Asignación de Árbitros a Trabajos',
                       'En Arbitraje',
                       'En Cierre de Arbitraje',
-                      'En Asignación de Secciones',
+                      'En Asignación de Sesiones',
                       'En Resumen'
                     ]
 
