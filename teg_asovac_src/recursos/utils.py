@@ -592,7 +592,6 @@ class CertificateGenerator:
         - context["recipient_name"] = String con el nombre y apellido separado por espacio del
             receptor del certificado.
         - context["roman_number"] = Numero romano de la convencion
-        - context["subject_title"] = String que representa el nombre del evento asovac.
         - context["people_names"] = Lista de Strings con el nombre del miembro del comite de
             logistica a certificar.
         """
