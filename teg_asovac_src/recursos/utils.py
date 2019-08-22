@@ -764,7 +764,7 @@ class CertificateGenerator:
         story.append(Paragraph(ptext, self.styles["Simple"]))
         story.append(Spacer(1, 12))
 
-        ptext = '<font><b>Coordinador de Sesión de presentación de trabajos libres.</b></font>'
+        ptext = '<font><b>Coordinador de Sesión de Presentación de Trabajos Libres.</b></font>'
         story.append(Paragraph(ptext, self.styles["Subject title"]))
         story.append(Spacer(1, 12))
 

@@ -1,0 +1,40 @@
+
+								<option>Certificado organizador de evento</option>
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-center">Documentos Digitales para Eventos</h2>
+				<br>
+				<h4>Seleccione el tipo de documento a generar:</h4>
+				<div class="row middle-content" style="margin-bottom: 50px; margin-top: 30px">
+					<div class="col-sm-4 col-sm-offset-1">
+						<a href="{% url 'recursos:create_session_coord_certificates' %}"
+						   class="btn btn-block btn-lg well-lg btn-primary" style="white-space: normal;">
+							<div class="row text-center" style="margin-bottom: 15px">
+								<i class="fa fa-envelope fa-2x"></i>
+							</div>
+							<p>Certificado de Coordinador de Sesiones</p>
+						</a>
+					</div>
+					<div class="col-sm-4 col-sm-offset-1">
+						<a href="#" class="btn btn-block btn-lg well-lg btn-primary" style="white-space: normal;">
+							<div class="row text-center" style="margin-bottom: 15px">
+								<i class="fa fa-envelope fa-2x"></i>
+							</div>
+							<p>Certificado de Organizador de Evento</p>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
