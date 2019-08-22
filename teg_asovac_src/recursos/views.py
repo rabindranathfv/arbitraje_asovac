@@ -696,17 +696,10 @@ def resources_paper(request):
     if request.method == "POST":
         form = CertificateToAuthorsForm(request.POST, sistema_id = arbitraje_id)
         if form.is_valid():
+            cert_context = create_certificate_context(arbitraje)
             for trabajo_id in form.cleaned_data['trabajos']:
                 autores_trabajo = Autores_trabajos.objects.filter(trabajo = trabajo_id)
                 """
-                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
-                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-                - context["authority1_info"] = String con informacion formateada de la autoridad1
-                - context["signature1_path"] = Camino local de la imagen de la firma1
-                - context["authority2_info"] = String con informacion formateada de la autoridad2
-                - context["signature2_path"] = Camino local de la imagen de la firma2
-                - context["logo_path"] = Camino local de la imagen del logo
-                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
                 - context["subject_title"] = String que representa el nombre del trabajo certificado.
                 - context["people_names"] = Lista de Strings con los nombres de los autores del trabajo.
                 - context["roman_number"] = Numero romano de la convencion
@@ -719,24 +712,16 @@ def resources_paper(request):
                     authors_emails.append(autor_trabajo.autor.correo_electronico)
                     authors_names.append( autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0] )
                 
-                context = {
-                    'header_url': arbitraje.cabecera,
-                    'city': arbitraje.ciudad,
-                    'authority1_info': arbitraje.autoridad1,
-                    'signature1_path': arbitraje.firma1,
-                    'authority2_info': arbitraje.autoridad2,
-                    'signature2_path': arbitraje.firma2,
-                    'logo_path': arbitraje.logo,
-                    'date_string': now_date_string,
+                instance_context = {
                     'roman_number': arbitraje.numero_romano,
                     'people_names': authors_names,
                     'subject_title': autores_trabajo.first().trabajo.titulo_espanol,
                 }
-
+                instance_context.update(cert_context)
                 certificate_gen = CertificateGenerator()
-                certificate = certificate_gen.get_paper_certificate(context)
+                certificate = certificate_gen.get_paper_certificate(instance_context)
 
-                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (context["subject_title"],context["roman_number"])
+                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (instance_context["subject_title"],instance_context["roman_number"])
 
                 context_email = {
                     'sistema': arbitraje,
