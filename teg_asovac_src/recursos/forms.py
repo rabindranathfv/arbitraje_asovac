@@ -7,8 +7,9 @@ from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from main_app.models import Usuario_rol_in_sistema
 from arbitrajes.models import Arbitro
+from autores.models import Autores_trabajos
+from main_app.models import Usuario_asovac, Usuario_rol_in_sistema, Sistema_asovac
 
 
 class CertificateToRefereeForm(forms.Form):
@@ -86,3 +87,21 @@ class MultipleRecipientsForm(forms.Form):
         for field_name in self.fields:
             if field_name.startswith('recipients_email_'):
                 yield self[field_name]
+
+
+class CertificateToAuthorsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        self.sistema_id = kwargs.pop('sistema_id')
+        super(CertificateToAuthorsForm,self).__init__(*args, **kwargs)
+        autores_trabajos = Autores_trabajos.objects.filter(sistema_asovac = self.sistema_id, es_autor_principal = True, pagado = True, trabajo__estatus__iexact="aceptado")
+        trabajos = []
+        for autor_trabajo in autores_trabajos:
+            trabajos.append((autor_trabajo.trabajo.id, autor_trabajo.trabajo.titulo_espanol))
+        self.fields['trabajos'] = forms.MultipleChoiceField(  choices = trabajos,
+                                                required=True,
+                                                label="",
+                                                widget=FilteredSelectMultiple("Trabajos", is_stacked=False))
+
+    
+

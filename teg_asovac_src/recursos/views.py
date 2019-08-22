@@ -29,7 +29,8 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
-from .forms import CertificateToRefereeForm, MultipleRecipientsForm
+from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm
+
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -322,7 +323,72 @@ def resources_author(request):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     # print items
+    if request.method == "POST":
+        form = CertificateToAuthorsForm(request.POST, sistema_id = arbitraje_id)
+        if form.is_valid():
+            for trabajo_id in form.cleaned_data['trabajos']:
+                autores_trabajo = Autores_trabajos.objects.filter(trabajo = trabajo_id)
+                """
+                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
+                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
+                - context["authority1_info"] = String con informacion formateada de la autoridad1
+                - context["signature1_path"] = Camino local de la imagen de la firma1
+                - context["authority2_info"] = String con informacion formateada de la autoridad2
+                - context["signature2_path"] = Camino local de la imagen de la firma2
+                - context["logo_path"] = Camino local de la imagen del logo
+                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
+                - context["recipient_name"] = String con el nombre y apellido separado por espacio del
+                    receptor del certificado.
+                - context["roman_number"] = Numero romano de la convencion
+                - context["subject_title"] = String que representa el nombre del trabajo completo.
+                - context["people_names"] = Lista de Strings con nombres  de los autores del paper.
+                """
+                now = timezone_now()
+                now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
+                authors_emails = []
+                authors_names = []
+                for autor_trabajo in autores_trabajo:
+                    authors_emails.append(autor_trabajo.autor.correo_electronico)
+                    authors_names.append( autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0] )
+                
+                context = {
+                    'header_url': arbitraje.cabecera,
+                    'city': arbitraje.ciudad,
+                    'authority1_info': arbitraje.autoridad1,
+                    'signature1_path': arbitraje.firma1,
+                    'authority2_info': arbitraje.autoridad2,
+                    'signature2_path': arbitraje.firma2,
+                    'logo_path': arbitraje.logo,
+                    'date_string': now_date_string,
+                    'recipient_name': '',
+                    'roman_number': arbitraje.numero_romano,
+                    'subject_title': autores_trabajo.first().trabajo.titulo_espanol,
+                    'people_names': authors_names
 
+                }
+
+                certificate_gen = CertificateGenerator()
+                certificate = certificate_gen.get_authors_certificate(context)
+
+                filename = "Certificado_Convencion_Asovac_%s.pdf" % (context["roman_number"])
+
+                context_email = {
+                    'sistema': arbitraje,
+                    'titulo_trabajo': autores_trabajo.first().trabajo.titulo_espanol,
+                    'rol': 'autor'
+                }
+                msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
+
+                email_msg = EmailMultiAlternatives('Certificado de autor(es)', msg_plain, config('EMAIL_HOST_USER'), authors_emails)
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados al(los) autor(es) seleccionados con éxito.')
+            return redirect('recursos:resources_author')
+    else:    
+        form = CertificateToAuthorsForm(sistema_id = arbitraje_id)
     context = {
         'nombre_vista' : 'Recursos',
         'main_navbar_options' : TOP_NAVBAR_OPTIONS,
@@ -336,6 +402,7 @@ def resources_author(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'form': form
     }
     return render(request, 'main_app_resources_author.html', context)
 
@@ -386,7 +453,7 @@ def resources_referee(request):
                     'logo_path': arbitraje.logo,
                     'date_string': now_date_string,
                     'recipient_name': arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0],
-                    'roman_number': 'LXVIII',
+                    'roman_number': arbitraje.numero_romano,
                     'people_names': [arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0]],
                     'peoples_id': arbitro.cedula_pasaporte
                 }
@@ -400,7 +467,7 @@ def resources_referee(request):
 
                 context_email = {
                     'sistema': arbitraje,
-                    'usuario': arbitro,
+                    'usuario': arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0],
                     'rol': 'árbitro de subárea'
                 }
                 msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)

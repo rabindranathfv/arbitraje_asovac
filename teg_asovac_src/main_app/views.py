@@ -43,10 +43,10 @@ estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
                       'En Selección y Asignación de Coordinadores de Área',
                       'En Carga de Trabajos',
-                      'En Asignación de Trabajos a las Áreas',
+                      'En Asignación de Árbitros a Trabajos',
                       'En Arbitraje',
                       'En Cierre de Arbitraje',
-                      'En Asignación de Secciones',
+                      'En Asignación de Sesiones',
                       'En Resumen'
                     ]
 
@@ -806,6 +806,7 @@ def state_arbitration(request, arbitraje_id):
     if request.method == 'POST':
         if form.is_valid() and Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2, status = True).exists():
             state = form.save()
+            messages.success(request, 'El estado del sistema ha sido cambiado con éxito')
             #Codigo para enviar correo electronico
             if state.estado_arbitraje == 8:
                 autores_principal_list = Autores_trabajos.objects.filter(sistema_asovac = arbitraje, es_autor_principal = True, pagado = True)
@@ -835,13 +836,14 @@ def state_arbitration(request, arbitraje_id):
                             html_message=msg_html,              #mensaje en html
                             )
         else:
-            messages.error(request, 'El sistema no tiene un coordinador general asignado, por favor asigne uno para poder cambiar de estado.')
+            messages.error(request, 'El sistema no tiene un coordinador general asignado, \
+                por favor asigne uno para poder cambiar de estado.')
         #estado = request.POST['estadoArbitraje']
         #print(estado)
         #request.session['estado'] = update_state_arbitration(arbitraje_id,estado)
 
 
-    # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente        
+    # si entro en el post se actualiza el estado de lo contrario no cambia y se lo paso a la vista igualmente
     estado = request.session['estado']
     context = {
         'nombre_vista' : 'Cambiar Estado del Arbitraje',
