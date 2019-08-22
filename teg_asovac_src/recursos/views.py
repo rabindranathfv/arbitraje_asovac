@@ -429,41 +429,24 @@ def resources_referee(request):
     if request.method == 'POST':
         form = CertificateToRefereeForm(request.POST, sistema_id = arbitraje.id)
         if form.is_valid():
+            cert_context = create_certificate_context(arbitraje)
             for arbitro_id in form.cleaned_data['arbitros']:
                 arbitro = Arbitro.objects.get(id = arbitro_id)
-                """
-                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
-                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-                - context["authority1_info"] = String con informacion formateada de la autoridad1
-                - context["signature1_path"] = Camino local de la imagen de la firma1
-                - context["authority2_info"] = String con informacion formateada de la autoridad2
-                - context["signature2_path"] = Camino local de la imagen de la firma2
-                - context["logo_path"] = Camino local de la imagen del logo
-                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-                """
                 now = timezone_now()
                 now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
-                context = {
-                    'header_url': arbitraje.cabecera,
-                    'city': 'Caracas',
-                    'authority1_info': arbitraje.autoridad1,
-                    'signature1_path': arbitraje.firma1,
-                    'authority2_info': arbitraje.autoridad2,
-                    'signature2_path': arbitraje.firma2,
-                    'logo_path': arbitraje.logo,
-                    'date_string': now_date_string,
+                instance_context = {
                     'recipient_name': arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0],
                     'roman_number': arbitraje.numero_romano,
                     'people_names': [arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0]],
                     'peoples_id': arbitro.cedula_pasaporte
                 }
-
+                instance_context.update(cert_context)
                 certificate_gen = CertificateGenerator()
-                certificate = certificate_gen.get_referees_certificate(context)
+                certificate = certificate_gen.get_referees_certificate(instance_context)
 
-                name = context["recipient_name"].split(' ')
+                name = instance_context["recipient_name"].split(' ')
                 name = '_'.join(name)
-                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, context["roman_number"])
+                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, instance_context["roman_number"])
 
                 context_email = {
                     'sistema': arbitraje,
