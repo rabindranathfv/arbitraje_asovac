@@ -27,9 +27,13 @@ urlpatterns = [
     url(r'^certificado/arbitraje-certificado/$',
         views.resources_arbitration, name='resources_arbitration'),
     url(r'^certificado/sesion-certificado/$', views.resources_sesion, name='resources_sesion'),
+
+    url(r'^certificado/trabajo-certificado/$', views.resources_paper, name='resources_paper'),
+
     url(r'^documentos/asovac/$', views.resources_asovac, name='resources_asovac'),
     url(r'^documentos/asovac/comision-organizadora$',
         views.create_organizer_comitee_certificates, name='create_organizer_comitee_certificates'),
+
 
     #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),
