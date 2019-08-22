@@ -381,7 +381,7 @@ def resources_author(request):
         'route_resultados': route_resultados,
         'form': form
     }
-    return render(request, 'main_app_resources_author.html', context)
+    return render(request, 'recursos_author.html', context)
 
 
 
@@ -457,7 +457,7 @@ def resources_referee(request):
         'route_resultados': route_resultados,
         'form': form,
     }
-    return render(request, 'main_app_resources_referee.html', context)
+    return render(request, 'recursos_referee.html', context)
 
 
 
@@ -716,5 +716,5 @@ def resources_paper(request):
         'form': form,
         'paper': True, 
     }
-    return render(request, 'main_app_resources_author.html', context)
+    return render(request, 'recursos_author.html', context)
 
