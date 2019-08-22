@@ -593,7 +593,7 @@ def resources_asovac(request):
 
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
-    return render(request, 'main_app_resources_asovac.html', context)
+    return render(request, 'recursos_asovac_documents.html', context)
 
 
 
