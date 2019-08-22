@@ -462,45 +462,48 @@ def create_logistics_certificates(request):
                         "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
                     )
                 )
+                break
 
-        arbitraje_id = request.session['arbitraje_id']
-        arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-        cert_context = create_certificate_context(arbitraje)
-        certificate_gen = CertificateGenerator()
-        for r_name, r_email in recipients_tuples:
-            instance_context = {
-                "recipient_name": r_name,
-                "people_names": [r_name],
-            }
-            instance_context.update(cert_context)
-            certificate = certificate_gen.get_logistics_certificate(instance_context)
-            name = r_name.split(' ')
-            name = '_'.join(name)
-            filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name,
-                                                                             cert_context["roman_number"])
-            context_email = {
-                'sistema': arbitraje,
-                'usuario': r_name,
-                'rol': 'miembro de la comisión de logística'
-            }
-            msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
-                                         context_email)
-            msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
-                                        context_email)
+        print 'form error', form.errors
+        if not form.errors:
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "recipient_name": r_name,
+                    "people_names": [r_name],
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_logistics_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                 cert_context["roman_number"])
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'miembro de la comisión de logística'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
 
-            email_msg = EmailMultiAlternatives(
-                'Certificado de Comisión Logística',
-                msg_plain,
-                config('EMAIL_HOST_USER'),
-                [r_email]
-            )
-            email_msg.attach(filename, certificate.content, 'application/pdf')
-            email_msg.attach_alternative(msg_html, "text/html")
-            email_msg.send()
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Comisión Logística',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
 
-        messages.success(request, 'Se han enviado los certificados \
-            a los destinatarios listados con éxito.')
-        return redirect('recursos:create_logistics_certificates')
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:create_logistics_certificates')
 
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'

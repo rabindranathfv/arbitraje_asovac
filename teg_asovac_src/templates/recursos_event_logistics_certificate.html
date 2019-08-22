@@ -19,6 +19,7 @@
 				<h5><b>Lista de destinatarios:</b></h5>
 				<div class="row" style="margin-top: 30px; margin-bottom: 50px">
 					<div class="col-sm-12">
+						{% include "success_messages.html" %}
 						{% include "errors_form.html" %}
 						<form method="POST">
 							{% csrf_token %}
