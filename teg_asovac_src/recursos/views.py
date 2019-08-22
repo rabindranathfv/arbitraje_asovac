@@ -5,10 +5,12 @@ import os
 import random
 
 from decouple import config
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
+from django.forms import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
@@ -27,10 +29,16 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
-from .forms import CertificateToRefereeForm, CertificateToAuthorsForm
+from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm
+
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+
+TOP_NAVBAR_OPTIONS = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -144,6 +152,37 @@ class ChartData(APIView):
         return Response(data)
 
 
+# Funcion de ayuda que genera un contexto comun para todas las vistas/views
+def create_common_context(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    item_active = 1
+    items = validate_rol_status(estado, rol_id, item_active, arbitraje_id)
+    route_conf = get_route_configuracion(estado, rol_id, arbitraje_id)
+    route_seg = get_route_seguimiento(estado, rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado, rol_id, item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado, rol_id)
+    route_resultados = get_route_resultados(estado, rol_id, arbitraje_id)
+
+    context = {
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+    }
+
+    return context
+
+
 def generate_random_color():
     letras = "0123456789ABCDEF"
     color = "#"
@@ -160,8 +199,7 @@ def create_certificate_context(arbitraje):
     path_logo = arbitraje.logo.url.replace('/media/', '')
 
     context = {}
-    context["recipient_name"] = 'Rabindranath Ferreira'
-    context["city"] = 'Caracas'
+    context["city"] = arbitraje.ciudad
     context["header_url"] = arbitraje.cabecera
     context["authority1_info"] = arbitraje.autoridad1.replace(',', '<br/>')
     context["signature1_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path1)
@@ -169,14 +207,16 @@ def create_certificate_context(arbitraje):
     context["signature2_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path2)
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
-    context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
-    context['event_date_string'] = now_date_string
-    context['date_string'] = now_date_string
-    context["roman_number"] = 'LXVII'
-    context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
-     ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    context["people_names"] = ['Rabindranath Ferreira'] * 5
-    context["peoples_id"] = 'V-6.186.871'
+    context["roman_number"] = arbitraje.numero_romano
+
+    # context["recipient_name"] = 'Rabindranath Ferreira'
+    # context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
+    # context['event_date_string'] = now_date_string
+    # context['date_string'] = now_date_string
+    # context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
+    #  ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
+    # context["people_names"] = ['Rabindranath Ferreira'] * 5
+    # context["peoples_id"] = 'V-6.186.871'
 
     return context
 
@@ -194,42 +234,8 @@ def abreviate_if_neccesary(area_nombre):
 # Create your views here.
 @login_required
 def recursos_pag(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
-    # print (rol_id)
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos.html', context)
 
 def get_data(request, *args, **kwargs):
@@ -301,10 +307,7 @@ def create_authors_certificates(request):
 
 @login_required
 def resources_author(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -388,7 +391,7 @@ def resources_author(request):
         form = CertificateToAuthorsForm(sistema_id = arbitraje_id)
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -407,12 +410,6 @@ def resources_author(request):
 
 @login_required
 def resources_referee(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
-
-
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -487,7 +484,7 @@ def resources_referee(request):
         form = CertificateToRefereeForm(sistema_id = arbitraje.id)
     context = {
         'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
+        'main_navbar_options' : TOP_NAVBAR_OPTIONS,
         'estado' : estado,
         'rol_id' : rol_id,
         'arbitraje_id' : arbitraje_id,
@@ -506,168 +503,172 @@ def resources_referee(request):
 
 @login_required
 def resources_event(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    return render(request, 'recursos_event_certificates.html', context)
 
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-        
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+@login_required
+def create_logistics_certificates(request):
+    form = MultipleRecipientsForm(request.POST or None)
+    if request.method == 'POST':
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+                break
 
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+        print 'form error', form.errors
+        if not form.errors:
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "recipient_name": r_name,
+                    "people_names": [r_name],
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_logistics_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "CertificadoLogistica_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                 cert_context["roman_number"])
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'miembro de la comisión de logística'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
 
-    # print items
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Comisión Logística',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
 
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
-    return render(request, 'main_app_resources_event.html', context)
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:create_logistics_certificates')
+
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_event_logistics_certificate.html', context)
 
 
 
 @login_required
 def resources_sesion(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_sesion.html', context)
 
 
 
 @login_required
 def resources_asovac(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    return render(request, 'recursos_asovac_documents.html', context)
 
 
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
+@login_required
+def create_organizer_comitee_certificates(request):
+    form = MultipleRecipientsForm(request.POST or None)
+    if request.method == 'POST':
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+                break
 
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+        print 'form error', form.errors
+        if not form.errors:
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "recipient_name": r_name,
+                    "people_names": [r_name],
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_comitee_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "CertificadoComite_Organizador_Convencion_Asovac_%s.pdf" % cert_context["roman_number"]
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'miembro de la comisión organizadora'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
 
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Comisión Organizadora',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
 
-    # print items
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:create_organizer_comitee_certificates')
 
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
-    return render(request, 'main_app_resources_asovac.html', context)
-
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_organizer_comitee_certificate.html', context)
 
 
 @login_required
 def resources_arbitration(request):
-    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
-
-    item_active = 1
-    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
-
-    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
-    route_seg= get_route_seguimiento(estado,rol_id)
-    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
-    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
-    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
-    context = {
-        'nombre_vista' : 'Recursos',
-        'main_navbar_options' : main_navbar_options,
-        'estado' : estado,
-        'rol_id' : rol_id,
-        'arbitraje_id' : arbitraje_id,
-        'item_active' : item_active,
-        'items':items,
-        'route_conf':route_conf,
-        'route_seg':route_seg,
-        'route_trabajos_sidebar':route_trabajos_sidebar,
-        'route_trabajos_navbar': route_trabajos_navbar,
-        'route_resultados': route_resultados,
-    }
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_arbitrations.html', context)
 
 

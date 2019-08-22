@@ -5,13 +5,14 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm,PasswordResetForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
 from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
+from django.core.exceptions import ValidationError
 
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
@@ -352,3 +353,10 @@ class SubAreaRegistForm(forms.ModelForm):
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
     file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("El correo "+email+" no se encuentra registrado.")
+        return email
