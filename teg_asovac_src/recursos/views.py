@@ -541,11 +541,78 @@ def create_logistics_certificates(request):
 
 @login_required
 def resources_sesion(request):
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    return render(request, 'recursos_session_certificates.html', context)
+
+
+@login_required
+def create_session_coord_certificates(request):
+    form = MultipleRecipientsForm(request.POST or None)
+    if request.method == 'POST':
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+                break
+
+        print 'form error', form.errors
+        if not form.errors:
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "recipient_name": r_name,
+                    "people_names": [r_name],
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_session_coord_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "CertificadoCoordinador_de_Sesion_Convencion_Asovac_%s.pdf" % cert_context["roman_number"]
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'coordinador de sesión de presentación de trabajos libres'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Coordinador de Sesiones',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:create_session_coord_certificates')
 
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
-    return render(request, 'main_app_resources_sesion.html', context)
-
+    context['form'] = form
+    return render(request, 'recursos_session_coord_certificate.html', context)
 
 
 @login_required
@@ -717,4 +784,3 @@ def resources_paper(request):
         'paper': True, 
     }
     return render(request, 'recursos_author.html', context)
-
