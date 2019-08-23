@@ -7,6 +7,8 @@
 </div>
 <form method="POST" enctype="multipart/form-data" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id step %}" novalidate>
     <div class="modal-body">
+        {% include "errors_form.html" %}
+        {% include "success_messages.html" %}
         {% csrf_token %}
         <div id="datos_pagador">
             {{ datos_pagador_form | crispy }}

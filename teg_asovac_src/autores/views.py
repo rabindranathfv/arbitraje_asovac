@@ -708,6 +708,8 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			messages.success(request, 'Pago añadido con éxito.')
 			data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
 			data['form_is_valid'] = True
+		elif step =="3":
+			messages.error(request,"Número de referencia duplicado, por favor verifique el número de transferencia/cheque indicado dado que ya hay un pago registrado con ese número de referencia en nuestro sistema.")
 	else:
 		step = 1
 	context ={
