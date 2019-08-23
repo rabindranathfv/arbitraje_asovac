@@ -5,13 +5,14 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm,PasswordResetForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
 from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
+from django.core.exceptions import ValidationError
 
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
@@ -92,7 +93,9 @@ class DataBasicForm(forms.ModelForm):
             'firma1',
             'autoridad2',
             'firma2',
-            'logo'
+            'logo',
+            'ciudad',
+            'numero_romano'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
@@ -105,10 +108,13 @@ class DataBasicForm(forms.ModelForm):
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
+            'ciudad': 'Ciudad',
+            'numero_romano': 'Número Romano',
         }
         help_texts = {
             'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
             'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
+            'numero_romano': 'Número de la convención en números romanos para desplegar en cartas y certificados',
         }
 
     def __init__(self, *args, **kwargs):
@@ -152,6 +158,8 @@ class DataBasicForm(forms.ModelForm):
                 style="padding-left: 15px;"
             ),
             HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
+            'ciudad',
+            'numero_romano',
             'autoridad1',
             'firma1',
             Div(
@@ -345,3 +353,10 @@ class SubAreaRegistForm(forms.ModelForm):
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
     file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("El correo "+email+" no se encuentra registrado.")
+        return email

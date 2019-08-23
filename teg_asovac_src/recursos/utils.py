@@ -592,7 +592,6 @@ class CertificateGenerator:
         - context["recipient_name"] = String con el nombre y apellido separado por espacio del
             receptor del certificado.
         - context["roman_number"] = Numero romano de la convencion
-        - context["subject_title"] = String que representa el nombre del evento asovac.
         - context["people_names"] = Lista de Strings con el nombre del miembro del comite de
             logistica a certificar.
         """
@@ -765,7 +764,7 @@ class CertificateGenerator:
         story.append(Paragraph(ptext, self.styles["Simple"]))
         story.append(Spacer(1, 12))
 
-        ptext = '<font><b>Coordinador de Sesión de presentación de trabajos libres.</b></font>'
+        ptext = '<font><b>Coordinador de Sesión de Presentación de Trabajos Libres.</b></font>'
         story.append(Paragraph(ptext, self.styles["Subject title"]))
         story.append(Spacer(1, 12))
 

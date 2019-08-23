@@ -1,0 +1,2 @@
+Sistema ASOVAC: Certificado de árbitro
+Hola {{ arbitro.nombres }} {{ arbitro.apellidos }}, le agradecemos por su participación en el sistema asovac {{ sistema.nombre}}. Adjunto se encuentra el pdf de su certificado como arbitro, gracias por ser parte de nuestra convención.

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import Q
+from django.db import connection
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -952,7 +953,7 @@ def review_pay(request, factura_id):
         pago = request.POST.get("statusPago")
         factura.status = pago
         factura.save()
-        messages.success(request,"Se ha cambiado el status del pago con éxito.")
+        messages.success(request,"Se ha cambiado el estatus del pago con éxito.")
         return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
     context ={
 		'factura': factura,
@@ -1018,48 +1019,75 @@ def selectArbitro(request,id):
             listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
         else:
             # print "el formulario no viene vacio"
+            listArbId =""
             list_arbitros= form['id'].split(",")
-            listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
+            # Para dar formato al arary de id para el query
+            totalArbitros=len(list_arbitros)
+            cont=1
+            # print totalArbitros
+            for arb_id in list_arbitros:
+                if totalArbitros > 1:
+                    if cont < totalArbitros:
+                        listArbId= listArbId+str(arb_id)+","
+                    else:
+                        listArbId= listArbId+str(arb_id)
+                else:
+                    listArbId= listArbId+str(arb_id)
+                cont= cont+1
+ 
+            # consulta para eliminar registros no seleccionados
+            query= "DELETE FROM trabajos_trabajo_arbitro "
+            where="WHERE trabajos_trabajo_arbitro.trabajo_id={} and trabajos_trabajo_arbitro.arbitro_id not in ({})".format(id,listArbId)
+            query= query+where
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+            # print Trabajo_arbitro.objects.extra(where=["trabajos_trabajo_arbitro.trabajo_id= %s and trabajos_trabajo_arbitro.arbitro_id not in(%s)"],params=[id,listArbId]).query
+            # listArbTrab=Trabajo_arbitro.objects.extra(where=["trabajos_trabajo_arbitro.trabajo_id= %s and trabajos_trabajo_arbitro.arbitro_id not in(%s)"],params=[id,listArbId]).delete()
+            # return HttpResponse(str("Exit"))
+            # listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
             for arb in list_arbitros:
                 # print listArbTrab
                 trabajo= Trabajo.objects.get(id=id)
                 arbitro= Arbitro.objects.get(id=arb)
-                # Se crea la instancia de arbitros y trabajos 
-                arbitroTrabajo= Trabajo_arbitro()
-                arbitroTrabajo.fin_arbitraje= False
-                arbitroTrabajo.invitacion= False
-                arbitroTrabajo.trabajo=trabajo
-                arbitroTrabajo.arbitro=arbitro
-                arbitroTrabajo.save()
+                # Para verificar si el registro existe
+                if Trabajo_arbitro.objects.filter(arbitro=arb).exists() == False:
+                    # Se crea la instancia de arbitros y trabajos 
+                    arbitroTrabajo= Trabajo_arbitro()
+                    arbitroTrabajo.fin_arbitraje= False
+                    arbitroTrabajo.invitacion= False
+                    arbitroTrabajo.trabajo=trabajo
+                    arbitroTrabajo.arbitro=arbitro
+                    arbitroTrabajo.save()
 
-                # Se crean parametros para el correo 
-                url_site = get_current_site(request)
-                arb_id=urlsafe_base64_encode(force_bytes(arbitro.pk))
-                token= account_activation_token.make_token(arbitro)
-                inv_id=urlsafe_base64_encode(force_bytes(arbitroTrabajo.pk))
+                    # Se crean parametros para el correo 
+                    url_site = get_current_site(request)
+                    arb_id=urlsafe_base64_encode(force_bytes(arbitro.pk))
+                    token= account_activation_token.make_token(arbitro)
+                    inv_id=urlsafe_base64_encode(force_bytes(arbitroTrabajo.pk))
 
-                # print ("Datos Correo: {0} {1} {2} {3} {4} {5}".format(url_site,arbitro.apellidos,arbitro.nombres,arbitro.correo_electronico,arb_id,token))
+                    # print ("Datos Correo: {0} {1} {2} {3} {4} {5}".format(url_site,arbitro.apellidos,arbitro.nombres,arbitro.correo_electronico,arb_id,token))
 
-                # Correo de asignacion a trabajos con token de confirmacion
-                context = {
-                    'invitacion':inv_id,
-                    'url_site':url_site,
-                    'arbitro':arbitro,
-                    'arb_id':arb_id,
-                    'token':token,
-                    'trabajo':trabajo.titulo_espanol,
-                    'arbitraje':arbitraje,
-                }
-                msg_plain = render_to_string('../templates/email_templates/create_invitation.txt', context)
-                msg_html = render_to_string('../templates/email_templates/create_invitation.html', context)
+                    # Correo de asignacion a trabajos con token de confirmacion
+                    context = {
+                        'invitacion':inv_id,
+                        'url_site':url_site,
+                        'arbitro':arbitro,
+                        'arb_id':arb_id,
+                        'token':token,
+                        'trabajo':trabajo.titulo_espanol,
+                        'arbitraje':arbitraje,
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/create_invitation.txt', context)
+                    msg_html = render_to_string('../templates/email_templates/create_invitation.html', context)
 
-                send_mail(
-                    'Asignación de trabajo para revisión',              #titulo
-                    msg_plain,                                          #mensaje txt
-                    config('EMAIL_HOST_USER'),                          #email de envio
-                    [arbitro.correo_electronico],                       #destinatario
-                    html_message=msg_html,                              #mensaje en html
-                    )
+                    send_mail(
+                        'Asignación de trabajo para revisión',              #titulo
+                        msg_plain,                                          #mensaje txt
+                        config('EMAIL_HOST_USER'),                          #email de envio
+                        [arbitro.correo_electronico],                       #destinatario
+                        html_message=msg_html,                              #mensaje en html
+                        )
 
         response['status']= 200
             # response['status']= 404

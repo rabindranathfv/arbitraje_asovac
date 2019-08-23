@@ -1,0 +1,18 @@
+{% extends "email_templates/email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Certificado de {{rol}}
+{% endblock %}
+
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Buenas{% if usuario  %} <strong>{{ usuario }}</strong>{% endif %}, le agradecemos por su participación en el sistema asovac <strong>{{ sistema.nombre}}</strong>. Adjunto se encuentra el certificado que acrédita su participación como <strong>{{rol}}</strong>{% if titulo_trabajo %} en el trabajo <strong>{{titulo_trabajo}}</strong>{% endif %}, gracias por ser parte de nuestra convención.
+        </p>
+    </td>
+</tr>
+{% endblock %}

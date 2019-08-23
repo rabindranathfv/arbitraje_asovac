@@ -48,12 +48,12 @@
 								</td>
 								<td class="text-center">
 									{% if trabajos_arbitro.trabajo.estatus == "Pendiente" %}
-										<span class="label label-warning lb-md center-block">Pendiente</span>
-									{% elif trabajos_arbitro.trabajo.estatus == "Aprobado" %}
-										<span class="label label-success lb-md center-block">Aprobado</span>
-									{% elif trabajos_arbitro.trabajo.estatus == "Rechazado" %}
-										<span class="label label-danger lb-md center-block">Rechazado</span>
-									{% endif %}
+                                        <span class="label label-warning">Pendiente</span>
+                                    {% elif trabajos_arbitro.trabajo.estatus == "Aceptado" %}
+                                        <span class="label label-success">Aceptado</span>
+                                    {% elif trabajos_arbitro.trabajo.estatus == "Rechazado" %}
+                                        <span class="label label-danger">Rechazado</span>
+                                    {% endif %}
 								</td>
 								<td class="text-center">
 
