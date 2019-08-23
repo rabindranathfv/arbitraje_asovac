@@ -953,7 +953,7 @@ def review_pay(request, factura_id):
         pago = request.POST.get("statusPago")
         factura.status = pago
         factura.save()
-        messages.success(request,"Se ha cambiado el status del pago con éxito.")
+        messages.success(request,"Se ha cambiado el estatus del pago con éxito.")
         return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
     context ={
 		'factura': factura,
