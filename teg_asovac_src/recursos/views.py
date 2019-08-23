@@ -326,23 +326,9 @@ def resources_author(request):
     if request.method == "POST":
         form = CertificateToAuthorsForm(request.POST, sistema_id = arbitraje_id)
         if form.is_valid():
+            cert_context = create_certificate_context(arbitraje)
             for trabajo_id in form.cleaned_data['trabajos']:
                 autores_trabajo = Autores_trabajos.objects.filter(trabajo = trabajo_id)
-                """
-                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
-                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-                - context["authority1_info"] = String con informacion formateada de la autoridad1
-                - context["signature1_path"] = Camino local de la imagen de la firma1
-                - context["authority2_info"] = String con informacion formateada de la autoridad2
-                - context["signature2_path"] = Camino local de la imagen de la firma2
-                - context["logo_path"] = Camino local de la imagen del logo
-                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-                - context["recipient_name"] = String con el nombre y apellido separado por espacio del
-                    receptor del certificado.
-                - context["roman_number"] = Numero romano de la convencion
-                - context["subject_title"] = String que representa el nombre del trabajo completo.
-                - context["people_names"] = Lista de Strings con nombres  de los autores del paper.
-                """
                 now = timezone_now()
                 now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
                 authors_emails = []
@@ -351,26 +337,17 @@ def resources_author(request):
                     authors_emails.append(autor_trabajo.autor.correo_electronico)
                     authors_names.append( autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0] )
                 
-                context = {
-                    'header_url': arbitraje.cabecera,
-                    'city': arbitraje.ciudad,
-                    'authority1_info': arbitraje.autoridad1,
-                    'signature1_path': arbitraje.firma1,
-                    'authority2_info': arbitraje.autoridad2,
-                    'signature2_path': arbitraje.firma2,
-                    'logo_path': arbitraje.logo,
-                    'date_string': now_date_string,
+                instance_context = {
                     'recipient_name': '',
                     'roman_number': arbitraje.numero_romano,
                     'subject_title': autores_trabajo.first().trabajo.titulo_espanol,
                     'people_names': authors_names
-
                 }
-
+                instance_context.update(cert_context)
                 certificate_gen = CertificateGenerator()
-                certificate = certificate_gen.get_authors_certificate(context)
+                certificate = certificate_gen.get_authors_certificate(instance_context)
 
-                filename = "Certificado_Convencion_Asovac_%s.pdf" % (context["roman_number"])
+                filename = "Certificado_Convencion_Asovac_%s.pdf" % (instance_context["roman_number"])
 
                 context_email = {
                     'sistema': arbitraje,
@@ -404,7 +381,7 @@ def resources_author(request):
         'route_resultados': route_resultados,
         'form': form
     }
-    return render(request, 'main_app_resources_author.html', context)
+    return render(request, 'recursos_author.html', context)
 
 
 
@@ -429,41 +406,24 @@ def resources_referee(request):
     if request.method == 'POST':
         form = CertificateToRefereeForm(request.POST, sistema_id = arbitraje.id)
         if form.is_valid():
+            cert_context = create_certificate_context(arbitraje)
             for arbitro_id in form.cleaned_data['arbitros']:
                 arbitro = Arbitro.objects.get(id = arbitro_id)
-                """
-                - context["header_url"] = URL con la ubicacion de la imagen del header del certificado.
-                - context["city"] = String con el nombre de la Ciudad donde se desarrolla la Asovac.
-                - context["authority1_info"] = String con informacion formateada de la autoridad1
-                - context["signature1_path"] = Camino local de la imagen de la firma1
-                - context["authority2_info"] = String con informacion formateada de la autoridad2
-                - context["signature2_path"] = Camino local de la imagen de la firma2
-                - context["logo_path"] = Camino local de la imagen del logo
-                - context['date_string'] = String con la Fecha en formato 'DD de Mes de AAAA'
-                """
                 now = timezone_now()
                 now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
-                context = {
-                    'header_url': arbitraje.cabecera,
-                    'city': 'Caracas',
-                    'authority1_info': arbitraje.autoridad1,
-                    'signature1_path': arbitraje.firma1,
-                    'authority2_info': arbitraje.autoridad2,
-                    'signature2_path': arbitraje.firma2,
-                    'logo_path': arbitraje.logo,
-                    'date_string': now_date_string,
+                instance_context = {
                     'recipient_name': arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0],
                     'roman_number': arbitraje.numero_romano,
                     'people_names': [arbitro.nombres.split(' ')[0] + ' ' + arbitro.apellidos.split(' ')[0]],
                     'peoples_id': arbitro.cedula_pasaporte
                 }
-
+                instance_context.update(cert_context)
                 certificate_gen = CertificateGenerator()
-                certificate = certificate_gen.get_referees_certificate(context)
+                certificate = certificate_gen.get_referees_certificate(instance_context)
 
-                name = context["recipient_name"].split(' ')
+                name = instance_context["recipient_name"].split(' ')
                 name = '_'.join(name)
-                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, context["roman_number"])
+                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (name, instance_context["roman_number"])
 
                 context_email = {
                     'sistema': arbitraje,
@@ -497,7 +457,7 @@ def resources_referee(request):
         'route_resultados': route_resultados,
         'form': form,
     }
-    return render(request, 'main_app_resources_referee.html', context)
+    return render(request, 'recursos_referee.html', context)
 
 
 
@@ -737,3 +697,90 @@ def resources_arbitration(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     return render(request, 'main_app_resources_arbitrations.html', context)
+
+
+@login_required
+def resources_paper(request):
+    main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
+                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
+                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
+                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+    # print (rol_id)
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    item_active = 1
+    items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
+
+    route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg= get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+    # print items
+    if request.method == "POST":
+        form = CertificateToAuthorsForm(request.POST, sistema_id = arbitraje_id)
+        if form.is_valid():
+            cert_context = create_certificate_context(arbitraje)
+            for trabajo_id in form.cleaned_data['trabajos']:
+                autores_trabajo = Autores_trabajos.objects.filter(trabajo = trabajo_id)
+                """
+                - context["subject_title"] = String que representa el nombre del trabajo certificado.
+                - context["people_names"] = Lista de Strings con los nombres de los autores del trabajo.
+                - context["roman_number"] = Numero romano de la convencion
+                """
+                now = timezone_now()
+                now_date_string = '%s de %s de %s' % (now.day, MONTH_NAMES[now.month - 1], now.year)
+                authors_emails = []
+                authors_names = []
+                for autor_trabajo in autores_trabajo:
+                    authors_emails.append(autor_trabajo.autor.correo_electronico)
+                    authors_names.append( autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0] )
+                
+                instance_context = {
+                    'roman_number': arbitraje.numero_romano,
+                    'people_names': authors_names,
+                    'subject_title': autores_trabajo.first().trabajo.titulo_espanol,
+                }
+                instance_context.update(cert_context)
+                certificate_gen = CertificateGenerator()
+                certificate = certificate_gen.get_paper_certificate(instance_context)
+
+                filename = "Certificado_%s_Convencion_Asovac_%s.pdf" % (instance_context["subject_title"],instance_context["roman_number"])
+
+                context_email = {
+                    'sistema': arbitraje,
+                    'titulo_trabajo': autores_trabajo.first().trabajo.titulo_espanol,
+                    'rol': 'autor'
+                }
+                msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
+
+                email_msg = EmailMultiAlternatives('Certificado por trabajo', msg_plain, config('EMAIL_HOST_USER'), authors_emails)
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados de los trabajos seleccionados al(los) autor(es) con éxito.')
+            return redirect('recursos:resources_paper')
+    else:    
+        form = CertificateToAuthorsForm(sistema_id = arbitraje_id)
+    context = {
+        'nombre_vista' : 'Recursos',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'form': form,
+        'paper': True, 
+    }
+    return render(request, 'recursos_author.html', context)
