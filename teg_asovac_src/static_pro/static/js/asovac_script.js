@@ -595,7 +595,7 @@ var SaveAñadirPagoForm= function(){
             }
         });
 
-        console.log(arbitros);
+        // console.log(arbitros);
         datos.push({"name": "id", "value": arbitros});
         datos.push({"name": "trabajo", "value": $("#trabajo").val()});
         var testarray= [{"name": "id", "value": 21},{"name": "nombre", "value": 22}];
