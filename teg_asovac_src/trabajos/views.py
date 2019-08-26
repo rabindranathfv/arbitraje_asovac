@@ -951,10 +951,27 @@ def review_pay(request, factura_id):
 
     if request.method =='POST':
         pago = request.POST.get("statusPago")
-        factura.status = pago
-        factura.save()
-        messages.success(request,"Se ha cambiado el estatus del pago con éxito.")
-        return redirect('trabajos:checkPago', id = autor_trabajo.trabajo.id)
+        form = MessageForm(request.POST)
+        if pago:
+            if pago.lower() == 'aceptado':     
+                factura.status = pago
+                factura.save()
+                messages.success(request,"Se ha cambiado el estatus a del pago a 'aceptado' con éxito.")
+                return redirect('trabajos:checkPago', id = factura.pagador.autor_trabajo.trabajo.id)
+            elif pago.lower() == 'rechazado':
+                form = MessageForm()
+                context = {
+                    'factura': factura,
+                    'form': form
+                }
+                data['html_form'] = render_to_string('ajax/decline_pay_reasons.html', context, request = request)
+                return JsonResponse(data)
+        elif form.is_valid():
+            factura.observacion_coordinador = form.cleaned_data['motivo_rechazo']
+            factura.status = 'Rechazado'
+            factura.save()
+            messages.success(request, "Se ha cambiado el estados del pago a 'rechazado' con éxito." )
+            return redirect('trabajos:checkPago', id = factura.pagador.autor_trabajo.trabajo.id)
     context ={
 		'factura': factura,
         'review_mode': True
