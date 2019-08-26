@@ -88,6 +88,11 @@
 										<a class="show-form" data-url="{% url 'autores:detalles_pago' factura.pagador.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 											<i class="fas fa-door-open"></i>
 										</a>
+										{% if factura.status == "Rechazado" %}
+											<a class="show-form" data-url="{% url 'autores:detalles_rechazo_pago' factura.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Detalles rechazo">
+												<i class="fas fa-door-open"></i>
+											</a>
+										{% endif %}
 									</td>
 								</tr>
 							{% endfor %}
