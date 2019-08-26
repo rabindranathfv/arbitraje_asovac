@@ -799,12 +799,12 @@ def list_pagos(request,id):
     
     # consulta mas completa
     
-    query= "SELECT aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
+    query= "SELECT aut_trab.numero_postulacion AS aut_numero_postulacion, aut_fac.numero_postulacion AS fac_numero_postulacion, aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
     where=' WHERE aut_trab.trabajo_id= %s'
     query= query+where
     
     query_count=query
-    query= query + " ORDER BY aut_pag.id" 
+    query= query + " ORDER BY aut_fac.status" 
     
     data= Factura.objects.raw(query,id)
     data_count= Factura.objects.raw(query_count,id)
@@ -827,7 +827,13 @@ def list_pagos(request,id):
             status= '<span class="label label-danger">'+item.status +'</span>'
         else:
             status= '<span class="label label-warning">'+item.status +'</span>'
-        response['query'].append({'id':item.id, 'status':status, "pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante })
+
+
+        if item.aut_numero_postulacion == item.fac_numero_postulacion:
+            actual = '<span class="label label-success">Sí</span>'
+        else:
+            actual = '<span class="label label-danger">No</span>'
+        response['query'].append({'id':item.id, 'status':status, "pagador":pagador,"cedula":cedula,"fecha_pago":fecha_pago, "telefono_oficina":telefono_oficina,"telefono_habitacion_celular":telefono_habitacion_celular,"comprobante":comprobante, "actual": actual })
     
     response={
         'total': total,
@@ -899,9 +905,11 @@ def checkPago(request,id):
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
     
-    pending_review  = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='pendiente').exists()
+    autor_trabajo_principal = Autores_trabajos.objects.get(es_autor_principal = True, trabajo = id)
 
-    rejected_pay = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='rechazado').exists()
+    pending_review  = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='pendiente', numero_postulacion = autor_trabajo_principal.numero_postulacion).exists()
+
+    rejected_pay = Factura.objects.filter(pagador__autor_trabajo__trabajo = id, status__iexact='rechazado', numero_postulacion = autor_trabajo_principal.numero_postulacion ).exists()
 
     context = {
         'nombre_vista' : 'Detalle del pago',
@@ -1496,11 +1504,11 @@ def request_new_pay(request, trabajo_id):
             monto_deuda = 0
             facturas = Factura.objects.filter(pagador__autor_trabajo__trabajo = autor_principal.trabajo.id)
             for factura in facturas:
-                if factura.status.lower() == "rechazado":
-                    pago = factura.pago
-                    pagador = factura.pagador
-                    datos_pagador = pagador.datos_pagador
+                if factura.status.lower() == "rechazado" and factura.pagador.autor_trabajo.numero_postulacion == factura.numero_postulacion:
                     monto_deuda += factura.monto_total
+                elif factura.status.lower() =='aceptado':
+                    factura.numero_postulacion += 1
+                    factura.save()
 
             razones_rechazo = form.cleaned_data['motivo_rechazo']
             sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
@@ -1509,6 +1517,7 @@ def request_new_pay(request, trabajo_id):
                 autor_trabajo.pagado = False
                 autor_trabajo.esperando_modificacion_pago =  True
                 autor_trabajo.monto_total += monto_deuda
+                autor_trabajo.numero_postulacion += 1
                 autor_trabajo.save()
 
             context = {

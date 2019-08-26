@@ -692,6 +692,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			factura.pago = pago
 			factura.iva = factura.monto_total * autor_trabajo.sistema_asovac.porcentaje_iva / 100
 			factura.monto_subtotal = factura.monto_total - factura.iva
+			factura.numero_postulacion = autor_trabajo.numero_postulacion
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
 			if autor_trabajo.monto_total <= 0:
