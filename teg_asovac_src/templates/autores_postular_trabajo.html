@@ -45,11 +45,12 @@
 
                         <thead>
                             <tr>
-                                <th data-field = "nombre" class="col-sm-3">Nombre</th>
+                                <th data-field = "nombre" class="col-sm-2">Nombre</th>
 								<th class="col-sm-2">Cédula</th>                 
 								<th class="col-sm-2">Banco Origen</th>
 								<th class="col-sm-2">N° de Transferencia/Cheque</th>
 								<th class="col-sm-2">Monto pagado</th>
+								<th class="col-sm-1">Estatus</th>
 								<th class="col-sm-1">Acciones</th>
                             </tr>
                         </thead>
@@ -74,6 +75,15 @@
 										{% endif %}
 									</td>
 									<td class="text-center"> {{ factura.monto_total}} </td>
+									<td class="text-center">
+										{% if factura.status == "Pendiente" %}
+											<span class="label label-warning">Pendiente</span>
+										{% elif factura.status == "Aceptado" %}
+											<span class="label label-success">Aceptado</span>
+										{% elif factura.status == "Rechazado" %}
+											<span class="label label-danger">Rechazado</span>
+										{% endif %}
+									</td>
 									<td class="text-center">
 										<a class="show-form" data-url="{% url 'autores:detalles_pago' factura.pagador.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 											<i class="fas fa-door-open"></i>

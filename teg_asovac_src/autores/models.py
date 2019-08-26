@@ -182,6 +182,7 @@ class Factura(models.Model):
 	iva = models.FloatField()
 	monto_total = models.FloatField()
 	status =  models.CharField(max_length=15, default = 'Pendiente')
+	observacion_coordinador = models.CharField(max_length=255, blank = True)
 
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
