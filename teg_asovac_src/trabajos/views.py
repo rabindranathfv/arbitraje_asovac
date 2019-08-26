@@ -1501,10 +1501,7 @@ def request_new_pay(request, trabajo_id):
                     pagador = factura.pagador
                     datos_pagador = pagador.datos_pagador
                     monto_deuda += factura.monto_total
-                    pago.delete()
-                    pagador.delete()
-                    datos_pagador.delete()
-                    factura.delete()
+
             razones_rechazo = form.cleaned_data['motivo_rechazo']
             sistema = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
             for autor_trabajo in autores_trabajo:   

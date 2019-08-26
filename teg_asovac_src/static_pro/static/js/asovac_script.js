@@ -128,7 +128,7 @@ $(document).ready(function(){
         // alert('ShowForm');
         $.ajax({
             url: btn.attr('data-url'),
-            type: 'POST',
+            type: 'get',
             dataType: 'json',
             success: function (data){
                 // console.log(data.html_form);
