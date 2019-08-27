@@ -9,105 +9,76 @@
                 <a href="#resultados-trabajos" class="btn btn-primary" title="Resultados de trabajos"><i class="fa fa-file-word"></i> Trabajos</a>
                 <a href="#resultados-arbitrajes" class="btn btn-primary" title="Resultados de arbitrajes"><i class="fa fa-chart-bar"></i> Arbitrajes</a>
                 <a href="#resultados-areas" class="btn btn-primary"title="Resultados según áreas"><i class="fa fa-align-left"></i> Resultados por área</a>
-                <a href="#autores-areas" class="btn btn-primary" title="Cantidad de autores por área"><i class="fa fa-chart-pie"></i> Autores por área</a>
+                <a href="#autores-area" class="btn btn-primary" title="Cantidad de autores por área"><i class="fa fa-chart-pie"></i> Autores por área</a>
             </div>
         </div>
     </div>
-	<div class="row">
-         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
-            
-            <div class = "col-lg-6 col-sm-12" id="autores-instruccion">
-                <div class="panel panel-default">  
-                    <div class="panel-heading">
-                        <h4>
-                            Autores según nivel de instrucción
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row middle-content">
-                                <canvas id="autores-nivel-instruccion" heigth="100px"></canvas>
-                            </div>
-                        </div>
+	<div class="row" id="autores-instruccion">
+	    <div class="jumbotron RLcard col-sm-offset-1 col-sm-5">
+	        <div class="col-lg-12 col-sm-12" >
+	            <h4>
+	                Autores según nivel de instrucción
+	            </h4>
+	            <div class="container-fluid">
+	                <div class="row middle-content">
+	                    <canvas id="autores-nivel-instruccion" heigth="100px"></canvas>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+	    <div class="jumbotron RLcard col-sm-5" id="resultados-trabajos">
+	        <div class="col-lg-12 col-sm-12" >
+	            <h4>
+	                Resultados de trabajos
+	            </h4>
+
+	            <div class="container-fluid">
+	                <div class="row middle-content">
+	                    <canvas id="trabajos" heigth="100px"></canvas>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+	</div>
+
+
+    <div class="row">
+        <div class="jumbotron RLcard col-sm-offset-1 col-sm-5" id="resultados-arbitrajes">
+            <div class="col-lg-12 col-sm-12" >
+                <h4>
+                    Resultados de arbitrajes
+                </h4>
+                <div class="container-fluid">
+                    <div class="row middle-content">
+                        <canvas id="arbitros-invitaciones" heigth="100px"></canvas>
                     </div>
                 </div>
             </div>
-
-            <div class = "col-lg-6 col-sm-12" id="resultados-trabajos">
-                <div class="panel panel-default">  
-                    <div class="panel-heading">
-                        <h4>
-                            Resultados de trabajos
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row middle-content">
-                                <canvas id="trabajos" heigth="100px"></canvas>
-                            </div>
-                        </div>
+        </div>
+        <div class="jumbotron RLcard col-sm-5" id="resultados-areas">
+            <div class="col-lg-12 col-sm-12" >
+                <h4>
+                    Resultados según áreas
+                </h4>
+                <div class="container-fluid">
+                    <div class="row middle-content">
+                        <canvas id="areas" heigth="100px"></canvas>
                     </div>
                 </div>
-             </div>
-
+            </div>
         </div>
     </div>
 
     <div class="row">
         <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
-            
-             <div class = "col-lg-6 col-sm-12" id="resultados-arbitrajes">
-                <div class="panel panel-default">  
-                    <div class="panel-heading">
-                        <h4>
-                            Resultados de arbitrajes
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row middle-content">
-                                <canvas id="arbitros-invitaciones" heigth="100px"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             </div>
-
-            <div class = "col-lg-6 col-sm-12" id="resultados-areas">
-                <div class="panel panel-default">  
-                    <div class="panel-heading">
-                        <h4>
-                            Resultados según áreas
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row middle-content">
-                                <canvas id="areas" heigth="100px"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="jumbotron RLcard col-sm-offset-1 col-sm-10">
-
-            <div class="panel panel-default" id="autores-areas">  
-                <div class="panel-heading">
-                    <h4>
-                        Cantidad de autores por área
-                    </h4>
-                </div>
-                <div class="panel-body">
-                    <div class="container-fluid">
-                        <div class="row middle-content">
-                            <canvas id="autores-area" heigth="100px"></canvas>
-                        </div>
-                    </div>
+            <h4>
+                Cantidad de autores por área
+            </h4>
+            <div class="container-fluid">
+                <div class="row middle-content">
+                    <canvas id="autores-area" heigth="100px"></canvas>
                 </div>
             </div>
         </div>
