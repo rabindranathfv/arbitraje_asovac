@@ -659,6 +659,7 @@ var SaveAñadirPagoForm= function(){
         $("#question").hide();
         $("#confirm-button").hide();
         $("#cancel-button").hide();
+        $('.close').hide();
         $("#loading").show();
     });
     $('#enviar-certificado').click(countSelectedFiltered);
