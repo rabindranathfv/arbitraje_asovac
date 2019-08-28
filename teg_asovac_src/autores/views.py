@@ -692,6 +692,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 			factura.pago = pago
 			factura.iva = factura.monto_total * autor_trabajo.sistema_asovac.porcentaje_iva / 100
 			factura.monto_subtotal = factura.monto_total - factura.iva
+			factura.numero_postulacion = autor_trabajo.numero_postulacion
 			factura.save()
 			autor_trabajo.monto_total = autor_trabajo.monto_total - factura.monto_total
 			if autor_trabajo.monto_total <= 0:
@@ -738,6 +739,20 @@ def detalles_pago(request, pagador_id):
 		'factura': factura,
 	}
 	data['html_form'] = render_to_string('ajax/postular_trabajo_pay_details.html', context, request=request)
+	return JsonResponse(data)
+
+
+#Modal para ver los detalles del pago para postular un trabajo
+@login_required
+def detalles_rechazo_pago(request, factura_id):
+	data = dict()
+	event_id = request.session['arbitraje_id']
+	factura = get_object_or_404(Factura, id = factura_id)
+	autor_trabajo = get_object_or_404(Autores_trabajos ,autor__usuario__usuario = request.user, sistema_asovac = event_id, trabajo = factura.pagador.autor_trabajo.trabajo)
+	context ={
+		'factura': factura,
+	}
+	data['html_form'] = render_to_string('ajax/factura_observations.html', context, request=request)
 	return JsonResponse(data)
 
 

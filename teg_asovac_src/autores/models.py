@@ -89,6 +89,7 @@ class Autores_trabajos(models.Model):
 	monto_total = models.FloatField(default = 100) #Falta que se indique el monto total
 	pagado = models.BooleanField(default=False)
 	esperando_modificacion_pago = models.BooleanField(default=False) #Este nuevo campo se utilizará para saber si la postulación tuvo un error en el pago y requiere que se suba de nuevo para ser arbitrado
+	numero_postulacion = models.IntegerField(default = 1)
 
 	def __str__(self):
 		return "{} - {}".format(self.autor.nombres, self.trabajo.titulo_espanol)#.encode('utf-8', errors='replace')
@@ -182,7 +183,8 @@ class Factura(models.Model):
 	iva = models.FloatField()
 	monto_total = models.FloatField()
 	status =  models.CharField(max_length=15, default = 'Pendiente')
-
+	observacion_coordinador = models.CharField(max_length=255, blank = True)
+	numero_postulacion = models.IntegerField()
 	def __str__(self):
 		return self.pago.tipo_pago#.encode('utf-8', errors='replace')
 	#def __str__(self):
