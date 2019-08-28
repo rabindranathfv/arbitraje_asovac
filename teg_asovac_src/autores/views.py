@@ -878,7 +878,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['message'] = data['message'] + "Error en la fila {0} la cédula/pasaporte es un campo obligatorio \n".format(fila)
                         else:
 							cedula_pasaporte = str(excel_file.cell_value(rowx=fila, colx=3))
-							if cedula_pasaporte[0] !='V' and cedula_pasaporte != 'P':
+							if cedula_pasaporte[0] !='V' and cedula_pasaporte[0] != 'P':
 								data['status'] = 400
 								data['message'] = data['message'] + "Error en la fila {0}, el campo cédula/pasaporte debe empezar por una letra V o P seguido del número \n".format(fila)
 
@@ -956,28 +956,29 @@ def validate_load_users(filename,extension,arbitraje_id):
                         elif not Area.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()).exists():
 							data['status']=400
 							data['message'] = data['message'] + "Error en la fila {0}, no existe un área con este nombre \n".format(fila)
-
-						# Se verifica que el campo subarea1 no este vacio
-                        if excel_file.cell_value(rowx=fila, colx=13) == '':
-                            data['status']=400
-                            data['message'] = data['message'] + "Error en la fila {0} el subárea1 es un campo obligatorio \n".format(fila)
-
+						
                         else:
-							area = Area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip())
-							subarea_name = excel_file.cell_value(rowx=fila, colx=13).encode('utf-8').strip()
-							if not Sub_area.objects.filter(area = area, nombre__iexact = subarea_name).exists():
+							# Se verifica que el campo subarea1 no este vacio
+							if excel_file.cell_value(rowx=fila, colx=13) == '':
 								data['status']=400
-								data['message'] = data['message'] + "Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
+								data['message'] = data['message'] + "Error en la fila {0} el subárea1 es un campo obligatorio \n".format(fila)
 
-						# Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
-                        if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).encode('utf-8').strip()).exists():
-							data['status']=400
-							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
+							else:
+								area = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()
+								subarea_name = excel_file.cell_value(rowx=fila, colx=13).encode('utf-8').strip()
+								if not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = subarea_name).exists():
+									data['status']=400
+									data['message'] = data['message'] + "Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado \n".format(fila, area)
 
-						# Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
-                        if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).encode('utf-8').strip()).exists():
-							data['status']=400
-							data['message'] = data['message'] + "Error en la fila {0}, no hay subarea3 asociada al área de {1} con el nombre indicado \n".format(fila, area.nombre)
+								# Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
+								if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).encode('utf-8').strip()).exists():
+									data['status']=400
+									data['message'] = data['message'] + "Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado \n".format(fila, area)
+
+								# Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
+								if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).encode('utf-8').strip()).exists():
+									data['status']=400
+									data['message'] = data['message'] + "Error en la fila {0}, no hay subarea3 asociada al área de {1} con el nombre indicado \n".format(fila, area)
 
 						# Se verifica que el campo universidad no este vacio
                         if excel_file.cell_value(rowx=fila, colx=16) == '':
