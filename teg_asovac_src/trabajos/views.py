@@ -1072,11 +1072,12 @@ def selectArbitro(request,id):
             # return HttpResponse(str("Exit"))
             # listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
             for arb in list_arbitros:
+                print("holis")
                 # print listArbTrab
                 trabajo= Trabajo.objects.get(id=id)
                 arbitro= Arbitro.objects.get(id=arb)
                 # Para verificar si el registro existe
-                if Trabajo_arbitro.objects.filter(arbitro=arb).exists() == False:
+                if Trabajo_arbitro.objects.filter(arbitro=arb, trabajo = trabajo).exists() == False:
                     # Se crea la instancia de arbitros y trabajos 
                     arbitroTrabajo= Trabajo_arbitro()
                     arbitroTrabajo.fin_arbitraje= False

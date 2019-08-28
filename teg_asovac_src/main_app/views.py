@@ -2668,12 +2668,13 @@ def list_usuarios(request):
         # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
-        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+        group_by=' GROUP BY ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,arb.genero,au.username,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular '
+        query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
         query_count=query
         search= search+'%'
         where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
         # where=' WHERE au.first_name LIKE %s' 
-        query= query+where
+        query= query+where+group_by
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         # query= query + " ORDER BY " + order_by
         
@@ -2697,14 +2698,15 @@ def list_usuarios(request):
             # data=User.objects.all().order_by('pk')[init:limit].query
 
             # consulta mas completa
-            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, a.nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+            group_by=' GROUP BY ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,arb.genero,au.username,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular '
+            query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username,STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
             order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
-            query_count=query
-            query= query + " ORDER BY " + order_by
-            
+            query_count=query+group_by
+            query= query + group_by + " ORDER BY " + order_by
             data= User.objects.raw(query)
             data_count= User.objects.raw(query_count)
             total=0
+            # print data
             for item in data_count:
                 total=total+1
   
@@ -2903,10 +2905,10 @@ def removeUsuario(request,id,arbitraje_id):
 @login_required
 def changeRol(request,id,arbitraje_id):
     # Lista de roles
-    rol_list=Rol.objects.all()
+    rol_list=Rol.objects.all().filter(id__gt=2)
     array_rols=[]
 
-    for item in rol_list:
+    for item in rol_list: 
         array_rols.append(item.id)
     
     # print "Array de roles: ",array_rols
@@ -2920,7 +2922,7 @@ def changeRol(request,id,arbitraje_id):
     user_role= get_roles(id,"is_admin")
     # rols= get_role_list(user_asovac.id,arbitraje_id)
     rols= get_role_list(id,arbitraje_id)
-    
+
     # Obtenemos el mayor rol del usuario que hizo la petición
     request_user= get_object_or_404(Usuario_asovac,usuario_id=request.user.id)
     request_user_role= get_roles(request_user.id,"is_admin")
