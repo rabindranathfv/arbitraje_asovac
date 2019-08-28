@@ -14,6 +14,8 @@ from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_
 from .validators import valid_extension
 from django.core.exceptions import ValidationError
 
+from arbitrajes.models import Arbitro
+
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
                         (2,'En Selección y Asignación de Coordinadores de Área'),
@@ -360,3 +362,14 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
         if not User.objects.filter(email__iexact=email, is_active=True).exists():
             raise forms.ValidationError("El correo "+email+" no se encuentra registrado.")
         return email
+    
+
+class EditPersonalDataForm(forms.ModelForm):
+    
+    class Meta:
+        model = Arbitro
+        fields = ['nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico']
+    
+    def __init__(self, *args, **kwargs):
+        super(EditPersonalDataForm, self).__init__(*args, **kwargs)
+        confirm_email = forms.EmailField(required=False)
