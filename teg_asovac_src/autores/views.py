@@ -1182,6 +1182,7 @@ def load_authors_modal(request):
 def export_authors(request):
 
 	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 	data = []
 	temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
 	for item in temporal_list:
@@ -1190,7 +1191,7 @@ def export_authors(request):
 
 	# Para definir propiedades del documento de excel
 	response = HttpResponse(content_type='application/ms-excel')
-	response['Content-Disposition'] = 'attachment; filename=Autores.xls'
+	response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_autores.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
 	workbook = xlwt.Workbook()
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
@@ -1245,6 +1246,7 @@ def export_authors(request):
 def format_import_authors(request):
 
 	arbitraje_id = request.session['arbitraje_id']
+	arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
 	data = []
 	temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
 	for item in temporal_list:
@@ -1253,7 +1255,7 @@ def format_import_authors(request):
 
 	# Para definir propiedades del documento de excel
 	response = HttpResponse(content_type='application/ms-excel')
-	response['Content-Disposition'] = 'attachment; filename=Formato_Autores.xls'
+	response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_autores.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
 	workbook = xlwt.Workbook()
 	worksheet = workbook.add_sheet("Autores")
 	# Para agregar los titulos de cada columna
