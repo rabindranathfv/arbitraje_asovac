@@ -784,7 +784,6 @@ class CertificateGenerator:
         - context["subject_title"] = String que representa el nombre del evento asovac.
         - context["people_names"] = Lista de Strings con el nombre del organizador del
             evento a certificar.
-        - context["roman_number"] = Numero romano de la convencion
         - context['event_name_string'] = Nombre del evento por el que se certifica al organizador
         - context['event_date_string'] = Fecha en string del evento por el que se certifica al organizador
         """

@@ -1,0 +1,87 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-left">Miembros organizadores a Certificar</h2>
+				<br>
+				<h4>
+					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociado de los organizadores a los que se les enviarán sus certificados, luego se le pedirá el nombre y fecha del evento.
+				</h4>
+				<br>
+				<h5><b>Lista de destinatarios:</b></h5>
+				<div class="row" style="margin-top: 30px; margin-bottom: 50px">
+					<div class="col-sm-12">
+						{% include "success_messages.html" %}
+						{% include "errors_form.html" %}
+						<form action="." method="POST" id="form-loading">
+							{% csrf_token %}
+							<div class="container" id="form-container">
+								<div class="row">
+									<div class="col-sm-6 form-group">
+										<div class="controls">
+											{{ form.recipients_name_0 }}
+										</div>
+									</div>
+									<div class="col-sm-6 form-group">
+										<div class="controls">
+											{{ form.recipients_email_0 }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div align="center">
+									<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalCenter" id="enviar-certificado">
+										Enviar certificado
+									</button>
+
+                                    <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <h3 class="modal-title" id="ModalLongTitle">Enviar certificado</h3>
+                                                </div>
+                                                <div class="modal-body text-center content-modal" style="font-size:14px;">
+                                                    <div id="question" >	
+                                                        {{form.recipients_date}}
+                                                        <br>
+                                                        {{form.recipients_event_name}}
+                                                    </div>
+                                                    <div id="loading" style="display:none;">
+                                                        <p>Enviando certificados, por favor espere...</p>
+                                                        <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal" id="cancel-button">Cancelar</button>
+                                                    <button type="submit" class="btn btn-lg btn-primary" id="confirm-button">Confirmar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+<script type="text/javascript" src="{% static 'js/multiple_recipients_dynamic_form.js' %}"></script>
+{% endblock %}
