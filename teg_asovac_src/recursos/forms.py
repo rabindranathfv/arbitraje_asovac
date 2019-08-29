@@ -150,5 +150,58 @@ class MultipleRecipientsWithDateForm(forms.Form):
                 yield self[field_name]
     
 
+class MultipleRecipientsWithDateAndSubjectForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(MultipleRecipientsWithDateAndSubjectForm, self).__init__(*args, **kwargs)
+        # create a new recipients_name blank field
+        field1_name = 'recipients_name_0'
+        self.fields[field1_name] = forms.CharField(
+            required=False,
+            widget=forms.TextInput(attrs={'placeholder':'Nombre Completo',
+                                          'class':'form-control new-list-item'})
+        )
+        # create a new recipients_email blank field
+        field2_name = 'recipients_email_0'
+        self.fields[field2_name] = forms.EmailField(
+            required=False,
+            widget=forms.EmailInput(attrs={'placeholder':'Correo Electrónico',
+                                            'class':'form-control new-list-item'})
+        )
+
+        # create a new recipients_event_name blank field
+        field3_name = 'recipients_event_name'
+        self.fields[field3_name] = forms.CharField(
+            widget=forms.TextInput(attrs={'placeholder':'Nombre del evento',
+                                          'class':'form-control'})
+        )
+        self.fields[field3_name].label = "Nombre del evento"
+
+        # create a new recipients_date blank field
+        field4_name = 'recipients_date'
+        self.fields[field4_name] = forms.DateField(
+            widget=forms.TextInput(attrs={'placeholder':'Fecha: dd/mm/AAAA',
+                                          'class':'form-control dateinput'})
+        )
+        self.fields[field4_name].label = "Fecha de evento"
+
+        # create a new recipients_event_name blank field
+        field3_name = 'recipients_conference_name'
+        self.fields[field3_name] = forms.CharField(
+            widget=forms.TextInput(attrs={'placeholder':'Título de la conferencia',
+                                          'class':'form-control'})
+        )
+        self.fields[field3_name].label = "Nombre de la conferencia"
+
+    def get_name_fields(self):
+        for field_name in self.fields:
+            if field_name.startswith('recipients_name_'):
+                yield self[field_name]
+
+    def get_email_fields(self):
+        for field_name in self.fields:
+            if field_name.startswith('recipients_email_'):
+                yield self[field_name]
+
 
 

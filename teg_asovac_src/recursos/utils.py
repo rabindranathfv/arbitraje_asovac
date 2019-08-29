@@ -688,7 +688,6 @@ class CertificateGenerator:
         del pdf correctamente:
         - context["subject_title"] = String que representa el titulo de la conferencia ofrecida.
         - context["people_names"] = Lista de Strings con el nombre del conferencista a certificar.
-        - context["roman_number"] = Numero romano de la convencion
         - context['event_name_string'] = Nombre del evento por el que se certifica al conferencista
         - context['event_date_string'] = Fecha en string del evento por el que se certifica al conferencista
         """

@@ -9,10 +9,10 @@
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
 				
-				<h2 class="text-left">Miembros organizadores a Certificar</h2>
+				<h2 class="text-left">Miembros {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a Certificar</h2>
 				<br>
 				<h4>
-					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociado de los organizadores a los que se les enviarán sus certificados, luego se le pedirá el nombre y fecha del evento.
+					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados, luego se le pedirá el nombre{% if conferencista %}, título de la conferencia{% endif %} y fecha del evento.
 				</h4>
 				<br>
 				<h5><b>Lista de destinatarios:</b></h5>
@@ -41,35 +41,60 @@
 									<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalCenter" id="enviar-certificado">
 										Enviar certificado
 									</button>
-
-                                    <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    <h3 class="modal-title" id="ModalLongTitle">Enviar certificado</h3>
-                                                </div>
-                                                <div class="modal-body text-center content-modal" style="font-size:14px;">
-                                                    <div id="question" >	
-                                                        {{form.recipients_date}}
-                                                        <br>
-                                                        {{form.recipients_event_name}}
+								</div>
+                                <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                <h3 class="modal-title" id="ModalLongTitle">Enviar certificado</h3>
+                                            </div>
+                                            <div class="modal-body content-modal" style="font-size:14px;">
+                                                <div id="question" >	
+                                                    <div id = "div_id_recipients_date" class="form-group">
+                                                        <label for="id_recipients_date" class="control-label requiredField" style='text-align:left;'>
+                                                            {{form.recipients_date.label}}
+                                                            <span class="asteriskField">*</span>
+                                                        </label>
+                                                        <div class="controls">
+                                                            {{form.recipients_date}}
+                                                        </div>
                                                     </div>
-                                                    <div id="loading" style="display:none;">
-                                                        <p>Enviando certificados, por favor espere...</p>
-                                                        <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+                                                    {% if conferencista %}
+                                                        <div id = "div_id_recipients_conference_name" class="form-group">
+                                                            <label for="id_recipients_conference_name" class="control-label requiredField" style='text-align:left;'>
+                                                                {{form.recipients_conference_name.label}}
+                                                                <span class="asteriskField">*</span>
+                                                            </label>
+                                                            <div class="controls">
+                                                                {{form.recipients_conference_name}}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div id = "div_id_recipients_event_name" class="form-group">
+                                                        <label for="id_recipients_event_name" class="control-label requiredField" style='text-align:left;'>
+                                                            {{form.recipients_event_name.label}}
+                                                            <span class="asteriskField">*</span>
+                                                        </label>
+                                                        <div class="controls">
+                                                            {{form.recipients_event_name}}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal" id="cancel-button">Cancelar</button>
-                                                    <button type="submit" class="btn btn-lg btn-primary" id="confirm-button">Confirmar</button>
+                                                <div id="loading" style="display:none; text-align:center;" >
+                                                    <p>Enviando certificados, por favor espere...</p>
+                                                    <i class="fas fa-circle-notch fa-spin fa-3x"></i>
                                                 </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal" id="cancel-button">Cancelar</button>
+                                                <button type="submit" class="btn btn-lg btn-primary" id="confirm-button">Confirmar</button>
                                             </div>
                                         </div>
                                     </div>
-								</div>
+                                </div>
 							</div>
 						</form>
 					</div>
