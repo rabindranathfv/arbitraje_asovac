@@ -209,7 +209,7 @@
                                         </a>
                                     </li>
                                 {% endif %}
-                                {% if not events_app  and request.session.is_author_created %}
+                                {% if not events_app and rol_id and request.session.is_author_created %}
                                     <li>
                                         <a class="dropdown-item show-form" data-url="{% url 'autores:author_edit_modal' user.id %}" >
                                             <i class="fas fa-edit"></i> Editar datos de autor
