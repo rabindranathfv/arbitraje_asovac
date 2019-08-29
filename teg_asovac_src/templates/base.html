@@ -202,6 +202,11 @@
                                 </span>
                             </a>
                             <ul class="dropdown-menu" style ="z-index:2">
+                                <li>
+                                    <a class="dropdown-item show-form" data-url="{% url 'main_app:edit_personal_data' %}" >
+                                        <i class="fas fa-edit"></i> Editar datos personales
+                                    </a>
+                                </li>
                                 {% if not events_app  and request.session.is_author_created %}
                                     <li>
                                         <a class="dropdown-item show-form" data-url="{% url 'autores:author_edit_modal' user.id %}" >
