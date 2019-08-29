@@ -3014,7 +3014,8 @@ def changeRol(request,id,arbitraje_id):
 def edit_personal_data(request):
     data= dict()
     arbitro = Arbitro.objects.get(usuario__usuario = request.user)
-
+    arbitraje_id = request.session['arbitraje_id']
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id, usuario_asovac__usuario = request.user )
     if request.method == 'POST':
         form = EditPersonalDataForm(request.POST, instance = arbitro)
         if form.is_valid():
@@ -3043,9 +3044,14 @@ def edit_personal_data(request):
     else:
         form = EditPersonalDataForm(instance = arbitro)
 
-
+    if usuario_rol_in_sistema:
+        usuario_asovac = usuario_rol_in_sistema.first().usuario_asovac
+    else:
+        usuario_asovac = ''
     context={
-        'form': form
+        'form': form,
+        'usuario_rol_in_sistema': usuario_rol_in_sistema,
+        'usuario_asovac': usuario_asovac
     }
     data['html_form']= render_to_string('ajax/edit_personal_data.html',context,request=request)
     return JsonResponse(data)
