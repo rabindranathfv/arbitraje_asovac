@@ -18,7 +18,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.recursos_pag, name='recursos'),
-    url(r'^pdf/$', views.create_authors_certificates, name='generate_pdf'),#generate_pdf  #create_authors_certificates
+    url(r'^pdf/$', views.generate_pdf, name='generate_pdf'),#generate_pdf  #create_authors_certificates
     url(r'^certificado/autor-certificado/$', views.resources_author, name='resources_author'),
     url(r'^certificado/arbitro-certificado/$', views.resources_referee, name='resources_referee'),
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),

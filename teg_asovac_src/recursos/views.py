@@ -28,7 +28,7 @@ from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_
 
 from trabajos.models import Trabajo_arbitro
 
-from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
+from .utils import CertificateGenerator, LetterGenerator, MiscellaneousGenerator
 from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm
 
 
@@ -250,10 +250,17 @@ def get_data(request, *args, **kwargs):
 def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    start_date = arbitraje.fecha_inicio_arbitraje
+    end_date = arbitraje.fecha_fin_arbitraje
+    date_start_string = '%s de %s' % (start_date.day, MONTH_NAMES[start_date.month - 1])
+    date_end_string = '%s de %s de %s' % (end_date.day, MONTH_NAMES[end_date.month - 1], end_date.year)
 
-    filename = "AsoVAC_Certificado_Autores.pdf"
+    filename = "AsoVAC_Rabindranath_Ferreira.pdf"
 
     context = {}
+    context["date_start_string"] = date_start_string
+    context["date_end_string"] = date_end_string
+    context["university_names"] = ['Universidad Metropolitana', 'Universidad Central de Venezuela']
     context["header_url"] = arbitraje.cabecera
     context["city"] = 'Caracas'
     context["day"] = 4
@@ -268,7 +275,7 @@ def generate_pdf(request,*args , **kwargs):
     context["start_date"] = '29 de Noviembre'
     context["finish_date"] = '1 de Diciembre de 2018'
     context["convention_place"] = "Universidad Metropolintana (UNIMET) y la Universidad Central de Venezuela (UCV)"
-    context["convention_saying"] = '"Ciencia, Tecnología e Innovación en Democracia"'
+    context["subject_title"] = 'Rabindranath Ferreira Villamizar'
     context["authors"] = ['Rabindranath Ferreira'] * 5
     #['Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres', 'Yoleida Soto Anes','Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres']
     context["max_info_date"] = '15 de Noviembre'
@@ -283,9 +290,9 @@ def generate_pdf(request,*args , **kwargs):
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
     context["footer_content"] = """http://www.asovac.org/lxvii-convencion-anual-de-asovac https://www.facebook.com/ConvencionAsovac2017<br/>(0212)753-5802 asovac.convencion2017@gmail.com"""
-    letters_gen = LetterGenerator()
+    doc_gen = MiscellaneousGenerator()
 
-    return letters_gen.get_rejection_letter_w_obs(filename, context)
+    return doc_gen.get_name_tag(filename, context)
 
 
 @login_required
