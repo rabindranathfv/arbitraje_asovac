@@ -8,6 +8,16 @@
 			<div class="jumbotron RLcard">
 				<div class="container-fluid">
 					<div class="row">
+						<div class="col-sm-2">
+							<div class="panel">
+							<a href="{% url 'main_app:apps_selection' %}" class="btn btn-warning btn-block">
+								<i class="fa fa-arrow-circle-left"></i> Aplicaciones
+							</a>
+							</div>
+						</div>
+						{% include "success_messages.html" %}
+					</div>
+					<div class="row">
 						{% include "success_messages.html" %}
 					</div>
 					<div class="row middle-content">

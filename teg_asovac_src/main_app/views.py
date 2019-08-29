@@ -27,14 +27,11 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.debug import sensitive_post_parameters
 
 
-from .forms import (
-    ChangePassForm, ArbitrajeStateChangeForm, CreateArbitrajeForm,
-    RegisterForm, DataBasicForm, PerfilForm,
-    ArbitrajeAssignCoordGenForm, SubAreaRegistForm,
-    UploadFileForm, AreaCreateForm, AssingRolForm
-)
 
-from .models import Rol, Sistema_asovac, Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from .forms import EditPersonalDataForm, ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
+
+from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+
 from autores.models import Autores_trabajos
 from sesiones.models import Sesion
 from trabajos.models import Trabajo
@@ -3010,4 +3007,52 @@ def changeRol(request,id,arbitraje_id):
 
         data['content']= render_to_string('ajax/BTUsuarios.html',context,request=request)
     
+    return JsonResponse(data)
+
+
+
+@login_required
+def edit_personal_data(request):
+    data= dict()
+    arbitro = Arbitro.objects.get(usuario__usuario = request.user)
+    arbitraje_id = request.session['arbitraje_id']
+    usuario_rol_in_sistema = Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id, usuario_asovac__usuario = request.user )
+    if request.method == 'POST':
+        form = EditPersonalDataForm(request.POST, instance = arbitro)
+        if form.is_valid():
+            arbitro = form.save()
+            
+            usuario_arbitro = arbitro.usuario.usuario
+            usuario_arbitro.first_name = arbitro.nombres
+            usuario_arbitro.last_name = arbitro.apellidos
+            usuario_arbitro.email = arbitro.correo_electronico
+            usuario_arbitro.save()
+
+            if Autor.objects.filter(usuario = arbitro.usuario).exists():
+                autor = Autor.objects.get(usuario = arbitro.usuario)
+                autor.nombres = arbitro.nombres
+                autor.apellidos = arbitro.apellidos
+                autor.cedula_pasaporte = arbitro.cedula_pasaporte
+                autor.correo_electronico = arbitro.correo_electronico
+                if arbitro.genero == 'M':
+                    autor.genero = 0
+                else:
+                    autor.genero = 1
+                autor.save()
+
+            messages.success(request, 'Se han guardado sus cambios con éxito.')
+
+    else:
+        form = EditPersonalDataForm(instance = arbitro)
+
+    if usuario_rol_in_sistema:
+        usuario_asovac = usuario_rol_in_sistema.first().usuario_asovac
+    else:
+        usuario_asovac = ''
+    context={
+        'form': form,
+        'usuario_rol_in_sistema': usuario_rol_in_sistema,
+        'usuario_asovac': usuario_asovac
+    }
+    data['html_form']= render_to_string('ajax/edit_personal_data.html',context,request=request)
     return JsonResponse(data)
