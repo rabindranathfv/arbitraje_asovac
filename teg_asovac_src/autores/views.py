@@ -1,30 +1,39 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random, string,xlrd,os,sys,xlwt
-from openpyxl import Workbook
-from decouple import config
-from django.conf import settings
+import os
+
 from django.core import serializers
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render,redirect, get_object_or_404
-from django.urls import reverse
-from .models import Autor, Autores_trabajos, Pagador, Factura, Datos_pagador, Pago, Universidad
-from arbitrajes.models import Arbitro
-from main_app.models import Rol,Sistema_asovac,Usuario_asovac, User, Usuario_rol_in_sistema, Area, Sub_area
-# from trabajos.models import Detalle_version_final
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
-from trabajos.views import show_areas_modal
-
-from .forms import EditAutorForm, DatosPagadorForm, PagoForm, FacturaForm, AdminCreateAutorForm, CreateUniversityForm, ImportFromExcelForm
-
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
+from django.urls import reverse
 
+from decouple import config
+import xlrd
+import xlwt
+
+from arbitrajes.models import Arbitro
+from main_app.forms import UploadFileForm
+from main_app.models import (
+    Rol, Sistema_asovac, Usuario_asovac,
+    User, Usuario_rol_in_sistema, Area, Sub_area
+)
+from main_app.views import (
+    get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
+    get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+)
+
+from .forms import (
+    EditAutorForm, DatosPagadorForm, PagoForm,
+    FacturaForm, AdminCreateAutorForm,
+    CreateUniversityForm, ImportFromExcelForm
+)
+from .models import Autor, Autores_trabajos, Pagador, Factura, Universidad
 
 # Create your views here.
 @login_required
@@ -914,7 +923,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             break
                         else:
                             correo_electronico = str(excel_file.cell_value(rowx=fila, colx=4))
-                            if User.objects.filter(email = correo_electronico).exists():
+                            if User.objects.filter(email=correo_electronico).exists():
                                 data['status'] = 400
                                 data['message'] = data['message'] + "Error en la fila {0}, ya hay un autor registrado con este correo electrónico \n".format(fila)
                                 break
@@ -1026,10 +1035,10 @@ def validate_load_users(filename,extension,arbitraje_id):
         is_create = create_authors(excel_file,arbitraje_id)
         print is_create
         if is_create == -1:
-            data['message'] = "Los datos del archivo son válidos"
+            data['message'] = "Los datos del archivo son válidos y han sido importados correctamente."
         else:
             data['status'] = 400
-            data['message'] =  "Problemas en la fila {0} al momento de almacenar, porque ya hay un autor con esa cédula o correo electrónico. Se lograron importar los autores hasta la fila anterior, es decir, hasta la fila {1}.".format(is_create, is_create-1)
+            data['message'] =  "Problemas en la fila {0} al momento de almacenar, porque ya existe un autor con esa cédula o correo electrónico. Se lograron importar los autores hasta la fila anterior, es decir, hasta la fila {1}.".format(is_create, is_create-1)
 
     return data
 
@@ -1132,19 +1141,19 @@ def create_authors(excel_file, arbitraje_id):
                     msg_plain = render_to_string('../templates/email_templates/admin_create_author.txt', context)
                     msg_html = render_to_string('../templates/email_templates/admin_create_author.html', context)
                     send_mail(
-                            'Creación de usuario',         #titulo
-                            msg_plain,                          #mensaje txt
-                            config('EMAIL_HOST_USER'),          #email de envio
-                            [user.email],               #destinatario
-                            html_message=msg_html,              #mensaje en html
-                            )
+                        'Creación de usuario',         #titulo
+                        msg_plain,                          #mensaje txt
+                        config('EMAIL_HOST_USER'),          #email de envio
+                        [user.email],               #destinatario
+                        html_message=msg_html,              #mensaje en html
+                    )
 
                 else:
                     resultado = fila
-                    break;
+                    break
             except:
                 resultado = fila
-                break;
+                break
 
 
     return resultado
@@ -1157,30 +1166,31 @@ def load_authors_modal(request):
     arbitraje_id = request.session['arbitraje_id']
 
     if request.method == "POST":
-        form = ImportFromExcelForm(request.POST, request.FILES)
+        form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             # Para guardar el archivo de forma local
-            file_name= save_file(request,"autores")
-            extension= get_extension_file(file_name)
+            file_name = save_file(request, "autores")
+            extension = get_extension_file(file_name)
 
             #Valida el contenido del archivo
-            response = validate_load_users(file_name, extension,arbitraje_id)
-            print response
+            response = validate_load_users(file_name, extension, arbitraje_id)
 
-            if response['status'] == 200:
-                messages.success(request, "La importación de autores fue llevada a cabo con éxito.")
-                return redirect('autores:authors_list')
-            else:
-                filename = "Error-Log-Import.txt"
-                content = response['message']
-                response = HttpResponse(content, content_type='text/plain')
-                response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
-                return response
+            context = {
+                'title': 'Cargar Autores',
+                'response': response['message'],
+                'status': response['status'],
+            }
+            print (response['message'], response['status'])
+            data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+            return JsonResponse(data)
 
-            #data['url'] = reverse('autores:authors_list')
-            #data['form_is_valid'] = True
+            # filename = "Error-Log-Import.txt"
+            # content = response['message']
+            # response = HttpResponse(content, content_type='text/plain')
+            # response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+            # return response
+
         else:
-            #data['form_is_valid'] = False
             messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
             return redirect('autores:authors_list')
     else:

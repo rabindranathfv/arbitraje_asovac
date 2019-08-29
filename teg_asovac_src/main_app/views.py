@@ -27,9 +27,14 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.debug import sensitive_post_parameters
 
 
-from .forms import ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
+from .forms import (
+    ChangePassForm, ArbitrajeStateChangeForm, CreateArbitrajeForm,
+    RegisterForm, DataBasicForm, PerfilForm,
+    ArbitrajeAssignCoordGenForm, SubAreaRegistForm,
+    UploadFileForm, AreaCreateForm, AssingRolForm
+)
 
-from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from .models import Rol, Sistema_asovac, Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
 from autores.models import Autores_trabajos
 from sesiones.models import Sesion
 from trabajos.models import Trabajo
