@@ -383,6 +383,9 @@ class EditPersonalDataForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EditPersonalDataForm, self).__init__(*args, **kwargs)
         self.fields['confirm_email'].widget.attrs['placeholder'] = 'Repita el correo en caso de cambio'
+        self.fields['genero'].label = 'Género'
+        self.fields['cedula_pasaporte'].label = 'Cédula/Pasaporte'
+        self.fields['correo_electronico'].label = 'Correo Electrónico'
 
     def clean_cedula_pasaporte(self):
         cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
