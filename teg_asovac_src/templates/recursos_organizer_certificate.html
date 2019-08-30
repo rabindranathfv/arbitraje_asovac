@@ -10,9 +10,15 @@
 			<div class="jumbotron RLcard">
 				{% include "success_messages.html" %}
                 {% include "errors_form.html" %}		
-                
-				<h2 class="text-left">Miembros {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a Certificar</h2>
-				<br>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2 class="text-left">Miembros {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a Certificar</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <a data-url="{% url 'recursos:load_lecturers_modal' %}" class="show-form btn btn-primary btn-block btn-lg" type="button"><i class="fa fa-file-excel" style="color:white"></i> Carga Masiva de Certificados</a>
+                    </div>
+                </div>
+                <br>
 				<h4>
 					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados, luego se le pedirá el nombre{% if conferencista %}, título de la conferencia{% endif %} y fecha del evento.
 				</h4>

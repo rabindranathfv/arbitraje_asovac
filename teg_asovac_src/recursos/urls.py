@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^certificado/organizador-certificado/$', views.resources_organizer, name='resources_organizer'),
     url(r'^certificado/conferencista-certificado/$', views.resources_lecturer, name='resources_lecturer'),
 
+    url(r'^organizador-importar-excel/$',views.load_lecturers_modal,name='load_lecturers_modal'),
+
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
         views.create_logistics_certificates, name='create_logistics_certificates'),

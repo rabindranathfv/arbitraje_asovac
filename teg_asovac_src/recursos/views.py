@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.forms import ValidationError
 from django.http import JsonResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, reverse
 from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
 
@@ -30,7 +30,7 @@ from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
 from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm, MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
-
+from autores.forms import ImportFromExcelForm
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -945,3 +945,48 @@ def resources_lecturer(request):
     context['form'] = form
     context['conferencista'] = True
     return render(request, 'recursos_organizer_certificate.html', context)
+
+
+
+@login_required
+def load_lecturers_modal(request):
+	data = dict()
+	arbitraje_id = request.session['arbitraje_id']
+
+	if request.method == "POST":
+		form = ImportFromExcelForm(request.POST, request.FILES)
+		if form.is_valid():
+			# Para guardar el archivo de forma local
+			file_name= save_file(request,"autores")
+			extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo
+			response = validate_load_users(file_name, extension,arbitraje_id)
+			print response
+
+			if response['status'] == 200:
+				messages.success(request, "La generación masiva de conferencistas y el envío de certificados fue llevado a cabo con éxito.")
+				return redirect('autores:authors_list')
+			else:
+				filename = "Error-Log-Import.txt"
+				content = response['message']
+				response = HttpResponse(content, content_type='text/plain')
+				response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+				return response
+
+			#data['url'] = reverse('autores:authors_list')
+			#data['form_is_valid'] = True
+		else:
+			#data['form_is_valid'] = False
+			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
+			return redirect('autores:authors_list')
+	else:
+		form = ImportFromExcelForm()
+
+	context ={
+		'form': form,
+		'rol': 'conferencistas',
+		'action': reverse('recursos:load_lecturers_modal')
+	}
+	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+	return JsonResponse(data)
