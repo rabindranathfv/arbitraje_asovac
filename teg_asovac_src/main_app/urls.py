@@ -56,6 +56,9 @@ urlpatterns = [
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
     url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
     url(r'^(?P<arbitraje_id>\d+)/load/(?P<rol>\d+)/usuarios$',views.load_users_modal,name='load_users'),
+    
+    # Agrega usuarios al evento
+    url(r'^(?P<arbitraje_id>\d+)/load/arbitraje$',views.load_users_arbitraje_modal,name='load_users_arbitraje'),
 
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),
