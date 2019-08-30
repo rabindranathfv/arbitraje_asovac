@@ -90,6 +90,7 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
     url(r'^usuario/(?P<user_id>\d+)/crear-autor/$',views.create_autor_instance_modal,name='create_autor_instance_modal'),
     url(r'^usuario/(?P<arbitraje_id>\d+)/registrar-en-sistema/$',views.register_user_in_sistema,name='register_user_in_sistema'),
+    url(r'^usuario/editar$',views.edit_personal_data,name='edit_personal_data'),
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
