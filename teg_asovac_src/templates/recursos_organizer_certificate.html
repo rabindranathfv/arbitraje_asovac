@@ -19,8 +19,8 @@
 				<br>
                 <form action="." method="POST" id="form-loading">
                     {% csrf_token %}
-                    <h5><b>Datos de evento:</b></h5>
-                    <div id = "div_id_recipients_event_name" class="form-group col-sm-4">
+                    <h5><b>Datos de evento{% if conferencista %} y conferencia{% endif %}:</b></h5>
+                    <div id = "div_id_recipients_event_name" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
                         <label for="id_recipients_event_name" class="control-label requiredField" style='text-align:left;'>
                             {{form.recipients_event_name.label}}
                             <span class="asteriskField">*</span>
@@ -29,7 +29,7 @@
                             {{form.recipients_event_name}}
                         </div>
                     </div>
-                    <div id = "div_id_recipients_date" class="form-group col-sm-4">
+                    <div id = "div_id_recipients_date" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
                         <label for="id_recipients_date" class="control-label requiredField" style='text-align:left;'>
                             {{form.recipients_date.label}}
                             <span class="asteriskField">*</span>
