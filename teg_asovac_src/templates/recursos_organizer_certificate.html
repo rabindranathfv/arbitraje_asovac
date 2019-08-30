@@ -15,14 +15,14 @@
                         <h2 class="text-left">Miembros {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a Certificar</h2>
                     </div>
                     <div class="col-sm-4">
-                        <a data-url="{% url 'recursos:load_lecturers_modal' %}" class="show-form btn btn-primary btn-block btn-lg" type="button"><i class="fa fa-file-excel" style="color:white"></i> Carga Masiva de Certificados</a>
+                        <a data-url="{{ url_modal }}" class="show-form btn btn-primary btn-block btn-lg" type="button"><i class="fa fa-file-excel" style="color:white"></i> Generación Masiva de Certificados</a>
                     </div>
                 </div>
                 <br>
-				<h4>
-					Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados, luego se le pedirá el nombre{% if conferencista %}, título de la conferencia{% endif %} y fecha del evento.
-				</h4>
-				<br>
+                <h4>
+                    Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados, luego se le pedirá el nombre{% if conferencista %}, título de la conferencia{% endif %} y fecha del evento.
+                </h4>
+                <br>
                 <form action="." method="POST" id="form-loading">
                     {% csrf_token %}
                     <h5><b>Datos de evento{% if conferencista %} y conferencia{% endif %}:</b></h5>
@@ -84,6 +84,7 @@
                         </div>
                     </div>
                 </form>
+
 			</div>
 		</div>
 	</div>

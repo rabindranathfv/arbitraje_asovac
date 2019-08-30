@@ -860,6 +860,7 @@ def resources_organizer(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     context['form'] = form
+    context['url_modal'] = reverse('recursos:load_organizers_modal')
     return render(request, 'recursos_organizer_certificate.html', context)
 
 
@@ -944,6 +945,7 @@ def resources_lecturer(request):
     context['nombre_vista'] = 'Recursos'
     context['form'] = form
     context['conferencista'] = True
+    context['url_modal'] = reverse('recursos:load_lecturers_modal')
     return render(request, 'recursos_organizer_certificate.html', context)
 
 #---------------------------------------------------------------------------------#
@@ -987,7 +989,7 @@ def load_lecturers_modal(request):
 			extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo
-			response = validate_load_lecturers(file_name, extension,arbitraje_id)
+			response = validate_load_lecturers(file_name, extension,arbitraje_id, True)
 			print response
 
 			if response['status'] == 200:
@@ -1016,21 +1018,64 @@ def load_lecturers_modal(request):
 
 
 
+@login_required
+def load_organizers_modal(request):
+	data = dict()
+	arbitraje_id = request.session['arbitraje_id']
 
-def validate_load_lecturers(filename,extension,arbitraje_id):
-	data= dict()
-	data['status']=400
-	data['message']="La estructura del archivo no es correcta"
-	if extension == "xlsx" or extension == "xls":
-		print "Formato xls/xlsx"
+	if request.method == "POST":
+		form = ImportFromExcelForm(request.POST, request.FILES)
+		if form.is_valid():
+			# Para guardar el archivo de forma local
+			file_name= save_file(request,"organizadores")
+			extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo
+			response = validate_load_lecturers(file_name, extension,arbitraje_id)
+			print response
+
+			if response['status'] == 200:
+				messages.success(request, "La generación masiva de certificados de organizadores y el envío de certificados fue llevado a cabo con éxito.")
+				return redirect('recursos:resources_organizer')
+			else:
+				messages.error(request, response['message'])
+				return redirect('recursos:resources_organizer')
+
+			#data['url'] = reverse('autores:authors_list')
+			#data['form_is_valid'] = True
+		else:
+			#data['form_is_valid'] = False
+			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
+			return redirect('recursos:resources_organizer')
+	else:
+		form = ImportFromExcelForm()
+
+	context ={
+		'form': form,
+		'rol': 'organizadores',
+		'action': reverse('recursos:load_organizers_modal')
+	}
+	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+	return JsonResponse(data)
+
+
+
+
+def validate_load_lecturers(filename,extension,arbitraje_id, lecturer = False):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
+    if lecturer:
+        ncols = 5
+    else:
+        ncols = 4
+    if extension == "xlsx" or extension == "xls":
         book = xlrd.open_workbook(filename)
-
         if book.nsheets > 0:
-
             excel_file = book.sheet_by_index(0)
             email_pattern = re.compile('^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
 
-            if excel_file.ncols == 5:
+            if excel_file.ncols == ncols:
                 data['status']=200
                 data['message']=""
                 # se validan los campos del documento
@@ -1068,25 +1113,25 @@ def validate_load_lecturers(filename,extension,arbitraje_id):
 							if not nombres_is_valid:
 								data['status']=400
 								data['message'] = "Error en la fila {0} el campo de nombre del destinatario, solo debe tener letras \n".format(fila)
-
-                        if excel_file.cell_value(rowx=fila, colx=4) == '':
-							data['status']=400
-							data['message'] = "Error en la fila {0} el título de la conferencia es un campo obligatorio \n".format(fila)
-
-
-	# Inserta los registros una vez realizada la validación correspondiente
-	if data['status'] == 200:
-		is_generated = generate_massive_lecturers_certificates(book,arbitraje_id)
-		if is_generated:
-			data['message'] = "Los datos del archivo son válidos"
+                        
+                        if lecturer:
+                            if excel_file.cell_value(rowx=fila, colx=4) == '':
+                                data['status']=400
+                                data['message'] = "Error en la fila {0} el título de la conferencia es un campo obligatorio \n".format(fila)
+    if data['status'] == 200:
+        if lecturer:
+            generate_massive_lecturers_certificates(book, arbitraje_id)
+        else:
+            generate_massive_organizer_certificates(book, arbitraje_id)
+        data['message'] = "Los datos del archivo son válidos"
         book.release_resources()
         del book
-	return data
+    print(data)
+    return data
 
 
 
 def generate_massive_lecturers_certificates(book, arbitraje_id):
-    resultado = True
     arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
     cert_context = create_certificate_context(arbitraje)
     certificate_gen = CertificateGenerator()
@@ -1141,4 +1186,63 @@ def generate_massive_lecturers_certificates(book, arbitraje_id):
             email_msg.attach(filename, certificate.content, 'application/pdf')
             email_msg.attach_alternative(msg_html, "text/html")
             email_msg.send()
-    return resultado
+
+
+def generate_massive_organizer_certificates(book, arbitraje_id):
+    resultado = True
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    cert_context = create_certificate_context(arbitraje)
+    certificate_gen = CertificateGenerator()
+    excel_file = book.sheet_by_index(0)
+    for fila in range(excel_file.nrows):
+        if fila > 0:
+            
+            nombre_evento = excel_file.cell_value(rowx=fila, colx=0)
+            year, month, day, hour, minute, second = xlrd.xldate_as_tuple(excel_file.cell_value(rowx=fila, colx=1), book.datemode)
+            email = excel_file.cell_value(rowx=fila, colx=2)
+            nombre = excel_file.cell_value(rowx=fila, colx=3)
+
+            if day < 10:
+                day = '0'+ str(day)
+            else:
+                day = str(day)
+
+            if month < 10:
+                month = '0'+ str(month)
+            else:
+                month = str(month)
+
+            instance_context = {
+                "subject_title": nombre_evento,
+                "people_names": [nombre],
+                "event_name_string": nombre_evento,
+                "event_date_string": day + '/' + month + '/' + str(year)
+
+            }
+            instance_context.update(cert_context)
+            certificate = certificate_gen.get_organizer_certificate(instance_context)
+            name = nombre_evento.split(' ')
+            name = '_'.join(name)
+            filename = "Certificado_Organizadores_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                cert_context["roman_number"])
+            context_email = {
+                'sistema': arbitraje,
+                'usuario': nombre_evento,
+                'rol': 'organizador'
+            }
+            msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                            context_email)
+            msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                        context_email)
+
+            email_msg = EmailMultiAlternatives(
+                'Certificado de organizador',
+                msg_plain,
+                config('EMAIL_HOST_USER'),
+                [email]
+            )
+            email_msg.attach(filename, certificate.content, 'application/pdf')
+            email_msg.attach_alternative(msg_html, "text/html")
+            email_msg.send()
+
+
