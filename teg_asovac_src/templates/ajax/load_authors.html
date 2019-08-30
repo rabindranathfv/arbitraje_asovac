@@ -5,14 +5,35 @@
         </button>
         <h3 class="modal-title" >Cargar autores con Excel:</h3>
 </div>
-<form method="POST" class=""  enctype="multipart/form-data" action="{% url 'autores:load_authors_modal' %}">
+<form method="POST" class="" id="loadUsersForm" enctype="multipart/form-data" action="{% url 'autores:load_authors_modal' %}" data-url="{% url 'autores:load_authors_modal' %}">
     <div class="modal-body">
         {% csrf_token %}
         {{ form | crispy }}
-        <p><strong>*</strong>Cuando le dé importar, esto tomará algunos segundos. Por favor, espere.</p>
+        <p><strong>*</strong>El proceso de importado puede tomar algunos segundos. Por favor, espere.</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-lg btn-primary">Importar</button>
     </div>
 </form>
+
+<script>
+     $('#loadUsersForm').submit(function(e){
+        e.preventDefault();
+        var input = document.getElementById('id_file');
+        var formData = new FormData();
+        formData.append('file',input.files[0]);
+        $.ajax({
+            url: $('#loadUsersForm').attr("data-url"),
+            type: 'POST',
+            data: formData,
+            success: function(data){
+                $('#table').bootstrapTable('refresh')
+                $('#modal-user .modal-content').html(data.html_form)
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+</script>
