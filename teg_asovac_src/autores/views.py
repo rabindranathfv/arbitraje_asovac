@@ -1184,8 +1184,10 @@ def load_authors_modal(request):
 
 	context ={
 		'form': form,
+		'rol': 'autores',
+		'action': reverse('autores:load_authors_modal')
 	}
-	data['html_form'] = render_to_string('ajax/load_authors.html', context, request=request)
+	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
 	return JsonResponse(data)
 
 
