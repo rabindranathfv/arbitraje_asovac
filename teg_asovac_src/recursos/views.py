@@ -876,6 +876,7 @@ def resources_lecturer(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+            
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -885,7 +886,13 @@ def resources_lecturer(request):
                     )
                 )
                 break
-
+        if n == 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Se requiere al menos un destinatario, por favor indique el nombre y el correo electrónico."
+                )
+            )
         print 'form error', form.errors
         if not form.errors and form.is_valid():
             fecha_evento = form.cleaned_data['recipients_date']
