@@ -12,7 +12,7 @@
                 {% include "errors_form.html" %}		
                 <div class="row">
                     <div class="col-sm-8">
-                        <h2 class="text-left">Miembros {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a Certificar</h2>
+                        <h2 class="text-left">Certificados de {% if conferencista %}conferencistas{% else %}organizadores{% endif %}</h2>
                     </div>
                     <div class="col-sm-4">
                         <a data-url="{{ url_modal }}" class="show-form btn btn-primary btn-block btn-lg" type="button"><i class="fa fa-file-excel" style="color:white"></i> Generación Masiva de Certificados</a>
@@ -20,36 +20,42 @@
                 </div>
                 <br>
                 <h4>
-                    Por favor ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados, luego se le pedirá el nombre{% if conferencista %}, título de la conferencia{% endif %} y fecha del evento.
+                    Por favor rellene los datos del evento e ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados.
                 </h4>
                 <br>
                 <form action="." method="POST" id="form-loading">
                     {% csrf_token %}
                     <h5><b>Datos de evento{% if conferencista %} y conferencia{% endif %}:</b></h5>
                     <div id = "div_id_recipients_event_name" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
+                        <!--
                         <label for="id_recipients_event_name" class="control-label requiredField" style='text-align:left;'>
                             {{form.recipients_event_name.label}}
                             <span class="asteriskField">*</span>
                         </label>
+                        -->
                         <div class="controls">
                             {{form.recipients_event_name}}
                         </div>
                     </div>
                     <div id = "div_id_recipients_date" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
+                        <!--
                         <label for="id_recipients_date" class="control-label requiredField" style='text-align:left;'>
                             {{form.recipients_date.label}}
                             <span class="asteriskField">*</span>
                         </label>
+                        -->
                         <div class="controls">
                             {{form.recipients_date}}
                         </div>
                     </div>
                     {% if conferencista %}
                         <div id = "div_id_recipients_conference_name" class="form-group col-sm-4">
+                            <!--
                             <label for="id_recipients_conference_name" class="control-label requiredField" style='text-align:left;'>
                                 {{form.recipients_conference_name.label}}
                                 <span class="asteriskField">*</span>
                             </label>
+                            -->
                             <div class="controls">
                                 {{form.recipients_conference_name}}
                             </div>
