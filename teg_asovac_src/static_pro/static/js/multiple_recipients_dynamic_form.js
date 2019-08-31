@@ -41,10 +41,11 @@ $(function() {
 		console.log("BLUR from " + $(this).attr('name'));
 		let $email_input = $hide_target.find('div.controls').children().last();
 		console.log($hide_target);
-		console.log($email_input);
+		console.log("email")
+		console.log($email_input.attr('id'));
 		let value1 = $(this).val();
 		let value2 = $email_input.val();
-		if (value1 === "" && value2 === "") {
+		if (value1 === "" && value2 === "" && $email_input.attr('id') != 'id_recipients_email_0') {
 			$hide_target.slideUp();
 		}
 	})
@@ -54,10 +55,11 @@ $(function() {
 		console.log("BLUR from " + $(this).attr('name'));
 		let $name_input = $hide_target.find('div.controls').children().first();
 		console.log($hide_target);
-		console.log($name_input);
+		console.log("nombre")
+		console.log($name_input.attr('id'));
 		let value1 = $(this).val();
 		let value2 = $name_input.val();
-		if (value1 === "" && value2 === "") {
+		if (value1 === "" && value2 === "" && $name_input.attr('id') != 'id_recipients_name_0') {
 			$hide_target.slideUp();
 		}
 	})
