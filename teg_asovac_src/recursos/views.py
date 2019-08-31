@@ -860,6 +860,7 @@ def resources_organizer(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     context['form'] = form
+    context['conferencista'] = 0
     context['url_modal'] = reverse('recursos:load_organizers_modal')
     return render(request, 'recursos_organizer_certificate.html', context)
 
@@ -944,7 +945,7 @@ def resources_lecturer(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     context['form'] = form
-    context['conferencista'] = True
+    context['conferencista'] = 1
     context['url_modal'] = reverse('recursos:load_lecturers_modal')
     return render(request, 'recursos_organizer_certificate.html', context)
 
