@@ -979,87 +979,99 @@ def save_file(request,type_load):
 
 @login_required
 def load_lecturers_modal(request):
-	data = dict()
-	arbitraje_id = request.session['arbitraje_id']
+    data = dict()
+    arbitraje_id = request.session['arbitraje_id']
 
-	if request.method == "POST":
-		form = ImportFromExcelForm(request.POST, request.FILES)
-		if form.is_valid():
+    if request.method == "POST":
+        form = ImportFromExcelForm(request.POST, request.FILES)
+        if form.is_valid():
 			# Para guardar el archivo de forma local
-			file_name= save_file(request,"conferencistas")
-			extension= get_extension_file(file_name)
+            file_name= save_file(request,"conferencistas")
+            extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo
-			response = validate_load_event_participants(file_name, extension,arbitraje_id, True)
-			print response
-
-			if response['status'] == 200:
-				messages.success(request, "La generación masiva de certificados de conferencistas y el envío de certificados fue llevado a cabo con éxito.")
-				return redirect('recursos:resources_lecturer')
-			else:
+            response = validate_load_event_participants(file_name, extension,arbitraje_id, True)
+            print response
+            if response['status'] == 200:
+                context = {
+                    'title': 'Cargar Conferencistas',
+                    'response': response['message'],
+                    'status': response['status'],
+                }
+                print (response['message'], response['status'])
+                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+                return JsonResponse(data)
+            
+            else:
 				messages.error(request, response['message'])
 				return redirect('recursos:resources_lecturer')
 
 			#data['url'] = reverse('autores:authors_list')
 			#data['form_is_valid'] = True
-		else:
+        else:       
 			#data['form_is_valid'] = False
 			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
 			return redirect('recursos:resources_lecturer')
-	else:
+    else:
 		form = ImportFromExcelForm()
 
-	context ={
+    context = {
 		'form': form,
 		'rol': 'conferencistas',
 		'action': reverse('recursos:load_lecturers_modal'),
         'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 2})
 	}
-	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
-	return JsonResponse(data)
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
 
 
 
 @login_required
 def load_organizers_modal(request):
-	data = dict()
-	arbitraje_id = request.session['arbitraje_id']
-
-	if request.method == "POST":
-		form = ImportFromExcelForm(request.POST, request.FILES)
-		if form.is_valid():
+    data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+    if request.method == "POST":
+        form = ImportFromExcelForm(request.POST, request.FILES)
+        if form.is_valid():
 			# Para guardar el archivo de forma local
-			file_name= save_file(request,"organizadores")
-			extension= get_extension_file(file_name)
+            file_name= save_file(request,"organizadores")
+            extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo
-			response = validate_load_event_participants(file_name, extension,arbitraje_id)
-			print response
+            response = validate_load_event_participants(file_name, extension,arbitraje_id)
+            print response
 
-			if response['status'] == 200:
-				messages.success(request, "La generación masiva de certificados de organizadores y el envío de certificados fue llevado a cabo con éxito.")
-				return redirect('recursos:resources_organizer')
-			else:
+            if response['status'] == 200:
+                context = {
+                    'title': 'Cargar Organizadores',
+                    'response': response['message'],
+                    'status': response['status'],
+                }
+                print (response['message'], response['status'])
+                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+                return JsonResponse(data)
+            
+            else:
 				messages.error(request, response['message'])
 				return redirect('recursos:resources_organizer')
 
 			#data['url'] = reverse('autores:authors_list')
 			#data['form_is_valid'] = True
-		else:
+        else:
 			#data['form_is_valid'] = False
 			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
 			return redirect('recursos:resources_organizer')
-	else:
+    else:
 		form = ImportFromExcelForm()
 
-	context ={
+    context ={
 		'form': form,
 		'rol': 'organizadores',
 		'action': reverse('recursos:load_organizers_modal'),
         'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 1})
 	}
-	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
-	return JsonResponse(data)
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
 
 
 
@@ -1126,7 +1138,7 @@ def validate_load_event_participants(filename,extension,arbitraje_id, lecturer =
             generate_massive_lecturers_certificates(book, arbitraje_id)
         else:
             generate_massive_organizer_certificates(book, arbitraje_id)
-        data['message'] = "Los datos del archivo son válidos"
+        data['message'] = "Se han generado y envíado los certificados con éxito"
         book.release_resources()
         del book
     print(data)

@@ -22,5 +22,12 @@
 <script src="{% static 'js/config.js' %}"></script>
 <script src="{% static 'js/es.js' %}"></script>
 <script src="{% static 'js/styles.js' %}"></script>
+<script>
+
+if ($('#my-sidebar').val() != 1) {
+    $('#my-footer').removeClass("col-md-offset-3");
+    $('#my-footer').addClass("col-md-offset-2");
+}
+</script>
 
 

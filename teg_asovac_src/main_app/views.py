@@ -27,6 +27,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.debug import sensitive_post_parameters
 
 
+
 from .forms import EditPersonalDataForm, ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
@@ -1667,6 +1668,7 @@ def load_users_modal(request, arbitraje_id, rol):
             'form': form,
             'arbitraje_id': arbitraje_id,
             'rol': rol,
+            'tipo': "file",
         }
         data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
         return JsonResponse(data)
@@ -1677,11 +1679,64 @@ def load_users_modal(request, arbitraje_id, rol):
         'title': modal_title,
         'form': form,
         'arbitraje_id': arbitraje_id,
-        'rol': rol
+        'rol': rol,
+        'tipo': "file",
     }
     data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
     return JsonResponse(data)
 
+#---------------------------------------------------------------------------------#
+#                    Agrega usuarios registrados a un arbitraje                   #
+#---------------------------------------------------------------------------------#
+@login_required
+def load_users_arbitraje_modal(request, arbitraje_id):
+    data= dict()
+    # consulta mas completa
+    query= "SELECT distinct ua.id,au.first_name,au.last_name,au.email FROM main_app_usuario_asovac as ua INNER JOIN auth_user as au on ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area as uasa on uasa.usuario_asovac_id = ua.id INNER JOIN main_app_sub_area as sa on sa.id = uasa.sub_area_id INNER JOIN main_app_area as a on a.id = sa.area_id LEFT JOIN main_app_usuario_rol_in_sistema as ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro as arb on arb.usuario_id = ua.id WHERE ris.id is null order by ua.id desc"
+    query_count=query
+    list_users= User.objects.raw(query)
+    rol_list=Rol.objects.all().filter(id__gt=2)
+    total_users=0
+    for users in list_users:
+        total_users= total_users+1
+
+    if request.method == 'POST':
+
+        list_users= request.POST.getlist('users[]')
+        rol= request.POST['id_rol']
+
+        for item in list_users:
+            # Lista de elementos para llenar tabla de roles por sistema
+            usuario_asovac= Usuario_asovac.objects.get(id=item)
+            arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+            itemRole= Rol.objects.get(id=rol)
+
+            try:
+                # Se construye el objeto para crear los roles
+                addRol=Usuario_rol_in_sistema()
+                addRol.usuario_asovac=usuario_asovac
+                addRol.rol=itemRole
+                addRol.sistema_asovac=arbitraje
+                addRol.save()
+                data['status']=200
+                data['message']="Los usuarios se han agregado de manera exitosa."
+
+            except:
+                data['status']=400
+                data['message']="Ha ocurrido un error procesando su solicitud, inténtelo nuevamente."
+
+
+    context = {
+        'title': "Registrar usuarios en el arbitraje",
+        'arbitraje_id': arbitraje_id,
+        'list_users': list_users,
+        'rol_list': rol_list,
+        'total_users': total_users,
+        'tipo': "system",
+    }
+    data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+    return JsonResponse(data)
+    
 #---------------------------------------------------------------------------------#
 #                 Valida el contenido del excel para cargar áreas                 #
 #---------------------------------------------------------------------------------#
