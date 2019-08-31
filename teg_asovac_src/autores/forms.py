@@ -253,16 +253,18 @@ class PagoForm(forms.ModelForm):
 
 	def clean_numero_transferencia(self):
 		numero_transferencia = self.cleaned_data['numero_transferencia']
-		if(self.cleaned_data['tipo_pago'] == 'T'):
+		if not 'tipo_pago' in self.cleaned_data:
+			pass
+		elif(self.cleaned_data['tipo_pago'] == 'T'):
 			if(not numero_transferencia):
 				raise forms.ValidationError(_("Falta indicar el número de transferencia, ya que indicó que el tipo de pago es transferencia"),code="required_numero_transferencia")
 			else:
 				if(numero_transferencia[0] == '0'):
 					raise forms.ValidationError(_("El número de transferencia no puede tener 0's a la izquierda."), code="invalid_numero_transferencia")
 				if(not numero_transferencia.isdigit()):
-					raise forms.ValidationError(_("El número de transferencia no puede contener letras ni espacios."), code="invalid_numero_transferencia")
+					raise forms.ValidationError(_("El número de transferencia solamente debe tener números."), code="invalid_numero_transferencia")
 				if(Pago.objects.filter(numero_transferencia = numero_transferencia).exists()):
-					raise forms.ValidationError(_("Ya existe un pago registrado con este número de transferencia"), code = "numero_transferencia_duplicated")
+					raise forms.ValidationError(_("Ya existe un pago registrado con el número de transferencia indicado"), code = "numero_transferencia_duplicated")
 		else:
 			if(numero_transferencia):
 				raise forms.ValidationError(_("El tipo de pago indicado es CHEQUE, si es correcto por favor deje este campo en blanco."))
@@ -270,20 +272,28 @@ class PagoForm(forms.ModelForm):
 
 	def clean_numero_cheque(self):
 		numero_cheque = self.cleaned_data['numero_cheque']
-		if(self.cleaned_data['tipo_pago'] == 'C'):
+		if not 'tipo_pago' in self.cleaned_data:
+			pass
+		elif(self.cleaned_data['tipo_pago'] == 'C'):
 			if(not numero_cheque):
 				raise forms.ValidationError(_("Falta indicar el número de cheque, ya que indicó que el tipo de pago es cheque"),code="required_numero_cheque")
 			else:
 				if(numero_cheque[0] == '0'):
 					raise forms.ValidationError(_("El número de cheque no puede tener 0's a la izquierda."), code="invalid_numero_cheque")
 				if(not numero_cheque.isdigit()):
-					raise forms.ValidationError(_("El número de cheque no puede contener letras ni espacios."), code="invalid_numero_cheque")
+					raise forms.ValidationError(_("El número de cheque solamente debe tener números."), code="invalid_numero_cheque")
 				if(Pago.objects.filter(numero_transferencia = numero_cheque).exists()):
-					raise forms.ValidationError(_("Ya existe un pago registrado con este número de cheque"), code = "numero_cheque_duplicated")
+					raise forms.ValidationError(_("Ya existe un pago registrado con el número de cheque indicado"), code = "numero_cheque_duplicated")
 		else:
 			if(numero_cheque):
 				raise forms.ValidationError(_("El tipo de pago indicado es TRANSFERENCIA, si es correcto por favor deje este campo en blanco."))
 		return numero_cheque
+
+	def clean_tipo_pago(self):
+		tipo_pago = self.cleaned_data['tipo_pago']
+		if not 'tipo_pago' in self.cleaned_data:
+			raise forms.ValidationError(_("Por favor indique el tipo de pago."),code="required_tipo_pago")
+		return tipo_pago
 
 
 # Form para vista de Factura

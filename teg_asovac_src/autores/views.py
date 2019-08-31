@@ -670,30 +670,30 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
     sistema = request.session['arbitraje_id']
     datos_pagador_form = DatosPagadorForm()
     factura_form = FacturaForm(sistema_id = sistema)
-    pago_form = PagoForm(sistema_id = sistema)
+    form = PagoForm(sistema_id = sistema)
     if request.method == "POST":
         if(step == '1'):    
             datos_pagador_form = DatosPagadorForm(request.POST)
             factura_form = FacturaForm(sistema_id = sistema)
-            pago_form = PagoForm(sistema_id = sistema)
+            form = PagoForm(sistema_id = sistema)
         elif(step == '2'):
             datos_pagador_form = DatosPagadorForm(request.POST)
             factura_form = FacturaForm(request.POST, sistema_id = sistema)
-            pago_form = PagoForm(sistema_id = sistema)
+            form = PagoForm(sistema_id = sistema)
         elif(step == '3'):
             datos_pagador_form = DatosPagadorForm(request.POST)
             factura_form = FacturaForm(request.POST, sistema_id = sistema)
-            pago_form = PagoForm(request.POST, request.FILES, sistema_id = sistema)
+            form = PagoForm(request.POST, request.FILES, sistema_id = sistema)
             
         if datos_pagador_form.is_valid() and step == "1":
             step = "2"
         elif datos_pagador_form.is_valid() and factura_form.is_valid() and step =="2":
             step = "3"
-        elif datos_pagador_form.is_valid() and factura_form.is_valid() and pago_form.is_valid() and step =="3":
+        elif datos_pagador_form.is_valid() and factura_form.is_valid() and form.is_valid() and step =="3":
             datos_pagador = datos_pagador_form.save()
             pagador = Pagador(autor_trabajo = autor_trabajo, datos_pagador = datos_pagador)
             pagador.save()
-            pago = pago_form.save(commit=False)
+            pago = form.save(commit=False)
             pago.numero_cuenta_origen = pago.numero_cuenta_origen.replace("-","")
             pago.save()
             factura = factura_form.save(commit=False)
@@ -718,14 +718,12 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
             messages.success(request, 'Pago añadido con éxito.')
             data['url'] = reverse('autores:postular_trabajo', kwargs={'trabajo_id':autor_trabajo.trabajo.id })
             data['form_is_valid'] = True
-        elif step =="3":
-            messages.error(request,"Número de referencia duplicado, por favor verifique el número de transferencia/cheque indicado dado que ya hay un pago registrado con ese número de referencia en nuestro sistema.")
     else:
         step = 1
     context ={
         'datos_pagador_form': datos_pagador_form,
         'factura_form': factura_form,
-        'pago_form': pago_form,
+        'form': form,
         'autor_trabajo': autor_trabajo,
         'step': step
     }
