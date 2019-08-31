@@ -26,7 +26,7 @@ urlpatterns = [
 
     url(r'^conferencista-importar-excel/$',views.load_lecturers_modal,name='load_lecturers_modal'),
     url(r'^organizador-importar-excel/$',views.load_organizers_modal,name='load_organizers_modal'),
-    
+
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
         views.create_logistics_certificates, name='create_logistics_certificates'),
@@ -40,7 +40,9 @@ urlpatterns = [
     url(r'^documentos/asovac/comision-organizadora$',
         views.create_organizer_comitee_certificates, name='create_organizer_comitee_certificates'),
 
-    #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),
     url(r'^api/chart/data/$', views.ChartData.as_view(), name='chart_data'),
+
+
+    url(r'^format-participants/(?P<option>\d+)/$', views.format_import_participants, name='format_import_participants'),
 ]

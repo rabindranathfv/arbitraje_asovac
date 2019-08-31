@@ -1137,10 +1137,10 @@ def create_authors(excel_file, arbitraje_id):
 
 				else:
 					resultado = fila
-					break;
+					break
 			except:
 				resultado = fila
-				break;
+				break
 
 
 	return resultado
@@ -1185,7 +1185,7 @@ def load_authors_modal(request):
 	context ={
 		'form': form,
 		'rol': 'autores',
-		'action': reverse('autores:load_authors_modal')
+		'action': reverse('autores:load_authors_modal'),
 	}
 	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
 	return JsonResponse(data)
@@ -1292,5 +1292,5 @@ def format_import_authors(request):
 		worksheet.write(row_num, col_num, columns[col_num])
 
 	workbook.save(response)
-
+	
 	return response

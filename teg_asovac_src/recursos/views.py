@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os, re, random, string,xlrd,os,sys,xlwt
+import os, re, random, string,xlrd,sys,xlwt
 from openpyxl import Workbook
 import datetime
 from decouple import config
@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.forms import ValidationError
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render,redirect, reverse
 from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
@@ -989,7 +989,7 @@ def load_lecturers_modal(request):
 			extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo
-			response = validate_load_lecturers(file_name, extension,arbitraje_id, True)
+			response = validate_load_event_participants(file_name, extension,arbitraje_id, True)
 			print response
 
 			if response['status'] == 200:
@@ -1011,7 +1011,8 @@ def load_lecturers_modal(request):
 	context ={
 		'form': form,
 		'rol': 'conferencistas',
-		'action': reverse('recursos:load_lecturers_modal')
+		'action': reverse('recursos:load_lecturers_modal'),
+        'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 2})
 	}
 	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
 	return JsonResponse(data)
@@ -1031,7 +1032,7 @@ def load_organizers_modal(request):
 			extension= get_extension_file(file_name)
 
             #Valida el contenido del archivo
-			response = validate_load_lecturers(file_name, extension,arbitraje_id)
+			response = validate_load_event_participants(file_name, extension,arbitraje_id)
 			print response
 
 			if response['status'] == 200:
@@ -1053,7 +1054,8 @@ def load_organizers_modal(request):
 	context ={
 		'form': form,
 		'rol': 'organizadores',
-		'action': reverse('recursos:load_organizers_modal')
+		'action': reverse('recursos:load_organizers_modal'),
+        'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 1})
 	}
 	data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
 	return JsonResponse(data)
@@ -1061,7 +1063,7 @@ def load_organizers_modal(request):
 
 
 
-def validate_load_lecturers(filename,extension,arbitraje_id, lecturer = False):
+def validate_load_event_participants(filename,extension,arbitraje_id, lecturer = False):
     data= dict()
     data['status']=400
     data['message']="La estructura del archivo no es correcta"
@@ -1246,3 +1248,42 @@ def generate_massive_organizer_certificates(book, arbitraje_id):
             email_msg.send()
 
 
+@login_required
+def format_import_participants(request, option):
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    data = []
+    # Para definir propiedades del documento de excel
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_conferencistas.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
+    workbook = xlwt.Workbook()
+    worksheet = workbook.add_sheet("Conferencistas")
+	# Para agregar los titulos de cada columna
+    row_num = 0
+    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)', 'Nombre Completo del Conferencista(*)']
+    if option == '2':
+        columns.append('Título de conferencia(*)')
+
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+	
+    row_num += 1
+    columns = ['Evento 1', '06/07/2019', 'juanito@gmail.com', 'Juanito Perez']
+    if option == '2':
+        columns.append('Título 1')
+        print(columns)
+
+    for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Evento 2', '29/12/2019', 'juanita@gmail.com', 'Juanita Perez']
+    if option == '2':
+        columns.append('Título 2')
+    for col_num in range(len(columns)):
+        print(col_num)
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    workbook.save(response)
+    return response
