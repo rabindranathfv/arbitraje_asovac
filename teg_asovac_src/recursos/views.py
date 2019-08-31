@@ -379,7 +379,8 @@ def resources_author(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'form': form
+        'form': form,
+        'admin_styles': True
     }
     return render(request, 'recursos_author.html', context)
 
@@ -456,7 +457,9 @@ def resources_referee(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'form': form,
+        'admin_styles': True
     }
+
     return render(request, 'recursos_referee.html', context)
 
 
@@ -782,6 +785,7 @@ def resources_paper(request):
         'route_resultados': route_resultados,
         'form': form,
         'paper': True, 
+        'admin_styles': True
     }
     return render(request, 'recursos_author.html', context)
 
