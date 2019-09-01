@@ -38,7 +38,8 @@ from .utils import (
 )
 from .forms import (
     CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
-    MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
+    MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
+    MultipleRecipientsWithRoleForm
 )
 
 
@@ -808,7 +809,7 @@ def resources_paper(request):
 
 @login_required
 def create_name_tags(request):
-    form = UploadFileForm(request.POST or None, request.FILES or None)
+    form = MultipleRecipientsWithRoleForm(request.POST or None)
     context = create_common_context(request)
     if request.method == 'POST':
         if form.is_valid():

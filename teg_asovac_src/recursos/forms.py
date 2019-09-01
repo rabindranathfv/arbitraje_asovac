@@ -177,3 +177,38 @@ class MultipleRecipientsWithDateAndSubjectForm(forms.Form):
         for field_name in self.fields:
             if field_name.startswith('recipients_email_'):
                 yield self[field_name]
+
+
+class MultipleRecipientsWithRoleForm(forms.Form):
+    ROLE_OPTIONS = (
+        ('asistente', 'Asistente'),
+        ('conferencista', 'Conferencista'),
+    )
+
+    role = forms.ChoiceField(
+        label="Tipo de Portanombre",
+        required=True,
+        choices=ROLE_OPTIONS,
+        widget=forms.Select(attrs={'class':'form-control'})
+    )
+
+
+    def __init__(self, *args, **kwargs):
+        super(MultipleRecipientsWithRoleForm, self).__init__(*args, **kwargs)
+        # create a new recipients_name blank field
+        field1_name = 'recipients_name_0'
+        self.fields[field1_name] = forms.CharField(
+            required=False,
+            widget=forms.TextInput(attrs={'placeholder':'Nombre Completo',
+                                          'class':'form-control new-list-item'})
+        )
+        # create a new recipients_email blank field
+        field2_name = 'recipients_email_0'
+        self.fields[field2_name] = forms.EmailField(
+            required=False,
+            widget=forms.EmailInput(attrs={'placeholder':'Correo Electrónico',
+                                           'class':'form-control new-list-item'})
+        )
+
+        # create a new recipients_event_name blank field
+        
