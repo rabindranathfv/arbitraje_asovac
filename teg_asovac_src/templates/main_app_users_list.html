@@ -23,13 +23,18 @@
 								<button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 								<ul class="dropdown-menu dropdown-menu-right">
 									<li>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users_arbitraje' arbitraje_id %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
+											<i class="fas fa-user-plus"></i> Agregar usuario al arbitraje
+										</a>
+									</li>
+									<li>
 										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
-											<i class="fa fa-upload"></i> Cargar <br> Coordinadores de Área
+											<i class="fa fa-upload"></i> Cargar  Coordinadores de Área
 										</a>
 									</li>
 									<li>
 										<a class="Descargar" href="/media/cargamasiva/Coordinadores_de_area.xlsx" title="Descargar coordinadores de área" download="convencion_asovac_{{date}}_coordinadores_de_área.xlsx">
-											<i class="fas fa-file-download"></i> Descargar <br>Coordinadores de Área
+											<i class="fas fa-file-download"></i> Descargar Coordinadores de Área
 										</a>
 									</li>
 									<li>

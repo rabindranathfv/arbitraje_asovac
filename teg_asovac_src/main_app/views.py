@@ -27,6 +27,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.debug import sensitive_post_parameters
 
 
+
 from .forms import EditPersonalDataForm, ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
@@ -875,7 +876,7 @@ def users_list(request, arbitraje_id):
     # rol = Usuario_asovac.objects.get(usuario_id=user.id).rol.all()
     user_asovac = Usuario_asovac.objects.all()
     users = Usuario_asovac.objects.all()
-    print users
+    # print users
     for user in user_asovac:
         query = user.usuario.username
         # user.rol.all()
@@ -1007,20 +1008,25 @@ def coord_general(request, arbitraje_id):
     route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
     route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
-
-    # print items
-
+   
     # Preparamos el formulario y el proceso de este para asignar coordinador general.
-    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
-    form = ArbitrajeAssignCoordGenForm(request.POST or None)
+    arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id or None)
+    # form = ArbitrajeAssignCoordGenForm(request.POST or None)
+    form = ArbitrajeAssignCoordGenForm(request.POST or None, sistema_id=arbitraje_id)
     if request.method == 'POST':
         if form.is_valid():
-            coordinador_general_form = form.cleaned_data['coordinador_general']
+            coordinador_general_form = request.POST['coordinador_general']
             if Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje, rol = 2).exists(): #El rol del coordinador general es 2
-                coordinador_general = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, rol = 2)
-                coordinador_general.usuario_asovac = coordinador_general_form
+                old_coordinador_general = Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, rol = 2)
+                old_coordinador_general.rol_id=5
+                old_coordinador_general.save()
+                coordinador_general =  Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, id = coordinador_general_form )
+                coordinador_general.rol_id=2
             else:
-                coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac = coordinador_general_form  )
+                # coordinador_general = Usuario_rol_in_sistema(sistema_asovac = arbitraje, rol_id = 2, usuario_asovac_id = coordinador_general_form  )
+                coordinador_general =  Usuario_rol_in_sistema.objects.get(sistema_asovac = arbitraje, id = coordinador_general_form )
+                coordinador_general.rol_id=2
+                
             coordinador_general.save()
 
             context = {
@@ -1667,6 +1673,7 @@ def load_users_modal(request, arbitraje_id, rol):
             'form': form,
             'arbitraje_id': arbitraje_id,
             'rol': rol,
+            'tipo': "file",
         }
         data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
         return JsonResponse(data)
@@ -1677,11 +1684,89 @@ def load_users_modal(request, arbitraje_id, rol):
         'title': modal_title,
         'form': form,
         'arbitraje_id': arbitraje_id,
-        'rol': rol
+        'rol': rol,
+        'tipo': "file",
     }
     data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
     return JsonResponse(data)
 
+#---------------------------------------------------------------------------------#
+#                    Agrega usuarios registrados a un arbitraje                   #
+#---------------------------------------------------------------------------------#
+@login_required
+def load_users_arbitraje_modal(request, arbitraje_id):
+    data= dict()
+    # consulta mas completa
+    query= "SELECT distinct ua.id,au.first_name,au.last_name,au.email FROM main_app_usuario_asovac as ua INNER JOIN auth_user as au on ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area as uasa on uasa.usuario_asovac_id = ua.id INNER JOIN main_app_sub_area as sa on sa.id = uasa.sub_area_id INNER JOIN main_app_area as a on a.id = sa.area_id LEFT JOIN main_app_usuario_rol_in_sistema as ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro as arb on arb.usuario_id = ua.id "
+    where = " WHERE ua.id not in (select main_app_usuario_rol_in_sistema.usuario_asovac_id from  main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.sistema_asovac_id={}) order by ua.id desc ".format(arbitraje_id)
+    query= query+where
+    query_count=query
+    list_users= User.objects.raw(query)
+    rol_list=Rol.objects.all().filter(id__gt=2)
+    total_users=0
+    for users in list_users:
+        total_users= total_users+1
+
+    if request.method == 'POST':
+
+        list_users= request.POST.getlist('users[]')
+        rol= request.POST['id_rol']
+
+        for item in list_users:
+            # Lista de elementos para llenar tabla de roles por sistema
+            usuario_asovac= Usuario_asovac.objects.get(id=item)
+            arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
+            itemRole= Rol.objects.get(id=rol)
+
+            # Para verificar que el usuario tenga registro en la tabla de arbitros
+            arbitro_exist=Arbitro.objects.filter(usuario=usuario_asovac).exists()
+        
+            try:
+                # Se construye el objeto para crear los roles
+                addRol=Usuario_rol_in_sistema()
+                addRol.usuario_asovac=usuario_asovac
+                addRol.rol=itemRole
+                addRol.sistema_asovac=arbitraje
+                addRol.save()
+                # Para manejar el caso de los arbitros sin instancias creadas
+                if not arbitro_exist:
+                    # Para crear registro en la tabla arbitro de usuarios no cargados por excel y se le modifique el rol
+                    user_select= get_object_or_404(User,id=usuario_asovac.usuario_id)
+                    arbitro =Arbitro()
+                    arbitro.nombres=user_select.first_name
+                    arbitro.apellidos=user_select.last_name
+                    arbitro.correo_electronico=user_select.email
+                    arbitro.usuario=usuario_asovac
+                    arbitro.save()
+                else:
+                    arbitro= get_object_or_404(Arbitro,usuario=usuario_asovac)
+                    arbitro.Sistema_asovac.remove(arbitraje)
+
+                #  si el rol es arbitro se agrega a la tabla relacional 
+                if rol == "4":
+                    arbitro= get_object_or_404(Arbitro,usuario=usuario_asovac)
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
+
+                data['status']=200
+                data['message']="Los usuarios se han agregado de manera exitosa."
+
+            except:
+                data['status']=400
+                data['message']="Ha ocurrido un error procesando su solicitud, inténtelo nuevamente."
+
+
+    context = {
+        'title': "Registrar usuarios en el arbitraje",
+        'arbitraje_id': arbitraje_id,
+        'list_users': list_users,
+        'rol_list': rol_list,
+        'total_users': total_users,
+        'tipo': "system",
+    }
+    data['html_form'] = render_to_string('ajax/load_users.html', context, request=request)
+    return JsonResponse(data)
+    
 #---------------------------------------------------------------------------------#
 #                 Valida el contenido del excel para cargar áreas                 #
 #---------------------------------------------------------------------------------#
@@ -2644,6 +2729,7 @@ def list_usuarios(request):
     
     response = {}
     response['query'] = []
+    arbitraje_id = request.session['arbitraje_id']
 
     sort= request.POST['sort']
     order= request.POST['order']
@@ -2655,7 +2741,8 @@ def list_usuarios(request):
     
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
     
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')
@@ -2675,7 +2762,7 @@ def list_usuarios(request):
         query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
         query_count=query
         search= search+'%'
-        where=' WHERE au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s '
+        where=' WHERE ris.sistema_asovac_id={} and (au.first_name like %s or au.last_name like %s or au.username like %s or au.email like %s) '.format(arbitraje_id)
         # where=' WHERE au.first_name LIKE %s' 
         query= query+where+group_by
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -2695,17 +2782,17 @@ def list_usuarios(request):
 
         else:
             print "Consulta Normal"
-            arbitraje_id = request.session['arbitraje_id']
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
             # data=User.objects.all().order_by('pk')[init:limit].query
 
             # consulta mas completa
+            where=' WHERE ris.sistema_asovac_id={} '.format(arbitraje_id)
             group_by=' GROUP BY ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,arb.genero,au.username,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular '
             query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username,STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
             order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
-            query_count=query+group_by
-            query= query + group_by + " ORDER BY " + order_by
+            query_count=query+where+group_by
+            query= query +where+ group_by + " ORDER BY " + order_by
             data= User.objects.raw(query)
             data_count= User.objects.raw(query_count)
             total=0

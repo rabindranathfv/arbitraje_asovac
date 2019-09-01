@@ -241,9 +241,8 @@ class Usuario_rol_in_sistema(models.Model):
     )
 
     def __str__(self):
-        return "{} {} {}".format(self.usuario_asovac.usuario.first_name,
-                                 self.usuario_asovac.usuario.last_name,
-                                 self.rol.descripcion).encode('utf-8', errors='replace')
+        return "{} {}".format(self.usuario_asovac.usuario.first_name,
+                                 self.usuario_asovac.usuario.last_name).encode('utf-8', errors='replace')
 
 
 #Esta seccion de codigo nos permite crear un objeto Usuario_asovac

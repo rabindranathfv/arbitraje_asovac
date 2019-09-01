@@ -625,7 +625,8 @@ def list_trabajos(request):
     
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
     
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')

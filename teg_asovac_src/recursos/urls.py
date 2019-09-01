@@ -21,6 +21,12 @@ urlpatterns = [
     url(r'^pdf/$', views.generate_pdf, name='generate_pdf'),#generate_pdf  #create_authors_certificates
     url(r'^certificado/autor-certificado/$', views.resources_author, name='resources_author'),
     url(r'^certificado/arbitro-certificado/$', views.resources_referee, name='resources_referee'),
+    url(r'^certificado/organizador-certificado/$', views.resources_organizer, name='resources_organizer'),
+    url(r'^certificado/conferencista-certificado/$', views.resources_lecturer, name='resources_lecturer'),
+
+    url(r'^conferencista-importar-excel/$',views.load_lecturers_modal,name='load_lecturers_modal'),
+    url(r'^organizador-importar-excel/$',views.load_organizers_modal,name='load_organizers_modal'),
+
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
         views.create_logistics_certificates, name='create_logistics_certificates'),
@@ -35,7 +41,9 @@ urlpatterns = [
         views.create_organizer_comitee_certificates, name='create_organizer_comitee_certificates'),
     url(r'^documentos/asovac/portanombres$', views.create_name_tags, name='create_name_tags'),
 
-    #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),
     url(r'^api/chart/data/$', views.ChartData.as_view(), name='chart_data'),
+
+
+    url(r'^format-participants/(?P<option>\d+)/$', views.format_import_participants, name='format_import_participants'),
 ]

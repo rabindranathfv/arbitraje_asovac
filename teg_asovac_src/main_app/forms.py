@@ -310,10 +310,23 @@ class AssingRolForm(forms.ModelForm):
 
 
 class ArbitrajeAssignCoordGenForm(forms.Form):
-    coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
+    # user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id).values_list('usuario_asovac_id', flat=True)
+    # usuarios_test = Usuario_asovac.objects.exclude(id__in=user_search )
+    # coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.exclude(id__in=user_search ).order_by('usuario__first_name'), label = '')
+    # coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
     def __init__(self, *args, **kwargs):
+        self.sistema_id = kwargs.pop('sistema_id')
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
-        self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
+        user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = self.sistema_id )
+        # user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = self.sistema_id ).values_list('usuario_asovac_id', flat=True)
+        # usuarios_test = Usuario_asovac.objects.exclude(id__in=user_search )
+        # list_users= Usuario_asovac.objects.exclude(id__in=user_search ).order_by('usuario__first_name')
+        self.fields['coordinador_general'] = forms.ModelChoiceField(  
+                                                queryset = Usuario_rol_in_sistema.objects.all().filter(sistema_asovac = self.sistema_id ).order_by('id'),
+                                                required=True,
+                                                label="",
+                                                widget=forms.Select(attrs={'class':'form-control'}))
+        # self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
