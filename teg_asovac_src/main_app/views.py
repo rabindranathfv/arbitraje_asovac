@@ -1718,6 +1718,9 @@ def load_users_arbitraje_modal(request, arbitraje_id):
             arbitraje=Sistema_asovac.objects.get(id=arbitraje_id)
             itemRole= Rol.objects.get(id=rol)
 
+            # Para verificar que el usuario tenga registro en la tabla de arbitros
+            arbitro_exist=Arbitro.objects.filter(usuario=usuario_asovac).exists()
+        
             try:
                 # Se construye el objeto para crear los roles
                 addRol=Usuario_rol_in_sistema()
@@ -1725,6 +1728,26 @@ def load_users_arbitraje_modal(request, arbitraje_id):
                 addRol.rol=itemRole
                 addRol.sistema_asovac=arbitraje
                 addRol.save()
+                # Para manejar el caso de los arbitros sin instancias creadas
+                if not arbitro_exist:
+                    # Para crear registro en la tabla arbitro de usuarios no cargados por excel y se le modifique el rol
+                    user_select= get_object_or_404(User,id=usuario_asovac.usuario_id)
+                    arbitro =Arbitro()
+                    arbitro.nombres=user_select.first_name
+                    arbitro.apellidos=user_select.last_name
+                    arbitro.correo_electronico=user_select.email
+                    arbitro.usuario=usuario_asovac
+                    arbitro.save()
+                else:
+                    arbitro= get_object_or_404(Arbitro,usuario=usuario_asovac)
+                    arbitro.Sistema_asovac.remove(arbitraje)
+
+                #  si el rol es arbitro se agrega a la tabla relacional 
+                if rol == "4":
+                    arbitro= get_object_or_404(Arbitro,usuario=usuario_asovac)
+                    arbitro.Sistema_asovac.add(arbitraje)
+                    arbitro.save()
+
                 data['status']=200
                 data['message']="Los usuarios se han agregado de manera exitosa."
 
