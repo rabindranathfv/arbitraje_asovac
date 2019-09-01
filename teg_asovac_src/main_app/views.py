@@ -901,6 +901,16 @@ def users_list(request, arbitraje_id):
     date=datetime.datetime.now()
     date=date.year
 
+    # Consulta para contar usuarios registrados en el sistema
+    where=' WHERE ris.sistema_asovac_id={} '.format(arbitraje_id)
+    group_by=' GROUP BY ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,arb.genero,au.username,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular '
+    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username,STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id"           
+    query= query +where+ group_by
+    data= User.objects.raw(query)
+    total_users=0
+    for item in data:
+        total_users=total_users+1
+        
     context = {
         'nombre_vista' : 'Listado de Usuarios',
         'users' : users,
@@ -915,6 +925,7 @@ def users_list(request, arbitraje_id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'date':date,
+        'total_users':total_users,
     }
     return render(request, 'main_app_users_list.html', context)
 

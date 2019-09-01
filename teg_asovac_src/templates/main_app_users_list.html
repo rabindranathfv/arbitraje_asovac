@@ -7,8 +7,23 @@
 			<div class="jumbotron RLcard">
 				{% include "success_messages.html" %}
 				{% include "errors_form.html" %}
-				<div class="row middle-content">			
-					<h2 class="text-left">Listado de Usuarios</h2>	
+				<!-- Caso en que o existen usuarios cargados en el arbitraje -->
+				{% if total_users == 0 %}
+					<div class="alert alert-info alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						No posee usuarios registrados en este proceso de arbitraje, 
+						en el botón de acciones podrá importar usuarios al sistema o agregar usuarios
+						ya registrados a este proceso de arbitraje,
+						para asignar un Coordinador General debe tener usuarios registrados.
+					</div>
+				{% endif %}
+
+				<div class="row">
+					<div class="col-sm-6">
+						<h2 class="text-left">Listado de Usuarios</h2>	
+					</div>
 				</div>
 				<!-- bootstrap-table -->
 					<!-- data table -->
