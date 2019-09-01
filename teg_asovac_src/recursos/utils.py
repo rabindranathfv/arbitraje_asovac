@@ -1004,23 +1004,24 @@ class MiscellaneousGenerator:
 
 
 def validate_recipients_excel(filename, extension):
+    response = dict()
+    response['status'] = 400
+    response['message'] = "La estructura del archivo no es correcta"
 
     if extension != "xlsx" and extension != "xls":
-        return "La estructura del archivo no es correcta", sheet
+        return response
 
-    print "Formato xls/xlsx"
     book = xlrd.open_workbook(filename)
 
     if book.nsheets <= 0:
-        return "La estructura del archivo no es correcta", sheet
+        return  response
 
-    print "El numero de hojas es mayor a 0"
     sheet = book.sheet_by_index(0)
 
     if sheet.ncols != 3:
-        return "La estructura del archivo no es correcta", sheet
+        return  response
 
-    print "El numero de columnas es igual a 3"
+    response['status'] = 400
 
     # Validar las celdas del documento
     for fila in range(1, sheet.nrows):
@@ -1031,24 +1032,31 @@ def validate_recipients_excel(filename, extension):
 
         # Se verifica que el campo email no este vacio
         if not email:
-            return "Error fila %i: Email no puede estar vacio." % (fila), sheet
+            response['message'] = "Error fila %i: Email no puede estar vacio." % (fila)
+            return response
 
         if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
-            return "Error fila %i: El email no es válido." % (fila), sheet
+            response['message'] = "Error fila %i: El email no es válido." % (fila)
+            return response
 
         full_name = sheet.cell_value(rowx=fila, colx=0).strip()
         role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
 
         # Se verifica que el campo nombre no este vacio
         if not full_name:
-            return "Error fila %i: Nombre completo no puede estar vacio." % (fila), sheet
+            response['message'] = "Error fila %i: Nombre completo no puede estar vacio." % (fila)
+            return response
 
         # Se verifica que el campo rol no este vacio
         if not role:
-            return "Error fila %i: Rol no puede estar vacio." % (fila), sheet
+            response['message'] = "Error fila %i: Rol no puede estar vacio." % (fila)
+            return response
 
         # Se verifica que el campo rol sea 'asistente' o 'conferencista'
         if role != 'asistente' and role != 'conferencista':
-            return "Error fila %i: Rol solo puede ser 'asistente' o 'conferencista'" % (fila), sheet
+            response['message'] = "Error fila %i: Rol solo puede ser 'asistente' o 'conferencista'" % (fila)
+            return response
 
-    return None, sheet
+    response['status'] = 200
+    response['message'] = 'Se han generado y enviado los portanombres con éxito'
+    return response

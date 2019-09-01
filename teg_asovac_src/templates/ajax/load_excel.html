@@ -32,7 +32,8 @@
             type: 'POST',
             data: formData,
             success: function(data){
-                $('#table').bootstrapTable('refresh')
+                console.log('SUCCESS!!')
+                console.log(data)
                 $('#modal-user .modal-content').html(data.html_form)
             },
             cache: false,

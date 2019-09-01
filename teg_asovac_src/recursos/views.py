@@ -1161,38 +1161,75 @@ def load_nametag_recipients_modal(request):
     data = dict()
     form = UploadFileForm(request.POST or None, request.FILES or None)
     context = create_common_context(request)
-
+    response_context = {'title': 'Carga Destinatarios de Portanombres'}
     if request.method == "POST":
-        form = ImportFromExcelForm(request.POST, request.FILES)
         if form.is_valid():
-            # Para guardar el archivo de forma local
-            file_name= save_file(request,"organizadores")
-            extension= get_extension_file(file_name)
+            extension = str(request.FILES.get('file')).decode('UTF-8').split('.')[-1]
+            filename = "destinatarios_portanombre." + extension
+            handle_uploaded_file(request.FILES['file'], filename)
+            filename = 'upload/' + filename
 
-            #Valida el contenido del archivo
-            response = validate_load_event_participants(file_name, extension,arbitraje_id)
-            print response
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            nametag_context = create_certificate_context(arbitraje)
 
-            if response['status'] == 200:
-                context = {
-                    'title': 'Cargar Organizadores',
-                    'response': response['message'],
-                    'status': response['status'],
-                }
-                print (response['message'], response['status'])
-                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+            response = validate_recipients_excel(filename, extension)
+
+            if response['status'] == 400:
+                # Se regreso algun codigo de error?
+                response_context['response'] = response['message']
+                response_context['status'] = 400
+                data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
                 return JsonResponse(data)
 
-            else:
-                messages.error(request, response['message'])
-                return redirect('recursos:resources_organizer')
+            sheet = xlrd.open_workbook(filename).sheet_by_index(0)
+            pdf_filename = 'Portanombre_AsoVAC.pdf'
+            nametag_gen = MiscellaneousGenerator()
 
-            #data['url'] = reverse('autores:authors_list')
-            #data['form_is_valid'] = True
+            for fila in range(1, sheet.nrows):
+                try:
+                    full_name = sheet.cell_value(rowx=fila, colx=0).strip()
+                    role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
+                    email = sheet.cell_value(rowx=fila, colx=2).strip()
+                except:
+                    response_context['response'] = "Ha ocurrido un error con los parámetros recibidos, vuelva a intentar."
+                    response_context['status'] = 400
+                    data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+                    return JsonResponse(data)
+
+                role = role.capitalize()
+                instance_context = {
+                    'subject_title': full_name,
+                    'role': role,
+                }
+                instance_context.update(nametag_context)
+                nametag = nametag_gen.get_name_tag(pdf_filename, instance_context)
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': full_name,
+                    'rol': role,
+                }
+                msg_plain = render_to_string('email_templates/nametag.txt', context_email)
+                msg_html = render_to_string('email_templates/nametag.html', context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Comisión Logística',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [email]
+                )
+                email_msg.attach(pdf_filename, nametag.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+            response_context['response'] = response['message']
+            response_context['status'] = response['status']
+            data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+            return JsonResponse(data)
         else:
-            #data['form_is_valid'] = False
-            messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
-            return redirect('recursos:resources_organizer')
+            response_context['response'] = "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos."
+            response_context['status'] = 400
+            data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+            return JsonResponse(data)
 
 
     context['form'] = form
