@@ -207,7 +207,9 @@ def create_certificate_context(arbitraje):
     date_end_string = '%s de %s de %s' % (arbitraje.fecha_fin_arbitraje.day,
                                           MONTH_NAMES[arbitraje.fecha_fin_arbitraje.month - 1],
                                           arbitraje.fecha_fin_arbitraje.year)
-
+    university_names = arbitraje.sedes.split(',')
+    university_names = map(lambda n: n.strip(), university_names)
+    print university_names
     context = {}
     context["city"] = arbitraje.ciudad
     context["header_url"] = arbitraje.cabecera
@@ -220,6 +222,7 @@ def create_certificate_context(arbitraje):
     context["roman_number"] = arbitraje.numero_romano
     context["date_start_string"] = date_start_string
     context["date_end_string"] = date_end_string
+    context["university_names"] = university_names
 
     return context
 
@@ -831,10 +834,6 @@ def create_name_tags(request):
                     return False
                 role = role.capitalize()
                 instance_context = {
-                    'university_names': [
-                        'Universidad Central de Venezuela',
-                        'Universidad Católica Andres Bello'
-                    ],
                     'subject_title': full_name,
                     'role': role,
                 }
