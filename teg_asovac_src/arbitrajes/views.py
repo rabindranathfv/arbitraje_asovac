@@ -342,7 +342,8 @@ def list_arbitros(request):
 
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
 
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')
@@ -482,7 +483,8 @@ def list_areas_arbitros(request,id):
 
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
 
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')
@@ -546,7 +548,8 @@ def list_subareas_arbitros(request,id):
 
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
 
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')
@@ -565,6 +568,9 @@ def list_subareas_arbitros(request,id):
 
     if sort != "pk":
         order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+    else:
+        order_by="ar.id"+" " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
         query= query + " ORDER BY " + order_by
 
     data= Arbitro.objects.raw(query,[event_id,id])
@@ -1028,7 +1034,8 @@ def list_arbitrajes(request):
     
     # Se verifica la existencia del parametro
     if request.POST.get('limit', False) != False:
-        limit= int(request.POST['limit'])+init
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
     
     if request.POST.get('export',False) != False:
         export= request.POST.get('export')
