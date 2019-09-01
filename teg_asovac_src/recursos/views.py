@@ -1161,7 +1161,7 @@ def load_nametag_recipients_modal(request):
     data = dict()
     form = UploadFileForm(request.POST or None, request.FILES or None)
     context = create_common_context(request)
-    
+
     if request.method == "POST":
         form = ImportFromExcelForm(request.POST, request.FILES)
         if form.is_valid():
@@ -1193,17 +1193,14 @@ def load_nametag_recipients_modal(request):
             #data['form_is_valid'] = False
             messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
             return redirect('recursos:resources_organizer')
-    else:
-        form = ImportFromExcelForm()
 
 
     context['form'] = form
-    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
     context = {
         'form': form,
-        'rol': 'organizadores',
-        'action': reverse('recursos:load_organizers_modal'),
-        'format_url': reverse('recursos:format_import_participants', kwargs={'option': 1})
+        'rol': 'destinatarios de portanombres',
+        'action': reverse('recursos:load_nametag_recipients_modal'),
+        'format_url': reverse('recursos:format_nametag_recipients')
     }
     data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
     return JsonResponse(data)
@@ -1445,7 +1442,7 @@ def format_nametag_recipients(request):
 
     # Para agregar los titulos de cada columna
     row_num = 0
-    columns = ['Nombre Completo(*)', 'Rol(*)','Correo electrónico(*)'] 
+    columns = ['Nombre Completo(*)', 'Rol(*)', 'Correo electrónico(*)'] 
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 
@@ -1461,4 +1458,3 @@ def format_nametag_recipients(request):
 
     workbook.save(response)
     return response
-

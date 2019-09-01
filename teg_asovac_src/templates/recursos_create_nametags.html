@@ -9,8 +9,17 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="jumbotron RLcard">
-				
-				<h2 class="text-left">Portanombres de Asistentes o Conferencistas</h2>
+				<div class="row">
+					<div class="col-sm-8">
+						<h2 class="text-left">Portanombres de Asistentes o Conferencistas</h2>
+					</div>
+					<div class="col-sm-4">
+						<a data-url="{% url 'recursos:load_nametag_recipients_modal' %}"
+						   class="show-form btn btn-primary btn-block btn-lg" type="button">
+							<i class="fa fa-file-excel" style="color:white"></i> Generación Masiva de Portanombres
+						</a>
+					</div>
+				</div>
 				<br>
 				<h4>
 					Por favor ingrese un archivo de excel con el formato correcto. El sistema se encargará de generar un

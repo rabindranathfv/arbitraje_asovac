@@ -1,5 +1,0 @@
-Sistema ASOVAC: Portanombre de {{ rol }}
-
-Un cordial saludo {{ usuario }}.
-
-Le agradecemos por su participación en {{ sistema.nombre }}. Adjunto se encuentra el su portanombre como {{ rol }}, gracias por ser parte de nuestra convención.

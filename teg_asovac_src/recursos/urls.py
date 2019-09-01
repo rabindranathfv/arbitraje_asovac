@@ -28,6 +28,8 @@ urlpatterns = [
         name='load_lecturers_modal'),
     url(r'^organizador-importar-excel/$', views.load_organizers_modal,
         name='load_organizers_modal'),
+    url(r'^destinatario-portanombres-importar-excel/$', views.load_nametag_recipients_modal,
+        name='load_nametag_recipients_modal'),
 
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
