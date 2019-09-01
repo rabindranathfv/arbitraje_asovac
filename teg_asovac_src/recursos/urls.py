@@ -24,8 +24,10 @@ urlpatterns = [
     url(r'^certificado/organizador-certificado/$', views.resources_organizer, name='resources_organizer'),
     url(r'^certificado/conferencista-certificado/$', views.resources_lecturer, name='resources_lecturer'),
 
-    url(r'^conferencista-importar-excel/$',views.load_lecturers_modal,name='load_lecturers_modal'),
-    url(r'^organizador-importar-excel/$',views.load_organizers_modal,name='load_organizers_modal'),
+    url(r'^conferencista-importar-excel/$', views.load_lecturers_modal,
+        name='load_lecturers_modal'),
+    url(r'^organizador-importar-excel/$', views.load_organizers_modal,
+        name='load_organizers_modal'),
 
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
@@ -45,5 +47,8 @@ urlpatterns = [
     url(r'^api/chart/data/$', views.ChartData.as_view(), name='chart_data'),
 
 
-    url(r'^format-participants/(?P<option>\d+)/$', views.format_import_participants, name='format_import_participants'),
+    url(r'^format-participants/(?P<option>\d+)/$', views.format_import_participants,
+        name='format_import_participants'),
+    url(r'^formato-portanombres/$', views.format_nametag_recipients,
+        name='format_nametag_recipients'),
 ]

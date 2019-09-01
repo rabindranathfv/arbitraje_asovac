@@ -33,6 +33,7 @@ class CertificateToRefereeForm(forms.Form):
             widget=FilteredSelectMultiple("Arbitros", is_stacked=False)
         )
 
+
 class MultipleRecipientsForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -49,34 +50,8 @@ class MultipleRecipientsForm(forms.Form):
         self.fields[field2_name] = forms.EmailField(
             required=False,
             widget=forms.EmailInput(attrs={'placeholder':'Correo Electrónico',
-                                            'class':'form-control new-list-item'})
+                                           'class':'form-control new-list-item'})
         )
-
-    # def clean(self):
-    #     cleaned_data = super(MultipleRecipientsForm, self).clean()
-    #     print cleaned_data
-    #     recipients_names = list()
-    #     recipients_emails = list()
-    #     i = 0
-    #     field1_name = 'recipients_name_%s' % (i)
-    #     field2_name = 'recipients_email_%s' % (i)
-    #     while self.cleaned_data.get(field1_name):
-    #         recipients_name = cleaned_data.get(field1_name)
-    #         recipients_email = cleaned_data.get(field2_name)
-    #         # Si existe un destinatario sin su email asociado o viceversa
-    #         # Se levanta un error de validacion:
-    #         if not (recipients_name and recipients_email):
-    #             raise forms.ValidationError(
-    #                 "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
-    #             )
-    #         else:
-    #             recipients_names.append(recipients_name)
-    #             recipients_emails.append(recipients_email)
-    #         i += 1
-    #         field1_name = 'recipients_name_%s' % (i)
-    #         field2_name = 'recipients_email_%s' % (i)
-    #     self.cleaned_data["recipients_names"] = recipients_names
-    #     self.cleaned_data["recipients_emails"] = recipients_emails
 
     def get_name_fields(self):
         for field_name in self.fields:
@@ -103,7 +78,7 @@ class CertificateToAuthorsForm(forms.Form):
                                                 label="",
                                                 widget=FilteredSelectMultiple("Trabajos", is_stacked=False))
 
-    
+
 class MultipleRecipientsWithDateForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
@@ -148,7 +123,7 @@ class MultipleRecipientsWithDateForm(forms.Form):
         for field_name in self.fields:
             if field_name.startswith('recipients_email_'):
                 yield self[field_name]
-    
+
 
 class MultipleRecipientsWithDateAndSubjectForm(forms.Form):
 
@@ -202,6 +177,3 @@ class MultipleRecipientsWithDateAndSubjectForm(forms.Form):
         for field_name in self.fields:
             if field_name.startswith('recipients_email_'):
                 yield self[field_name]
-
-
-

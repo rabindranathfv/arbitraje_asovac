@@ -25,7 +25,7 @@ from autores.forms import ImportFromExcelForm
 from autores.models import Autores_trabajos, Autor
 from autores.views import get_extension_file, validate_alpha
 from main_app.forms import UploadFileForm
-from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
+from main_app.models import Usuario_rol_in_sistema, Sistema_asovac, Area
 from main_app.views import (
     get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
     get_roles, get_route_configuracion, get_route_seguimiento,
@@ -33,17 +33,22 @@ from main_app.views import (
 )
 from trabajos.models import Trabajo_arbitro
 
-from .utils import CertificateGenerator, LetterGenerator, MiscellaneousGenerator, validate_recipients_excel
-from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm, MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
+from .utils import (
+    CertificateGenerator, MiscellaneousGenerator, validate_recipients_excel
+)
+from .forms import (
+    CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
+    MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
+)
 
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
-TOP_NAVBAR_OPTIONS = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+TOP_NAVBAR_OPTIONS = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
+                      {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
+                      {'title':'Resultados', 'icon': 'fa-chart-area','active': False},
+                      {'title':'Administración', 'icon': 'fa-archive', 'active': False}]
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -1127,7 +1132,7 @@ def load_organizers_modal(request):
                 print (response['message'], response['status'])
                 data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
                 return JsonResponse(data)
-            
+
             else:
 				messages.error(request, response['message'])
 				return redirect('recursos:resources_organizer')
@@ -1147,6 +1152,59 @@ def load_organizers_modal(request):
 		'action': reverse('recursos:load_organizers_modal'),
         'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 1})
 	}
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
+
+
+@login_required
+def load_nametag_recipients_modal(request):
+    data = dict()
+    form = UploadFileForm(request.POST or None, request.FILES or None)
+    context = create_common_context(request)
+    
+    if request.method == "POST":
+        form = ImportFromExcelForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Para guardar el archivo de forma local
+            file_name= save_file(request,"organizadores")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo
+            response = validate_load_event_participants(file_name, extension,arbitraje_id)
+            print response
+
+            if response['status'] == 200:
+                context = {
+                    'title': 'Cargar Organizadores',
+                    'response': response['message'],
+                    'status': response['status'],
+                }
+                print (response['message'], response['status'])
+                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+                return JsonResponse(data)
+
+            else:
+                messages.error(request, response['message'])
+                return redirect('recursos:resources_organizer')
+
+            #data['url'] = reverse('autores:authors_list')
+            #data['form_is_valid'] = True
+        else:
+            #data['form_is_valid'] = False
+            messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
+            return redirect('recursos:resources_organizer')
+    else:
+        form = ImportFromExcelForm()
+
+
+    context['form'] = form
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    context = {
+        'form': form,
+        'rol': 'organizadores',
+        'action': reverse('recursos:load_organizers_modal'),
+        'format_url': reverse('recursos:format_import_participants', kwargs={'option': 1})
+    }
     data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
     return JsonResponse(data)
 
@@ -1339,22 +1397,23 @@ def generate_massive_organizer_certificates(book, arbitraje_id):
 def format_import_participants(request, option):
 
     arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
     data = []
     # Para definir propiedades del documento de excel
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_conferencistas.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
     workbook = xlwt.Workbook()
     worksheet = workbook.add_sheet("Conferencistas")
-	# Para agregar los titulos de cada columna
+    # Para agregar los titulos de cada columna
     row_num = 0
-    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)', 'Nombre Completo del Conferencista(*)']
+    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)',
+               'Nombre Completo del Conferencista(*)']
     if option == '2':
         columns.append('Título de conferencia(*)')
 
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
-	
+
     row_num += 1
     columns = ['Evento 1', '06/07/2019', 'juanito@gmail.com', 'Juanito Perez']
     if option == '2':
@@ -1370,6 +1429,34 @@ def format_import_participants(request, option):
         columns.append('Título 2')
     for col_num in range(len(columns)):
         print(col_num)
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    workbook.save(response)
+    return response
+
+
+@login_required
+def format_nametag_recipients(request):
+    # Para definir propiedades del documento de excel
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=convencion_asovac_formato_portanombres.xls'
+    workbook = xlwt.Workbook()
+    worksheet = workbook.add_sheet("Destinatarios")
+
+    # Para agregar los titulos de cada columna
+    row_num = 0
+    columns = ['Nombre Completo(*)', 'Rol(*)','Correo electrónico(*)'] 
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Juanito Perez', 'conferencista', 'juanito@email.com']
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Juanita Perez', 'asistente', 'juanita@email.com', ]
+    for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 
     workbook.save(response)
