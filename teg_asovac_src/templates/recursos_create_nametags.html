@@ -1,0 +1,90 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-left">Portanombres de Asistentes o Conferencistas</h2>
+				<br>
+				<h4>
+					Por favor ingrese un archivo de excel con el formato correcto. El sistema se encargará de generar un
+					portanombres en formato pdf y de enviarlo al correo electrónico asociado al asistente o conferencista.
+				</h4>
+				<br>
+				<div class="row" style="margin-top: 15px; margin-bottom: 50px">
+					<div class="col-sm-12">
+						<form enctype="multipart/form-data" action="" id="loadRecipientsForm" method="POST"
+							  data-url="{% url 'recursos:create_name_tags' %}">
+							<h5><b>Lista de destinatarios:</b></h5>
+							{% csrf_token %}
+							{% include "success_messages.html" %}
+							{% include "errors_form.html" %}
+							<div class="container" id="form-container">
+								<div class="row">
+									<div class="col-sm-6 col-sm-offset-3 form-group">
+										<div class="controls">
+											{{ form.file.label }}
+											{{ form.file }}
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-4 col-sm-offset-4 text-center">
+										<input type="submit" name="submit" value="Generar" class="btn btn-success btn-lg" id="btn-modal-success">
+									</div>
+								</div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+<script>
+     $('#loadUsersForm').submit(function(e){
+        e.preventDefault();
+        var input = document.getElementById('id_file');
+        //console.log("File Seleccionado : ", input.files[0]);
+        var form = $(this);
+        // var formData = new FormData(form);
+        var formData = new FormData();
+        formData.append('file',input.files[0]);
+
+        
+        //console.log(formData);
+        $.ajax({
+            url: $('#loadUsersForm').attr("data-url"),
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                
+                $('#table').bootstrapTable('refresh')
+                if(data.form_is_valid){
+                    // console.log('data is saved')
+                    $('#modal-user .modal-content').html(data.html_form);
+                }else{
+                    //console.log('data is invalid')
+                    $('#modal-user .modal-content').html(data.html_form)
+                }
+
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+</script>
+{% endblock %}

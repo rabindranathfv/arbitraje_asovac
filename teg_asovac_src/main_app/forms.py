@@ -356,7 +356,7 @@ class SubAreaRegistForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
-    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx, class: form-control'}, ))
 
 class EmailValidationOnForgotPassword(PasswordResetForm):
     def clean_email(self):

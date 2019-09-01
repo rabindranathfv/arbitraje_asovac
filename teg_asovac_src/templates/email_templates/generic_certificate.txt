@@ -1,5 +1,5 @@
-Sistema ASOVAC: Certificado de árbitro
+Sistema ASOVAC: Certificado de {{ rol }}
 
 Un cordial saludo {{ usuario }}.
 
-Le agradecemos por su participación en {{ sistema.nombre}}. Adjunto se encuentra el pdf de su certificado como arbitro, gracias por ser parte de nuestra convención.
+Le agradecemos por su participación en {{ sistema.nombre }}. Adjunto se encuentra el pdf de su certificado como {{ rol }}, gracias por ser parte de nuestra convención.

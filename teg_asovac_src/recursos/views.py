@@ -23,12 +23,17 @@ from rest_framework import authentication, permissions
 from arbitrajes.models import Arbitro
 from autores.models import Autores_trabajos, Autor
 
+from main_app.forms import UploadFileForm
 from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
+from main_app.views import (
+    get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
+    get_roles, get_route_configuracion, get_route_seguimiento,
+    validate_rol_status, handle_uploaded_file
+)
 
 from trabajos.models import Trabajo_arbitro
 
-from .utils import CertificateGenerator, LetterGenerator, MiscellaneousGenerator
+from .utils import CertificateGenerator, LetterGenerator, MiscellaneousGenerator, validate_recipients_excel
 from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm
 
 
@@ -197,6 +202,11 @@ def create_certificate_context(arbitraje):
     path1 = arbitraje.firma1.url.replace('/media/', '')
     path2 = arbitraje.firma2.url.replace('/media/', '')
     path_logo = arbitraje.logo.url.replace('/media/', '')
+    date_start_string = '%s de %s' % (arbitraje.fecha_inicio_arbitraje.day,
+                                      MONTH_NAMES[arbitraje.fecha_inicio_arbitraje.month - 1])
+    date_end_string = '%s de %s de %s' % (arbitraje.fecha_fin_arbitraje.day,
+                                          MONTH_NAMES[arbitraje.fecha_fin_arbitraje.month - 1],
+                                          arbitraje.fecha_fin_arbitraje.year)
 
     context = {}
     context["city"] = arbitraje.ciudad
@@ -208,15 +218,8 @@ def create_certificate_context(arbitraje):
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
     context["roman_number"] = arbitraje.numero_romano
-
-    # context["recipient_name"] = 'Rabindranath Ferreira'
-    # context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
-    # context['event_date_string'] = now_date_string
-    # context['date_string'] = now_date_string
-    # context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
-    #  ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    # context["people_names"] = ['Rabindranath Ferreira'] * 5
-    # context["peoples_id"] = 'V-6.186.871'
+    context["date_start_string"] = date_start_string
+    context["date_end_string"] = date_end_string
 
     return context
 
@@ -791,3 +794,72 @@ def resources_paper(request):
         'paper': True, 
     }
     return render(request, 'recursos_author.html', context)
+
+
+
+def create_name_tags(request):
+    form = UploadFileForm(request.POST or None, request.FILES or None)
+    context = create_common_context(request)
+    if request.method == 'POST':
+        if form.is_valid():
+
+            extension = str(request.FILES.get('file')).decode('UTF-8').split('.')[-1]
+            filename = "destinatarios_portanombre." + extension
+            handle_uploaded_file(request.FILES['file'], filename)
+            filename = 'upload/' + filename
+
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            nametag_context = create_certificate_context(arbitraje)
+
+            msg, sheet = validate_recipients_excel(filename, extension)
+            if msg:
+                # Se regreso algun codigo de error?
+                messages.error(request, msg)
+                return redirect('recursos:create_name_tags')
+
+            pdf_filename = 'Portanombre_AsoVAC.pdf'
+            nametag_gen = MiscellaneousGenerator()
+
+            for fila in range(1, sheet.nrows):
+                try:
+                    full_name = sheet.cell_value(rowx=fila, colx=0).strip()
+                    role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
+                    email = sheet.cell_value(rowx=fila, colx=2).strip()
+                except:
+                    print "Ha ocurrido un error con los parametros recibidos"
+                    return False
+                role[0] = role[0].upper()
+                instance_context = {
+                    'university_names': [
+                        'Universidad Central de Venezuela',
+                        'Universidad Católica Andres Bello'
+                    ],
+                    'subject_title': full_name,
+                    'role': role,
+                }
+                instance_context.update(nametag_context)
+                nametag = nametag_gen.get_name_tag(pdf_filename, instance_context)
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': full_name,
+                    'rol': role,
+                }
+                msg_plain = render_to_string('email_templates/nametag.txt', context_email)
+                msg_html = render_to_string('email_templates/nametag.html', context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de Comisión Logística',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [email]
+                )
+                email_msg.attach(pdf_filename, nametag.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+            messages.success(request, 'Se han generado y enviado los portanombres con éxito')
+            return redirect('recursos:create_name_tags')
+
+    context['nombre_vista'] = 'Generación de Portanombres'
+    context['form'] = form
+    return render(request, 'recursos_create_nametags.html', context)

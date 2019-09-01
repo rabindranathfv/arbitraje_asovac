@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^documentos/asovac/$', views.resources_asovac, name='resources_asovac'),
     url(r'^documentos/asovac/comision-organizadora$',
         views.create_organizer_comitee_certificates, name='create_organizer_comitee_certificates'),
+    url(r'^documentos/asovac/portanombres$', views.create_name_tags, name='create_name_tags'),
 
     #Ajax
     url(r'^api/data/$', views.get_data, name='get_data'),

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
+import xlrd
 from io import BytesIO
 from reportlab.lib import utils
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_RIGHT, TA_CENTER
@@ -11,6 +13,8 @@ from reportlab.lib.units import inch, mm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
 from django.http import HttpResponse
+
+from main_app.views import handle_uploaded_file
 
 
 def get_image(path, width=1*inch):
@@ -938,19 +942,6 @@ class MiscellaneousGenerator:
         paragraph.drawOn(canvas, 12, 15)
 
 
-        # Primera autoridad y su firma
-        # signature1 = get_image(self.context["header_url"], width=signature_width)
-        # # Se ubica a un quinto del documento a partir del margen
-        # x_coord = (page_width / 5) + 50 - (signature_width / 2)
-        # y_coord = footer_height + 20
-        # signature1.drawOn(canvas, x_coord, y_coord)
-
-        # paragraph = Paragraph("""<font size=12>%s</font>""" % self.context["authority1_info"],
-        #                       self.styles['Right'])
-        # paragraph.wrapOn(canvas, 200, 50)
-        # paragraph.drawOn(canvas, 90, footer_height)
-
-
 
     def get_name_tag(self, filename, context):
         self.context = context
@@ -996,7 +987,7 @@ class MiscellaneousGenerator:
         story.append(Paragraph(ptext, self.styles["Header"]))
         story.append(Spacer(1, 24))
 
-        ptext = '<font>ASISTENTE</font>'
+        ptext = '<font>%s</font>' % self.context["role"]
         story.append(Paragraph(ptext, self.styles["Role"]))
         story.append(Spacer(1, 18))
 
@@ -1012,3 +1003,54 @@ class MiscellaneousGenerator:
         response.write(pdf)
 
         return response
+
+
+def validate_recipients_excel(filename, extension):
+
+    if extension != "xlsx" and extension != "xls":
+        return "La estructura del archivo no es correcta", sheet
+
+    print "Formato xls/xlsx"
+    book = xlrd.open_workbook(filename)
+
+    if book.nsheets <= 0:
+        return "La estructura del archivo no es correcta", sheet
+
+    print "El numero de hojas es mayor a 0"
+    sheet = book.sheet_by_index(0)
+
+    if sheet.ncols != 3:
+        return "La estructura del archivo no es correcta", sheet
+
+    print "El numero de columnas es igual a 3"
+
+    # Validar las celdas del documento
+    for fila in range(1, sheet.nrows):
+        # Verificar si el correo electronico fue procesado para saltar la fila, de
+        # lo contrario se procesa y se agrega al conjunto.
+
+        email = sheet.cell_value(rowx=fila, colx=2).strip()
+
+        # Se verifica que el campo email no este vacio
+        if not email:
+            return "Error fila %i: Email no puede estar vacio." % (fila), sheet
+
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+            return "Error fila %i: El email no es válido." % (fila), sheet
+
+        full_name = sheet.cell_value(rowx=fila, colx=0).strip()
+        role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
+
+        # Se verifica que el campo nombre no este vacio
+        if not full_name:
+            return "Error fila %i: Nombre completo no puede estar vacio." % (fila), sheet
+
+        # Se verifica que el campo rol no este vacio
+        if not role:
+            return "Error fila %i: Rol no puede estar vacio." % (fila), sheet
+
+        # Se verifica que el campo rol sea 'asistente' o 'conferencista'
+        if role != 'asistente' and role != 'conferencista':
+            return "Error fila %i: Rol solo puede ser 'asistente' o 'conferencista'" % (fila), sheet
+
+    return None, sheet

@@ -2245,9 +2245,11 @@ def handle_uploaded_file(file, filename):
         os.mkdir('upload/')
 
     # print "Nombre del archivo a guardar: ",filename
-    with open('upload/' + filename, 'wb+') as destination:
-        for chunk in file.chunks():
-            destination.write(chunk)
+    destination = open('upload/' + filename, 'wb+')
+    for chunk in file.chunks():
+        destination.write(chunk)
+    destination.close()
+
 
 
 
