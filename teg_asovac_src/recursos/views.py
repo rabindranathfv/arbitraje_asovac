@@ -813,59 +813,64 @@ def create_name_tags(request):
     context = create_common_context(request)
     if request.method == 'POST':
         if form.is_valid():
+            # Procesamiento manual del formulario
+            recipients_tuples = list()
+            n = 0
+            while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+                name = request.POST.get('recipients_name_' + str(n), None).strip()
+                email = request.POST.get('recipients_email_' + str(n), None).strip()
+                recipients_tuples.append((name, email))
+                n += 1
+            # Validacion de campos vacios
+            for r_name, r_email in recipients_tuples:
+                if not (r_name and r_email):
+                    form.add_error(
+                        None,
+                        ValidationError(
+                            "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                        )
+                    )
+                    break
 
-            extension = str(request.FILES.get('file')).decode('UTF-8').split('.')[-1]
-            filename = "destinatarios_portanombre." + extension
-            handle_uploaded_file(request.FILES['file'], filename)
-            filename = 'upload/' + filename
+            if not form.errors and form.is_valid():
+                role = form.cleaned_data['role']
+                arbitraje_id = request.session['arbitraje_id']
+                arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+                nametag_context = create_certificate_context(arbitraje)
+                misc_gen = MiscellaneousGenerator()
+                for r_name, r_email in recipients_tuples:
+                    instance_context = {
+                        'subject_title': r_name,
+                        'role': role.capitalize(),
+                    }
+                    filename = "Portanombre AsoVAC.pdf"
+                    instance_context.update(nametag_context)
+                    certificate = misc_gen.get_name_tag(filename, instance_context)
 
-            arbitraje_id = request.session['arbitraje_id']
-            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-            nametag_context = create_certificate_context(arbitraje)
+                    context_email = {
+                        'sistema': arbitraje,
+                        'usuario': r_name,
+                        'rol': role.capitalize()
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/nametag.txt',
+                                                 context_email)
+                    msg_html = render_to_string('../templates/email_templates/nametag.html',
+                                                context_email)
 
-            msg, sheet = validate_recipients_excel(filename, extension)
-            if msg:
-                # Se regreso algun codigo de error?
-                messages.error(request, msg)
+                    email_msg = EmailMultiAlternatives(
+                        'Portanombre AsoVAC',
+                        msg_plain,
+                        config('EMAIL_HOST_USER'),
+                        [r_email]
+                    )
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
+                    print '1 EMAIL ENVIADO A:'
+                    print email
+
+                messages.success(request, 'Se han generado y enviado los portanombres con éxito')
                 return redirect('recursos:create_name_tags')
-
-            pdf_filename = 'Portanombre_AsoVAC.pdf'
-            nametag_gen = MiscellaneousGenerator()
-
-            for fila in range(1, sheet.nrows):
-                try:
-                    full_name = sheet.cell_value(rowx=fila, colx=0).strip()
-                    role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
-                    email = sheet.cell_value(rowx=fila, colx=2).strip()
-                except:
-                    print "Ha ocurrido un error con los parametros recibidos"
-                    return False
-                role = role.capitalize()
-                instance_context = {
-                    'subject_title': full_name,
-                    'role': role,
-                }
-                instance_context.update(nametag_context)
-                nametag = nametag_gen.get_name_tag(pdf_filename, instance_context)
-                context_email = {
-                    'sistema': arbitraje,
-                    'usuario': full_name,
-                    'rol': role,
-                }
-                msg_plain = render_to_string('email_templates/nametag.txt', context_email)
-                msg_html = render_to_string('email_templates/nametag.html', context_email)
-
-                email_msg = EmailMultiAlternatives(
-                    'Certificado de Comisión Logística',
-                    msg_plain,
-                    config('EMAIL_HOST_USER'),
-                    [email]
-                )
-                email_msg.attach(pdf_filename, nametag.content, 'application/pdf')
-                email_msg.attach_alternative(msg_html, "text/html")
-                email_msg.send()
-            messages.success(request, 'Se han generado y enviado los portanombres con éxito')
-            return redirect('recursos:create_name_tags')
 
     context['nombre_vista'] = 'Generación de Portanombres'
     context['form'] = form
@@ -1214,7 +1219,7 @@ def load_nametag_recipients_modal(request):
                 msg_html = render_to_string('email_templates/nametag.html', context_email)
 
                 email_msg = EmailMultiAlternatives(
-                    'Certificado de Comisión Logística',
+                    'Portanombre AsoVAC',
                     msg_plain,
                     config('EMAIL_HOST_USER'),
                     [email]
