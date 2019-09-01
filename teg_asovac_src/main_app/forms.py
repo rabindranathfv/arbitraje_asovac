@@ -99,11 +99,13 @@ class DataBasicForm(forms.ModelForm):
             'firma2',
             'logo',
             'ciudad',
-            'numero_romano'
+            'numero_romano',
+            'sedes'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
-            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)
+            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format),
+            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'})
         }
         labels = {
             'descripcion': 'Descripción',
@@ -114,11 +116,13 @@ class DataBasicForm(forms.ModelForm):
             'color_letras_pie': 'Color Texto de Pie de Página',
             'ciudad': 'Ciudad',
             'numero_romano': 'Número Romano',
+            'sedes': 'Nombres de las Sedes del Evento',
         }
         help_texts = {
-            'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
-            'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. "Linea1,Linea2"',
+            'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. Linea1, Linea2',
+            'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. Linea1, Linea2',
             'numero_romano': 'Número de la convención en números romanos para desplegar en cartas y certificados',
+            'sedes': 'En caso de multiple sedes, separe los nombres por una coma Ej. Universidad1, Universidad2'
         }
 
     def __init__(self, *args, **kwargs):
@@ -164,6 +168,7 @@ class DataBasicForm(forms.ModelForm):
             HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
             'ciudad',
             'numero_romano',
+            'sedes',
             'autoridad1',
             'firma1',
             Div(
@@ -364,7 +369,7 @@ class EmailValidationOnForgotPassword(PasswordResetForm):
         if not User.objects.filter(email__iexact=email, is_active=True).exists():
             raise forms.ValidationError("El correo "+email+" no se encuentra registrado.")
         return email
-    
+
 
 class EditPersonalDataForm(forms.ModelForm):
     

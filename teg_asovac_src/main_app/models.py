@@ -187,6 +187,10 @@ class Sistema_asovac(models.Model):
         max_length=15,
         default='LXVII'
     )
+    sedes = models.TextField(
+        max_length=255,
+        default='Universidad Central de Venezuela'
+    )
 
     def __str__(self):
         return self.nombre.encode('utf-8', errors='replace')
@@ -199,7 +203,7 @@ class Usuario_asovac(models.Model):
 
     usuario = models.OneToOneField(
         User,
-        on_delete = models.CASCADE
+        on_delete=models.CASCADE
     )
     sub_area = models.ManyToManyField(
         Sub_area,

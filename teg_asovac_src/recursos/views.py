@@ -829,7 +829,7 @@ def create_name_tags(request):
                 except:
                     print "Ha ocurrido un error con los parametros recibidos"
                     return False
-                role[0] = role[0].upper()
+                role = role.capitalize()
                 instance_context = {
                     'university_names': [
                         'Universidad Central de Venezuela',
