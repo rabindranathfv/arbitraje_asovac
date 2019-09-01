@@ -81,6 +81,12 @@
                 <th>Monto total</th>
                 <td>{{ factura.monto_total |floatformat:2|intcomma }} Bs</td>
             </tr>
+            {% if factura.observacion_coordinador %}
+                <tr>
+                    <th>Motivos del rechazo</th>
+                    <td>{{ factura.observacion_coordinador }} </td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
 </div>
@@ -91,20 +97,22 @@
                 <i class="fas fa-file-download"></i> Comprobante
             </a>       
         </div>
-        <div class="col-md-4">
-            <form  method="post" action="{% url 'trabajos:review_pay' factura.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger btn-lg btn-block" > Rechazar</button> 
-                <input type="hidden" name="statusPago" value="Rechazado">
-            </form>
-        </div>
-        <div class="col-md-4">
-            <form  method="post" action="{% url 'trabajos:review_pay' factura.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary btn-lg btn-block" > Aceptar</button> 
-                <input type="hidden" name="statusPago" value="Aceptado">
-            </form>
-        </div> 
+        {% if factura.numero_postulacion == factura.pagador.autor_trabajo.numero_postulacion %}
+            <div class="col-md-4">
+                <form  method="post" class= "save-form-stay" data-url="{% url 'trabajos:review_pay' factura.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg btn-block" > Rechazar</button> 
+                    <input type="hidden" name="statusPago" value="Rechazado">
+                </form>
+            </div>
+            <div class="col-md-4">
+                <form  method="post" action="{% url 'trabajos:review_pay' factura.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" > Aceptar</button> 
+                    <input type="hidden" name="statusPago" value="Aceptado">
+                </form>
+            </div>
+        {% endif %}
     {% else %}
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
     {% endif %}

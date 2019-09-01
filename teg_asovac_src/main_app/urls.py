@@ -56,6 +56,9 @@ urlpatterns = [
     url(r'^load/areas$',views.load_areas_modal,name='load_areas'),
     url(r'^load/subareas$',views.load_subareas_modal,name='load_subareas'),
     url(r'^(?P<arbitraje_id>\d+)/load/(?P<rol>\d+)/usuarios$',views.load_users_modal,name='load_users'),
+    
+    # Agrega usuarios al evento
+    url(r'^(?P<arbitraje_id>\d+)/load/arbitraje$',views.load_users_arbitraje_modal,name='load_users_arbitraje'),
 
     #Carga de contenido 
     url(r'^list$',views.list,name='list'),
@@ -87,6 +90,7 @@ urlpatterns = [
     url(r'^usuario/(?P<id>\d+)/rol/validar$',views.validate_access_modal,name='validar_rol'),
     url(r'^usuario/(?P<user_id>\d+)/crear-autor/$',views.create_autor_instance_modal,name='create_autor_instance_modal'),
     url(r'^usuario/(?P<arbitraje_id>\d+)/registrar-en-sistema/$',views.register_user_in_sistema,name='register_user_in_sistema'),
+    url(r'^usuario/editar$',views.edit_personal_data,name='edit_personal_data'),
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),

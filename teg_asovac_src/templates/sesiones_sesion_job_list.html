@@ -1,5 +1,4 @@
-{% extends "content_wrapper.html" %}
-
+{% extends "content_wrapper_with_sidebar.html" %}
 {% block inner_content %}
 <div class="container" id="content-wrapper">
 	{% include "toggle_title.html" %}
@@ -41,10 +40,10 @@
 					<thead>
 						<tr>
 							<th data-field="trabajo__id" data-visible="false" data-show-columns="false">ID</th>
-							<th data-field="trabajo__titulo_espanol" data-sortable="true" class="col-md-3">Título del trabajo</th>
-							<th data-field="autor__cedula_pasaporte" data-sortable="true" class="col-md-2">Cédula/Pasaporte</th>
-							<th data-field="autor__correo_electronico" data-sortable="true" class="col-md-2">Correo Electrónico</th>
-							<th data-field="autor__nivel_instruccion" data-sortable="true" class="col-md-3">Nivel de instrucción</th>
+							<th data-field="trabajo__titulo_espanol" data-sortable="true" class="col-md-3" title="Título del trabajo">Título del trabajo</th>
+							<th data-field="autor__cedula_pasaporte" data-sortable="true" class="col-md-2" title="Cédula/Pasaporte">Cédula/Pasaporte</th>
+							<th data-field="autor__correo_electronico" data-sortable="true" class="col-md-2" title="Correo Electrónico">Correo Electrónico</th>
+							<th data-field="autor__nivel_instruccion" data-sortable="true" class="col-md-3" title="Nivel de instrucción">Nivel de instrucción</th>
 							<th data-field="operate" data-events="operateEvents" data-formatter="operateJobSesion" data-align="center" class="col-smd-2">Acciones</th>
 						</tr>
 					</thead>

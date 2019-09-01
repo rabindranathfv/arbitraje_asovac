@@ -6,9 +6,18 @@
 
             <div class="row">
                 <div class="jumbotron RLcard container">
+                    <div class="row">
+                        <div class="col-sm-3 col-md-2">
+                            <div class="panel">
+                            <a href="{% url 'main_app:apps_selection' %}" class="btn btn-warning btn-block">
+                                <i class="fa fa-arrow-circle-left"></i> Aplicaciones
+                            </a>
+                            </div>
+                        </div>
+                    </div>
                     <h2 class="text-center"><strong>Eventos</strong></h2>
                     <div class="col-sm-6 text-center">
-                        <h3><strong>Información general:</strong></h3>                
+                        <h3><strong>Información general:</strong></h3>
                         <p>Total eventos creados: {{ total_events }}</p>
                         <p>Total eventos finalizados: {{ total_events_ended }}</p>
                         <p>Total eventos presenciales: {{ total_presential_events }}</p>
@@ -20,14 +29,14 @@
                             <p>{{ event.nombre }}</p>
                         {% endfor %}
                     </div>
-			    </div>
+                </div>
             </div>
-            
+
             <div class="row">
-                <div class="jumbotron RLcard container">               
-                    <h2 class="text-center"><strong>Organizadores</strong></h2>         
+                <div class="jumbotron RLcard container">
+                    <h2 class="text-center"><strong>Organizadores</strong></h2>
                     <div class="col-sm-6 text-center">
-                        <h3><strong>Información general:</strong></h3> 
+                        <h3><strong>Información general:</strong></h3>
                         <p>Total Organizadores: {{ total_organizers }}</p>
                         <p>Total Organizadores miembros ASOVAC: {{ total_organizers_members }}</p>
                     </div>
@@ -41,8 +50,8 @@
             </div>
 
             <div class="row">
-                <div class="jumbotron RLcard container">                                     
-                    <h2 class="text-center"><strong>Locaciones</strong></h2>                
+                <div class="jumbotron RLcard container">
+                    <h2 class="text-center"><strong>Locaciones</strong></h2>
                     <div class="col-sm-6 text-center">
                         <h3><strong>Información general:</strong></h3> 
                         <p>Total Locaciones: {{ total_locations }}</p>
@@ -56,6 +65,6 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>         
+            </div>
 </div>
 {% endblock %}

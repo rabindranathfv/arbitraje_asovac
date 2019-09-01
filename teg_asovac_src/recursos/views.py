@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import os
-import random
-
+import os, re, random, string,xlrd,sys,xlwt
+from openpyxl import Workbook
+import datetime
 from decouple import config
 
 from django.conf import settings
@@ -11,8 +11,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.forms import ValidationError
-from django.http import JsonResponse
-from django.shortcuts import render,redirect
+from django.http import JsonResponse,HttpResponse
+from django.shortcuts import render,redirect, reverse
 from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
 
@@ -22,15 +22,15 @@ from rest_framework import authentication, permissions
 
 from arbitrajes.models import Arbitro
 from autores.models import Autores_trabajos, Autor
-
+from autores.views import get_extension_file, validate_alpha
 from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 from trabajos.models import Trabajo_arbitro
 
 from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
-from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm
-
+from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm, MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
+from autores.forms import ImportFromExcelForm
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -379,7 +379,8 @@ def resources_author(request):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
-        'form': form
+        'form': form,
+        'admin_styles': True
     }
     return render(request, 'recursos_author.html', context)
 
@@ -456,7 +457,9 @@ def resources_referee(request):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'form': form,
+        'admin_styles': True
     }
+
     return render(request, 'recursos_referee.html', context)
 
 
@@ -782,5 +785,521 @@ def resources_paper(request):
         'route_resultados': route_resultados,
         'form': form,
         'paper': True, 
+        'admin_styles': True
     }
     return render(request, 'recursos_author.html', context)
+
+
+
+
+@login_required
+def resources_organizer(request):
+    form = MultipleRecipientsWithDateForm(request.POST or None)
+    if request.method == 'POST':
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+                break
+
+        print 'form error', form.errors
+        if not form.errors and form.is_valid():
+            fecha_evento = form.cleaned_data['recipients_date']
+            nombre_evento = form.cleaned_data['recipients_event_name']
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "subject_title": nombre_evento,
+                    "people_names": [r_name],
+                    "event_name_string": nombre_evento,
+                    "event_date_string": fecha_evento.strftime('%d/%m/%Y')
+
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_organizer_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "Certificado_Organizadores_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                 cert_context["roman_number"])
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'organizador'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de organizador',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:resources_organizer')
+
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    context['conferencista'] = 0
+    context['url_modal'] = reverse('recursos:load_organizers_modal')
+    return render(request, 'recursos_organizer_certificate.html', context)
+
+
+@login_required
+def resources_lecturer(request):
+    form = MultipleRecipientsWithDateAndSubjectForm(request.POST or None)
+    if request.method == 'POST':
+        # Procesamiento manual del formulario
+        recipients_tuples = list()
+        n = 0
+        while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+            name = request.POST.get('recipients_name_' + str(n), None).strip()
+            email = request.POST.get('recipients_email_' + str(n), None).strip()
+            recipients_tuples.append((name, email))
+            n += 1
+        # Validacion de campos vacios
+            
+        for r_name, r_email in recipients_tuples:
+            if not (r_name and r_email):
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                    )
+                )
+                break
+        if n == 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Se requiere al menos un destinatario, por favor indique el nombre y el correo electrónico."
+                )
+            )
+        print 'form error', form.errors
+        if not form.errors and form.is_valid():
+            fecha_evento = form.cleaned_data['recipients_date']
+            nombre_evento = form.cleaned_data['recipients_event_name']
+            titulo_conferencia = form.cleaned_data['recipients_conference_name']
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            cert_context = create_certificate_context(arbitraje)
+            certificate_gen = CertificateGenerator()
+            for r_name, r_email in recipients_tuples:
+                instance_context = {
+                    "subject_title": titulo_conferencia,
+                    "people_names": [r_name],
+                    "event_name_string": nombre_evento,
+                    "event_date_string": fecha_evento.strftime('%d/%m/%Y')
+
+                }
+                instance_context.update(cert_context)
+                certificate = certificate_gen.get_lecturer_certificate(instance_context)
+                name = r_name.split(' ')
+                name = '_'.join(name)
+                filename = "Certificado_Conferencia_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                 cert_context["roman_number"])
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': r_name,
+                    'rol': 'conferencista'
+                }
+                msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                             context_email)
+                msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                            context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Certificado de conferencista',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [r_email]
+                )
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+
+            messages.success(request, 'Se han enviado los certificados \
+                a los destinatarios listados con éxito.')
+            return redirect('recursos:resources_lecturer')
+
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    context['conferencista'] = 1
+    context['url_modal'] = reverse('recursos:load_lecturers_modal')
+    return render(request, 'recursos_organizer_certificate.html', context)
+
+#---------------------------------------------------------------------------------#
+#                Guarda el archivo en la carpeta del proyecto                     #
+#---------------------------------------------------------------------------------#
+def handle_uploaded_file(file, filename):
+    if not os.path.exists('upload/'):
+        os.mkdir('upload/')
+
+    # print "Nombre del archivo a guardar: ",filename
+    with open('upload/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
+
+
+@login_required
+# Para guardar el archivo recibido del formulario
+def save_file(request,type_load):
+
+    name= str(request.FILES.get('file'))
+
+    extension = name.split('.')
+    file_name= "carga"+ type_load +"."+extension[1]
+    # Permite guardar el archivo y asignarle un nombre
+    handle_uploaded_file(request.FILES['file'], file_name)
+    route= "upload/"+file_name
+    # print "Ruta del archivo: ",route
+    return route
+
+@login_required
+def load_lecturers_modal(request):
+    data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+
+    if request.method == "POST":
+        form = ImportFromExcelForm(request.POST, request.FILES)
+        if form.is_valid():
+			# Para guardar el archivo de forma local
+            file_name= save_file(request,"conferencistas")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo
+            response = validate_load_event_participants(file_name, extension,arbitraje_id, True)
+            print response
+            if response['status'] == 200:
+                context = {
+                    'title': 'Cargar Conferencistas',
+                    'response': response['message'],
+                    'status': response['status'],
+                }
+                print (response['message'], response['status'])
+                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+                return JsonResponse(data)
+            
+            else:
+				messages.error(request, response['message'])
+
+
+			#data['url'] = reverse('autores:authors_list')
+			#data['form_is_valid'] = True
+        else:       
+			#data['form_is_valid'] = False
+			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
+
+    else:
+		form = ImportFromExcelForm()
+
+    context = {
+		'form': form,
+		'rol': 'conferencistas',
+		'action': reverse('recursos:load_lecturers_modal'),
+        'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 2})
+	}
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
+
+
+
+@login_required
+def load_organizers_modal(request):
+    data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+    if request.method == "POST":
+        form = ImportFromExcelForm(request.POST, request.FILES)
+        if form.is_valid():
+			# Para guardar el archivo de forma local
+            file_name= save_file(request,"organizadores")
+            extension= get_extension_file(file_name)
+
+            #Valida el contenido del archivo
+            response = validate_load_event_participants(file_name, extension,arbitraje_id)
+            print response
+
+            if response['status'] == 200:
+                context = {
+                    'title': 'Cargar Organizadores',
+                    'response': response['message'],
+                    'status': response['status'],
+                }
+                print (response['message'], response['status'])
+                data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
+                return JsonResponse(data)
+            
+            else:
+				messages.error(request, response['message'])
+
+			#data['url'] = reverse('autores:authors_list')
+			#data['form_is_valid'] = True
+        else:
+			#data['form_is_valid'] = False
+			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
+
+    else:
+		form = ImportFromExcelForm()
+
+    context ={
+		'form': form,
+		'rol': 'organizadores',
+		'action': reverse('recursos:load_organizers_modal'),
+        'format_url': reverse('recursos:format_import_participants', kwargs={ 'option': 1})
+	}
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
+
+
+
+
+def validate_load_event_participants(filename,extension,arbitraje_id, lecturer = False):
+    data= dict()
+    data['status']=400
+    data['message']="La estructura del archivo no es correcta"
+    if lecturer:
+        ncols = 5
+    else:
+        ncols = 4
+    if extension == "xlsx" or extension == "xls":
+        book = xlrd.open_workbook(filename)
+        if book.nsheets > 0:
+            excel_file = book.sheet_by_index(0)
+            email_pattern = re.compile('^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$')
+
+            if excel_file.ncols == ncols:
+                data['status']=200
+                data['message']=""
+                # se validan los campos del documento
+                for fila in range(excel_file.nrows):
+                    # Para no buscar los titulos
+                    if fila > 0:
+                        if excel_file.cell_value(rowx=fila, colx=0) == '':
+							data['status']=400
+							data['message'] = "Error en la fila {0} el nombre del evento es un campo obligatorio \n".format(fila)
+                        
+
+                        if excel_file.cell_value(rowx=fila, colx=1) == '':
+							data['status']=400
+							data['message'] = "Error en la fila {0} la fecha del evento es un campo obligatorio \n".format(fila)
+                        else:
+                            
+                            try:
+                                year, month, day, hour, minute, second = xlrd.xldate_as_tuple(excel_file.cell_value(rowx=fila, colx=1), book.datemode)
+                            except:
+                                data['status']=400
+                                data['message'] = "Error en la fila {0} la fecha debe tener formato dd/mm/AAAA \n".format(fila)
+                        
+                        if excel_file.cell_value(rowx=fila, colx=2) == '':
+							data['status']=400
+							data['message'] = "Error en la fila {0} el correo electrónico del destinatario es un campo obligatorio \n".format(fila)
+                        elif not email_pattern.match(excel_file.cell_value(rowx=fila, colx=2).strip()):
+                            data['status']=400
+                            data['message'] = "Error en la fila {0} el correo electrónico del destinatario no tiene un formato correcto \n".format(fila)
+                        
+                        if excel_file.cell_value(rowx=fila, colx=3) == '':
+							data['status']=400
+							data['message'] = "Error en la fila {0} el nombre del destinatario es un campo obligatorio \n".format(fila)
+                        else:
+							nombres_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=3)).strip())
+							if not nombres_is_valid:
+								data['status']=400
+								data['message'] = "Error en la fila {0} el campo de nombre del destinatario, solo debe tener letras \n".format(fila)
+                        
+                        if lecturer:
+                            if excel_file.cell_value(rowx=fila, colx=4) == '':
+                                data['status']=400
+                                data['message'] = "Error en la fila {0} el título de la conferencia es un campo obligatorio \n".format(fila)
+    if data['status'] == 200:
+        if lecturer:
+            generate_massive_lecturers_certificates(book, arbitraje_id)
+        else:
+            generate_massive_organizer_certificates(book, arbitraje_id)
+        data['message'] = "Se han generado y envíado los certificados con éxito"
+        book.release_resources()
+        del book
+    print(data)
+    return data
+
+
+
+def generate_massive_lecturers_certificates(book, arbitraje_id):
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    cert_context = create_certificate_context(arbitraje)
+    certificate_gen = CertificateGenerator()
+    excel_file = book.sheet_by_index(0)
+    for fila in range(excel_file.nrows):
+        if fila > 0:
+            
+            nombre_evento = excel_file.cell_value(rowx=fila, colx=0)
+            year, month, day, hour, minute, second = xlrd.xldate_as_tuple(excel_file.cell_value(rowx=fila, colx=1), book.datemode)
+            email = excel_file.cell_value(rowx=fila, colx=2)
+            nombre = excel_file.cell_value(rowx=fila, colx=3)
+            titulo_conferencia = excel_file.cell_value(rowx=fila, colx=4)
+            if day < 10:
+                day = '0'+ str(day)
+            else:
+                day = str(day)
+
+            if month < 10:
+                month = '0'+ str(month)
+            else:
+                month = str(month)
+
+            instance_context = {
+                "subject_title": titulo_conferencia,
+                "people_names": [nombre],
+                "event_name_string": nombre_evento,
+                "event_date_string": day + '/'+ month +'/'+str(year)
+
+            }
+            instance_context.update(cert_context)
+            certificate = certificate_gen.get_lecturer_certificate(instance_context)
+            name = nombre.split(' ')
+            name = '_'.join(name)
+            filename = "Certificado_Conferencia_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                cert_context["roman_number"])
+            context_email = {
+                'sistema': arbitraje,
+                'usuario': nombre,
+                'rol': 'conferencista'
+            }
+            msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                            context_email)
+            msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                        context_email)
+
+            email_msg = EmailMultiAlternatives(
+                'Certificado de conferencista',
+                msg_plain,
+                config('EMAIL_HOST_USER'),
+                [email]
+            )
+            email_msg.attach(filename, certificate.content, 'application/pdf')
+            email_msg.attach_alternative(msg_html, "text/html")
+            email_msg.send()
+
+
+def generate_massive_organizer_certificates(book, arbitraje_id):
+    resultado = True
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    cert_context = create_certificate_context(arbitraje)
+    certificate_gen = CertificateGenerator()
+    excel_file = book.sheet_by_index(0)
+    for fila in range(excel_file.nrows):
+        if fila > 0:
+            
+            nombre_evento = excel_file.cell_value(rowx=fila, colx=0)
+            year, month, day, hour, minute, second = xlrd.xldate_as_tuple(excel_file.cell_value(rowx=fila, colx=1), book.datemode)
+            email = excel_file.cell_value(rowx=fila, colx=2)
+            nombre = excel_file.cell_value(rowx=fila, colx=3)
+
+            if day < 10:
+                day = '0'+ str(day)
+            else:
+                day = str(day)
+
+            if month < 10:
+                month = '0'+ str(month)
+            else:
+                month = str(month)
+
+            instance_context = {
+                "subject_title": nombre_evento,
+                "people_names": [nombre],
+                "event_name_string": nombre_evento,
+                "event_date_string": day + '/' + month + '/' + str(year)
+
+            }
+            instance_context.update(cert_context)
+            certificate = certificate_gen.get_organizer_certificate(instance_context)
+            name = nombre_evento.split(' ')
+            name = '_'.join(name)
+            filename = "Certificado_Organizadores_%s_Convencion_Asovac_%s.pdf" % (name,
+                                                                                cert_context["roman_number"])
+            context_email = {
+                'sistema': arbitraje,
+                'usuario': nombre_evento,
+                'rol': 'organizador'
+            }
+            msg_plain = render_to_string('../templates/email_templates/generic_certificate.txt',
+                                            context_email)
+            msg_html = render_to_string('../templates/email_templates/generic_certificate.html',
+                                        context_email)
+
+            email_msg = EmailMultiAlternatives(
+                'Certificado de organizador',
+                msg_plain,
+                config('EMAIL_HOST_USER'),
+                [email]
+            )
+            email_msg.attach(filename, certificate.content, 'application/pdf')
+            email_msg.attach_alternative(msg_html, "text/html")
+            email_msg.send()
+
+
+@login_required
+def format_import_participants(request, option):
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    data = []
+    # Para definir propiedades del documento de excel
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_conferencistas.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
+    workbook = xlwt.Workbook()
+    worksheet = workbook.add_sheet("Conferencistas")
+	# Para agregar los titulos de cada columna
+    row_num = 0
+    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)', 'Nombre Completo del Conferencista(*)']
+    if option == '2':
+        columns.append('Título de conferencia(*)')
+
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+	
+    row_num += 1
+    columns = ['Evento 1', '06/07/2019', 'juanito@email.com', 'Juanito Perez']
+    if option == '2':
+        columns.append('Título 1')
+        print(columns)
+
+    for col_num in range(len(columns)):
+		worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Evento 2', '29/12/2019', 'juanita@email.com', 'Juanita Perez']
+    if option == '2':
+        columns.append('Título 2')
+    for col_num in range(len(columns)):
+        print(col_num)
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    workbook.save(response)
+    return response

@@ -92,13 +92,13 @@ $.ajaxSetup({
             '<a class="editUsuario" href="javascript:void(0)" title="Editar" >',
             '<i class="far fa-edit"></i>',
             '</a>  ',
-            '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
-            '<i class="fa fa-trash"></i>',
-            '</a>  ' ,
             '<a class="changeRol" href="javascript:void(0)" title="Roles" >', 
                 '<i class="fas fa-users"></i>', 
             '</a>' 
         ].join('');
+        // '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
+        //     '<i class="fa fa-trash"></i>',
+        //     '</a>  ' ,
     }
 
     function operateArbitros(value, row, index) {
