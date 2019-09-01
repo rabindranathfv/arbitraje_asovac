@@ -1008,14 +1008,14 @@ def load_lecturers_modal(request):
             
             else:
 				messages.error(request, response['message'])
-				return redirect('recursos:resources_lecturer')
+
 
 			#data['url'] = reverse('autores:authors_list')
 			#data['form_is_valid'] = True
         else:       
 			#data['form_is_valid'] = False
 			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
-			return redirect('recursos:resources_lecturer')
+
     else:
 		form = ImportFromExcelForm()
 
@@ -1057,14 +1057,13 @@ def load_organizers_modal(request):
             
             else:
 				messages.error(request, response['message'])
-				return redirect('recursos:resources_organizer')
 
 			#data['url'] = reverse('autores:authors_list')
 			#data['form_is_valid'] = True
         else:
 			#data['form_is_valid'] = False
 			messages.error(request, "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos.")
-			return redirect('recursos:resources_organizer')
+
     else:
 		form = ImportFromExcelForm()
 
@@ -1286,7 +1285,7 @@ def format_import_participants(request, option):
         worksheet.write(row_num, col_num, columns[col_num])
 	
     row_num += 1
-    columns = ['Evento 1', '06/07/2019', 'juanito@gmail.com', 'Juanito Perez']
+    columns = ['Evento 1', '06/07/2019', 'juanito@email.com', 'Juanito Perez']
     if option == '2':
         columns.append('Título 1')
         print(columns)
@@ -1295,7 +1294,7 @@ def format_import_participants(request, option):
 		worksheet.write(row_num, col_num, columns[col_num])
 
     row_num += 1
-    columns = ['Evento 2', '29/12/2019', 'juanita@gmail.com', 'Juanita Perez']
+    columns = ['Evento 2', '29/12/2019', 'juanita@email.com', 'Juanita Perez']
     if option == '2':
         columns.append('Título 2')
     for col_num in range(len(columns)):
