@@ -8,6 +8,7 @@
 
 <form method="POST" class="" id="loadUsersForm" enctype="multipart/form-data" action="{{action}}" data-url="{{action}}">
     <div class="modal-body">
+        {% include "success_messages.html" %}
         {% csrf_token %}
         {{ form | crispy }}
         <p><strong>*</strong>El proceso de importado puede tomar algunos segundos. Por favor, espere.</p>
