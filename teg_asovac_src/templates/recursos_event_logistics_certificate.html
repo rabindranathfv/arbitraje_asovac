@@ -23,7 +23,7 @@
 						{% include "errors_form.html" %}
 						<form method="POST">
 							{% csrf_token %}
-							<div class="container" id="form-container">
+							<div id="form-container">
 								<div class="row">
 									<div class="col-sm-6 form-group">
 										<div class="controls">
@@ -39,7 +39,7 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-2 col-sm-offset-10">
-									<input type="submit" name="submit" value="Generar" class="btn btn-success btn-lg btn-block" id="btn-modal-success">
+									<input type="submit" name="submit" value="Generar" class="btn btn-primary btn-lg btn-block" id="btn-modal-success">
 								</div>
 							</div>
 						</form>
