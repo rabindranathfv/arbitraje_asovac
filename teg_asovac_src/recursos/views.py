@@ -502,7 +502,18 @@ def create_logistics_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
+
         for r_name, r_email in recipients_tuples:
+            print 'VALIDANDO TUPLAS'
+            print r_name
+            print r_email
             if not (r_name and r_email):
                 form.add_error(
                     None,
@@ -579,6 +590,13 @@ def create_session_coord_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -655,6 +673,13 @@ def create_organizer_comitee_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -821,7 +846,15 @@ def create_name_tags(request):
                 email = request.POST.get('recipients_email_' + str(n), None).strip()
                 recipients_tuples.append((name, email))
                 n += 1
+
             # Validacion de campos vacios
+            if len(recipients_tuples) <= 0:
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Por favor ingrese al menos un nombre y un correo electrónico."
+                    )
+                )
             for r_name, r_email in recipients_tuples:
                 if not (r_name and r_email):
                     form.add_error(
@@ -890,6 +923,13 @@ def resources_organizer(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -967,7 +1007,14 @@ def resources_lecturer(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
-            
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
+
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
