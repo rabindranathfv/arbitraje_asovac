@@ -40,6 +40,9 @@ from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
 
 from autores.models import Autor, Universidad
 from autores.forms import AuthorCreateAutorForm
+
+from .guards import *
+
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
@@ -543,6 +546,11 @@ def dashboard(request, arbitraje_id):
     # for item,val in items.items():
         # print item, ":", val[0]
 
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        editar_datos_basicos = False
+    else:
+        editar_datos_basicos = True
+
     context = {
         'nombre_vista' : 'Panel Principal del Arbitraje',
         'estado' : estado,
@@ -558,6 +566,7 @@ def dashboard(request, arbitraje_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'editar_datos_basicos': editar_datos_basicos
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -625,6 +634,9 @@ def data_basic(request, arbitraje_id):
     rol_id = get_roles(request.user.id, arbitraje_id)
     arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
 
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        return render (request, '403.html')
+
     if request.method == 'GET':
         form = DataBasicForm(instance=arbitraje)
     elif request.method == 'POST':
@@ -666,6 +678,12 @@ def data_basic(request, arbitraje_id):
 @login_required
 def generate_COG_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        return render (request, '403.html')
+
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'COG'
     arbitraje.clave_maestra_coordinador_general = random_password
@@ -709,6 +727,13 @@ def generate_COG_key(request, arbitraje_id):
 @login_required
 def generate_COA_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        return render (request, '403.html')
+
+    
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'COA'
     arbitraje.clave_maestra_coordinador_area = random_password
@@ -744,6 +769,13 @@ def generate_COA_key(request, arbitraje_id):
 @login_required
 def generate_ARS_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        return render (request, '403.html')
+
+
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'ARS'
     arbitraje.clave_maestra_arbitro_subarea = random_password
@@ -786,6 +818,10 @@ def state_arbitration(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     user_id = request.user.id
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id)):
+        return render (request, '403.html')
+
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
