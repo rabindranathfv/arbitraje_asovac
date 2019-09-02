@@ -21,24 +21,35 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions
 
 from arbitrajes.models import Arbitro
+from autores.forms import ImportFromExcelForm
 from autores.models import Autores_trabajos, Autor
 from autores.views import get_extension_file, validate_alpha
-from main_app.models import Usuario_rol_in_sistema, Rol, Sistema_asovac, Usuario_asovac, Area
-from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
-
+from main_app.forms import UploadFileForm
+from main_app.models import Usuario_rol_in_sistema, Sistema_asovac, Area
+from main_app.views import (
+    get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
+    get_roles, get_route_configuracion, get_route_seguimiento,
+    validate_rol_status, handle_uploaded_file
+)
 from trabajos.models import Trabajo_arbitro
 
-from .utils import CertificateGenerator, LetterGenerator#, generate_authors_certificate
-from .forms import CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm, MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm
-from autores.forms import ImportFromExcelForm
+from .utils import (
+    CertificateGenerator, MiscellaneousGenerator, validate_recipients_excel
+)
+from .forms import (
+    CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
+    MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
+    MultipleRecipientsWithRoleForm
+)
+
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
-TOP_NAVBAR_OPTIONS = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
-                    {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
-                    {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
-                    {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
+TOP_NAVBAR_OPTIONS = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
+                      {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
+                      {'title':'Resultados', 'icon': 'fa-chart-area','active': False},
+                      {'title':'Administración', 'icon': 'fa-archive', 'active': False}]
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -197,7 +208,14 @@ def create_certificate_context(arbitraje):
     path1 = arbitraje.firma1.url.replace('/media/', '')
     path2 = arbitraje.firma2.url.replace('/media/', '')
     path_logo = arbitraje.logo.url.replace('/media/', '')
-
+    date_start_string = '%s de %s' % (arbitraje.fecha_inicio_arbitraje.day,
+                                      MONTH_NAMES[arbitraje.fecha_inicio_arbitraje.month - 1])
+    date_end_string = '%s de %s de %s' % (arbitraje.fecha_fin_arbitraje.day,
+                                          MONTH_NAMES[arbitraje.fecha_fin_arbitraje.month - 1],
+                                          arbitraje.fecha_fin_arbitraje.year)
+    university_names = arbitraje.sedes.split(',')
+    university_names = map(lambda n: n.strip(), university_names)
+    print university_names
     context = {}
     context["city"] = arbitraje.ciudad
     context["header_url"] = arbitraje.cabecera
@@ -208,15 +226,9 @@ def create_certificate_context(arbitraje):
     context["logo_path"] = os.path.join(os.path.join(settings.MEDIA_ROOT), path_logo)
     context['date_string'] = now_date_string
     context["roman_number"] = arbitraje.numero_romano
-
-    # context["recipient_name"] = 'Rabindranath Ferreira'
-    # context['event_name_string'] = 'LXVII Convencion Anual AsoVAC'
-    # context['event_date_string'] = now_date_string
-    # context['date_string'] = now_date_string
-    # context["subject_title"] = 'EVALUACIÓN DE LA OBTENCIÓN DE ACEITE ESENCIAL DE SARRAPIA (DIPTERYX\
-    #  ODORATA) EMPLEANDO CO2 COMO FLUIDO SUPERCRÍTICO Y MACERACIÓN ASISTIDA CON ULTRASONIDO'
-    # context["people_names"] = ['Rabindranath Ferreira'] * 5
-    # context["peoples_id"] = 'V-6.186.871'
+    context["date_start_string"] = date_start_string
+    context["date_end_string"] = date_end_string
+    context["university_names"] = university_names
 
     return context
 
@@ -238,6 +250,7 @@ def recursos_pag(request):
     context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos.html', context)
 
+
 def get_data(request, *args, **kwargs):
     data = {
         "sales": 100,
@@ -250,10 +263,17 @@ def get_data(request, *args, **kwargs):
 def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    start_date = arbitraje.fecha_inicio_arbitraje
+    end_date = arbitraje.fecha_fin_arbitraje
+    date_start_string = '%s de %s' % (start_date.day, MONTH_NAMES[start_date.month - 1])
+    date_end_string = '%s de %s de %s' % (end_date.day, MONTH_NAMES[end_date.month - 1], end_date.year)
 
-    filename = "AsoVAC_Certificado_Autores.pdf"
+    filename = "AsoVAC_Rabindranath_Ferreira.pdf"
 
     context = {}
+    context["date_start_string"] = date_start_string
+    context["date_end_string"] = date_end_string
+    context["university_names"] = ['Universidad Metropolitana', 'Universidad Central de Venezuela']
     context["header_url"] = arbitraje.cabecera
     context["city"] = 'Caracas'
     context["day"] = 4
@@ -268,7 +288,7 @@ def generate_pdf(request,*args , **kwargs):
     context["start_date"] = '29 de Noviembre'
     context["finish_date"] = '1 de Diciembre de 2018'
     context["convention_place"] = "Universidad Metropolintana (UNIMET) y la Universidad Central de Venezuela (UCV)"
-    context["convention_saying"] = '"Ciencia, Tecnología e Innovación en Democracia"'
+    context["subject_title"] = 'Rabindranath Ferreira Villamizar'
     context["authors"] = ['Rabindranath Ferreira'] * 5
     #['Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres', 'Yoleida Soto Anes','Karla Calo', 'Luis Henríquez', 'Laura Margarita Febres']
     context["max_info_date"] = '15 de Noviembre'
@@ -283,9 +303,9 @@ def generate_pdf(request,*args , **kwargs):
     context["deficient_areas"] = ['metodología', 'resultados', 'conclusiones', 'palabras clave']
     context["completed_work_form_link"] = 'https://docs.google.com/forms/d/e/1FAIpQLSdJsmghAty674AII18VKDbQDOv3-1b4jhZtJfqBouzYFwJL3g/viewform'
     context["footer_content"] = """http://www.asovac.org/lxvii-convencion-anual-de-asovac https://www.facebook.com/ConvencionAsovac2017<br/>(0212)753-5802 asovac.convencion2017@gmail.com"""
-    letters_gen = LetterGenerator()
+    doc_gen = MiscellaneousGenerator()
 
-    return letters_gen.get_rejection_letter_w_obs(filename, context)
+    return doc_gen.get_name_tag(filename, context)
 
 
 @login_required
@@ -385,7 +405,6 @@ def resources_author(request):
     return render(request, 'recursos_author.html', context)
 
 
-
 @login_required
 def resources_referee(request):
 
@@ -463,7 +482,6 @@ def resources_referee(request):
     return render(request, 'recursos_referee.html', context)
 
 
-
 @login_required
 def resources_event(request):
     context = create_common_context(request)
@@ -484,7 +502,18 @@ def create_logistics_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
+
         for r_name, r_email in recipients_tuples:
+            print 'VALIDANDO TUPLAS'
+            print r_name
+            print r_email
             if not (r_name and r_email):
                 form.add_error(
                     None,
@@ -541,7 +570,6 @@ def create_logistics_certificates(request):
     return render(request, 'recursos_event_logistics_certificate.html', context)
 
 
-
 @login_required
 def resources_sesion(request):
     context = create_common_context(request)
@@ -562,6 +590,13 @@ def create_session_coord_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -638,6 +673,13 @@ def create_organizer_comitee_certificates(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -790,6 +832,82 @@ def resources_paper(request):
     return render(request, 'recursos_author.html', context)
 
 
+@login_required
+def create_name_tags(request):
+    form = MultipleRecipientsWithRoleForm(request.POST or None)
+    context = create_common_context(request)
+    if request.method == 'POST':
+        if form.is_valid():
+            # Procesamiento manual del formulario
+            recipients_tuples = list()
+            n = 0
+            while request.POST.get('recipients_name_' + str(n), None) or request.POST.get('recipients_email_' + str(n), None):
+                name = request.POST.get('recipients_name_' + str(n), None).strip()
+                email = request.POST.get('recipients_email_' + str(n), None).strip()
+                recipients_tuples.append((name, email))
+                n += 1
+
+            # Validacion de campos vacios
+            if len(recipients_tuples) <= 0:
+                form.add_error(
+                    None,
+                    ValidationError(
+                        "Por favor ingrese al menos un nombre y un correo electrónico."
+                    )
+                )
+            for r_name, r_email in recipients_tuples:
+                if not (r_name and r_email):
+                    form.add_error(
+                        None,
+                        ValidationError(
+                            "Todos los destinatarios deben poseer un nombre y correo electrónico asociados."
+                        )
+                    )
+                    break
+
+            if not form.errors and form.is_valid():
+                role = form.cleaned_data['role']
+                arbitraje_id = request.session['arbitraje_id']
+                arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+                nametag_context = create_certificate_context(arbitraje)
+                misc_gen = MiscellaneousGenerator()
+                for r_name, r_email in recipients_tuples:
+                    instance_context = {
+                        'subject_title': r_name,
+                        'role': role.capitalize(),
+                    }
+                    filename = "Portanombre AsoVAC.pdf"
+                    instance_context.update(nametag_context)
+                    certificate = misc_gen.get_name_tag(filename, instance_context)
+
+                    context_email = {
+                        'sistema': arbitraje,
+                        'usuario': r_name,
+                        'rol': role.capitalize()
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/nametag.txt',
+                                                 context_email)
+                    msg_html = render_to_string('../templates/email_templates/nametag.html',
+                                                context_email)
+
+                    email_msg = EmailMultiAlternatives(
+                        'Portanombre AsoVAC',
+                        msg_plain,
+                        config('EMAIL_HOST_USER'),
+                        [r_email]
+                    )
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
+                    print '1 EMAIL ENVIADO A:'
+                    print email
+
+                messages.success(request, 'Se han generado y enviado los portanombres con éxito')
+                return redirect('recursos:create_name_tags')
+
+    context['nombre_vista'] = 'Generación de Portanombres'
+    context['form'] = form
+    return render(request, 'recursos_create_nametags.html', context)
 
 
 @login_required
@@ -805,6 +923,13 @@ def resources_organizer(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -882,7 +1007,14 @@ def resources_lecturer(request):
             recipients_tuples.append((name, email))
             n += 1
         # Validacion de campos vacios
-            
+        if len(recipients_tuples) <= 0:
+            form.add_error(
+                None,
+                ValidationError(
+                    "Por favor ingrese al menos un nombre y un correo electrónico."
+                )
+            )
+
         for r_name, r_email in recipients_tuples:
             if not (r_name and r_email):
                 form.add_error(
@@ -966,7 +1098,6 @@ def handle_uploaded_file(file, filename):
             destination.write(chunk)
 
 
-
 @login_required
 # Para guardar el archivo recibido del formulario
 def save_file(request,type_load):
@@ -980,6 +1111,7 @@ def save_file(request,type_load):
     route= "upload/"+file_name
     # print "Ruta del archivo: ",route
     return route
+
 
 @login_required
 def load_lecturers_modal(request):
@@ -1029,7 +1161,6 @@ def load_lecturers_modal(request):
     return JsonResponse(data)
 
 
-
 @login_required
 def load_organizers_modal(request):
     data = dict()
@@ -1054,7 +1185,7 @@ def load_organizers_modal(request):
                 print (response['message'], response['status'])
                 data['html_form'] = render_to_string('ajax/modal_succes.html', context, request=request)
                 return JsonResponse(data)
-            
+
             else:
 				messages.error(request, response['message'])
 
@@ -1077,6 +1208,91 @@ def load_organizers_modal(request):
     return JsonResponse(data)
 
 
+@login_required
+def load_nametag_recipients_modal(request):
+    data = dict()
+    form = UploadFileForm(request.POST or None, request.FILES or None)
+    context = create_common_context(request)
+    response_context = {'title': 'Carga Destinatarios de Portanombres'}
+    if request.method == "POST":
+        if form.is_valid():
+            extension = str(request.FILES.get('file')).decode('UTF-8').split('.')[-1]
+            filename = "destinatarios_portanombre." + extension
+            handle_uploaded_file(request.FILES['file'], filename)
+            filename = 'upload/' + filename
+
+            arbitraje_id = request.session['arbitraje_id']
+            arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+            nametag_context = create_certificate_context(arbitraje)
+
+            response = validate_recipients_excel(filename, extension)
+
+            if response['status'] == 400:
+                # Se regreso algun codigo de error?
+                response_context['response'] = response['message']
+                response_context['status'] = 400
+                data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+                return JsonResponse(data)
+
+            sheet = xlrd.open_workbook(filename).sheet_by_index(0)
+            pdf_filename = 'Portanombre_AsoVAC.pdf'
+            nametag_gen = MiscellaneousGenerator()
+
+            for fila in range(1, sheet.nrows):
+                try:
+                    full_name = sheet.cell_value(rowx=fila, colx=0).strip()
+                    role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
+                    email = sheet.cell_value(rowx=fila, colx=2).strip()
+                except:
+                    response_context['response'] = "Ha ocurrido un error con los parámetros recibidos, vuelva a intentar."
+                    response_context['status'] = 400
+                    data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+                    return JsonResponse(data)
+
+                role = role.capitalize()
+                instance_context = {
+                    'subject_title': full_name,
+                    'role': role,
+                }
+                instance_context.update(nametag_context)
+                nametag = nametag_gen.get_name_tag(pdf_filename, instance_context)
+                context_email = {
+                    'sistema': arbitraje,
+                    'usuario': full_name,
+                    'rol': role,
+                }
+                msg_plain = render_to_string('email_templates/nametag.txt', context_email)
+                msg_html = render_to_string('email_templates/nametag.html', context_email)
+
+                email_msg = EmailMultiAlternatives(
+                    'Portanombre AsoVAC',
+                    msg_plain,
+                    config('EMAIL_HOST_USER'),
+                    [email]
+                )
+                email_msg.attach(pdf_filename, nametag.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
+            response_context['response'] = response['message']
+            response_context['status'] = response['status']
+            data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+            return JsonResponse(data)
+        else:
+            response_context['response'] = "El archivo indicado no es xls o xlsx, por favor suba un archivo en alguno de esos dos formatos."
+            response_context['status'] = 400
+            data['html_form'] = render_to_string('ajax/modal_succes.html', response_context, request=request)
+            return JsonResponse(data)
+
+
+    context['form'] = form
+    context = {
+        'form': form,
+        'rol': 'destinatarios de portanombres',
+        'action': reverse('recursos:load_nametag_recipients_modal'),
+        'format_url': reverse('recursos:format_nametag_recipients')
+    }
+    data['html_form'] = render_to_string('ajax/load_excel.html', context, request=request)
+    return JsonResponse(data)
 
 
 def validate_load_event_participants(filename,extension,arbitraje_id, lecturer = False):
@@ -1146,7 +1362,6 @@ def validate_load_event_participants(filename,extension,arbitraje_id, lecturer =
         del book
     print(data)
     return data
-
 
 
 def generate_massive_lecturers_certificates(book, arbitraje_id):
@@ -1268,22 +1483,23 @@ def generate_massive_organizer_certificates(book, arbitraje_id):
 def format_import_participants(request, option):
 
     arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
     data = []
     # Para definir propiedades del documento de excel
     response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_conferencistas.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
     workbook = xlwt.Workbook()
     worksheet = workbook.add_sheet("Conferencistas")
-	# Para agregar los titulos de cada columna
+    # Para agregar los titulos de cada columna
     row_num = 0
-    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)', 'Nombre Completo del Conferencista(*)']
+    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)',
+               'Nombre Completo del Conferencista(*)']
     if option == '2':
         columns.append('Título de conferencia(*)')
 
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
-	
+
     row_num += 1
     columns = ['Evento 1', '06/07/2019', 'juanito@email.com', 'Juanito Perez']
     if option == '2':
@@ -1299,6 +1515,34 @@ def format_import_participants(request, option):
         columns.append('Título 2')
     for col_num in range(len(columns)):
         print(col_num)
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    workbook.save(response)
+    return response
+
+
+@login_required
+def format_nametag_recipients(request):
+    # Para definir propiedades del documento de excel
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=convencion_asovac_formato_portanombres.xls'
+    workbook = xlwt.Workbook()
+    worksheet = workbook.add_sheet("Destinatarios")
+
+    # Para agregar los titulos de cada columna
+    row_num = 0
+    columns = ['Nombre Completo(*)', 'Rol(*)', 'Correo electrónico(*)'] 
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Juanito Perez', 'conferencista', 'juanito@email.com']
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Juanita Perez', 'asistente', 'juanita@email.com', ]
+    for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 
     workbook.save(response)
