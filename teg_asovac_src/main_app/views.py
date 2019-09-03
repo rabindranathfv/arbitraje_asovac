@@ -905,7 +905,7 @@ def state_arbitration(request, arbitraje_id):
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     users = User.objects.all()
@@ -974,7 +974,7 @@ def users_list(request, arbitraje_id):
 @login_required
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -1016,7 +1016,7 @@ def user_roles(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     item_active = 1
@@ -1055,7 +1055,7 @@ def coord_general(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     item_active = 1
@@ -1284,8 +1284,9 @@ def process_modal(request,form,template_name):
 @login_required
 def create_user_modal(request):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
+
     if request.method == 'POST':
         form= RegisterForm(request.POST)
     else:
@@ -1299,7 +1300,7 @@ def create_user_modal(request):
 def update_user_modal(request,id):
     print "update_user_modal"
     rol_id=get_roles(request.user.id)
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     user=  get_object_or_404(User,id=id)
@@ -1316,7 +1317,7 @@ def update_user_modal(request,id):
 @login_required
 def delete_user_modal(request,id):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     data= dict()
@@ -1339,7 +1340,7 @@ def delete_user_modal(request,id):
 @login_required
 def update_rol_modal(request,id):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guards(rol_id):
+    if not usuarios_guard(rol_id):
         raise PermissionDenied
 
     #print "update_rol_modal"
@@ -1498,6 +1499,9 @@ def areas_subareas(request):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)

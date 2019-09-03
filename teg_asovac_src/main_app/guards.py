@@ -21,14 +21,14 @@ def datos_basicos_guard(estado, rol_id):
     else:
         return False
 
-def usuarios_guards(rol_id):
+def usuarios_guard(rol_id):
     if rol_id == 1:
         return True
     else:
         return False
 
-def recursos_guard(estado, rol_id):
-    if (rol_id in [1,2]) or (estado >= 7 and (3 >= rol_id  or 4 >= rol_id)):
+def areas_subareas_guard(estado, rol_id):
+    if (1 >= rol_id) or (estado == 1 and (2 >= rol_id or 3 >= rol_id)) or (estado == 2 and 2 >= rol_id):
         return True
     else:
         return False
