@@ -1,0 +1,20 @@
+{% extends "email_templates/email_base_template.html" %}
+{% load static %}
+
+{% block title %}
+Sistema ASOVAC: Portanombre de {{ rol }}
+{% endblock %}
+
+
+{% block content %}
+<tr>
+    <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
+        <!-- Email text goes here-->
+        <p style="text-align: justify;">
+            Un cordial saludo {{ usuario }}.
+            <br>
+            Le agradecemos por su participación en <strong>{{ sistema.nombre }}</strong>. Adjunto se encuentra el su portanombre como <strong>{{ rol }}</strong>, gracias por ser parte de nuestra convención.
+        </p>
+    </td>
+</tr>
+{% endblock %}

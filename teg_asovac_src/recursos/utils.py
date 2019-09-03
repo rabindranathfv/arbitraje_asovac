@@ -1,16 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
+import xlrd
 from io import BytesIO
 from reportlab.lib import utils
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_RIGHT, TA_CENTER
-from reportlab.lib.colors import ReportLabBlue
+from reportlab.lib.colors import ReportLabBlue, toColor
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
+from reportlab.lib.units import inch, mm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 
 from django.http import HttpResponse
+
+from main_app.views import handle_uploaded_file
 
 
 def get_image(path, width=1*inch):
@@ -18,6 +22,12 @@ def get_image(path, width=1*inch):
     img_w, img_h = img.getSize()
     aspect = img_h / float(img_w)
     return Image(path, width=width, height=(width * aspect))
+
+def get_image_with_dimensions(path, width=1*inch):
+    img = utils.ImageReader(path)
+    img_w, img_h = img.getSize()
+    aspect = img_h / float(img_w)
+    return Image(path, width=width, height=(width * aspect)), width, width * aspect
 
 
 class LetterGenerator:
@@ -871,3 +881,182 @@ class CertificateGenerator:
         response.write(pdf)
 
         return response
+
+
+class MiscellaneousGenerator:
+    """
+    Generador de documentos misceleaneos en pdf.
+    """
+    def __init__(self):
+        self.styles = None
+        self.context = None
+
+    def _add_nametag_content(self, canvas, doc):
+        page_width, page_height = (95*mm, 120*mm)
+
+        #Agregar fondo azul
+        canvas.saveState()
+        bg_color = toColor('rgb(36, 63, 96)')
+        canvas.setFillColorRGB(bg_color.red, bg_color.green, bg_color.blue)
+        canvas.rect(0, 0, page_width, page_height, stroke=0, fill=1)
+        canvas.restoreState()
+
+        #Agregar card blanco
+        canvas.saveState()
+        bg_color = toColor('rgb(255, 255, 255)')
+        canvas.setFillColorRGB(bg_color.red, bg_color.green, bg_color.blue)
+        canvas.rect(7, 15, page_width - 14, page_height - 45, stroke=0, fill=1)
+        canvas.restoreState()
+
+        #Agregar circulos de recorte
+        canvas.saveState()
+        fg_color = toColor('rgb(255, 255, 255)')
+        circle_y = page_height - 15
+        canvas.setDash([1,1,1,1],0)
+        canvas.setStrokeColorRGB(fg_color.red, fg_color.green, fg_color.blue)
+        canvas.circle((page_width / 3) - 15, circle_y, 7, stroke=1, fill=0)
+        canvas.circle((page_width / 3)*2 + 15, circle_y, 7, stroke=1, fill=0)
+        canvas.restoreState()
+
+        #Insertar imagen de cabecera
+        header_img, image_w, image_h = get_image_with_dimensions(self.context["header_url"], width=page_width - 16)
+        print (image_w, image_h)
+        header_img.drawOn(canvas, 8, page_height - 31 - image_h)
+
+        #Agregar seccion aquamarina
+        canvas.saveState()
+        bg_color = toColor('rgb(49, 133, 156)')
+        canvas.setFillColorRGB(bg_color.red, bg_color.green, bg_color.blue)
+        canvas.rect(7, 135, page_width - 14, 65, stroke=0, fill=1)
+        canvas.restoreState()
+
+        #Agregar Footer
+        colleges_string = '<br/>'.join(self.context["university_names"])
+        ptext = '<font size=12><b>%s<br/>%s al %s</b></font>' % (colleges_string,
+                                                                 self.context["date_start_string"],
+                                                                 self.context["date_end_string"])
+        paragraph = Paragraph(ptext, self.styles["Footer"])
+        paragraph.wrapOn(canvas, page_width - 24, 50)
+        paragraph.drawOn(canvas, 12, 15)
+
+
+
+    def get_name_tag(self, filename, context):
+        self.context = context
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename=' + filename
+
+        my_buffer = BytesIO()
+
+        doc = SimpleDocTemplate(
+            my_buffer,
+            pagesize=(95*mm, 120*mm),
+            rightMargin=1,
+            leftMargin=1,
+            topMargin=1,
+            bottomMargin=1
+        )
+
+        self.styles = getSampleStyleSheet()
+        #textColor=ReportLabBlue))
+        self.styles.add(ParagraphStyle(
+            name='Name', alignment=TA_CENTER, fontSize=20, leading=23
+        ))
+        self.styles.add(ParagraphStyle(
+            name='Role', alignment=TA_CENTER, fontSize=36, leading=39, fontName='Times-Roman',
+            textColor=toColor('rgb(255, 255, 255)')
+        ))
+
+        self.styles.add(ParagraphStyle(
+            name='Header', alignment=TA_CENTER, fontSize=19, leading=20, fontName='Times-Roman'
+        ))
+
+        self.styles.add(ParagraphStyle(
+            name='Footer', alignment=TA_CENTER, FontSize=50, leading=17
+        ))
+        story = []
+
+        story.append(Spacer(1, 72))
+
+        ptext = '<font>%s</font>' % self.context["roman_number"]
+        story.append(Paragraph(ptext, self.styles["Header"]))
+        story.append(Spacer(1, 6))
+        ptext = '<font>Convención Anual AsoVAC</font>'
+        story.append(Paragraph(ptext, self.styles["Header"]))
+        story.append(Spacer(1, 24))
+
+        ptext = '<font>%s</font>' % self.context["role"]
+        story.append(Paragraph(ptext, self.styles["Role"]))
+        story.append(Spacer(1, 18))
+
+        ptext = '<font><b>%s</b></font>' % self.context["subject_title"]
+        story.append(Paragraph(ptext, self.styles["Name"]))
+        story.append(Spacer(1, 12))
+
+
+        doc.build(story, onFirstPage=self._add_nametag_content)
+
+        pdf = my_buffer.getvalue()
+        my_buffer.close()
+        response.write(pdf)
+
+        return response
+
+
+def validate_recipients_excel(filename, extension):
+    response = dict()
+    response['status'] = 400
+    response['message'] = "La estructura del archivo no es correcta"
+
+    if extension != "xlsx" and extension != "xls":
+        return response
+
+    book = xlrd.open_workbook(filename)
+
+    if book.nsheets <= 0:
+        return  response
+
+    sheet = book.sheet_by_index(0)
+
+    if sheet.ncols != 3:
+        return  response
+
+    response['status'] = 400
+
+    # Validar las celdas del documento
+    for fila in range(1, sheet.nrows):
+        # Verificar si el correo electronico fue procesado para saltar la fila, de
+        # lo contrario se procesa y se agrega al conjunto.
+
+        email = sheet.cell_value(rowx=fila, colx=2).strip()
+
+        # Se verifica que el campo email no este vacio
+        if not email:
+            response['message'] = "Error fila %i: Email no puede estar vacio." % (fila)
+            return response
+
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+            response['message'] = "Error fila %i: El email no es válido." % (fila)
+            return response
+
+        full_name = sheet.cell_value(rowx=fila, colx=0).strip()
+        role = sheet.cell_value(rowx=fila, colx=1).strip().lower()
+
+        # Se verifica que el campo nombre no este vacio
+        if not full_name:
+            response['message'] = "Error fila %i: Nombre completo no puede estar vacio." % (fila)
+            return response
+
+        # Se verifica que el campo rol no este vacio
+        if not role:
+            response['message'] = "Error fila %i: Rol no puede estar vacio." % (fila)
+            return response
+
+        # Se verifica que el campo rol sea 'asistente' o 'conferencista'
+        if role != 'asistente' and role != 'conferencista':
+            response['message'] = "Error fila %i: Rol solo puede ser 'asistente' o 'conferencista'" % (fila)
+            return response
+
+    response['status'] = 200
+    response['message'] = 'Se han generado y enviado los portanombres con éxito'
+    return response
