@@ -298,6 +298,9 @@ def asignacion_de_sesion(request):
     estado = arbitraje.estado_arbitraje
     rol_id = get_roles(request.user.id, event_id)
 
+    if not assign_session_guard(estado, rol_id):
+        raise PermissionDenied
+
     item_active = 2
     items = validate_rol_status(estado, rol_id, item_active, event_id)
 
@@ -956,7 +959,7 @@ def adminChangeAreas(request,id):
 
     if not referee_guard(estado, rol_id):
         raise PermissionDenied
-        
+
     data= dict()
     user= get_object_or_404(User,id=id)
     auth_user=user    
@@ -1448,6 +1451,13 @@ def list_trabajos_aceptados(request):
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not assign_session_guard(estado, rol_id):
+        raise PermissionDenied
+
     area= user_area
 
     # print "El rol del usuario logueado es: ",rol_user
@@ -1650,7 +1660,14 @@ def asigSesion(request,id):
 
     # print "Asignar sesión"
     data= dict()
-    arbitraje = request.session['arbitraje_id']
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not assign_session_guard(estado, rol_id):
+        raise PermissionDenied
+
     listSesion= Sesion.objects.filter(sistema=arbitraje)
     trabajo= Trabajo.objects.get(id = id)
     print trabajo.sesion_id
@@ -1687,6 +1704,13 @@ def generate_report(request,tipo):
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not referee_guard(estado, rol_id):
+        raise PermissionDenied
+
     area= user_area
     # Para exportar información de Arbitro
     if tipo == '1':
