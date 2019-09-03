@@ -12,6 +12,7 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login, l
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
 from django.http import JsonResponse,HttpResponse
@@ -635,7 +636,7 @@ def data_basic(request, arbitraje_id):
     arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
 
     if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
-        return render (request, '403.html')
+        raise PermissionDenied
 
     if request.method == 'GET':
         form = DataBasicForm(instance=arbitraje)
@@ -682,7 +683,7 @@ def generate_COG_key(request, arbitraje_id):
     rol_id = get_roles(request.user.id, arbitraje_id)
 
     if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
-        return render (request, '403.html')
+        raise PermissionDenied
 
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'COG'
@@ -731,7 +732,7 @@ def generate_COA_key(request, arbitraje_id):
     rol_id = get_roles(request.user.id, arbitraje_id)
 
     if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
-        return render (request, '403.html')
+        raise PermissionDenied
 
     
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
@@ -773,8 +774,7 @@ def generate_ARS_key(request, arbitraje_id):
     rol_id = get_roles(request.user.id, arbitraje_id)
 
     if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
-        return render (request, '403.html')
-
+        raise PermissionDenied
 
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'ARS'
@@ -820,7 +820,7 @@ def state_arbitration(request, arbitraje_id):
     rol_id=get_roles(request.user.id,arbitraje_id)
 
     if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id)):
-        return render (request, '403.html')
+        raise PermissionDenied
 
 
     item_active = 1
