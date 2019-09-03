@@ -1235,6 +1235,12 @@ def create_authors(excel_file, arbitraje_id):
 def load_authors_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
 
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
@@ -1285,7 +1291,13 @@ def load_authors_modal(request):
 def export_authors(request):
 
     arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = []
     temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
     for item in temporal_list:
@@ -1349,7 +1361,13 @@ def export_authors(request):
 def format_import_authors(request):
 
     arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(id = arbitraje_id)
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+        
     data = []
     temporal_list = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id)
     for item in temporal_list:
