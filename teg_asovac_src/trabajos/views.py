@@ -1184,8 +1184,10 @@ def viewTrabajo(request, id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id,arbitraje_id)
-
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+    
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -1558,7 +1560,7 @@ def request_new_pay(request, trabajo_id):
     rol_id=get_roles(request.user.id,arbitraje_id) 
     if not trabajos_seguimiento_guard(estado, rol_id):
         raise PermissionDenied
-        
+
     data = dict()
     autores_trabajo = Autores_trabajos.objects.filter(trabajo__id = trabajo_id)
     if request.method == "POST":
