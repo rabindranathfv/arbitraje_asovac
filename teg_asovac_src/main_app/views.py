@@ -904,6 +904,10 @@ def state_arbitration(request, arbitraje_id):
 @login_required
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
+    
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
+
     users = User.objects.all()
     try:
         print request.session['message-type']
@@ -970,7 +974,8 @@ def users_list(request, arbitraje_id):
 @login_required
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
-
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -1011,6 +1016,9 @@ def user_roles(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
+
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -1046,6 +1054,9 @@ def coord_general(request, arbitraje_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1112,7 +1123,7 @@ def coord_general(request, arbitraje_id):
 
 
 @login_required
-def coord_area(request, arbitraje_id):
+def coord_area(request, arbitraje_id): #Por ahora no tiene uso
 
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -1149,7 +1160,7 @@ def coord_area(request, arbitraje_id):
 
 
 @login_required
-def total(request, arbitraje_id):
+def total(request, arbitraje_id): #No tiene uso
 
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -1211,7 +1222,7 @@ def apps_selection(request):
 
 # Ajax/para el uso de ventanas modales
 @login_required
-def create_autor_instance_modal(request, user_id):
+def create_autor_instance_modal(request, user_id): #No necesita de permisos por ahora
     data = dict()
     form = AuthorCreateAutorForm()
     if request.method == 'POST':
@@ -1272,6 +1283,9 @@ def process_modal(request,form,template_name):
 
 @login_required
 def create_user_modal(request):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
     if request.method == 'POST':
         form= RegisterForm(request.POST)
     else:
@@ -1284,6 +1298,10 @@ def create_user_modal(request):
 @login_required
 def update_user_modal(request,id):
     print "update_user_modal"
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
+
     user=  get_object_or_404(User,id=id)
     if request.method == 'POST':
         # form= RegisterForm(request.POST,instance=user)
@@ -1297,6 +1315,10 @@ def update_user_modal(request,id):
 
 @login_required
 def delete_user_modal(request,id):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
+
     data= dict()
     user= get_object_or_404(User,id=id)
     # print user
@@ -1316,6 +1338,10 @@ def delete_user_modal(request,id):
 
 @login_required
 def update_rol_modal(request,id):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guards(rol_id):
+        raise PermissionDenied
+
     #print "update_rol_modal"
     data= dict()
     # Obtenemos el mayor rol del usuario que hizo la petición
