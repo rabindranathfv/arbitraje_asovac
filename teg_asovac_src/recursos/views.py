@@ -249,6 +249,12 @@ def abreviate_if_neccesary(area_nombre):
 # Create your views here.
 @login_required
 def recursos_pag(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    if not resultados_guard(estado, rol_id):
+        raise PermissionDenied
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos.html', context)
