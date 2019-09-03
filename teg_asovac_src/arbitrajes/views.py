@@ -54,7 +54,8 @@ def estatus_trabajos(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
-
+    if not arbitrajes_guard(estado, rol_id):
+        raise PermissionDenied
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
     area=request.session['area']
     subarea=request.session['subarea']
@@ -1277,6 +1278,8 @@ def viewArbitraje(request, id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if not arbitrajes_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1314,7 +1317,14 @@ def viewArbitraje(request, id):
 
 @login_required
 def changeStatus(request, id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not arbitrajes_guard(estado, rol_id):
+        raise PermissionDenied
+
+
     response= dict()
     # print "Cambio de estatus del trabajo"
     # Detalle del trabajo
@@ -1391,7 +1401,13 @@ def changeStatus(request, id):
 
 @login_required
 def statusArbitraje(request, id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not arbitrajes_guard(estado, rol_id):
+        raise PermissionDenied
+
     response= dict()
     # print "Estatus del arbitraje por parte de los arbitros"
     query= "SELECT t.id,a.correo_electronico, a.nombres, a.apellidos, ta.arbitraje_resultado, ta.comentario_autor FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
@@ -1417,6 +1433,12 @@ def statusArbitraje(request, id):
 
 @login_required
 def newArbitraje(request, id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not arbitrajes_guard(estado, rol_id):
+        raise PermissionDenied
 
     response= dict()
 
@@ -1446,7 +1468,6 @@ def newArbitraje(request, id):
 #---------------------------------------------------------------------------------#
 @login_required
 def list_trabajos_aceptados(request):
-
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
@@ -1635,7 +1656,14 @@ def list_trabajos_aceptados(request):
 def editPresentacion(request,id):
     print "Edit Presentacion"
     data= dict()
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
 
+    if not assign_session_guard(estado, rol_id):
+        raise PermissionDenied
+        
     if request.method == 'POST':
 
         trabajo= Trabajo.objects.get(id = id)
