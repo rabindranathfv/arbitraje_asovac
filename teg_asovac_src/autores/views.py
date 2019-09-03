@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import os
 
 from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -34,10 +35,19 @@ from .forms import (
     CreateUniversityForm, ImportFromExcelForm
 )
 from .models import Autor, Autores_trabajos, Pagador, Factura, Universidad
+from .guards import *
 
 # Create your views here.
 @login_required
 def admin_create_author(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     if request.method == "POST":
         form = AdminCreateAutorForm(request.POST)
         print(form.is_valid(),"Ok")
@@ -169,6 +179,9 @@ def authors_list(request):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -216,6 +229,9 @@ def universitys_list(request):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
 
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -248,6 +264,13 @@ def list_universitys(request):
     response = {}
     response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     sort= request.POST['sort']
     search= request.POST['search']
     # Se verifica la existencia del parametro
@@ -308,7 +331,14 @@ def list_universitys(request):
 
 @login_required
 def delete_university(request, university_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     universidad = get_object_or_404(Universidad, id = university_id)
     if request.method == "POST":
@@ -324,7 +354,14 @@ def delete_university(request, university_id):
 
 @login_required
 def details_university(request, university_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     universidad = get_object_or_404(Universidad, id = university_id)
     context = {
@@ -337,6 +374,14 @@ def details_university(request, university_id):
 @login_required
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def edit_university(request, university_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     universidad = get_object_or_404(Universidad, id = university_id)
     if request.method == "POST":
@@ -362,6 +407,15 @@ def edit_university(request, university_id):
 @login_required
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def create_university(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
+
     data = dict()
     if request.method == "POST":
         form = CreateUniversityForm(request.POST)
@@ -389,6 +443,13 @@ def list_authors (request):
     total = 0
     response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     sort= request.POST['sort']
     search= request.POST['search']
     # Se verifica la existencia del parametro
@@ -448,6 +509,14 @@ def list_authors (request):
 
 @login_required
 def author_edit(request, autor_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
+
     autor = get_object_or_404(Autor, id = autor_id)
     if request.method == 'POST':
         form = EditAutorForm(request.POST,user = autor.usuario.usuario, instance = autor)
@@ -474,11 +543,6 @@ def author_edit(request, autor_id):
                     {'title':'Resultados',      'icon': 'fa-chart-area','active': False},
                     {'title':'Administración',  'icon': 'fa-archive',   'active': False}]
 
-
-    arbitraje_id = request.session['arbitraje_id']
-    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
-    estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id , arbitraje_id)
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -521,7 +585,10 @@ def author_details(request, autor_id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id,arbitraje_id)
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -585,6 +652,13 @@ def author_edit_modal(request, user_id):
 @login_required
 def author_details(request, autor_id):
     data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not autores_guard(estado, rol_id):
+        raise PermissionDenied
     #user =  User.objects.get(id = user_id)
     autor =  get_object_or_404(Autor, id = autor_id)
     context ={
