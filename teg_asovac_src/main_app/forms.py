@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import re
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm,PasswordResetForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
 from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
 from .validators import valid_extension
+from django.core.exceptions import ValidationError
+
+from arbitrajes.models import Arbitro
 
 estados_arbitraje = (   (0,'Desactivado'),
                         (1,'Iniciado'),
@@ -87,11 +92,20 @@ class DataBasicForm(forms.ModelForm):
             'fecha_fin_arbitraje',
             'cabecera',
             'color_fondo_pie',
-            'color_letras_pie'
+            'color_letras_pie',
+            'autoridad1',
+            'firma1',
+            'autoridad2',
+            'firma2',
+            'logo',
+            'ciudad',
+            'numero_romano',
+            'sedes'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
-            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format)
+            'fecha_fin_arbitraje': forms.DateInput(format=my_date_format),
+            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'})
         }
         labels = {
             'descripcion': 'Descripción',
@@ -100,6 +114,15 @@ class DataBasicForm(forms.ModelForm):
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
+            'ciudad': 'Ciudad',
+            'numero_romano': 'Número Romano',
+            'sedes': 'Nombres de las Sedes del Evento',
+        }
+        help_texts = {
+            'autoridad1': 'Para desplegar texto en una nueva línea, inserte una coma Ej. Linea1, Linea2',
+            'autoridad2': 'Para desplegar texto en una nueva línea, inserte una coma Ej. Linea1, Linea2',
+            'numero_romano': 'Número de la convención en números romanos para desplegar en cartas y certificados',
+            'sedes': 'En caso de multiple sedes, separe los nombres por una coma Ej. Universidad1, Universidad2'
         }
 
     def __init__(self, *args, **kwargs):
@@ -141,6 +164,39 @@ class DataBasicForm(forms.ModelForm):
                 ,),
                 css_class="row",
                 style="padding-left: 15px;"
+            ),
+            HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Certificados</h3><hr>""", ),
+            'ciudad',
+            'numero_romano',
+            'sedes',
+            'autoridad1',
+            'firma1',
+            Div(
+                HTML("""{% if form.instance.firma1 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 1</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma1 %}<img src="{{ form.instance.firma1.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'autoridad2',
+            'firma2',
+            Div(
+                HTML("""{% if form.instance.firma2 %}<label class="control-label col-sm-3">Imagen de Firma Autoridad 2</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.firma2 %}<img src="{{ form.instance.firma2.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
+            ),
+            'logo',
+            Div(
+                HTML("""{% if form.instance.logo.url %}<label class="control-label col-sm-3">Imagen de Logo</label>{% endif %}""", ),
+                Div(
+                    HTML("""{% if form.instance.logo.url %}<img src="{{ form.instance.logo.url }}" alt="Preview Firma 1" style="width:40%; border: 1px solid #999;">{% endif %}""", ),
+                    css_class='controls col-sm-8'
+                ),
+                css_class='form-group'
             ),
             Div(
                 Div(
@@ -253,36 +309,37 @@ class AssingRolForm(forms.ModelForm):
         # widgets = {'rol': CheckboxSelectMultiple()}
 
 
-class ArbitrajeAssignCoordGenForm(forms.ModelForm):
+class ArbitrajeAssignCoordGenForm(forms.Form):
+    # user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = arbitraje_id).values_list('usuario_asovac_id', flat=True)
+    # usuarios_test = Usuario_asovac.objects.exclude(id__in=user_search )
+    # coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.exclude(id__in=user_search ).order_by('usuario__first_name'), label = '')
+    # coordinador_general = forms.ModelChoiceField(queryset = Usuario_asovac.objects.all().order_by('usuario__first_name'), label = '')
     def __init__(self, *args, **kwargs):
+        self.sistema_id = kwargs.pop('sistema_id')
         super(ArbitrajeAssignCoordGenForm, self).__init__(*args, **kwargs)
-                                                        # El rol con id 2 es Coordinador General
-        self.fields['coordinador_general'].queryset = Usuario_asovac.objects.all()
-        self.fields['coordinador_general'].required = True
-
-    class Meta:
-        model = Sistema_asovac
-        fields = ['coordinador_general']
-        widgets = {'coordinador_general': forms.Select(attrs={'class': 'form-control'})}
-
+        user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = self.sistema_id )
+        # user_search=Usuario_rol_in_sistema.objects.filter(sistema_asovac = self.sistema_id ).values_list('usuario_asovac_id', flat=True)
+        # usuarios_test = Usuario_asovac.objects.exclude(id__in=user_search )
+        # list_users= Usuario_asovac.objects.exclude(id__in=user_search ).order_by('usuario__first_name')
+        self.fields['coordinador_general'] = forms.ModelChoiceField(  
+                                                queryset = Usuario_rol_in_sistema.objects.all().filter(sistema_asovac = self.sistema_id ).order_by('id'),
+                                                required=True,
+                                                label="",
+                                                widget=forms.Select(attrs={'class':'form-control'}))
+        # self.fields['coordinador_general'].widget.attrs['class'] = 'form-control'
 
 class ArbitrajeStateChangeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArbitrajeStateChangeForm, self).__init__(*args, **kwargs)
         self.fields['estado_arbitraje'].required = True
+        self.fields['estado_arbitraje'].label=''
 
     class Meta:
         model = Sistema_asovac
-        fields = ['coordinador_general', 'estado_arbitraje']
-        widgets = {'coordinador_general': forms.HiddenInput(),
-                'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
+        fields = ['estado_arbitraje']
+        widgets = {'estado_arbitraje': forms.Select(choices = estados_arbitraje, attrs={'class': "form-control"})}
 
-    def clean_coordinador_general(self):
-        data = self.cleaned_data['coordinador_general']
-        if data is None:
-            print ('Raising form error of estado!')
-            raise forms.ValidationError("¡Este arbitraje no posee Coordinador General! Asigne uno para continuar.")
-        return data
+
 
 """
 class RolForm(forms.ModelForm):
@@ -317,4 +374,66 @@ class SubAreaRegistForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
-    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx'}))
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': '.xls, .csv, .xlsx, class: form-control'}, ))
+
+class EmailValidationOnForgotPassword(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not User.objects.filter(email__iexact=email, is_active=True).exists():
+            raise forms.ValidationError("El correo "+email+" no se encuentra registrado.")
+        return email
+
+
+class EditPersonalDataForm(forms.ModelForm):
+    
+    class Meta:
+        model = Arbitro
+        fields = ['nombres', 'apellidos', 'genero', 'cedula_pasaporte', 'correo_electronico']
+        widgets = {
+            'nombres': forms.TextInput(attrs={'placeholder': 'Ejemplo:Juan Enrique', }),
+            'apellidos': forms.TextInput(attrs={'placeholder': 'Ejemplo:Castro Rodriguez'}),
+            'cedula_pasaporte': forms.TextInput(attrs={'placeholder': 'Formato: V para CI y P para pasaporte, seguido del número.'}),
+            'correo_electronico': forms.TextInput(attrs={'placeholder': 'Ejemplo: juancastro@gmail.com'}),
+        }
+
+    confirm_email = forms.EmailField(label = "Confirmar correo electrónico",required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(EditPersonalDataForm, self).__init__(*args, **kwargs)
+        self.fields['confirm_email'].widget.attrs['placeholder'] = 'Repita el correo en caso de cambio'
+        self.fields['genero'].label = 'Género'
+        self.fields['cedula_pasaporte'].label = 'Cédula/Pasaporte'
+        self.fields['correo_electronico'].label = 'Correo Electrónico'
+
+    def clean_cedula_pasaporte(self):
+        cedula_pasaporte = self.cleaned_data['cedula_pasaporte']
+        pattern = re.compile('^(V|P)[0-9]+$')
+        if not pattern.match(cedula_pasaporte):
+            raise forms.ValidationError("Formato de cédula/pasaporte incorrecto, introduzca V o P seguido del número. Ejemplo: V500")
+        return cedula_pasaporte
+        
+    def clean_nombres(self):
+        nombres = self.cleaned_data['nombres']
+        pattern = re.compile('^([a-zA-Z]+\s?){1,3}$')
+        if not pattern.match(nombres):
+            raise forms.ValidationError("El campo nombres no puede tener carácteres especiales, debe tener sus nombres separados de un solo espacio.")
+        return nombres
+
+    def clean_apellidos(self):
+        nombres = self.cleaned_data['apellidos']
+        pattern = re.compile('^([a-zA-Z]+\s?){1,3}$')
+        if not pattern.match(nombres):
+            raise forms.ValidationError("El campo apellidos no puede tener carácteres especiales, debe tener sus apellidos separados de un solo espacio.")
+        return nombres
+
+    def clean_confirm_email(self):
+        correo_electronico_antiguo = self.instance.correo_electronico
+        correo_electronico = self.cleaned_data['correo_electronico']
+        correo_electronico_confirmacion = self.cleaned_data['confirm_email']
+        if correo_electronico_antiguo != correo_electronico:
+            if correo_electronico_confirmacion == "":
+                raise forms.ValidationError("Se detectó un cambio en el correo elecrónico, por favor confirme el correo electrónico que desea cambiar.")
+            elif correo_electronico_confirmacion != correo_electronico:
+                raise forms.ValidationError("Confirmación del correo electrónico no coincide con el correo que desea asignar a su cuenta.")
+        return correo_electronico_confirmacion
+

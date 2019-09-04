@@ -1,0 +1,5 @@
+Sistema AsoVAC: Asignación de coordinador general
+Se le notifica que usted ha sido asignado como coordinador general de uno de nuestros sistemas, a continuación tiene la información:
+Sistema AsoVAC: {{ sistema.nombre }}
+Fecha de inicio del arbitraje:  {{sistema.fecha_inicio_arbitraje}} 
+Fecha de fin del arbitraje:  {{sistema.fecha_fin_arbitraje}}

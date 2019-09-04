@@ -5,7 +5,9 @@ from django.db import models
 from main_app.models import Sistema_asovac,Usuario_asovac
 
 # Create your models here.
-
+CHOICES_GENERO = (('M','Masculino'),
+                 ('F','Femenino'),
+                 )
 
 """""""""""""""""""""""""""
 Arbitraje Model
@@ -61,7 +63,7 @@ class Arbitro(models.Model):
 
 	nombres = models.CharField(max_length=100)
 	apellidos = models.CharField(max_length=100)
-	genero = models.CharField(max_length=10)
+	genero = models.CharField(max_length=10, choices = CHOICES_GENERO)
 	cedula_pasaporte = models.CharField(max_length=20)
 	titulo = models.CharField(max_length=50, blank = True)
 	correo_electronico = models.EmailField(max_length=150)

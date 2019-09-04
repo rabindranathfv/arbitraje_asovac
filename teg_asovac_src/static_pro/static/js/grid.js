@@ -92,13 +92,13 @@ $.ajaxSetup({
             '<a class="editUsuario" href="javascript:void(0)" title="Editar" >',
             '<i class="far fa-edit"></i>',
             '</a>  ',
-            '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
-            '<i class="fa fa-trash"></i>',
-            '</a>  ' ,
             '<a class="changeRol" href="javascript:void(0)" title="Roles" >', 
                 '<i class="fas fa-users"></i>', 
             '</a>' 
         ].join('');
+        // '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
+        //     '<i class="fa fa-trash"></i>',
+        //     '</a>  ' ,
     }
 
     function operateArbitros(value, row, index) {
@@ -168,16 +168,9 @@ $.ajaxSetup({
         ].join('');
     }
 
-    function operatePagos(value, row, index) {
-        return [
-            '<a class="Descargar" href="/media/'+row.comprobante+'" title="Descargar comprobante" download> ',
-            '<i class="fas fa-file-download"></i>',
-            '</a>  ' ,
-        ].join('');
-    }
     function operateAdminAreas(value, row, index) {
         return [
-            '<a class="changeAreaArbitro" href="javascript:void(0)" title="Eliminar">',
+            '<a class="changeAreaArbitro" href="javascript:void(0)" title="Cambiar Área">',
             '<i class="fas fa-edit"></i>',
             '</a>  ' ,
         ].join('');
@@ -466,7 +459,7 @@ $.ajaxSetup({
         },
         'click .changeAreaArbitro': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+"/"+$(this).attr("class");
-            console.log(route);
+            console.log(route+row.id);
             $.ajax({
                 url: route,
                 type: 'get',
@@ -478,6 +471,7 @@ $.ajaxSetup({
                 success: function (data){
                     // console.log(data);
                     $('#bootstrapTableModal .modal-content').html(data.content);
+                    $('#originArea').val(row.id);  
                 }
             });
         

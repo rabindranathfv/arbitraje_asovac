@@ -25,9 +25,14 @@ from django.core.mail import send_mail
 from django.conf.urls import include
 #import para collect static y usar media
 from django.conf.urls.static import static
-from django.contrib.auth.views import login, logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+from django.contrib.auth.views import logout_then_login, password_reset, password_reset_done, password_reset_confirm, password_reset_complete
+from main_app.views import login_view
+from main_app.forms import EmailValidationOnForgotPassword
+from django.views.i18n import JavaScriptCatalog
+
 
 urlpatterns = [
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     url(r'^admin/', admin.site.urls),
     ## add routing using include in apps / The namespace allows for url tag convention to be used in templates.
     url(r'^administracion/', include('main_app.urls', namespace='main_app')),
@@ -42,7 +47,7 @@ urlpatterns = [
      ## password and login 
 
     url(r'^logout/', logout_then_login, name='logout'),
-    url(r'^$',login,{'template_name':'main_app_login.html'},name='login'),
+    url(r'^$',login_view, name = 'login'),
 
     #url(r'^accounts/login/',login,{'template_name':'main_app_login.html'},name='login'),
     
@@ -50,7 +55,8 @@ urlpatterns = [
         {'template_name':'password_reset_form.html',
         'email_template_name': 'email_templates/password_reset_email_txt.html',
         'html_email_template_name': 'email_templates/password_reset_email.html',
-        'subject_template_name': 'email_templates/password_reset_subject.txt'},
+        'subject_template_name': 'email_templates/password_reset_subject.txt',
+        'password_reset_form': EmailValidationOnForgotPassword},
         name='password_reset'),
     url(r'^password_reset_done$', password_reset_done, 
         {'template_name': 'password_reset_done.html'}, 

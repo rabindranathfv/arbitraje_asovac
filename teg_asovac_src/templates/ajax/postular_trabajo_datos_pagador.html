@@ -5,13 +5,63 @@
     </button>
     <h3 class="modal-title" >Datos del pagador del trabajo: {{ autor_trabajo.trabajo.titulo_espanol }}</h3>
 </div>
-<form method="POST" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}">
+<form method="POST" enctype="multipart/form-data" class="create-datos-pagador" data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id step %}" novalidate>
     <div class="modal-body">
+        {% include "errors_form.html" %}
+        {% include "success_messages.html" %}
         {% csrf_token %}
-        {{ form | crispy }}
+        <div id="datos_pagador">
+            {{ datos_pagador_form | crispy }}
+        </div>
+        <div id="factura">
+            {{ factura_form | crispy }}
+        </div>
+        <div id="pagador">
+            {{ form | crispy }}
+        </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-lg btn-primary">Añadir</button>
     </div>
 </form>
+
+<script>
+    if({{ step }} != 2 &&  {{step}} != 3)
+    {
+        $("#factura").hide();
+        $("#pagador").hide();
+    }
+    else if({{step}} == 2)
+    {
+        $("#datos_pagador").hide();
+        $("#pagador").hide();
+    }
+    else if({{step}} == 3)
+    {
+        $("#datos_pagador").hide();
+        $("#factura").hide();
+    }
+    $( function(){
+        $( ".dateinput" ).datepicker({ dateFormat: 'dd/mm/yy'});
+    });
+    $("#div_id_numero_transferencia").hide();
+    $("#div_id_numero_cheque").hide();
+    // Para manejar la seleccion modalidad
+    pay = $('#id_tipo_pago').val('')
+    $('#id_tipo_pago').change(function(){
+        var tipo_pago = $(this).val();
+        if (tipo_pago == "T")
+        {
+            $("#div_id_numero_transferencia").show();
+            $("#div_id_numero_cheque").hide();
+            $('#id_numero_cheque').val('');
+        }
+        else
+        {
+            $("#div_id_numero_cheque").show();
+            $("#div_id_numero_transferencia").hide();
+            $('#id_numero_transferencia').val('');
+        }
+    });
+</script>

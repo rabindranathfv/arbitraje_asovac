@@ -461,7 +461,7 @@ var SaveAñadirPagoForm= function(){
                     }
                 }else{
                     // console.log('error en la actualizacion')
-                    $('#modal-user .modal-body').html(data.message);
+                    $('#modal-user .modal-body').html('<div class="alert alert-danger alert-dismissible" role="alert"><strong>'+data.message+'</strong></div>');
                     $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
                     // $('#modal-user').modal('hide');
                 }
@@ -595,7 +595,7 @@ var SaveAñadirPagoForm= function(){
             }
         });
 
-        console.log(arbitros);
+        // console.log(arbitros);
         datos.push({"name": "id", "value": arbitros});
         datos.push({"name": "trabajo", "value": $("#trabajo").val()});
         var testarray= [{"name": "id", "value": 21},{"name": "nombre", "value": 22}];
@@ -649,6 +649,21 @@ var SaveAñadirPagoForm= function(){
         });
         return false;
       };
+    
+    var countSelectedFiltered = function(){
+        let tamano = $('.selector-chosen > select  > option').length;
+        $("#selectedCount").text(tamano);
+        console.log(tamano);
+    };
+    $("#form-loading").submit(function(e) {
+        $("#question").hide();
+        $("#confirm-button").hide();
+        $("#cancel-button").hide();
+        $('.close').hide();
+        $("#loading").show();
+    });
+    $('#enviar-certificado').click(countSelectedFiltered);
+
 
     // Show modal
     $('.show-form').click(ShowForm);
@@ -690,9 +705,7 @@ var SaveAñadirPagoForm= function(){
 
 
     // Añadir pago a un trabajo
-    $('#modal-user').on('submit','.create-datos-pagador',SaveAñadirPagoForm);
-    $('#modal-user').on('submit','.create-datos-factura',SaveAñadirPagoForm);
-    $('#modal-user').on('submit','.create-datos-pago',saveFileFormAndRedirect);
+    $('#modal-user').on('submit','.create-datos-pagador',saveFileFormAndRedirect);
 
     //show areas
     $('.show_areas').click(ShowForm);
@@ -782,4 +795,32 @@ var SaveAñadirPagoForm= function(){
         
     });
     
+    // Para listar subareas del arbitro seleccionado
+    $("#addArea").click(function (e) { 
+        console.log("Para validar agregar areas");
+        
+        var form= $(this);
+        var route=form.attr('data-url');
+        var path=$("#addArea");
+        var total=path[0].baseURI.length;
+        var id=path[0].baseURI[total-2]+path[0].baseURI[total-1];
+        console.log(path[0].baseURI[total-2]+path[0].baseURI[total-1]);
+
+        $.ajax({
+            url: route,
+            type: 'get',
+            data: id,
+            dataType: 'json',
+            beforeSend: function(){
+                $('#bootstrapTableModal').modal('show');  
+            },
+            success: function (data){
+                // console.log(data);
+                $('#bootstrapTableModal .modal-content').html(data.content);
+            }
+        });
+        
+    });
+
+
 });

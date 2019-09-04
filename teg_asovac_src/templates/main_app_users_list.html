@@ -7,70 +7,60 @@
 			<div class="jumbotron RLcard">
 				{% include "success_messages.html" %}
 				{% include "errors_form.html" %}
-				<div class="row middle-content">			
-					<h2 class="text-left">Listado de Usuarios</h2>	
+				<!-- Caso en que o existen usuarios cargados en el arbitraje -->
+				{% if total_users == 0 %}
+					<div class="alert alert-info alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						No posee usuarios registrados en este proceso de arbitraje, 
+						en el botón de acciones podrá importar usuarios al sistema o agregar usuarios
+						ya registrados a este proceso de arbitraje,
+						para asignar un Coordinador General debe tener usuarios registrados.
+					</div>
+				{% endif %}
+
+				<div class="row">
+					<div class="col-sm-6">
+						<h2 class="text-left">Listado de Usuarios</h2>	
+					</div>
 				</div>
 				<!-- bootstrap-table -->
-				<div class="row"> 
-					
-					<div class="col-md-8">
-						
-					</div>
-					<div class="col-sm-2 col-sm-offset-2 btn-lg align-right">
-						<!-- <div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li> -->
-									<!-- <a  href="#" class="show-form" data-url="{% url 'main_app:crear_usuario' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fas fa-plus-circle"></i> Crear usuario</a> -->
-								<!-- </li>
-								<li>
-									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar <br> Coordinador  de Área</a>
-								</li>
-								<li>
-									<a class="Descargar" href="/media/cargamasiva/Coordinadores_de_área.xlsx" title="Descargar ejemplo para coordinador de área" download=""> <i class="fas fa-file-download"></i> Ejemplo <br>Coordinador de Área</a>
-								</li>
-								<li>
-									<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
-								</li>
-								<li>
-									<a class="Descargar" href="/media/cargamasiva/Arbitros.xlsx" title="Descargar ejemplo para árbitros" download=""> <i class="fas fa-file-download"></i> Ejemplo Árbitros</a>
-								</li>
-							</ul>
-						</div> -->
-					</div>
-				</div>
 					<!-- data table -->
 					<input type="hidden" id="listUsuarios" name="list" data-url="{% url 'main_app:list_usuarios' %}">
 					
 					<div id="toolbar">
 						<div class="form-inline" role="form">
-							<!-- <div class="form-group">
-								<select class="form-control" id="type_export">
-									<option value="view">Exportar página</option>
-									<option value="all">Exportar todo</option>
-								</select>
-							</div> -->
-							<!-- <button id="export" type="submit" data-target="#table" class="btn btn-default"><i class="fas fa-download"></i></button> -->
 							<div class="btn-group">
 								<a href="{% url 'main_app:generar_reporte' 1 %}"  class="btn btn-default"><i class="fas fa-download"></i></a>
 							</div>
 							<div class="btn-group">
 								<button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
 								<ul class="dropdown-menu dropdown-menu-right">
-									<!-- <li>
-										<a  href="#" class="show-form" data-url="{% url 'main_app:crear_usuario' %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fas fa-plus-circle"></i> Crear usuario</a>
-									</li> -->
 									<li>
-										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar <br> Coordinadores  de Área</a>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users_arbitraje' arbitraje_id %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
+											<i class="fas fa-user-plus"></i> Agregar usuario al arbitraje
+										</a>
 									</li>
 									<li>
-										<a class="Descargar" href="/media/cargamasiva/Coordinadores_de_area.xlsx" title="Descargar coordinadores de área" download="convencion_asovac_{{date}}_coordinadores_de_área.xlsx"> <i class="fas fa-file-download"></i> Descargar <br>Coordinadores de Área</a>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 3 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
+											<i class="fa fa-upload"></i> Cargar  Coordinadores de Área
+										</a>
 									</li>
 									<li>
-										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Cargar Árbitros</a>
+										<a class="Descargar" href="/media/cargamasiva/Coordinadores_de_area.xlsx" title="Descargar coordinadores de área" download="convencion_asovac_{{date}}_coordinadores_de_área.xlsx">
+											<i class="fas fa-file-download"></i> Descargar Coordinadores de Área
+										</a>
 									</li>
 									<li>
-										<a class="Descargar" href="/media/cargamasiva/Arbitros.xlsx" title="Descargar árbitros" download="convencion_asovac_{{date}}_arbitros.xlsx"> <i class="fas fa-file-download"></i> Descargar Árbitros</a>
+										<a href="#" class="showUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id 4 %}" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel">
+											<i class="fa fa-upload"></i> Cargar Árbitros
+										</a>
+									</li>
+									<li>
+										<a class="Descargar" href="/media/cargamasiva/Arbitros.xlsx" title="Descargar árbitros" download="convencion_asovac_{{date}}_arbitros.xlsx">
+											<i class="fas fa-file-download"></i> Descargar Árbitros
+										</a>
 									</li>
 								</ul>
 							</div>

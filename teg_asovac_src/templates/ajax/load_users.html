@@ -1,57 +1,213 @@
 {% load crispy_forms_tags %}
-<form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id rol %}">
-    {% csrf_token %}
-    
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <h3 class="modal-title" >Cargar Usuarios</h3>
-    </div>
-    <div class="modal-body">
-        {% include "errors_form.html" %}
-        {{  form | crispy }}
-    </div>
-    <div class="modal-footer">
-      <!-- Default switch -->
-        <label class="bs-switch">
-        <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-primary btn-lg" >Guardar</button>
-    </div>
-</form>
 
-<script>
-   
-     $('#loadUsersForm').submit(function(e){
-        e.preventDefault();
-        var input = document.getElementById('id_file');
-        //console.log("File Seleccionado : ", input.files[0]);
-        var form = $(this);
-        // var formData = new FormData(form);
-        var formData = new FormData();
-        formData.append('file',input.files[0]);
+{% if tipo == "file" %}
+    <form enctype="multipart/form-data" action="" id="loadUsersForm" method="post" class="loadUsersForm" data-url="{% url 'main_app:load_users' arbitraje_id rol %}">
+        {% csrf_token %}
 
-        
-        //console.log(formData);
-        $.ajax({
-            url: $('#loadUsersForm').attr("data-url"),
-            type: 'POST',
-            data: formData,
-            success: function (data) {
-                
-                $('#table').bootstrapTable('refresh')
-                if(data.form_is_valid){
-                    // console.log('data is saved')
-                    $('#modal-user .modal-content').html(data.html_form);
-                }else{
-                    //console.log('data is invalid')
-                    $('#modal-user .modal-content').html(data.html_form)
-                }
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h3 class="modal-title">{{ title }}</h3>
+        </div>
 
-            },
-            cache: false,
-            contentType: false,
-            processData: false
+        <div class="modal-body">
+            {% include "errors_form.html" %}
+            {{  form | crispy }}
+        </div>
+
+        <div class="modal-footer">
+        <!-- Default switch -->
+            <label class="bs-switch"></label>
+            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-lg">Cargar</button>
+        </div>
+    </form>
+
+    <script>
+        $('#loadUsersForm').submit(function(e){
+            e.preventDefault();
+            var input = document.getElementById('id_file');
+            //console.log("File Seleccionado : ", input.files[0]);
+            var form = $(this);
+            // var formData = new FormData(form);
+            var formData = new FormData();
+            formData.append('file',input.files[0]);
+
+            
+            //console.log(formData);
+            $.ajax({
+                url: $('#loadUsersForm').attr("data-url"),
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    
+                    $('#table').bootstrapTable('refresh')
+                    if(data.form_is_valid){
+                        // console.log('data is saved')
+                        $('#modal-user .modal-content').html(data.html_form);
+                    }else{
+                        //console.log('data is invalid')
+                        $('#modal-user .modal-content').html(data.html_form)
+                    }
+
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
         });
-    });
-</script>
+    </script>
+
+{% else %}
+    {% if tipo == "system" %}
+    <form method="post" id="" class="" data-url="{% url 'main_app:load_users_arbitraje' arbitraje_id %}">
+            {% csrf_token %}
+            <div class="tab-content">
+                <div id="areas" class="tab-pane fade in active">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" >{{ title }}</h3>
+                    </div>
+            
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <th>Nombre</th>
+                                <th>Correo electrónico</th>
+                                <th style="text-align: right;" width="10%" >
+                                    {% if total_users > 0 %}
+                                        <label class="contentCheck">
+                                            <input class="select-all" name="all" value="all" type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    {% endif %}
+                                </th>
+                            </thead>
+                            {% if total_users > 0 %}
+                                {% for user in list_users %}
+                                <tr>
+                                    <td>{{user.first_name}} {{user.last_name}}</td>
+                                    <td>{{user.email}} </td>
+                                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                                    <td class="text-center" style="text-align: right;">
+                                        <label class="contentCheck">
+                                            <input class="" name="users[]" value="{{user.id}}" type="checkbox">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else%}
+                                <tr>
+                                    <td class="text-center" colspan="3" >
+                                        No se encontraron usuarios para agregar al arbitraje
+                                    </td>
+                                </tr>
+                            {% endif%}
+                            
+                        </table>
+                    </div>
+            
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-lg"  data-dismiss="modal">Cerrar</button>
+                        <button type="button" href="#rol" data-toggle="pill" disabled class=" next btn btn-primary btn-lg" >Siguiente</button>
+                    </div>
+                </div>
+                <!-- Sección para seleccionar rol -->
+                <div id="rol" class="tab-pane fade">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title" >{{ title }}</h3>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <label for="id_rol"> Seleccione un rol:</label>
+                        <select name="id_rol" id="id_rol" class="form-control">
+                            <option value=""> Seleccione</option>
+                            {% for item in rol_list %}
+                                <option value="{{item.id}}">{{item.nombre}}</option>
+                            {% endfor%}
+                        </select>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <a data-toggle="pill" href="#areas" type="button" class="btn btn-danger btn-lg" >Regresar</a>
+                        <button type="button" disabled class="send btn btn-primary btn-lg" >Guardar</button>
+                    </div>
+                </div>
+                <!-- Sección para seleccionar rol -->
+            </div>
+        </form>
+        <script>
+            // Para detectar el boton de seleccionar todo
+            $("input[name='all']").on('change', function (e) {
+                // console.log("Se selecciona todo");
+                if($("input[name='all']").prop('checked')){
+                    $("input[name='users[]']").each(function () {
+                        $(this).prop("checked",true);
+                    });
+                    $('.next').attr('disabled',false);
+                }else{
+                    $("input[name='users[]']").each(function () {
+                        $(this).prop("checked",false);
+                    });
+                    $('.next').attr('disabled',true);
+                }
+            });
+            // Para detectar la seleccion de un usuario
+            $("input[name='users[]']").on('change', function (e) {
+
+                var select=0;
+                // Para contar cantidad de usuarios seleccionados
+                $("input[name='users[]']").each(function () {
+                    if ($(this).prop("checked") ) {
+                        select++;
+                    } 
+                });
+                
+                if(select > 0 ){
+                    $('.next').attr('disabled',false);
+                }else{
+                    $('.next').attr('disabled',true);
+                }
+            });
+            $("#id_rol").on('change', function(){
+                // console.log("Se selecciona"+$(this).val());
+                var select=$(this).val();
+                if(select != "" ){
+                    $('.send').attr('disabled',false);
+                }else{
+                    $('.send').attr('disabled',true);
+                }
+            });
+
+            $(".send").on('click', function (e) {
+
+                form=$(this).parent().parent().parent().parent();
+                route=form.attr("data-url");
+
+                $.ajax({
+                    type: "post",
+                    url: route,
+                    data: form.serialize(),
+                    dataType: "json",
+                    success: function (data) {
+                        if(data.status == 200 ){
+                            // console.log('actualizacion exitosa')
+                            $('#modal-user .modal-body').html(data.message);
+                            $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                            $('#table').bootstrapTable('refresh');
+                        }else{
+                            // console.log('error en la actualizacion')
+                            $('#modal-user .modal-body').html(data.message);
+                            $('#modal-user .modal-footer').html('<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>');
+                        }
+
+                    }
+                });
+
+            });
+        </script>
+    {% endif %}
+{% endif %}

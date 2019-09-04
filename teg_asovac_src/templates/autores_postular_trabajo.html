@@ -23,21 +23,18 @@
 
 				<div id ="toolbar">
 					{% if autor_trabajo.es_autor_principal == True and autor_trabajo.pagado == False %}
-						<div class="btn-group">
-							<button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li>
-									<a data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id %}" class="show-form" type="button" class=""><i class="fas fa-money-bill-alt" style="color:black"></i> Añadir Pago</a>
-								</li>				
-							</ul>
-						</div>
+						{% if estado == 3 or autor_trabajo.esperando_modificacion_pago == True %}
+							<div class="btn-group">
+								<a data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id  1 %}" class="show-form btn btn-primary btn-block" type="button"><i class="fas fa-money-bill-alt" style="color:white"></i> Añadir Pago</a>
+						 	</div>
+						{% endif %}
 					{% endif %}
 				</div>
                 <div class="table-responsive">
                     <table class="table table-bordered" id="show-pays"
                         data-toggle="table"
                         data-search="true"
-                        data-sort-name="nombre"
+                        data-sort-name="status"
                         data-pagination="true"
 						data-toolbar="#toolbar"
 						data-toolbar-align="right"
@@ -48,11 +45,12 @@
 
                         <thead>
                             <tr>
-                                <th data-field = "nombre" class="col-sm-3">Nombre</th>
+                                <th class="col-sm-2">Nombre</th>
 								<th class="col-sm-2">Cédula</th>                 
 								<th class="col-sm-2">Banco Origen</th>
 								<th class="col-sm-2">N° de Transferencia/Cheque</th>
 								<th class="col-sm-2">Monto pagado</th>
+								<th data-field = "status" class="col-sm-1">Estatus</th>
 								<th class="col-sm-1">Acciones</th>
                             </tr>
                         </thead>
@@ -78,9 +76,23 @@
 									</td>
 									<td class="text-center"> {{ factura.monto_total}} </td>
 									<td class="text-center">
+										{% if factura.status == "Pendiente" %}
+											<span class="p label label-warning">Pendiente</span>
+										{% elif factura.status == "Aceptado" %}
+											<span class="a label label-success">Aceptado</span>
+										{% elif factura.status == "Rechazado" %}
+											<span class="r label label-danger">Rechazado</span>
+										{% endif %}
+									</td>
+									<td class="text-center">
 										<a class="show-form" data-url="{% url 'autores:detalles_pago' factura.pagador.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Información Completa">
 											<i class="fas fa-door-open"></i>
 										</a>
+										{% if factura.status == "Rechazado" %}
+											<a class="show-form" data-url="{% url 'autores:detalles_rechazo_pago' factura.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Detalles rechazo">
+												<i class="fa fa-info"></i>
+											</a>
+										{% endif %}
 									</td>
 								</tr>
 							{% endfor %}

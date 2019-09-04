@@ -55,8 +55,8 @@ class TrabajoForm(forms.ModelForm):
 				),
 				css_class='row'
 			),
-			HTML("<div class=\"col-sm-2 col-sm-offset-8\"><a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a></div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-primary btn-success btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button></div>"),
-			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button><h3 class=\"modal-title\" id=\"ModalLongTitle\">Crear Trabajo</h3></div><div class=\"modal-body text-center content-modal\">¿Está seguro que desea crear el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-lg btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-lg btn-primary\">Postular</button></div></div></div></div>"),
+			HTML("<div class=\"col-sm-2 col-sm-offset-8\"><a href=\"#accordion\" class=\"btn btn-danger btn-block btn-lg\" data-toggle=\"collapse\">Cancelar</a></div><div class=\"col-sm-2\"><button type=\"button\" class=\"btn btn-primary btn-primary btn-lg btn-block\" data-toggle=\"modal\" data-target=\"#ModalCenter\">Guardar</button></div>"),
+			HTML("<div class=\"modal fade\" id=\"ModalCenter\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"ModalCenterTitle\" aria-hidden=\"true\"><div class=\"modal-dialog modal-dialog-centered\" role=\"document\"><div class=\"modal-content\"><div class=\"modal-header\"><button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button><h3 class=\"modal-title\" id=\"ModalLongTitle\">Crear Trabajo</h3></div><div class=\"modal-body text-center content-modal\" style=\"font-size:14px\">¿Está seguro que desea crear el trabajo?</div><div class=\"modal-footer\"><button type=\"button\" class=\"btn btn-lg btn-danger\" data-dismiss=\"modal\">Cancelar</button><button type=\"submit\" class=\"btn btn-lg btn-primary\">Crear</button></div></div></div></div>"),
 			)
 
 	def clean_archivo_trabajo(self):
@@ -116,21 +116,12 @@ class EditTrabajoForm(forms.ModelForm):
 			raise forms.ValidationError(_("El archivo indicado no es pdf, por favor seleccione un archivo pdf."), code = "formato_archivo_incorrecto")
 		return trabajo
 
-#Form para colocar observaciones a la versión final del trabajo
-# class AutorObservationsFinalVersionJobForm(forms.ModelForm):
-
-# 	class Meta:
-# 		model = Detalle_version_final
-# 		fields = ['observaciones']
-
-# 	def __init__(self, *args, **kwargs):
-# 		super(AutorObservationsFinalVersionJobForm,self).__init__(*args, **kwargs)
-# 		self.helper = FormHelper()
-# 		self.helper.form_id = 'job-observations-form'
-# 		self.helper.form_method = 'post'
-# 		self.helper.form_class = 'form-horizontal'
-# 		self.helper.label_class = 'col-sm-3'
-# 		self.helper.field_class = 'col-sm-8'
-# 		self.fields['observaciones'].label = "Observaciones"
-# 		self.fields['observaciones'].widget.attrs['rows'] = 4
-
+class MessageForm(forms.Form):
+    motivo_rechazo = forms.CharField(label='Motivos del rechazo', widget = forms.Textarea(attrs={'placeholder': 'Indique TODOS los motivos por los cuáles fueron rechazados algunos pagos.'}), max_length=100)
+    def __init__(self, *args, **kwargs):
+		super(MessageForm,self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'message-form'
+		self.helper.form_method = 'post'
+		self.helper.form_class = 'form-horizontal'
+		self.helper.form_tag = False

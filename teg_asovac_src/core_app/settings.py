@@ -67,7 +67,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core_app.middleware.AuthenticationMiddleware', 
 ]
+
+AUTO_LOGOUT_DELAY = 30 #Tiempo en minutos
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+
 
 ROOT_URLCONF = 'core_app.urls'
 
@@ -96,7 +101,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # Postgresql Database config
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
@@ -164,14 +169,14 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static_pro","static")
+    os.path.join(BASE_DIR, "static_pro", "static")
 ]
 
 # CONFIG to production
-STATIC_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","static_root")
-MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env","media_root")
+STATIC_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env", "static_root")
+MEDIA_ROOT = os.path.join(os.path.join(BASE_DIR), "static_env", "media_root")
 LOGIN_URL = '/'
-LOGIN_REDIRECT_URL= reverse_lazy('main_app:apps_selection')
+LOGIN_REDIRECT_URL = reverse_lazy('main_app:apps_selection')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
 FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
                         "django_excel.TemporaryExcelFileUploadHandler")
@@ -185,4 +190,4 @@ MESSAGE_TAGS = {
 }
 
 # Session time out settings
-SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)
+# SESSION_COOKIE_AGE = 2 * 60 * 60 ## Seconds before session timeout (2 hours)

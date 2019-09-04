@@ -4,7 +4,8 @@
 
 {% block inner_content %}
 <div class="container" id="content-wrapper">
-
+	{% include "errors_form.html" %}
+    {% include "success_messages.html" %}
 	{% include "toggle_title.html" %}
 
 	<div class="row">
@@ -65,7 +66,7 @@
 									<th data-field="titulo_espanol" data-sortable="true">Título </th>
 									<th data-field="forma_presentacion" data-sortable="true">Presentación</th>
 									<th data-field="confirmacion_pago" data-sortable="true">Pago</th>
-									<th data-field="operate" data-events="operateEvents" data-formatter="operateTrabajos" data-align="center">Acciones</th>
+									<th data-width="11%" data-field="operate" data-events="operateEvents" data-formatter="operateTrabajos" data-align="center">Acciones</th>
 								</tr>
 						</thead>
 					</table>

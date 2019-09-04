@@ -366,7 +366,7 @@ def create_sesion(request):
             coordinador_sesion = Coordinadores_sesion(sesion = sesion)
             coordinador_sesion.save()
             
-            messages.success(request, "Sesion creada con éxito.")
+            messages.success(request, "Sesión creada con éxito.")
             return redirect('sesiones:sesions_list')
     else:
         sesion_form = SesionForm()

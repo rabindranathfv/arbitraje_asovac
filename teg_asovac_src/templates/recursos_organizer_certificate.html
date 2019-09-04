@@ -1,0 +1,138 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+{% load static %}
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				{% include "success_messages.html" %}
+                {% include "errors_form.html" %}		
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2 class="text-left">Certificados de {% if conferencista %}conferencistas{% else %}organizadores{% endif %}</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <a data-url="{{ url_modal }}" class="show-form btn btn-primary btn-block btn-lg" type="button"><i class="fa fa-file-excel" style="color:white"></i> Generación Masiva</a>
+                    </div>
+                </div>
+                <br>
+                <div class = "row">
+                    <h4>
+                        Por favor rellene los datos del evento e ingrese de forma ordenada los nombres y correos electrónicos asociados de los {% if conferencista %}conferencistas{% else %}organizadores{% endif %} a los que se les enviarán sus certificados.
+                    </h4>
+                </div>
+                <br>
+                <div class = "row">
+                    <div class = "col-sm-12">
+                        <form action="." method="POST" id="form-loading">
+                            {% csrf_token %}
+                            <div class="row">
+                                <h5><b>Datos de evento{% if conferencista %} y conferencia{% endif %}:</b></h5>
+                                <div id = "div_id_recipients_event_name" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
+                                    <!--
+                                    <label for="id_recipients_event_name" class="control-label requiredField" style='text-align:left;'>
+                                        {{form.recipients_event_name.label}}
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    -->
+                                    <div class="controls">
+                                        {{form.recipients_event_name}}
+                                    </div>
+                                </div>
+                                <div id = "div_id_recipients_date" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
+                                    <!--
+                                    <label for="id_recipients_date" class="control-label requiredField" style='text-align:left;'>
+                                        {{form.recipients_date.label}}
+                                        <span class="asteriskField">*</span>
+                                    </label>
+                                    -->
+                                    <div class="controls">
+                                        {{form.recipients_date}}
+                                    </div>
+                                </div>
+                                {% if conferencista %}
+                                    <div id = "div_id_recipients_conference_name" class="form-group col-sm-4">
+                                        <!--
+                                        <label for="id_recipients_conference_name" class="control-label requiredField" style='text-align:left;'>
+                                            {{form.recipients_conference_name.label}}
+                                            <span class="asteriskField">*</span>
+                                        </label>
+                                        -->
+                                        <div class="controls">
+                                            {{form.recipients_conference_name}}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div> 
+                            <div class="row" style="margin-top: 30px; margin-bottom: 50px">
+                                <h5><b>Lista de destinatarios:</b></h5>
+                                <div class="col-sm-12">
+                                    <div id="form-container">
+                                        <div class="row">
+                                            <div class="form-group col-sm-6">
+                                                <div class="controls">
+                                                    {{ form.recipients_name_0 }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group col-sm-6">
+                                                <div class="controls">
+                                                    {{ form.recipients_email_0 }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div align="center">
+                                            <button type="submit" class="btn btn-primary btn-lg col-sm-offset-9 col-sm-3" id = "question" disabled>
+                                                <span>Enviar certificado</span>
+                                            </button>
+                                            <button class="btn btn-primary btn-lg" align="center" id="loading" style="display:none;">
+                                                <span>
+                                                    <p>Enviando certificados, por favor espere...</p>
+                                                    <i class="fas fa-circle-notch fa-spin"></i>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div> 
+
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block js_extra %}
+<script type="text/javascript" src="{% static 'js/multiple_recipients_dynamic_form.js' %}"></script>
+<script>
+
+$('input').keyup(function() { 
+    let recipients_event_name = $('#id_recipients_event_name').val()
+    let recipients_date = $('#id_recipients_date').val()
+    let recipients_email_0 = $('#id_recipients_email_0').val()
+    let recipients_name_0 = $('#id_recipients_name_0').val()
+    if (recipients_event_name && recipients_date && recipients_email_0 && recipients_name_0)
+    {   
+        if(({{conferencista}} == 1 && $('#id_recipients_conference_name').val()) || {{conferencista}} == 0)
+        { 
+            $('button[type="submit"]').removeAttr('disabled');
+        }else{
+            $('button[type="submit"]').prop("disabled", true);
+        }
+    }
+    else
+    {   
+        $('button[type="submit"]').prop("disabled", true);
+    }
+}); 
+</script>
+{% endblock %}
