@@ -736,13 +736,6 @@ def create_organizer_comitee_certificates(request):
     return render(request, 'recursos_organizer_comitee_certificate.html', context)
 
 
-@login_required
-def resources_arbitration(request):
-
-    context = create_common_context(request)
-    context['nombre_vista'] = 'Recursos'
-    return render(request, 'main_app_resources_arbitrations.html', context)
-
 
 @login_required
 def resources_paper(request):
