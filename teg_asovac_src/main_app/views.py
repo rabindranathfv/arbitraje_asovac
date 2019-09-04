@@ -167,10 +167,7 @@ def get_route_seguimiento(estado,rol_id):
 
 
 def get_route_trabajos_sidebar(estado,rol_id,item_active):
-    if (estado == 4 and 2 == rol_id and item_active == 2):
-        return reverse('trabajos:trabajos_evaluados')
-    else:
-        return reverse('trabajos:jobs_list')
+    return reverse('trabajos:jobs_list')
 
 
 def get_route_trabajos_navbar(estado,rol_id):
