@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from .models import  Usuario_rol_in_sistema,Usuario_asovac,User,Rol
 from django.shortcuts import render, redirect, get_object_or_404, render_to_response
+from django.core.urlresolvers import reverse
 
 def user_is_arbitraje(function):
     def wrap(request, *args, **kwargs):
@@ -12,7 +13,10 @@ def user_is_arbitraje(function):
         is_admin= Usuario_rol_in_sistema.objects.filter(rol= rol, usuario_asovac = usuario_asovac).exists()
 
         if is_admin == True:
-            return function(request, *args, **kwargs)
+            if 'arbitraje_id' in request.session and 'estado' in request.session:
+                return function(request, *args, **kwargs)
+            else:
+                return redirect('main_app:home')
         else:
             if 'arbitraje_id' in request.session and 'estado' in request.session:
                 return function(request, *args, **kwargs)

@@ -25,6 +25,7 @@ from autores.forms import AddAuthorToJobForm
 from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
+from main_app.decorators import user_is_arbitraje
 
 from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
 from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
@@ -127,6 +128,7 @@ def trabajos(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
