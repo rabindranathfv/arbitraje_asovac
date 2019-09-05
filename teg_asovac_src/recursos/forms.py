@@ -182,6 +182,7 @@ class MultipleRecipientsWithDateAndSubjectForm(forms.Form):
 class MultipleRecipientsWithRoleForm(forms.Form):
     ROLE_OPTIONS = (
         ('asistente', 'Asistente'),
+        ('autor', 'Autor'),
         ('conferencista', 'Conferencista'),
     )
 
