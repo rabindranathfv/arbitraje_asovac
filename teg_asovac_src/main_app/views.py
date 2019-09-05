@@ -31,6 +31,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from .forms import EditPersonalDataForm, ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from .decorators import user_is_arbitraje
 
 from autores.models import Autores_trabajos
 from sesiones.models import Sesion
@@ -494,6 +495,7 @@ def home(request):
 
 
 @login_required
+@user_is_arbitraje
 def dashboard(request, arbitraje_id):
     #-----------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
@@ -1324,8 +1326,10 @@ def validate_access_modal(request,id):
     data= dict()
     user_id= request.user.id
     user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
-    arbitraje_id= id 
-    # print "Arbitraje:",arbitraje_id
+    arbitraje_id= id
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    # print "El arbitraje es: {} y el estado es: {}".format(arbitraje_id,estado)
 
     if request.method == 'POST':
         print "El metodo es post"
@@ -1349,6 +1353,8 @@ def validate_access_modal(request,id):
           
             request.session['area']= area_session
             request.session['subarea']=subarea_session
+            request.session['estado']=estado
+            request.session['arbitraje_id'] = arbitraje_id
 
             context = {
                 'params_validations' : params_validations,
