@@ -1538,5 +1538,10 @@ def format_nametag_recipients(request):
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 
+    row_num += 1
+    columns = ['Juan Perez', 'autor', 'juan@email.com', ]
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
     workbook.save(response)
     return response
