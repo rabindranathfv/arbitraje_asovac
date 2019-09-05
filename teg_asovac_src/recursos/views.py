@@ -736,13 +736,6 @@ def create_organizer_comitee_certificates(request):
     return render(request, 'recursos_organizer_comitee_certificate.html', context)
 
 
-@login_required
-def resources_arbitration(request):
-
-    context = create_common_context(request)
-    context['nombre_vista'] = 'Recursos'
-    return render(request, 'main_app_resources_arbitrations.html', context)
-
 
 @login_required
 def resources_paper(request):
@@ -1542,6 +1535,11 @@ def format_nametag_recipients(request):
 
     row_num += 1
     columns = ['Juanita Perez', 'asistente', 'juanita@email.com', ]
+    for col_num in range(len(columns)):
+        worksheet.write(row_num, col_num, columns[col_num])
+
+    row_num += 1
+    columns = ['Juan Perez', 'autor', 'juan@email.com', ]
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 

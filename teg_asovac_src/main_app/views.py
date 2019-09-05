@@ -167,10 +167,7 @@ def get_route_seguimiento(estado,rol_id):
 
 
 def get_route_trabajos_sidebar(estado,rol_id,item_active):
-    if (estado == 4 and 2 == rol_id and item_active == 2):
-        return reverse('trabajos:trabajos_evaluados')
-    else:
-        return reverse('trabajos:jobs_list')
+    return reverse('trabajos:jobs_list')
 
 
 def get_route_trabajos_navbar(estado,rol_id):
@@ -249,13 +246,13 @@ def getMaxRol(rol, roles):
     return Rol 
 
 # Obtener nombre de los roles del usuario
-def get_names_roles(user_id,name=True):
+def get_names_roles(user_id,name=True,arbitraje_id=None):
     usuario_asovac = Usuario_asovac.objects.get(usuario_id=user_id)
     big_rol=None
 
     # Manejo de roles
     rol_id=6
-    rols=Usuario_rol_in_sistema.objects.filter(usuario_asovac_id = usuario_asovac.id)
+    rols=Usuario_rol_in_sistema.objects.filter(usuario_asovac_id = usuario_asovac.id,sistema_asovac_id=arbitraje_id)
     big_rol= getMaxRol(rol_id, rols)
     # big_rol.rol.nombre
     # print "El mayor rol es: ",big_rol.rol_id, " y el estatus es: ", big_rol.status, " y el nombre del rol es ",big_rol.rol.nombre
@@ -307,11 +304,11 @@ def validate_access(rol,data_arbitraje,clave):
     return 0
 
 # Parametros para validacion de arbitraje
-def create_params_validations(request,status):
+def create_params_validations(request,status,arbitraje_id):
     params_validations = dict()
-    params_validations['rol_name']=get_names_roles(request.user.id)
+    params_validations['rol_name']=get_names_roles(request.user.id,True,arbitraje_id)
     # params_validations['cant']=len(params_validations['rol_name'])
-    params_validations['rol_id']=get_names_roles(request.user.id,False)
+    params_validations['rol_id']=get_names_roles(request.user.id,False,arbitraje_id)
     params_validations['is_admin']=is_admin( params_validations['rol_name'])
     params_validations['status']=status
     # print params_validations
@@ -442,7 +439,7 @@ def register(request):
 @login_required
 def home(request):
     # Queryset
-    arbitraje_data = Sistema_asovac.objects.all()
+    arbitraje_data = Sistema_asovac.objects.all().order_by('-id')
 
     params_validations = dict()
     #rol_id=get_roles(request.user.id)
@@ -485,7 +482,7 @@ def home(request):
     # Se le aplican zip a las 3 siguientes listas para que todas queden en una lista de tuplas
     arb_data = zip(arbitraje_data, state_strings, allow_entry_list,rol_list)
 
-    print(arbitraje_data, state_strings, allow_entry_list,rol_list)
+    # print(arbitraje_data, state_strings, allow_entry_list,rol_list)
     context = {
         'nombre_vista' : 'Inicio',
         'arb_data' : arb_data,
@@ -910,7 +907,7 @@ def users_list(request, arbitraje_id):
     total_users=0
     for item in data:
         total_users=total_users+1
-        
+
     context = {
         'nombre_vista' : 'Listado de Usuarios',
         'users' : users,
@@ -1338,7 +1335,7 @@ def validate_access_modal(request,id):
         # print "El rol es: ", request.POST['rol'], " El arbitraje es: ",data_arbitraje
         # print "Validate acces is: ",validate_access(rol,data_arbitraje,clave)
         if validate_access(rol,data_arbitraje,clave) == 1:
-            params_validations= create_params_validations(request,1)
+            params_validations= create_params_validations(request,1,arbitraje_id)
             data['form_is_valid']= True
             data['method']= 'post'
             # para enviar area a la cual pertenece el usuari por sesion 
@@ -1359,7 +1356,7 @@ def validate_access_modal(request,id):
             }
             data['html_form']= render_to_string('ajax/validate_rol_success.html',context,request=request)
         else:
-            params_validations= create_params_validations(request,0)
+            params_validations= create_params_validations(request,0,arbitraje_id)
             data['form_is_valid']= False
             data['method']= 'post'
             context = {
@@ -1371,7 +1368,7 @@ def validate_access_modal(request,id):
     else:
         # print "El metodo es get"
     
-        params_validations= create_params_validations(request,2)
+        params_validations= create_params_validations(request,2,arbitraje_id)
         data['form_is_valid']= True
         data['method']= 'get'
         context = {

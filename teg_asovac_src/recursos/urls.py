@@ -34,8 +34,6 @@ urlpatterns = [
     url(r'^documentos/eventos/$', views.resources_event, name='resources_event'),
     url(r'^documentos/eventos/comision-logistica$',
         views.create_logistics_certificates, name='create_logistics_certificates'),
-    url(r'^certificado/arbitraje-certificado/$',
-        views.resources_arbitration, name='resources_arbitration'),
     url(r'^documentos/sesion/$', views.resources_sesion, name='resources_sesion'),
     url(r'^documentos/sesion/coordinador-sesion/$',
         views.create_session_coord_certificates, name='create_session_coord_certificates'),
