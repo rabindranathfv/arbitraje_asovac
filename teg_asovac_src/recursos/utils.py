@@ -1053,8 +1053,8 @@ def validate_recipients_excel(filename, extension):
             return response
 
         # Se verifica que el campo rol sea 'asistente' o 'conferencista'
-        if role != 'asistente' and role != 'conferencista':
-            response['message'] = "Error fila %i: Rol solo puede ser 'asistente' o 'conferencista'" % (fila)
+        if role != 'asistente' and role != 'conferencista' and role != 'autor':
+            response['message'] = "Error fila %i: Rol solo puede ser 'asistente', 'conferencista' o 'autor'" % (fila)
             return response
 
     response['status'] = 200
