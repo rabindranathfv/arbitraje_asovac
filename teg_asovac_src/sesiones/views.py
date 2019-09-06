@@ -21,11 +21,13 @@ from django.template.loader import render_to_string
 from django.shortcuts import render,get_object_or_404, redirect
 
 from .forms import SesionForm, EspacioFisicoForm, EspacioVirtualForm
+from main_app.decorators import user_is_arbitraje
 
 import datetime, operator
 from datetime import datetime
 # Create your views here.
 @login_required
+@user_is_arbitraje
 def sesiones_pag(request):
     context = {
         "nombre_vista": 'sesiones'
@@ -36,6 +38,7 @@ def sesiones_pag(request):
 
 ####################### Inclusión de eventos en arbitrajes########################
 @login_required
+@user_is_arbitraje
 def sesions_list(request):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -76,6 +79,7 @@ def sesions_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def list_sesions (request):
     response = {}
     response['query'] = []
@@ -165,6 +169,7 @@ def list_sesions (request):
 
 
 @login_required
+@user_is_arbitraje
 def sesions_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -206,6 +211,7 @@ def sesions_edit(request):
 
 
 @login_required
+@user_is_arbitraje
 def sesions_space_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -247,6 +253,7 @@ def sesions_space_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def sesions_space_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -289,6 +296,7 @@ def sesions_space_edit(request):
 
 ####################### Inclusión de eventos en arbitrajes########################
 @login_required
+@user_is_arbitraje
 def create_sesion(request):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -392,6 +400,7 @@ def create_sesion(request):
 
 
 @login_required
+@user_is_arbitraje
 def load_space_form(request, modalidad):
     data = dict()
     #Modalidad = 1 es espacio físico, modalidad = 2 es espacio virtual
@@ -406,6 +415,7 @@ def load_space_form(request, modalidad):
 
 
 @login_required
+@user_is_arbitraje
 def delete_sesion(request, sesion_id):
     
     data = dict()

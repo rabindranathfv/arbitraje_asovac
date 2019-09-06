@@ -23,6 +23,7 @@ from main_app.models import (
     Rol, Sistema_asovac, Usuario_asovac,
     User, Usuario_rol_in_sistema, Area, Sub_area
 )
+from main_app.decorators import user_is_arbitraje
 from main_app.views import (
     get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
     get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
@@ -37,6 +38,7 @@ from .models import Autor, Autores_trabajos, Pagador, Factura, Universidad
 
 # Create your views here.
 @login_required
+@user_is_arbitraje
 def admin_create_author(request):
     if request.method == "POST":
         form = AdminCreateAutorForm(request.POST)
@@ -142,6 +144,7 @@ def admin_create_author(request):
 
 
 @login_required
+@user_is_arbitraje
 def autores_pag(request):
     context = {
         "nombre_vista": 'autores'
@@ -151,6 +154,7 @@ def autores_pag(request):
 
 
 @login_required
+@user_is_arbitraje
 def authors_list(request):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -198,6 +202,7 @@ def authors_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def universitys_list(request):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -244,6 +249,7 @@ def universitys_list(request):
     return render(request, 'autores_universitys_list.html', context)
 
 @login_required
+@user_is_arbitraje
 def list_universitys(request):
     response = {}
     response['query'] = []
@@ -307,6 +313,7 @@ def list_universitys(request):
     return JsonResponse(response)
 
 @login_required
+@user_is_arbitraje
 def delete_university(request, university_id):
     
     data = dict()
@@ -323,6 +330,7 @@ def delete_university(request, university_id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def details_university(request, university_id):
     
     data = dict()
@@ -335,6 +343,7 @@ def details_university(request, university_id):
 
 
 @login_required
+@user_is_arbitraje
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def edit_university(request, university_id):
     data = dict()
@@ -360,6 +369,7 @@ def edit_university(request, university_id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def create_university(request):
     data = dict()
@@ -383,6 +393,7 @@ def create_university(request):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def list_authors (request):
     response = {}
     temporal_list = []
@@ -447,6 +458,7 @@ def list_authors (request):
 
 
 @login_required
+@user_is_arbitraje
 def author_edit(request, autor_id):
     autor = get_object_or_404(Autor, id = autor_id)
     if request.method == 'POST':
@@ -510,6 +522,7 @@ def author_edit(request, autor_id):
 
 
 @login_required
+@user_is_arbitraje
 def author_details(request, autor_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -555,6 +568,7 @@ def author_details(request, autor_id):
 
 
 @login_required
+@user_is_arbitraje
 #Modal para editar datos de autor del usuario logueado
 def author_edit_modal(request, user_id):
     data = dict()
@@ -583,6 +597,7 @@ def author_edit_modal(request, user_id):
 
 #Modal para ver los detalles del autor
 @login_required
+@user_is_arbitraje
 def author_details(request, autor_id):
     data = dict()
     #user =  User.objects.get(id = user_id)
@@ -596,6 +611,7 @@ def author_details(request, autor_id):
 
 
 @login_required
+@user_is_arbitraje
 #Vista para generar certificado
 def generar_certificado(request):
     context={
@@ -606,6 +622,7 @@ def generar_certificado(request):
 
 
 @login_required
+@user_is_arbitraje
 #Vista donde el autor ve los pagadores de sus trabajos y tiene opción de añadir nuevos
 def postular_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -663,6 +680,7 @@ def postular_trabajo(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 #Modal para crear datos del pagador
 def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
     data = dict()
@@ -733,6 +751,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 
 #Modal para ver los detalles del pago para postular un trabajo
 @login_required
+@user_is_arbitraje
 def detalles_pago(request, pagador_id):
     data = dict()
     #usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
@@ -751,6 +770,7 @@ def detalles_pago(request, pagador_id):
 
 #Modal para ver los detalles del pago para postular un trabajo
 @login_required
+@user_is_arbitraje
 def detalles_rechazo_pago(request, factura_id):
     data = dict()
     event_id = request.session['arbitraje_id']
@@ -764,6 +784,7 @@ def detalles_rechazo_pago(request, factura_id):
 
 
 @login_required
+@user_is_arbitraje
 #Modal para crear universidad, ya teniendo los datos del autor en sesion serializados
 def create_university_modal(request):
     data = dict()
@@ -806,6 +827,7 @@ def handle_uploaded_file(file, filename):
 
 
 @login_required
+@user_is_arbitraje
 # Para guardar el archivo recibido del formulario
 def save_file(request,type_load):
 
@@ -1158,6 +1180,7 @@ def create_authors(excel_file, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def load_authors_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
@@ -1208,6 +1231,7 @@ def load_authors_modal(request):
 #                               Exportar Autores                                  #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def export_authors(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -1272,6 +1296,7 @@ def export_authors(request):
 #                               Format para import de Autores                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def format_import_authors(request):
 
     arbitraje_id = request.session['arbitraje_id']

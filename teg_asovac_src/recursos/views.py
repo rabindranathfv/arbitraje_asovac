@@ -31,6 +31,7 @@ from main_app.views import (
     get_roles, get_route_configuracion, get_route_seguimiento,
     validate_rol_status, handle_uploaded_file
 )
+from main_app.decorators import user_is_arbitraje
 from trabajos.models import Trabajo_arbitro
 
 from .utils import (
@@ -245,6 +246,7 @@ def abreviate_if_neccesary(area_nombre):
 
 # Create your views here.
 @login_required
+@user_is_arbitraje
 def recursos_pag(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -260,6 +262,7 @@ def get_data(request, *args, **kwargs):
 
 
 @login_required
+@user_is_arbitraje
 def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -309,11 +312,13 @@ def generate_pdf(request,*args , **kwargs):
 
 
 @login_required
+@user_is_arbitraje
 def create_approval_letters(request):
     pass
 
 
 @login_required
+@user_is_arbitraje
 def create_authors_certificates(request):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -326,6 +331,7 @@ def create_authors_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_author(request):
 
     # print (rol_id)
@@ -406,6 +412,7 @@ def resources_author(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_referee(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -483,6 +490,7 @@ def resources_referee(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_event(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -490,6 +498,7 @@ def resources_event(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_logistics_certificates(request):
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
@@ -571,6 +580,7 @@ def create_logistics_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_sesion(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -578,6 +588,7 @@ def resources_sesion(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_session_coord_certificates(request):
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
@@ -654,6 +665,7 @@ def create_session_coord_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_asovac(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -661,6 +673,7 @@ def resources_asovac(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_organizer_comitee_certificates(request):
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
@@ -738,6 +751,7 @@ def create_organizer_comitee_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_paper(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -826,6 +840,7 @@ def resources_paper(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_name_tags(request):
     form = MultipleRecipientsWithRoleForm(request.POST or None)
     context = create_common_context(request)
@@ -904,6 +919,7 @@ def create_name_tags(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_organizer(request):
     form = MultipleRecipientsWithDateForm(request.POST or None)
     if request.method == 'POST':
@@ -988,6 +1004,7 @@ def resources_organizer(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_lecturer(request):
     form = MultipleRecipientsWithDateAndSubjectForm(request.POST or None)
     if request.method == 'POST':
@@ -1090,8 +1107,8 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
-
 @login_required
+@user_is_arbitraje
 # Para guardar el archivo recibido del formulario
 def save_file(request,type_load):
 
@@ -1105,8 +1122,8 @@ def save_file(request,type_load):
     # print "Ruta del archivo: ",route
     return route
 
-
 @login_required
+@user_is_arbitraje
 def load_lecturers_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
@@ -1155,6 +1172,7 @@ def load_lecturers_modal(request):
 
 
 @login_required
+@user_is_arbitraje
 def load_organizers_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
@@ -1202,6 +1220,7 @@ def load_organizers_modal(request):
 
 
 @login_required
+@user_is_arbitraje
 def load_nametag_recipients_modal(request):
     data = dict()
     form = UploadFileForm(request.POST or None, request.FILES or None)
@@ -1473,6 +1492,7 @@ def generate_massive_organizer_certificates(book, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def format_import_participants(request, option):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -1515,6 +1535,7 @@ def format_import_participants(request, option):
 
 
 @login_required
+@user_is_arbitraje
 def format_nametag_recipients(request):
     # Para definir propiedades del documento de excel
     response = HttpResponse(content_type='application/ms-excel')
