@@ -16,7 +16,15 @@ def user_is_arbitraje(function):
             if 'arbitraje_id' in request.session and 'estado' in request.session:
                 return function(request, *args, **kwargs)
             else:
-                return redirect('main_app:home')
+                ruta=request.path.split('/')
+                is_numeric=ruta[2].isnumeric()              # True
+                tam=len(ruta)                               # 4
+                is_admin= 'administracion' in ruta[1]       # True
+              
+                if is_admin == True and tam == 4 and is_numeric == True:
+                    return function(request, *args, **kwargs)
+                else:
+                    return redirect('main_app:home')
         else:
             if 'arbitraje_id' in request.session and 'estado' in request.session:
                 return function(request, *args, **kwargs)
