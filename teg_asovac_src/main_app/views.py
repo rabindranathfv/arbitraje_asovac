@@ -612,6 +612,7 @@ def detalles_resumen(request):
 
 
 @login_required
+@user_is_arbitraje
 def data_basic(request, arbitraje_id):
     #------------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
@@ -663,6 +664,7 @@ def data_basic(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def generate_COG_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
@@ -706,6 +708,7 @@ def generate_COG_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def generate_COA_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
@@ -741,6 +744,7 @@ def generate_COA_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def generate_ARS_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
@@ -778,6 +782,7 @@ def generate_ARS_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def state_arbitration(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -865,6 +870,7 @@ def state_arbitration(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
     users = User.objects.all()
@@ -931,6 +937,7 @@ def users_list(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
 
@@ -967,6 +974,7 @@ def user_edit(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def user_roles(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -1003,6 +1011,7 @@ def user_roles(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def coord_general(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -1075,6 +1084,7 @@ def coord_general(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def coord_area(request, arbitraje_id):
 
     # print (rol_id)
@@ -1112,6 +1122,7 @@ def coord_area(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def total(request, arbitraje_id):
 
     # print (rol_id)
@@ -1174,6 +1185,7 @@ def apps_selection(request):
 
 # Ajax/para el uso de ventanas modales
 @login_required
+@user_is_arbitraje
 def create_autor_instance_modal(request, user_id):
     data = dict()
     form = AuthorCreateAutorForm()
@@ -1434,6 +1446,7 @@ def get_area(user_id):
 #                              Vista areas subareas                               #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def areas_subareas(request):
 
     estado = request.session['estado']
@@ -2426,6 +2439,7 @@ def list (request):
 #                                   Crud Areas                                    #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewArea(request,id):
     data= dict()
     area=Area.objects.get(id=id)
@@ -2440,6 +2454,7 @@ def viewArea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def editArea(request,id):
     data= dict()
 
@@ -2472,6 +2487,7 @@ def editArea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def removeArea(request,id):
     
     data= dict()
@@ -2512,6 +2528,7 @@ def removeArea(request,id):
 #                  Carga el contenido de la tabla de Subareas                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_subareas(request):
     response = {}
     response['query'] = []
@@ -2578,6 +2595,7 @@ def list_subareas(request):
 #                                 Crud Subareas                                   #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewSubarea(request,id):
     data= dict()
     subarea=Sub_area.objects.get(id=id)
@@ -2592,6 +2610,7 @@ def viewSubarea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def editSubarea(request,id):
     data= dict()
     if request.method == 'POST':
@@ -2622,6 +2641,7 @@ def editSubarea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def removeSubarea(request,id):
     
     data= dict()
@@ -2893,6 +2913,7 @@ def generate_report(request,tipo):
 #                                 Crud Usuarios                                   #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewUsuario(request,id,arbitraje_id):
     data= dict()
     user=User.objects.get(id=id)
@@ -2907,6 +2928,7 @@ def viewUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def editUsuario(request,id,arbitraje_id):
     data= dict()
     user=  get_object_or_404(User,id=id)
@@ -2957,6 +2979,7 @@ def editUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def removeUsuario(request,id,arbitraje_id):
     data= dict()
     # Usuario seleccionado 
@@ -3007,6 +3030,7 @@ def removeUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def changeRol(request,id,arbitraje_id):
     # Lista de roles
     rol_list=Rol.objects.all().filter(id__gt=2)
