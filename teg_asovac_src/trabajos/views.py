@@ -1133,7 +1133,6 @@ def selectArbitro(request,id):
             # return HttpResponse(str("Exit"))
             # listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
             for arb in list_arbitros:
-                print("holis")
                 # print listArbTrab
                 trabajo= Trabajo.objects.get(id=id)
                 arbitro= Arbitro.objects.get(id=arb)

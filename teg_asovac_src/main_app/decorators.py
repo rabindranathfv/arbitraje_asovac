@@ -11,6 +11,7 @@ def user_is_arbitraje(function):
         rol = Rol.objects.get(id = 1)
         # arbitraje = Sistema_asovac.objects.get(id = request.session['arbitraje_id'])
         is_admin= Usuario_rol_in_sistema.objects.filter(rol= rol, usuario_asovac = usuario_asovac).exists()
+        is_author= Usuario_rol_in_sistema.objects.filter(rol= 5, usuario_asovac = usuario_asovac).exists()
 
         if is_admin == True:
             if 'arbitraje_id' in request.session and 'estado' in request.session:
@@ -29,7 +30,10 @@ def user_is_arbitraje(function):
             if 'arbitraje_id' in request.session and 'estado' in request.session:
                 return function(request, *args, **kwargs)
             else:
-                raise PermissionDenied
+                if is_author:
+                    return function(request, *args, **kwargs)
+                else:
+                    raise PermissionDenied
                 
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
