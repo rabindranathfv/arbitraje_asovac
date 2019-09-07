@@ -6,3 +6,16 @@ def trabajos_seguimiento_guard(estado, rol_id):
         return True
     else:
         return False
+
+
+def trabajos_guard(estado, rol_id):
+    if((estado == 3 or estado == 5 ) and 5 >= rol_id):
+        return True
+    else:
+        return False
+
+def add_new_job_version_guard(estado, rol_id):
+    if(estado == 5 and 5 >= rol_id):
+        return True
+    else:
+        return False

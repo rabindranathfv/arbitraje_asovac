@@ -50,6 +50,9 @@ def trabajos(request):
     estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id,arbitraje_id)
+    
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -244,6 +247,8 @@ def edit_trabajo(request, trabajo_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -365,7 +370,9 @@ def detalles_trabajo(request, trabajo_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
-
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+    
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -376,7 +383,7 @@ def detalles_trabajo(request, trabajo_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    trabajo = Trabajo.objects.get( id = trabajo_id)
+    trabajo = get_object_or_404(Trabajo, id = trabajo_id)
 
     context = {
         'nombre_vista' : 'Editar Trabajo',
@@ -462,7 +469,13 @@ def trabajos_resultados_autor(request):
 @login_required
 @user_is_arbitraje
 def delete_job(request, trabajo_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = trabajo_id)
     if request.method == "POST":
@@ -514,9 +527,15 @@ def show_job_observations(request, trabajo_version_final_id):
 @user_is_arbitraje
 #Vista de ajax para añadir autores a un trabajo
 def add_author_to_job(request, autor_trabajo_id):
-    data = dict()
     arbitraje_id = request.session['arbitraje_id']
     sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    estado = sistema_asovac.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+        
+    data = dict()
+    
     autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id) 
     if request.method == "POST":
         form = AddAuthorToJobForm(request.POST, autor_trabajo = autor_trabajo)
@@ -662,7 +681,7 @@ def list_trabajos(request):
 
 
     if search != "" and export == "":
-        print "Consulta Search"
+        print ("Consulta Search")
         # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
@@ -701,10 +720,10 @@ def list_trabajos(request):
         # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
         if export !=  "":
     
-            print "Consulta para Exportar Todo"
+            print ("Consulta para Exportar Todo")
 
         else:
-            print "Consulta Normal"
+            print ("Consulta Normal")
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
             # data=User.objects.all().order_by('pk')[init:limit].query
@@ -828,7 +847,7 @@ def list_pagos(request,id):
     sort= request.POST['sort']
     order= request.POST['order']
     
-    print "Consulta Normal"
+    print ("Consulta Normal")
     
     # consulta mas completa
     
@@ -1322,7 +1341,7 @@ def viewEstatus(request,id):
 @login_required
 @user_is_arbitraje
 def generate_report(request,tipo):
-    print "Excel para trabajos"
+    print ("Excel para trabajos")
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
@@ -1390,7 +1409,7 @@ def generate_report(request,tipo):
 
     else:
         if tipo== '2':
-            print "Estatus del arbitraje"
+            print ("Estatus del arbitraje")
             if rol_user == 1 or rol_user == 2:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
@@ -1510,6 +1529,13 @@ def generate_report(request,tipo):
 @login_required
 @user_is_arbitraje
 def add_new_version_to_job(request, last_version_trabajo_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not add_new_job_version_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
     if request.method == "POST":

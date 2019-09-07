@@ -29,6 +29,7 @@ from main_app.views import (
     get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
     get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 )
+from trabajos.guards import *
 
 from .forms import (
     EditAutorForm, DatosPagadorForm, PagoForm,
@@ -711,6 +712,9 @@ def postular_trabajo(request, trabajo_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , event_id)
 
+    if not trabajos_guard(estado, rol_id):
+        raise PermissionDenied
+
     item_active = 0
     items = validate_rol_status(estado,rol_id,item_active,event_id)
 
@@ -757,6 +761,14 @@ def postular_trabajo(request, trabajo_id):
 @user_is_arbitraje
 #Modal para crear datos del pagador
 def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
+    event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , event_id)
+
+    if not trabajos_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id)
     sistema = request.session['arbitraje_id']
@@ -827,6 +839,14 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
 @login_required
 @user_is_arbitraje
 def detalles_pago(request, pagador_id):
+    event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , event_id)
+
+    if not trabajos_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     #usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     #autor = Autor.objects.get(usuario__usuario = request.user)
@@ -846,6 +866,14 @@ def detalles_pago(request, pagador_id):
 @login_required
 @user_is_arbitraje
 def detalles_rechazo_pago(request, factura_id):
+    event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , event_id)
+
+    if not trabajos_guard(estado, rol_id):
+        raise PermissionDenied
+        
     data = dict()
     event_id = request.session['arbitraje_id']
     factura = get_object_or_404(Factura, id = factura_id)
