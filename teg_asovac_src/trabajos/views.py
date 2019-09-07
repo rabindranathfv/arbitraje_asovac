@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.db import connection
 from django.http import JsonResponse, HttpResponse
@@ -25,14 +26,17 @@ from autores.forms import AddAuthorToJobForm
 from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
+from main_app.decorators import user_is_arbitraje
 
 from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
+from .guards import *
 from .models import Trabajo, Trabajo_arbitro #, Detalle_version_final
 from .tokens import account_activation_token
 
 
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 @login_required
+@user_is_arbitraje
 def trabajos(request):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -46,6 +50,9 @@ def trabajos(request):
     estado = arbitraje.estado_arbitraje
 
     rol_id=get_roles(request.user.id,arbitraje_id)
+    
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -127,6 +134,7 @@ def trabajos(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -140,7 +148,9 @@ def jobs_list(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
-
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+        
     # Seción para obtener área y subarea enviada por sesión y filtrar consulta
     area=request.session['area']
     subarea=request.session['subarea']
@@ -179,6 +189,7 @@ def jobs_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -191,6 +202,8 @@ def jobs_edit(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -221,6 +234,7 @@ def jobs_edit(request):
 
 
 @login_required
+@user_is_arbitraje
 # Vista para editar trabajos
 def edit_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -233,6 +247,8 @@ def edit_trabajo(request, trabajo_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -297,6 +313,7 @@ def edit_trabajo(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 #Vista donde aparecen los trabajos evaluados
 def trabajos_evaluados(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -309,7 +326,8 @@ def trabajos_evaluados(request):
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,event_id)
-
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, event_id)
 
@@ -340,6 +358,7 @@ def trabajos_evaluados(request):
 
 
 @login_required
+@user_is_arbitraje
 def detalles_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -351,7 +370,9 @@ def detalles_trabajo(request, trabajo_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
-
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+    
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -362,7 +383,7 @@ def detalles_trabajo(request, trabajo_id):
     route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
 
     # print items
-    trabajo = Trabajo.objects.get( id = trabajo_id)
+    trabajo = get_object_or_404(Trabajo, id = trabajo_id)
 
     context = {
         'nombre_vista' : 'Editar Trabajo',
@@ -385,6 +406,7 @@ def detalles_trabajo(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def trabajos_resultados_autor(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -445,8 +467,15 @@ def trabajos_resultados_autor(request):
 
 
 @login_required
+@user_is_arbitraje
 def delete_job(request, trabajo_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = trabajo_id)
     if request.method == "POST":
@@ -462,6 +491,7 @@ def delete_job(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def show_job_observations(request, trabajo_version_final_id):
     data = dict()
     trabajo_version_final = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
@@ -494,11 +524,18 @@ def show_job_observations(request, trabajo_version_final_id):
 
 
 @login_required
+@user_is_arbitraje
 #Vista de ajax para añadir autores a un trabajo
 def add_author_to_job(request, autor_trabajo_id):
-    data = dict()
     arbitraje_id = request.session['arbitraje_id']
     sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    estado = sistema_asovac.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if(not trabajos_guard(estado, rol_id)):
+        raise PermissionDenied
+        
+    data = dict()
+    
     autor_trabajo = get_object_or_404(Autores_trabajos, id = autor_trabajo_id) 
     if request.method == "POST":
         form = AddAuthorToJobForm(request.POST, autor_trabajo = autor_trabajo)
@@ -551,6 +588,7 @@ def query_filter(sidebar_item):
 
 
 @login_required
+@user_is_arbitraje
 def show_areas_modal(request,id):
     # print "ID recibido",id 
     data= dict()
@@ -603,12 +641,17 @@ def show_areas_modal(request,id):
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_trabajos(request):
     
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
     arbitraje_id = request.session['arbitraje_id']
+    estado = Sistema_asovac.objects.get(id = arbitraje_id).estado_arbitraje
+    if not trabajos_seguimiento_guard(estado, rol_user):
+        raise PermissionDenied
+
     area= user_area
 
     # print "El rol del usuario logueado es: ",rol_user
@@ -638,7 +681,7 @@ def list_trabajos(request):
 
 
     if search != "" and export == "":
-        print "Consulta Search"
+        print ("Consulta Search")
         # data= Usuario_asovac.objects.select_related('arbitro','usuario').filter( Q(usuario__username__contains=search) | Q(usuario__first_name__contains=search) | Q(usuario__last_name__contains=search) | Q(usuario__email__contains=search) ).order_by(order)
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
@@ -677,10 +720,10 @@ def list_trabajos(request):
         # if request.POST.get('limit', False) == False or request.POST.get('offset', False) == False:
         if export !=  "":
     
-            print "Consulta para Exportar Todo"
+            print ("Consulta para Exportar Todo")
 
         else:
-            print "Consulta Normal"
+            print ("Consulta Normal")
             # consulta basica
             # data=User.objects.all().order_by(order)[init:limit].query
             # data=User.objects.all().order_by('pk')[init:limit].query
@@ -779,6 +822,7 @@ def list_trabajos(request):
 #                  Carga el contenido de la tabla de pagos                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_pagos(request,id):
     
     # factura= Factura.objects.filter(pagador__autor_trabajo__trabajo=id)
@@ -789,6 +833,13 @@ def list_pagos(request,id):
     # print factura.get().pagador.datos_pagador.apellidos
     # print factura.get().pagador.datos_pagador.cedula
     # print factura.get().pagador.apellidos
+    event_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=event_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,event_id)
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
 
     response = {}
     response['query'] = []
@@ -796,7 +847,7 @@ def list_pagos(request,id):
     sort= request.POST['sort']
     order= request.POST['order']
     
-    print "Consulta Normal"
+    print ("Consulta Normal")
     
     # consulta mas completa
     
@@ -885,6 +936,7 @@ def filterArbitro(data,trabajo_id):
     return arbitros
 
 @login_required
+@user_is_arbitraje
 def checkPago(request,id):
 
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -895,8 +947,9 @@ def checkPago(request,id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id,arbitraje_id)
-
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -932,8 +985,17 @@ def checkPago(request,id):
     return render(request,"trabajos_trabajo_pago.html",context)
 
 @login_required
+@user_is_arbitraje
 def validatePago(request,id):
     # print request.POST.get("statusPago")
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
+
     trabajo = Trabajo.objects.get( id = id)
     pago=request.POST.get("statusPago")
     response= dict()
@@ -952,7 +1014,16 @@ def validatePago(request,id):
     return JsonResponse(response)
 
 @login_required
+@user_is_arbitraje
 def review_pay(request, factura_id):
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     event_id = request.session['arbitraje_id']
     factura = get_object_or_404(Factura, id = factura_id)
@@ -989,8 +1060,16 @@ def review_pay(request, factura_id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def selectArbitro(request,id):
     # print "Trabajo id: ",id
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
 
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -1073,7 +1152,6 @@ def selectArbitro(request,id):
             # return HttpResponse(str("Exit"))
             # listArbTrab= Trabajo_arbitro.objects.filter(trabajo_id=id).delete()
             for arb in list_arbitros:
-                print("holis")
                 # print listArbTrab
                 trabajo= Trabajo.objects.get(id=id)
                 arbitro= Arbitro.objects.get(id=arb)
@@ -1133,6 +1211,7 @@ def selectArbitro(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def viewTrabajo(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -1142,8 +1221,10 @@ def viewTrabajo(request, id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
-    rol_id=get_roles(request.user.id,arbitraje_id)
-
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+    
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -1185,6 +1266,7 @@ def viewTrabajo(request, id):
 
 
 @login_required
+@user_is_arbitraje
 def invitacion(request, uidb64, token):
     try:
         invitacion_id = force_text(urlsafe_base64_decode(uidb64))
@@ -1212,8 +1294,15 @@ def invitacion(request, uidb64, token):
 
 
 @login_required
+@user_is_arbitraje
 def viewEstatus(request,id):
     # print "Trabajo id: ",id
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
 
     response= dict()
     
@@ -1250,8 +1339,17 @@ def viewEstatus(request,id):
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def generate_report(request,tipo):
-    print "Excel para trabajos"
+    print ("Excel para trabajos")
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
+
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     user_area=get_area(request.user.id)
@@ -1311,7 +1409,7 @@ def generate_report(request,tipo):
 
     else:
         if tipo== '2':
-            print "Estatus del arbitraje"
+            print ("Estatus del arbitraje")
             if rol_user == 1 or rol_user == 2:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
@@ -1429,7 +1527,15 @@ def generate_report(request,tipo):
 
 
 @login_required
+@user_is_arbitraje
 def add_new_version_to_job(request, last_version_trabajo_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not add_new_job_version_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
     if request.method == "POST":
@@ -1483,6 +1589,7 @@ def add_new_version_to_job(request, last_version_trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def view_referee_observation(request, trabajo_id):
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = trabajo_id) 
@@ -1495,7 +1602,15 @@ def view_referee_observation(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def request_new_pay(request, trabajo_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id) 
+    if not trabajos_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     autores_trabajo = Autores_trabajos.objects.filter(trabajo__id = trabajo_id)
     if request.method == "POST":

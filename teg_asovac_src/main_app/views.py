@@ -12,6 +12,7 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login, l
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse_lazy
 from django.http import JsonResponse,HttpResponse
@@ -31,6 +32,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from .forms import EditPersonalDataForm, ChangePassForm, ArbitrajeStateChangeForm, MyLoginForm, CreateArbitrajeForm, RegisterForm, DataBasicForm,PerfilForm,ArbitrajeAssignCoordGenForm,SubAreaRegistForm,UploadFileForm,AreaCreateForm, AssingRolForm
 
 from .models import Rol,Sistema_asovac,Usuario_asovac, Area, Sub_area, Usuario_rol_in_sistema
+from .decorators import user_is_arbitraje
 
 from autores.models import Autores_trabajos
 from sesiones.models import Sesion
@@ -40,6 +42,9 @@ from arbitrajes.models import Arbitro #,Arbitros_Sistema_asovac
 
 from autores.models import Autor, Universidad
 from autores.forms import AuthorCreateAutorForm
+
+from .guards import *
+
 # Lista de Estados de un arbitraje.
 estados_arbitraje = [ 'Desactivado',
                       'Iniciado',
@@ -109,13 +114,13 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if (1 >= rol_id and item_active == 2) or (estado == 1 and 2 >= rol_id and item_active == 2) or ((estado ==2 or estado == 3 or estado == 4) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (estado ==1 and 3 >= rol_id and item_active==2):
         sidebar_options.append("arbiters")
     # verify_asignar_sesion
-    if(1 >= rol_id and item_active == 2) or (estado == 4 and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (estado ==7 and 2 >= rol_id and item_active == 2):
+    if(1 >= rol_id and item_active == 2) or (estado == 7 and 2 >= rol_id and item_active == 2):
         sidebar_options.append("assing_session")
     # verify_trabajo_option
     if((estado ==3 or estado ==4 or estado ==5) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (1 >= rol_id and item_active ==2) or(estado ==6 and 3 >= rol_id and item_active ==2):
         sidebar_options.append("jobs")
     # verify_sesions_arbitraje_option
-    if (1 >= rol_id and item_active == 2) or ((estado == 4 or estado ==7) and (2 >= rol_id or 3 >= rol_id) and item_active == 2):
+    if (1 >= rol_id and item_active == 2) or ((estado ==7) and (2 >= rol_id or 3 >= rol_id) and item_active == 2):
         sidebar_options.append("session_arbitration")
     # verify_arbitraje_option
     if (1 >= rol_id and item_active == 2) or (estado in [5,6] and (3 >= rol_id) and item_active == 2):
@@ -494,6 +499,7 @@ def home(request):
 
 
 @login_required
+@user_is_arbitraje
 def dashboard(request, arbitraje_id):
     #-----------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
@@ -540,6 +546,11 @@ def dashboard(request, arbitraje_id):
     # for item,val in items.items():
         # print item, ":", val[0]
 
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        editar_datos_basicos = False
+    else:
+        editar_datos_basicos = True
+
     context = {
         'nombre_vista' : 'Panel Principal del Arbitraje',
         'estado' : estado,
@@ -555,6 +566,7 @@ def dashboard(request, arbitraje_id):
         'route_trabajos_sidebar':route_trabajos_sidebar,
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
+        'editar_datos_basicos': editar_datos_basicos
     }
     return render(request, 'main_app_dashboard.html', context)
 
@@ -610,6 +622,7 @@ def detalles_resumen(request):
 
 
 @login_required
+@user_is_arbitraje
 def data_basic(request, arbitraje_id):
     #------------------------------------------------------------------------------------#
     # Aquí debe ocurrir una verificacion: tiene el request.user acceso a este arbitraje?
@@ -621,6 +634,9 @@ def data_basic(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id = get_roles(request.user.id, arbitraje_id)
     arbitraje = Sistema_asovac.objects.get(id=arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        raise PermissionDenied
 
     if request.method == 'GET':
         form = DataBasicForm(instance=arbitraje)
@@ -661,8 +677,15 @@ def data_basic(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def generate_COG_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        raise PermissionDenied
+
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'COG'
     arbitraje.clave_maestra_coordinador_general = random_password
@@ -704,8 +727,16 @@ def generate_COG_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def generate_COA_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        raise PermissionDenied
+
+    
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'COA'
     arbitraje.clave_maestra_coordinador_area = random_password
@@ -739,8 +770,15 @@ def generate_COA_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def generate_ARS_key(request, arbitraje_id):
     arbitraje = get_object_or_404(Sistema_asovac,id=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id) and datos_basicos_guard(estado, rol_id)):
+        raise PermissionDenied
+
     random_password = ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(5))
     random_password += 'ARS'
     arbitraje.clave_maestra_arbitro_subarea = random_password
@@ -776,6 +814,7 @@ def generate_ARS_key(request, arbitraje_id):
     return redirect('main_app:data_basic', arbitraje_id=arbitraje_id)
 
 @login_required
+@user_is_arbitraje
 def state_arbitration(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
@@ -783,6 +822,10 @@ def state_arbitration(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     user_id = request.user.id
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not (configuration_guard(estado, rol_id) and configuration_general_guard(estado, rol_id)):
+        raise PermissionDenied
+
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -863,8 +906,13 @@ def state_arbitration(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
+    
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     users = User.objects.all()
     try:
         print request.session['message-type']
@@ -929,9 +977,11 @@ def users_list(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
-
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -965,12 +1015,16 @@ def user_edit(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def user_roles(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1001,12 +1055,16 @@ def user_roles(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def coord_general(request, arbitraje_id):
     # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1073,6 +1131,7 @@ def coord_general(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def coord_area(request, arbitraje_id):
 
     # print (rol_id)
@@ -1110,6 +1169,7 @@ def coord_area(request, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def total(request, arbitraje_id):
 
     # print (rol_id)
@@ -1172,6 +1232,7 @@ def apps_selection(request):
 
 # Ajax/para el uso de ventanas modales
 @login_required
+@user_is_arbitraje
 def create_autor_instance_modal(request, user_id):
     data = dict()
     form = AuthorCreateAutorForm()
@@ -1233,6 +1294,10 @@ def process_modal(request,form,template_name):
 
 @login_required
 def create_user_modal(request):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     if request.method == 'POST':
         form= RegisterForm(request.POST)
     else:
@@ -1245,6 +1310,10 @@ def create_user_modal(request):
 @login_required
 def update_user_modal(request,id):
     print "update_user_modal"
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     user=  get_object_or_404(User,id=id)
     if request.method == 'POST':
         # form= RegisterForm(request.POST,instance=user)
@@ -1258,6 +1327,10 @@ def update_user_modal(request,id):
 
 @login_required
 def delete_user_modal(request,id):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     data= dict()
     user= get_object_or_404(User,id=id)
     # print user
@@ -1277,6 +1350,10 @@ def delete_user_modal(request,id):
 
 @login_required
 def update_rol_modal(request,id):
+    rol_id=get_roles(request.user.id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     #print "update_rol_modal"
     data= dict()
     # Obtenemos el mayor rol del usuario que hizo la petición
@@ -1324,8 +1401,10 @@ def validate_access_modal(request,id):
     data= dict()
     user_id= request.user.id
     user= get_object_or_404(Usuario_asovac,usuario_id=user_id)
-    arbitraje_id= id 
-    # print "Arbitraje:",arbitraje_id
+    arbitraje_id= id
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    # print "El arbitraje es: {} y el estado es: {}".format(arbitraje_id,estado)
 
     if request.method == 'POST':
         print "El metodo es post"
@@ -1349,6 +1428,8 @@ def validate_access_modal(request,id):
           
             request.session['area']= area_session
             request.session['subarea']=subarea_session
+            request.session['estado']=estado
+            request.session['arbitraje_id'] = arbitraje_id
 
             context = {
                 'params_validations' : params_validations,
@@ -1428,11 +1509,15 @@ def get_area(user_id):
 #                              Vista areas subareas                               #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def areas_subareas(request):
 
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1470,6 +1555,13 @@ def areas_subareas(request):
 #---------------------------------------------------------------------------------#
 @login_required
 def process_areas_modal(request,form,template_name):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
     if request.method == 'POST':
         # if form.is_valid():
@@ -1516,6 +1608,13 @@ def process_areas_modal(request,form,template_name):
 #---------------------------------------------------------------------------------#
 @login_required
 def process_subareas_modal(request,form,template_name):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
     if request.method == 'POST':
         # if form.is_valid():
@@ -1561,6 +1660,13 @@ def process_subareas_modal(request,form,template_name):
 #---------------------------------------------------------------------------------#
 @login_required
 def load_areas_modal(request):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data=dict()
     if request.method == 'POST':
         print 'el metodo es post'
@@ -1601,6 +1707,13 @@ def load_areas_modal(request):
 #---------------------------------------------------------------------------------#
 @login_required
 def load_subareas_modal(request):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data=dict()
     if request.method == 'POST':
         print 'el metodo es post'
@@ -2420,7 +2533,15 @@ def list (request):
 #                                   Crud Areas                                    #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewArea(request,id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
     area=Area.objects.get(id=id)
     data['status']= 200
@@ -2434,7 +2555,15 @@ def viewArea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def editArea(request,id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
 
     if request.method == 'POST':
@@ -2466,8 +2595,15 @@ def editArea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def removeArea(request,id):
-    
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
 
     if request.method == 'POST':
@@ -2506,7 +2642,15 @@ def removeArea(request,id):
 #                  Carga el contenido de la tabla de Subareas                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_subareas(request):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     response = {}
     response['query'] = []
 
@@ -2572,7 +2716,15 @@ def list_subareas(request):
 #                                 Crud Subareas                                   #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewSubarea(request,id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
     subarea=Sub_area.objects.get(id=id)
     data['status']= 200
@@ -2586,7 +2738,15 @@ def viewSubarea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def editSubarea(request,id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
     if request.method == 'POST':
         
@@ -2616,8 +2776,15 @@ def editSubarea(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def removeSubarea(request,id):
-    
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+
+    if not areas_subareas_guard(estado, rol_id):
+        raise PermissionDenied
+
     data= dict()
 
     if request.method == 'POST':
@@ -2734,7 +2901,12 @@ def changepassword_modal(request):
 #---------------------------------------------------------------------------------#
 @login_required
 def list_usuarios(request):
-    
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     response = {}
     response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
@@ -2840,6 +3012,11 @@ def list_usuarios(request):
 #---------------------------------------------------------------------------------#
 @login_required
 def generate_report(request,tipo):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
 
     # Para exportar información de usuarios 
     if tipo == '1':
@@ -2887,7 +3064,14 @@ def generate_report(request,tipo):
 #                                 Crud Usuarios                                   #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewUsuario(request,id,arbitraje_id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     data= dict()
     user=User.objects.get(id=id)
     data['status']= 200
@@ -2901,7 +3085,14 @@ def viewUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def editUsuario(request,id,arbitraje_id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     data= dict()
     user=  get_object_or_404(User,id=id)
 
@@ -2951,7 +3142,14 @@ def editUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def removeUsuario(request,id,arbitraje_id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     data= dict()
     # Usuario seleccionado 
     user_asovac= get_object_or_404(Usuario_asovac,usuario=id)
@@ -3001,7 +3199,14 @@ def removeUsuario(request,id,arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def changeRol(request,id,arbitraje_id):
+    estado = request.session['estado']
+    arbitraje_id = request.session['arbitraje_id']
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id):
+        raise PermissionDenied
+
     # Lista de roles
     rol_list=Rol.objects.all().filter(id__gt=2)
     array_rols=[]

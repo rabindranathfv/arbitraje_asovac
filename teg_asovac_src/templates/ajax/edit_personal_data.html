@@ -13,7 +13,9 @@
         </div>
         <div class="row text-center">
             <p><strong>Roles asignados:</strong> {% for usuario_rol in usuario_rol_in_sistema %}<span class="label label-success">{{ usuario_rol.rol.nombre }}</span> {% endfor %} </p>
-            <p><strong>Subáreas asignadas:</strong> {% for subarea in usuario_asovac.sub_area.all %}<span class="label label-success">{{ subarea.nombre }}</span> {% endfor %}</p>
+            <!--
+                <p><strong>Subáreas asignadas:</strong> {% for subarea in usuario_asovac.sub_area.all %}<span class="label label-success">{{ subarea.nombre }}</span> {% endfor %}</p>
+            -->
             <br>
         </div>
         {% csrf_token %}

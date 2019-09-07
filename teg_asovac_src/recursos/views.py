@@ -9,6 +9,7 @@ from decouple import config
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.forms import ValidationError
 from django.http import JsonResponse,HttpResponse
@@ -19,6 +20,8 @@ from django.utils.timezone import now as timezone_now
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
+
+from .guards import *
 
 from arbitrajes.models import Arbitro
 from autores.forms import ImportFromExcelForm
@@ -31,6 +34,7 @@ from main_app.views import (
     get_roles, get_route_configuracion, get_route_seguimiento,
     validate_rol_status, handle_uploaded_file
 )
+from main_app.decorators import user_is_arbitraje
 from trabajos.models import Trabajo_arbitro
 
 from .utils import (
@@ -245,7 +249,14 @@ def abreviate_if_neccesary(area_nombre):
 
 # Create your views here.
 @login_required
+@user_is_arbitraje
 def recursos_pag(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    if not resultados_guard(estado, rol_id):
+        raise PermissionDenied
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
     return render(request, 'recursos.html', context)
@@ -260,6 +271,7 @@ def get_data(request, *args, **kwargs):
 
 
 @login_required
+@user_is_arbitraje
 def generate_pdf(request,*args , **kwargs):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -309,11 +321,13 @@ def generate_pdf(request,*args , **kwargs):
 
 
 @login_required
+@user_is_arbitraje
 def create_approval_letters(request):
     pass
 
 
 @login_required
+@user_is_arbitraje
 def create_authors_certificates(request):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -326,6 +340,7 @@ def create_authors_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_author(request):
 
     # print (rol_id)
@@ -333,6 +348,9 @@ def resources_author(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
+    
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -406,12 +424,16 @@ def resources_author(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_referee(request):
 
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -483,6 +505,7 @@ def resources_referee(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_event(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -490,7 +513,16 @@ def resources_event(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_logistics_certificates(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
         # Procesamiento manual del formulario
@@ -571,6 +603,7 @@ def create_logistics_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_sesion(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -578,7 +611,16 @@ def resources_sesion(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_session_coord_certificates(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
         # Procesamiento manual del formulario
@@ -654,6 +696,7 @@ def create_session_coord_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_asovac(request):
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
@@ -661,7 +704,16 @@ def resources_asovac(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_organizer_comitee_certificates(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsForm(request.POST or None)
     if request.method == 'POST':
         # Procesamiento manual del formulario
@@ -738,6 +790,7 @@ def create_organizer_comitee_certificates(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_paper(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': True},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -748,6 +801,9 @@ def resources_paper(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -826,7 +882,16 @@ def resources_paper(request):
 
 
 @login_required
+@user_is_arbitraje
 def create_name_tags(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsWithRoleForm(request.POST or None)
     context = create_common_context(request)
     if request.method == 'POST':
@@ -904,7 +969,16 @@ def create_name_tags(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_organizer(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsWithDateForm(request.POST or None)
     if request.method == 'POST':
         # Procesamiento manual del formulario
@@ -988,7 +1062,16 @@ def resources_organizer(request):
 
 
 @login_required
+@user_is_arbitraje
 def resources_lecturer(request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     form = MultipleRecipientsWithDateAndSubjectForm(request.POST or None)
     if request.method == 'POST':
         # Procesamiento manual del formulario
@@ -1090,8 +1173,8 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
-
 @login_required
+@user_is_arbitraje
 # Para guardar el archivo recibido del formulario
 def save_file(request,type_load):
 
@@ -1105,11 +1188,17 @@ def save_file(request,type_load):
     # print "Ruta del archivo: ",route
     return route
 
-
 @login_required
+@user_is_arbitraje
 def load_lecturers_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
 
     if request.method == "POST":
         form = ImportFromExcelForm(request.POST, request.FILES)
@@ -1155,9 +1244,17 @@ def load_lecturers_modal(request):
 
 
 @login_required
+@user_is_arbitraje
 def load_organizers_modal(request):
     data = dict()
     arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+
     if request.method == "POST":
         form = ImportFromExcelForm(request.POST, request.FILES)
         if form.is_valid():
@@ -1202,8 +1299,17 @@ def load_organizers_modal(request):
 
 
 @login_required
+@user_is_arbitraje
 def load_nametag_recipients_modal(request):
     data = dict()
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id , arbitraje_id)
+
+    if not recursos_guard(estado, rol_id):
+        raise PermissionDenied
+        
     form = UploadFileForm(request.POST or None, request.FILES or None)
     context = create_common_context(request)
     response_context = {'title': 'Carga Destinatarios de Portanombres'}
@@ -1473,6 +1579,7 @@ def generate_massive_organizer_certificates(book, arbitraje_id):
 
 
 @login_required
+@user_is_arbitraje
 def format_import_participants(request, option):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -1515,6 +1622,7 @@ def format_import_participants(request, option):
 
 
 @login_required
+@user_is_arbitraje
 def format_nametag_recipients(request):
     # Para definir propiedades del documento de excel
     response = HttpResponse(content_type='application/ms-excel')

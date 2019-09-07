@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'core_app.middleware.AuthenticationMiddleware', 
 ]
 
-AUTO_LOGOUT_DELAY = 30 #Tiempo en minutos
+AUTO_LOGOUT_DELAY = 720 #Tiempo en minutos
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 ROOT_URLCONF = 'core_app.urls'
