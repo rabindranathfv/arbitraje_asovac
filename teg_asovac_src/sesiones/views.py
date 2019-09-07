@@ -5,6 +5,7 @@ from decouple import config
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 
 from .models import Sesion, Coordinadores_sesion, Espacio
@@ -20,8 +21,12 @@ from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render,get_object_or_404, redirect
 
+
 from .forms import SesionForm, EspacioFisicoForm, EspacioVirtualForm
+
 from main_app.decorators import user_is_arbitraje
+from .guards import *
+
 
 import datetime, operator
 from datetime import datetime
@@ -49,7 +54,9 @@ def sesions_list(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
-
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+        
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
@@ -81,6 +88,13 @@ def sesions_list(request):
 @login_required
 @user_is_arbitraje
 def list_sesions (request):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     response = {}
     response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
@@ -307,6 +321,8 @@ def create_sesion(request):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 5
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -417,7 +433,12 @@ def load_space_form(request, modalidad):
 @login_required
 @user_is_arbitraje
 def delete_sesion(request, sesion_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
     data = dict()
     sesion = get_object_or_404(Sesion, id = sesion_id)
     if request.method == "POST":
@@ -433,7 +454,13 @@ def delete_sesion(request, sesion_id):
 
 
 def details_sesion(request, sesion_id):
-    
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     sesion = get_object_or_404(Sesion, id = sesion_id)
     
@@ -468,6 +495,8 @@ def edit_sesion(request, sesion_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 5
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -519,6 +548,8 @@ def sesion_job_list(request, sesion_id):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
 
     item_active = 2
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -568,10 +599,15 @@ def sesion_job_list(request, sesion_id):
     return render(request,"sesiones_sesion_job_list.html",context)
 
 def list_job_sesion (request, sesion_id):
-    response = {}
-    response['query'] = []
     arbitraje_id = request.session['arbitraje_id']
     sistema_asovac = get_object_or_404(Sistema_asovac, id = arbitraje_id)
+    estado = sistema_asovac.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
+    response = {}
+    response['query'] = []
     sesion = get_object_or_404(Sesion, id = sesion_id, sistema = sistema_asovac)
     
     sort= request.POST['sort']
@@ -648,6 +684,13 @@ def list_job_sesion (request, sesion_id):
 
 
 def assign_coordinator(request, sesion_id, autor_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     sesion = get_object_or_404(Sesion, id = sesion_id)
 
@@ -699,6 +742,13 @@ def assign_coordinator(request, sesion_id, autor_id):
     return JsonResponse(data)
 
 def assign_co_coordinator(request, sesion_id, autor_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not sesiones_seguimiento_guard(estado, rol_id):
+        raise PermissionDenied
+
     data = dict()
     sesion = get_object_or_404(Sesion, id = sesion_id)
 
