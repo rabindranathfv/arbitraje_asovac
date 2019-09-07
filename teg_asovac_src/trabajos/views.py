@@ -26,6 +26,7 @@ from autores.forms import AddAuthorToJobForm
 from autores.models import Autor, Autores_trabajos,Factura
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac,User, Area, Sub_area, Usuario_rol_in_sistema
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status, get_area,exist_email
+from main_app.decorators import user_is_arbitraje
 
 from .forms import TrabajoForm, EditTrabajoForm, MessageForm #, AutorObservationsFinalVersionJobForm
 from .guards import *
@@ -35,6 +36,7 @@ from .tokens import account_activation_token
 
 #Vista donde están la lista de trabajos del autor y dónde se le permite crear, editar o eliminar trabajos
 @login_required
+@user_is_arbitraje
 def trabajos(request):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -129,6 +131,7 @@ def trabajos(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_list(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -183,6 +186,7 @@ def jobs_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_edit(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -227,6 +231,7 @@ def jobs_edit(request):
 
 
 @login_required
+@user_is_arbitraje
 # Vista para editar trabajos
 def edit_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -303,6 +308,7 @@ def edit_trabajo(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 #Vista donde aparecen los trabajos evaluados
 def trabajos_evaluados(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -347,6 +353,7 @@ def trabajos_evaluados(request):
 
 
 @login_required
+@user_is_arbitraje
 def detalles_trabajo(request, trabajo_id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -392,6 +399,7 @@ def detalles_trabajo(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def trabajos_resultados_autor(request):
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': True},
@@ -452,6 +460,7 @@ def trabajos_resultados_autor(request):
 
 
 @login_required
+@user_is_arbitraje
 def delete_job(request, trabajo_id):
     
     data = dict()
@@ -469,6 +478,7 @@ def delete_job(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def show_job_observations(request, trabajo_version_final_id):
     data = dict()
     trabajo_version_final = get_object_or_404(Detalle_version_final, id = trabajo_version_final_id)
@@ -501,6 +511,7 @@ def show_job_observations(request, trabajo_version_final_id):
 
 
 @login_required
+@user_is_arbitraje
 #Vista de ajax para añadir autores a un trabajo
 def add_author_to_job(request, autor_trabajo_id):
     data = dict()
@@ -558,6 +569,7 @@ def query_filter(sidebar_item):
 
 
 @login_required
+@user_is_arbitraje
 def show_areas_modal(request,id):
     # print "ID recibido",id 
     data= dict()
@@ -610,6 +622,7 @@ def show_areas_modal(request,id):
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_trabajos(request):
     
     event_id = request.session['arbitraje_id']
@@ -790,6 +803,7 @@ def list_trabajos(request):
 #                  Carga el contenido de la tabla de pagos                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_pagos(request,id):
     
     # factura= Factura.objects.filter(pagador__autor_trabajo__trabajo=id)
@@ -903,6 +917,7 @@ def filterArbitro(data,trabajo_id):
     return arbitros
 
 @login_required
+@user_is_arbitraje
 def checkPago(request,id):
 
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
@@ -951,6 +966,7 @@ def checkPago(request,id):
     return render(request,"trabajos_trabajo_pago.html",context)
 
 @login_required
+@user_is_arbitraje
 def validatePago(request,id):
     # print request.POST.get("statusPago")
     arbitraje_id = request.session['arbitraje_id']
@@ -979,6 +995,7 @@ def validatePago(request,id):
     return JsonResponse(response)
 
 @login_required
+@user_is_arbitraje
 def review_pay(request, factura_id):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -1024,6 +1041,7 @@ def review_pay(request, factura_id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def selectArbitro(request,id):
     # print "Trabajo id: ",id
     arbitraje_id = request.session['arbitraje_id']
@@ -1175,6 +1193,7 @@ def selectArbitro(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def viewTrabajo(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -1229,6 +1248,7 @@ def viewTrabajo(request, id):
 
 
 @login_required
+@user_is_arbitraje
 def invitacion(request, uidb64, token):
     try:
         invitacion_id = force_text(urlsafe_base64_decode(uidb64))
@@ -1256,6 +1276,7 @@ def invitacion(request, uidb64, token):
 
 
 @login_required
+@user_is_arbitraje
 def viewEstatus(request,id):
     # print "Trabajo id: ",id
     arbitraje_id = request.session['arbitraje_id']
@@ -1300,6 +1321,7 @@ def viewEstatus(request,id):
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def generate_report(request,tipo):
     print "Excel para trabajos"
     arbitraje_id = request.session['arbitraje_id']
@@ -1487,6 +1509,7 @@ def generate_report(request,tipo):
 
 
 @login_required
+@user_is_arbitraje
 def add_new_version_to_job(request, last_version_trabajo_id):
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = last_version_trabajo_id)
@@ -1541,6 +1564,7 @@ def add_new_version_to_job(request, last_version_trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def view_referee_observation(request, trabajo_id):
     data = dict()
     trabajo = get_object_or_404(Trabajo, id = trabajo_id) 
@@ -1553,6 +1577,7 @@ def view_referee_observation(request, trabajo_id):
 
 
 @login_required
+@user_is_arbitraje
 def request_new_pay(request, trabajo_id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)

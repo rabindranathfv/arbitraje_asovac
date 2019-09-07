@@ -28,9 +28,11 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import ArbitroForm, RefereeCommentForm
+from main_app.decorators import user_is_arbitraje
 
 # Create your views here.
 @login_required
+@user_is_arbitraje
 def arbitrajes_pag(request):
     context = {
         "nombre_vista": 'Arbitrajes'
@@ -40,6 +42,7 @@ def arbitrajes_pag(request):
 
 
 @login_required
+@user_is_arbitraje
 def estatus_trabajos(request):
 
     main_navbar_options = [{'title':'Configuración',   'icon': 'fa-cogs',      'active': False},
@@ -94,6 +97,7 @@ def estatus_trabajos(request):
 
 
 @login_required
+@user_is_arbitraje
 def jobs_for_review(request):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -139,6 +143,7 @@ def jobs_for_review(request):
 
 
 @login_required
+@user_is_arbitraje
 def detalles_resumen(request, id_trabajo):
     event_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=event_id)
@@ -177,6 +182,7 @@ def detalles_resumen(request, id_trabajo):
 
 
 @login_required
+@user_is_arbitraje
 def referee_list(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -214,6 +220,7 @@ def referee_list(request):
 
 
 @login_required
+@user_is_arbitraje
 def referee_edit(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -253,6 +260,7 @@ def referee_edit(request):
 
 
 @login_required
+@user_is_arbitraje
 def areas_subareas(request):
 
     arbitraje_id = request.session['arbitraje_id']
@@ -292,6 +300,7 @@ def areas_subareas(request):
 
 
 @login_required
+@user_is_arbitraje
 def asignacion_de_sesion(request):
 
     event_id = request.session['arbitraje_id']
@@ -335,6 +344,7 @@ def asignacion_de_sesion(request):
 #                  Carga el contenido de la tabla de arbitros                     #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_arbitros(request):
 
     event_id = request.session['arbitraje_id']
@@ -485,6 +495,7 @@ def list_arbitros(request):
 #            Carga el contenido de la tabla de áreas para árbitros                #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_areas_arbitros(request,id):
     
     event_id = request.session['arbitraje_id']
@@ -555,6 +566,7 @@ def list_areas_arbitros(request,id):
 #          Carga el contenido de la tabla de subáreas para árbitros               #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_subareas_arbitros(request,id):
 
     event_id = request.session['arbitraje_id']
@@ -628,6 +640,7 @@ def list_subareas_arbitros(request,id):
 #                                 Crud Arbitros                                   #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewArbitro(request,id):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
@@ -651,6 +664,7 @@ def viewArbitro(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def editArbitro(request,id):
     print "Edit Arbitro"
     event_id = request.session['arbitraje_id']
@@ -708,6 +722,7 @@ def editArbitro(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def removeArbitro(request,id):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
@@ -761,6 +776,7 @@ def removeArbitro(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def adminRemoveSubarea(request,id,subarea):
     print "Eliminar Subarea ", id
     arbitraje_id = request.session['arbitraje_id']
@@ -820,6 +836,7 @@ def adminRemoveSubarea(request,id,subarea):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def adminAddSubareas(request,id):
     print "ID recibido para agregar areas",id
     arbitraje_id = request.session['arbitraje_id']
@@ -895,6 +912,7 @@ def adminAddSubareas(request,id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def adminAddareas(request,id):
     # print "ID recibido para agregar areas",id
     arbitraje_id = request.session['arbitraje_id']
@@ -950,6 +968,7 @@ def adminAddareas(request,id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def adminChangeAreas(request,id):
     # print "ID recibido para agregar areas",id
     # print request
@@ -1023,6 +1042,7 @@ def adminChangeAreas(request,id):
 
 
 @login_required
+@user_is_arbitraje
 def adminArea(request, id):
     main_navbar_options = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
                            {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
@@ -1069,6 +1089,7 @@ def adminArea(request, id):
 #---------------------------------------------------------------------------------#
 
 @login_required
+@user_is_arbitraje
 def getSubareas(request,id):
 
     # print "Área seleccionada",id
@@ -1090,6 +1111,7 @@ def getSubareas(request,id):
 #                  Carga el contenido de la tabla de arbitraje                    #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_arbitrajes(request):
     
     event_id = request.session['arbitraje_id']
@@ -1268,6 +1290,7 @@ def list_arbitrajes(request):
 #                                CRUD de Arbitrajes                               #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def viewArbitraje(request, id):
     main_navbar_options = [{'title':'Configuración','icon': 'fa-cogs','active': True },
                     {'title':'Monitoreo',       'icon': 'fa-eye',       'active': False},
@@ -1316,6 +1339,7 @@ def viewArbitraje(request, id):
 
 
 @login_required
+@user_is_arbitraje
 def changeStatus(request, id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -1400,6 +1424,7 @@ def changeStatus(request, id):
 
 
 @login_required
+@user_is_arbitraje
 def statusArbitraje(request, id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -1432,6 +1457,7 @@ def statusArbitraje(request, id):
 
 
 @login_required
+@user_is_arbitraje
 def newArbitraje(request, id):
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
@@ -1467,6 +1493,7 @@ def newArbitraje(request, id):
 #             Carga el contenido para asignar sesiones a los trabajos             #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def list_trabajos_aceptados(request):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
@@ -1653,6 +1680,7 @@ def list_trabajos_aceptados(request):
 #                          CRUD Trabajos Aceptados                                #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def editPresentacion(request,id):
     print "Edit Presentacion"
     data= dict()
@@ -1684,6 +1712,7 @@ def editPresentacion(request,id):
     return JsonResponse(data)
 
 @login_required
+@user_is_arbitraje
 def asigSesion(request,id):
 
     # print "Asignar sesión"
@@ -1726,6 +1755,7 @@ def asigSesion(request,id):
 #                               Exportar Arbitro                                  #
 #---------------------------------------------------------------------------------#
 @login_required
+@user_is_arbitraje
 def generate_report(request,tipo):
     print "Excel para arbitros"
     event_id = request.session['arbitraje_id']
@@ -1797,6 +1827,7 @@ def generate_report(request,tipo):
 
 
 @login_required
+@user_is_arbitraje
 def review_job(request, trabajo_id):
     data = dict()
     trabajo = Trabajo.objects.get(id = trabajo_id)
