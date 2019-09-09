@@ -1590,32 +1590,43 @@ def format_import_participants(request, option):
     response['Content-Disposition'] = 'attachment; filename=convencion_asovac_{0}_formato_conferencistas.xls'.format(arbitraje.fecha_inicio_arbitraje.year)
     workbook = xlwt.Workbook()
     worksheet = workbook.add_sheet("Conferencistas")
+    date_format = xlwt.XFStyle()
+    date_format.num_format_str = 'dd/MM/yyyy'
     # Para agregar los titulos de cada columna
     row_num = 0
-    columns = ['Nombre Evento(*)', 'Fecha Evento(*)','Correo electrónico del conferencista(*)',
-               'Nombre Completo del Conferencista(*)']
+    columns = ['Nombre Evento(*)', 'Fecha Evento(*)']
     if option == '2':
+        columns.append('Correo electrónico del conferencista(*)')
+        columns.append('Nombre Completo del Conferencista(*)')
         columns.append('Título de conferencia(*)')
+    else:
+        columns.append('Correo electrónico del organizador(*)')
+        columns.append('Nombre Completo del Organizador(*)')
 
     for col_num in range(len(columns)):
         worksheet.write(row_num, col_num, columns[col_num])
 
     row_num += 1
-    columns = ['Evento 1', '06/07/2019', 'juanito@email.com', 'Juanito Perez']
+    columns = ['Evento 1', 'Fecha', 'juanito@email.com', 'Juanito Perez']
     if option == '2':
         columns.append('Título 1')
         print(columns)
 
     for col_num in range(len(columns)):
-		worksheet.write(row_num, col_num, columns[col_num])
+        if col_num != 1:
+		    worksheet.write(row_num, col_num, columns[col_num])
+        else:
+            worksheet.write(row_num, col_num, datetime.datetime.strptime("01/01/2019", "%d/%M/%Y").date(), date_format)
 
     row_num += 1
-    columns = ['Evento 2', '29/12/2019', 'juanita@email.com', 'Juanita Perez']
+    columns = ['Evento 2',  'Fecha', 'juanita@email.com', 'Juanita Perez']
     if option == '2':
         columns.append('Título 2')
     for col_num in range(len(columns)):
-        print(col_num)
-        worksheet.write(row_num, col_num, columns[col_num])
+        if col_num != 1:
+		    worksheet.write(row_num, col_num, columns[col_num])
+        else:
+            worksheet.write(row_num, col_num, datetime.datetime.strptime("29/10/2019", "%d/%M/%Y").date() , date_format)
 
     workbook.save(response)
     return response

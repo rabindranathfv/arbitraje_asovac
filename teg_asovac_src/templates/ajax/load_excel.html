@@ -8,23 +8,36 @@
 
 <form method="POST" class="" id="loadUsersForm" enctype="multipart/form-data" action="{{action}}" data-url="{{action}}">
     <div class="modal-body">
-        {% include "success_messages.html" %}
-        {% csrf_token %}
-        {{ form | crispy }}
-        <p><strong>*</strong>El proceso de importado puede tomar algunos segundos. Por favor, espere.</p>
+        <div id="question-modal">
+            {% include "success_messages.html" %}
+            {% csrf_token %}
+            {{ form | crispy }}
+            <p><strong>*</strong>El proceso de importado puede tomar algunos segundos. Por favor, espere.</p>
+        </div>
+        <div id="loading-modal" style="display:none;" align="center">
+            <p>Obteniendo información de excel, por favor espere...</p>
+            <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+        </div>
     </div>
     <div class="modal-footer">
         {% if format_url %}
-            <a href="{{ format_url }}" class="btn btn-info btn-lg" type="button"> Descargar Formato</a>
+            <a href="{{ format_url }}" class="btn btn-info btn-lg" type="button" id="download-button-modal"> Descargar Formato</a>
         {% endif %}
-        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-lg btn-primary">Importar</button>
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal" id = "cancel-button-modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary" id = "confirm-button-modal">Importar</button>
     </div>
 </form>
 
 <script>
      $('#loadUsersForm').submit(function(e){
         e.preventDefault();
+        $("#question-modal").hide();
+        $("#confirm-button-modal").hide();
+        $("#cancel-button-modal").hide();
+        $("#download-button-modal").hide();
+        $('.close').hide();
+        $("#loading-modal").show();
+
         var input = document.getElementById('id_file');
         var formData = new FormData();
         formData.append('file',input.files[0]);
