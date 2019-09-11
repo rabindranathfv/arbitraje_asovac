@@ -307,6 +307,7 @@ class FacturaForm(forms.ModelForm):
         }
 	def __init__(self, *args, **kwargs):
 		self.sistema_id = kwargs.pop('sistema_id')
+		self.autor_trabajo_id = kwargs.pop('autor_trabajo_id')
 		super(FacturaForm,self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.fields['monto_total'].widget.attrs['placeholder'] = 'Ejemplo: 100.50'
@@ -319,9 +320,12 @@ class FacturaForm(forms.ModelForm):
 		self.fields['monto_total'].label = "Monto Total"
 
 	def clean_monto_total(self):
+		autor_trabajo = Autores_trabajos.objects.get(id = self.autor_trabajo_id)
 		monto_total = self.cleaned_data['monto_total']
 		if monto_total <= 0:
 			raise forms.ValidationError(_("El monto debe ser mayor que 0."),code = "invalid_monto_total")
+		elif monto_total > autor_trabajo.monto_total:
+			raise forms.ValidationError(_("El monto total indicado supera al monto que le falta pagar por el trabajo (faltan por pagar {0}0Bs)".format(autor_trabajo.monto_total)),code = "invalid_monto_total")
 		return monto_total
 	
 	def clean_fecha_emision(self):
