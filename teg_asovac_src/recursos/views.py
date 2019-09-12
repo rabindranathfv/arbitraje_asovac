@@ -1107,7 +1107,7 @@ def resources_lecturer(request):
                     "Se requiere al menos un destinatario, por favor indique el nombre y el correo electrónico."
                 )
             )
-        print 'form error', form.errors
+        # print 'form error', form.errors
         if not form.errors and form.is_valid():
             fecha_evento = form.cleaned_data['recipients_date']
             nombre_evento = form.cleaned_data['recipients_event_name']
