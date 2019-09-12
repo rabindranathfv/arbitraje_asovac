@@ -95,8 +95,9 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify_estado_arbitrajes_option (This one is always true...)
     sidebar_options.append("arbitration_state")
     # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
-    if (1 >= rol_id and item_active == 1):
+    if ((1 == rol_id or (2 == rol_id and estado >= 2)) and item_active == 1):
         sidebar_options.append("users")
+    if (1 >= rol_id and item_active == 1):
         sidebar_options.append("assing_general_coordinator")
     # verify_asignacion_coordinador_area_option
     if(estado ==2 and 2 >= rol_id and item_active == 1) or (1 >= rol_id and item_active == 1):
@@ -909,8 +910,12 @@ def state_arbitration(request, arbitraje_id):
 @user_is_arbitraje
 def users_list(request, arbitraje_id):
     rol_id = get_roles(request.user.id,arbitraje_id)
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
     
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     users = User.objects.all()
@@ -980,12 +985,14 @@ def users_list(request, arbitraje_id):
 @user_is_arbitraje
 def user_edit(request, arbitraje_id):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guard(rol_id):
-        raise PermissionDenied
-    # print (rol_id)
     arbitraje_id = request.session['arbitraje_id']
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
+
+    if not usuarios_guard(rol_id, estado):
+        raise PermissionDenied
+    # print (rol_id)
+    
 
     item_active = 1
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
@@ -1023,7 +1030,7 @@ def user_roles(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     item_active = 1
@@ -1063,7 +1070,7 @@ def coord_general(request, arbitraje_id):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id)
 
-    if not usuarios_guard(rol_id):
+    if not assign_CG_guard(rol_id):
         raise PermissionDenied
 
     item_active = 1
@@ -1295,7 +1302,12 @@ def process_modal(request,form,template_name):
 @login_required
 def create_user_modal(request):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guard(rol_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     if request.method == 'POST':
@@ -1311,7 +1323,11 @@ def create_user_modal(request):
 def update_user_modal(request,id):
     print "update_user_modal"
     rol_id=get_roles(request.user.id)
-    if not usuarios_guard(rol_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     user=  get_object_or_404(User,id=id)
@@ -1328,7 +1344,11 @@ def update_user_modal(request,id):
 @login_required
 def delete_user_modal(request,id):
     rol_id=get_roles(request.user.id)
-    if not usuarios_guard(rol_id):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id=get_roles(request.user.id,arbitraje_id)
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     data= dict()
@@ -2904,7 +2924,7 @@ def list_usuarios(request):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     response = {}
@@ -3015,7 +3035,7 @@ def generate_report(request,tipo):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     # Para exportar información de usuarios 
@@ -3090,7 +3110,7 @@ def editUsuario(request,id,arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     data= dict()
@@ -3147,7 +3167,7 @@ def removeUsuario(request,id,arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     data= dict()
@@ -3204,7 +3224,7 @@ def changeRol(request,id,arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     # Lista de roles
