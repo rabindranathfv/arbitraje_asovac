@@ -27,11 +27,11 @@ class DashboardCharts(APIView):
         #El siguiente codigo es para obtener los datos necesarios para la grafica de genero
         #de los autores
         women_count = Usuario_rol_in_sistema.objects.filter(rol=5,
-                                                            usuario_asovac__autor__genero=1,
+                                                            usuario_asovac__autor__genero__iexact="femenino",
                                                             sistema_asovac=arbitraje_id,
                                                             status=True).count()
         men_count = Usuario_rol_in_sistema.objects.filter(rol=5,
-                                                          usuario_asovac__autor__genero=0,
+                                                          usuario_asovac__autor__genero__iexact="masculino",
                                                           sistema_asovac=arbitraje_id,
                                                           status=True).count()
 
