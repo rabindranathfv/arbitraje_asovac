@@ -993,7 +993,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['message'] = data['message'] + "Error en la fila {0} el nombre es un campo obligatorio \n".format(fila)
                             break
                         else:
-                            nombres_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=0)).strip())
+                            nombres_is_valid = validate_alpha(excel_file.cell_value(rowx=fila, colx=0).strip())
                             if not nombres_is_valid:
                                 data['status'] = 400
                                 data['message'] = data['message'] + "Error en la fila {0} el campo de nombres, solo debe tener letras \n".format(fila)
@@ -1004,7 +1004,7 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['message'] = data['message'] + "Error en la fila {0} el apellido es un campo obligatorio \n".format(fila)
                             break
                         else:
-                            apellidos_is_valid = validate_alpha(str(excel_file.cell_value(rowx=fila, colx=1)).strip())
+                            apellidos_is_valid = validate_alpha(excel_file.cell_value(rowx=fila, colx=1).strip())
                             if not apellidos_is_valid:
                                 data['status'] = 400
                                 data['message'] = data['message'] + "Error en la fila {0} el campo de apellidos, solo debe tener letras \n".format(fila)
@@ -1102,9 +1102,9 @@ def validate_load_users(filename,extension,arbitraje_id):
                             data['status'] = 400
                             data['message'] = data['message'] + "Error en la fila {0} el área es un campo obligatorio \n".format(fila)
                             break
-                        elif not Area.objects.filter(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()).exists():
+                        elif not Area.objects.filter(codigo__iexact = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()).exists():
                             data['status'] = 400
-                            data['message'] = data['message'] + "Error en la fila {0}, no existe un área con este nombre \n".format(fila)
+                            data['message'] = data['message'] + "Error en la fila {0}, no existe un área con este código \n".format(fila)
                             break
                         else:
                             # Se verifica que el campo subarea1 no este vacio
@@ -1115,19 +1115,19 @@ def validate_load_users(filename,extension,arbitraje_id):
                             else:
                                 area = excel_file.cell_value(rowx=fila, colx=12).encode('utf-8').strip()
                                 subarea_name = excel_file.cell_value(rowx=fila, colx=13).encode('utf-8').strip()
-                                if not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = subarea_name).exists():
+                                if not Sub_area.objects.filter(area__codigo__iexact = area, codigo__iexact = subarea_name).exists():
                                     data['status'] = 400
-                                    data['message'] = data['message'] + "Error en la fila {0}, no hay subarea1 asociada al área de {1} con el nombre indicado \n".format(fila, area)
+                                    data['message'] = data['message'] + "Error en la fila {0}, no hay código de subarea1 asociado al área de código {1} \n".format(fila, area)
                                     break
                                 # Se verifica que el campo subarea2 sea correcto en el caso que tenga datos
-                                if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).encode('utf-8').strip()).exists():
+                                if excel_file.cell_value(rowx=fila, colx=14) != '' and not Sub_area.objects.filter(area__codigo__iexact = area, codigo__iexact = excel_file.cell_value(rowx=fila, colx=14).encode('utf-8').strip()).exists():
                                     data['status'] = 400
-                                    data['message'] = data['message'] + "Error en la fila {0}, no hay subarea2 asociada al área de {1} con el nombre indicado \n".format(fila, area)
+                                    data['message'] = data['message'] + "Error en la fila {0}, no hay código de subarea2 asociada al área de código {1} \n".format(fila, area)
                                     break
                                 # Se verifica que el campo subarea3 sea correcto en el caso que tenga datos
-                                if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area__nombre__iexact = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).encode('utf-8').strip()).exists():
+                                if excel_file.cell_value(rowx=fila, colx=15) != '' and not Sub_area.objects.filter(area__codigo__iexact = area, codigo__iexact = excel_file.cell_value(rowx=fila, colx=15).encode('utf-8').strip()).exists():
                                     data['status'] = 400
-                                    data['message'] = data['message'] + "Error en la fila {0}, no hay subarea3 asociada al área de {1} con el nombre indicado \n".format(fila, area)
+                                    data['message'] = data['message'] + "Error en la fila {0}, no hay código de subarea3 asociada al área de código {1} \n".format(fila, area)
                                     break
                         # Se verifica que el campo universidad no este vacio
                         if excel_file.cell_value(rowx=fila, colx=16) == '':
@@ -1205,16 +1205,16 @@ def create_authors(excel_file, arbitraje_id):
                     usuario_rol_in_sistema = Usuario_rol_in_sistema(rol = rol_author, sistema_asovac = arbitraje, usuario_asovac = usuario_asovac)
                     usuario_rol_in_sistema.save()
 
-                    area = Area.objects.get(nombre__iexact = excel_file.cell_value(rowx=fila, colx=12).strip())
-                    subarea1 = Sub_area.objects.get(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=13).strip())
+                    area = Area.objects.get(codigo__iexact = excel_file.cell_value(rowx=fila, colx=12).strip())
+                    subarea1 = Sub_area.objects.get(area = area, codigo__iexact = excel_file.cell_value(rowx=fila, colx=13).strip())
 
                     usuario_asovac.sub_area.add(subarea1)
                     if excel_file.cell_value(rowx=fila, colx=14) != "":
-                        subarea2= Sub_area.objects.get(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=14).strip())
+                        subarea2= Sub_area.objects.get(area = area, codigo__iexact = excel_file.cell_value(rowx=fila, colx=14).strip())
                         usuario_asovac.sub_area.add(subarea2)
 
                     if excel_file.cell_value(rowx=fila, colx=15) != "":
-                        subarea3= Sub_area.objects.get(area = area, nombre__iexact = excel_file.cell_value(rowx=fila, colx=15).strip())
+                        subarea3= Sub_area.objects.get(area = area, codigo__iexact = excel_file.cell_value(rowx=fila, colx=15).strip())
                         usuario_asovac.sub_area.add(subarea3)
 
                     usuario_asovac.save()
