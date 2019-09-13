@@ -5,8 +5,8 @@ from django.db import models
 from main_app.models import Sistema_asovac,Usuario_asovac
 
 # Create your models here.
-CHOICES_GENERO = (('M','Masculino'),
-                 ('F','Femenino'),
+CHOICES_GENERO = (('Masculino','Masculino'),
+                 ('Femenino','Femenino'),
                  )
 
 """""""""""""""""""""""""""

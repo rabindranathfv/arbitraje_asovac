@@ -2137,7 +2137,14 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                         if sh.cell_value(rowx=fila, colx=8) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
-                            data['message']="Error en la fila {0} el genero es un campo obligatorio".format(fila)
+                            data['message']="Error en la fila {0} el género es un campo obligatorio".format(fila)
+                            break
+
+                        # Se verifica que el campo genero tengaun formato válido
+                        if sh.cell_value(rowx=fila, colx=8) != 'M' and sh.cell_value(rowx=fila, colx=8) != 'F' and sh.cell_value(rowx=fila, colx=8) != 'Masculino' and sh.cell_value(rowx=fila, colx=8) != 'Femenino':
+                            # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
+                            data['status']=400
+                            data['message']="Error en la fila {0} el género no posee un valor válido".format(fila)
                             break
 
                         # Se verifica que el campo cedula o pasaporte no este vacio
@@ -2151,7 +2158,7 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                         if sh.cell_value(rowx=fila, colx=10) == '':
                             # print "Error en la fila {0} el correo {1} ya se encuentra registrado".format(fila,sh.cell_value(rowx=fila, colx=3))
                             data['status']=400
-                            data['message']="Error en la fila {0} el titulo es un campo obligatorio".format(fila)
+                            data['message']="Error en la fila {0} el título es un campo obligatorio".format(fila)
                             break
 
                         # Se verifica que el campo linea de investigación no este vacio
@@ -2272,7 +2279,7 @@ def exist_username(user):
 
 
 def exist_area(area):
-    exist= Area.objects.filter(nombre=area).exists()
+    exist= Area.objects.filter(codigo=area).exists()
     return exist
 
 def exist_subarea_nombre(subarea):
@@ -2294,8 +2301,8 @@ def exist_code(code):
 
 def exist_subarea(area, subarea):
     # print subarea
-    query= Area.objects.get(nombre=area)
-    exist= Sub_area.objects.filter(nombre=subarea,area_id=query.id).exists()
+    query= Area.objects.get(codigo=area)
+    exist= Sub_area.objects.filter(codigo=subarea,area_id=query.id).exists()
     
     return exist
 
@@ -2372,10 +2379,16 @@ def create_users(sh,arbitraje_id,rol):
                 # Guarda los datos asociados al arbitro
                 
                 # Campos obliogatorios
+                genero=''
                 arbitro =Arbitro()
                 arbitro.nombres=sh.cell_value(rowx=fila, colx=0).strip()
                 arbitro.apellidos=sh.cell_value(rowx=fila, colx=1).strip()
-                arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
+                if sh.cell_value(rowx=fila, colx=8).strip() == 'M' or sh.cell_value(rowx=fila, colx=8).strip() == 'Masculino':
+                    genero= 'Masculino'
+                else:
+                    genero= 'Femenino'
+                # arbitro.genero=sh.cell_value(rowx=fila, colx=8).strip()
+                arbitro.genero=genero
                 arbitro.cedula_pasaporte=str(sh.cell_value(rowx=fila, colx=9)).replace(".0","").strip()
                 arbitro.titulo=sh.cell_value(rowx=fila, colx=10).strip()
                 arbitro.linea_investigacion=sh.cell_value(rowx=fila, colx=11).strip()
@@ -2447,6 +2460,7 @@ def create_users(sh,arbitraje_id,rol):
                         html_message=msg_html,              #mensaje en html
                         )
             except:
+                transaction.rollback()
                 print "Ha ocurrido un error con los parametros recibidos"   
                 return 400
     return 200 
@@ -2458,7 +2472,7 @@ def create_users(sh,arbitraje_id,rol):
 #---------------------------------------------------------------------------------#
 def get_subarea(name):
     # print "Area a crear: ",name
-    subarea=Sub_area.objects.get(nombre=name)
+    subarea=Sub_area.objects.get(codigo=name)
     return subarea.id
 
 
