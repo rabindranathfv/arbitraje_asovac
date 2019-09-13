@@ -32,35 +32,17 @@
                             <div class="row">
                                 <h5><b>Datos de evento{% if conferencista %} y conferencia{% endif %}:</b></h5>
                                 <div id = "div_id_recipients_event_name" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
-                                    <!--
-                                    <label for="id_recipients_event_name" class="control-label requiredField" style='text-align:left;'>
-                                        {{form.recipients_event_name.label}}
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    -->
                                     <div class="controls">
                                         {{form.recipients_event_name}}
                                     </div>
                                 </div>
                                 <div id = "div_id_recipients_date" class="form-group col-sm-{% if conferencista %}4{% else %}6{% endif %}">
-                                    <!--
-                                    <label for="id_recipients_date" class="control-label requiredField" style='text-align:left;'>
-                                        {{form.recipients_date.label}}
-                                        <span class="asteriskField">*</span>
-                                    </label>
-                                    -->
                                     <div class="controls">
                                         {{form.recipients_date}}
                                     </div>
                                 </div>
                                 {% if conferencista %}
                                     <div id = "div_id_recipients_conference_name" class="form-group col-sm-4">
-                                        <!--
-                                        <label for="id_recipients_conference_name" class="control-label requiredField" style='text-align:left;'>
-                                            {{form.recipients_conference_name.label}}
-                                            <span class="asteriskField">*</span>
-                                        </label>
-                                        -->
                                         <div class="controls">
                                             {{form.recipients_conference_name}}
                                         </div>
