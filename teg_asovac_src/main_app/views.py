@@ -2257,7 +2257,7 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                     if is_create == 400:
                         data['status']=400
                         data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
-                    print "Los datos del archivo son válidos"
+                    print ("Los datos del archivo son válidos")
 
     return data 
 

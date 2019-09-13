@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
-CHOICES_GENERO = ((0,'Masculino'),
-                 (1,'Femenino'),
+CHOICES_GENERO = (('Masculino','Masculino'),
+                 ('Femenino','Femenino'),
                  )
 
 # Create your models here.
@@ -55,7 +55,7 @@ class Autor(models.Model):
 	marca_temporal = models.DateTimeField(auto_now=True)
 	nombres = models.CharField(max_length=40)
 	apellidos = models.CharField(max_length=40)
-	genero = models.SmallIntegerField(choices=CHOICES_GENERO)
+	genero = models.CharField(max_length=10, choices=CHOICES_GENERO)
 	cedula_pasaporte = models.CharField(max_length=20)
 	correo_electronico = models.EmailField(max_length=254)
 	telefono_oficina = models.CharField(max_length=20)
