@@ -1221,9 +1221,9 @@ def create_authors(excel_file, arbitraje_id):
 
                     new_autor = Autor(usuario = usuario_asovac, nombres = user.first_name, apellidos = user.last_name, correo_electronico = user.email)
                     if excel_file.cell_value(rowx=fila, colx=2).strip().lower() == "m":
-                        new_autor.genero = 0
+                        new_autor.genero = "Masculino"
                     else:
-                        new_autor.genero = 1
+                        new_autor.genero = "Femenino"
 
 
                     new_autor.cedula_pasaporte = excel_file.cell_value(rowx=fila, colx=3).strip()
