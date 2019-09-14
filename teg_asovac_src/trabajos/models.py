@@ -41,7 +41,7 @@ class Trabajo(models.Model):
 	trabajo_version= models.ForeignKey('self', null=True, blank=True)
 	sesion = models.ForeignKey('sesiones.Sesion', null=True, blank = True)
 
-	estatus = models.CharField(max_length=20, default="Pendiente")
+	estatus = models.CharField(max_length=50, default="Pendiente")
 	codigo = models.CharField(max_length=20, blank = True)
 	titulo_espanol = models.CharField(max_length=100)
 	titulo_ingles = models.CharField(max_length=100, blank = True)
@@ -54,6 +54,7 @@ class Trabajo(models.Model):
 	version = models.CharField(max_length=20,blank=True)
 	archivo_trabajo = models.FileField(upload_to = job_directory_path,validators=[validate_file_extension])#upload_to = job_directory_path,
 	requiere_arbitraje= models.BooleanField(default=False)
+	se_carga_correccion= models.BooleanField(default=False)
 	padre =  models.IntegerField(default=0)
 	confirmacion_pago= models.CharField(max_length=20, default="Por Revisar")
 	def __str__(self):
