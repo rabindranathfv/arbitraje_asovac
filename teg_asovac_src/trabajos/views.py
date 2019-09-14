@@ -21,6 +21,7 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from arbitrajes.guards import assign_session_guard
 from arbitrajes.models import Arbitro
 from autores.forms import AddAuthorToJobForm
 from autores.models import Autor, Autores_trabajos,Factura
@@ -1346,8 +1347,6 @@ def generate_report(request,tipo):
     arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id,arbitraje_id) 
-    if not trabajos_seguimiento_guard(estado, rol_id):
-        raise PermissionDenied
 
 
     event_id = request.session['arbitraje_id']
