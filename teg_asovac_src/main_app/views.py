@@ -115,7 +115,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if (1 >= rol_id and item_active == 2) or (estado == 1 and 2 >= rol_id and item_active == 2) or ((estado ==2 or estado == 3 or estado == 4) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (estado ==1 and 3 >= rol_id and item_active==2):
         sidebar_options.append("arbiters")
     # verify_asignar_sesion
-    if(1 >= rol_id and item_active == 2) or (estado == 7 and 2 >= rol_id and item_active == 2):
+    if(1 >= rol_id and item_active == 2) or (estado == 7 and 3 >= rol_id and item_active == 2):
         sidebar_options.append("assing_session")
     # verify_trabajo_option
     if((estado ==3 or estado ==4 or estado ==5) and (2 >= rol_id or 3 >= rol_id) and item_active == 2) or (1 >= rol_id and item_active ==2) or(estado ==6 and 3 >= rol_id and item_active ==2):
@@ -2257,7 +2257,7 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
                     if is_create == 400:
                         data['status']=400
                         data['message']="Ha ocurrido un error, los datos no fueron cargado de forma correcta."
-                    print ("Los datos del archivo son válidos")
+                    print ("Los datos del archivo son validos")
 
     return data 
 
