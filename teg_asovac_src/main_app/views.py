@@ -3391,3 +3391,173 @@ def edit_personal_data(request):
     }
     data['html_form']= render_to_string('ajax/edit_personal_data.html',context,request=request)
     return JsonResponse(data)
+
+
+@login_required
+@user_is_arbitraje
+def usersAdminArea(request, arbitraje_id,id):
+    main_navbar_options = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
+                           {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
+                           {'title':'Resultados', 'icon': 'fa-chart-area', 'active': False},
+                           {'title':'Administración', 'icon': 'fa-archive', 'active': False}]
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+    user= User.objects.get(id=id)
+
+    item_active = 1
+    items = validate_rol_status(estado, rol_id, item_active, arbitraje_id)
+
+    route_conf = get_route_configuracion(estado,rol_id, arbitraje_id)
+    route_seg = get_route_seguimiento(estado,rol_id)
+    route_trabajos_sidebar = get_route_trabajos_sidebar(estado,rol_id,item_active)
+    route_trabajos_navbar = get_route_trabajos_navbar(estado,rol_id)
+    route_resultados = get_route_resultados(estado,rol_id, arbitraje_id)
+
+
+    context = {
+        'nombre_vista' : 'Área usuario',
+        'main_navbar_options' : main_navbar_options,
+        'estado' : estado,
+        'rol_id' : rol_id,
+        'arbitraje_id' : arbitraje_id,
+        'item_active' : item_active,
+        'items':items,
+        'route_conf':route_conf,
+        'route_seg':route_seg,
+        'route_trabajos_sidebar':route_trabajos_sidebar,
+        'route_trabajos_navbar': route_trabajos_navbar,
+        'route_resultados': route_resultados,
+        'user_id':id,
+        'user':user
+    }
+    return render(request, "main_app_admin_areas.html", context)
+
+@login_required
+@user_is_arbitraje
+def changeAreaUser(request,arbitraje_id,id):
+    # print "ID recibido para agregar areas",id
+    # print request
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    data= dict()
+    user= get_object_or_404(User,id=id)
+    auth_user=user    
+    user= Usuario_asovac.objects.get(usuario_id=id)
+    
+    subareas= Sub_area.objects.all()
+    areas= Area.objects.all()
+
+    if request.method == 'POST':
+        # print "El metodo es post para cambiar de area"
+        subareas_post= request.POST.getlist("subareas_value")
+        # print (subareas_post)
+        # print request.POST.getlist("areas_value")
+        # print request.POST.getlist("subareas_value")
+        # print request.POST.getlist("originArea")
+        originArea=request.POST.getlist("originArea")
+        usuario_asovac= Usuario_asovac.objects.get(id=id)
+        # print usuario_asovac.id
+        # Para obtener registros a eliminar 
+        query= "SELECT main_app_usuario_asovac_sub_area.id,main_app_usuario_asovac_sub_area.usuario_asovac_id,main_app_usuario_asovac_sub_area.sub_area_id FROM main_app_usuario_asovac_sub_area INNER JOIN main_app_sub_area on main_app_sub_area.id = main_app_usuario_asovac_sub_area.sub_area_id INNER JOIN main_app_area on main_app_area.id= main_app_sub_area.area_id "
+        where="WHERE main_app_area.id={} AND main_app_usuario_asovac_sub_area.usuario_asovac_id={}".format(originArea[0],id)
+        query= query+where
+        subareasDelete=Area.objects.raw(query)
+        
+        # # Para eliminar registros viejos
+        for subarea in subareasDelete:
+            # print subarea.usuario_asovac_id
+            # print subarea.sub_area_id
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE usuario_asovac_id={} and sub_area_id={}".format(subarea.usuario_asovac_id,subarea.sub_area_id)
+            query= query+where
+            cursor = connection.cursor()
+            cursor.execute(query)
+        
+        array_subareas=subareas_post
+        
+        # # Para agregar nuevos registros
+        for item in array_subareas:
+            query= "INSERT INTO  main_app_usuario_asovac_sub_area (usuario_asovac_id, sub_area_id) VALUES "
+            values="({0},{1})".format(id,item)
+            
+            query= query+values
+            cursor = connection.cursor()
+            cursor.execute(query)
+
+        data['status']=200
+        data['message']= "Se han actualizado las subáreas de forma exitosa."
+
+    else:
+        # print "el metodo es get"
+        context= {
+            'tipo': 'changeAreaArbitro',
+            'areas': areas,
+            'subareas':subareas,
+            'user_id': id,
+        }
+        data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
+
+    return JsonResponse(data)
+
+
+@login_required
+@user_is_arbitraje
+def deleteSubAreaUser(request,arbitraje_id,id,subarea):
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    data= dict()
+    query= "SELECT * FROM main_app_usuario_asovac_sub_area AS usu_sub_a INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id "
+    where=' WHERE usu_sub_a.id=%s ' 
+    query= query+where
+    query_result= Usuario_asovac.objects.raw(query,[subarea])
+
+    # Para contar subareas 
+    query='SELECT * FROM arbitrajes_arbitro AS arb INNER JOIN '+'"arbitrajes_arbitro_Sistema_asovac"'+' as sis_aso on sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac as usu_aso on usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id INNER JOIN main_app_area as ar on ar.id= sub_a.area_id'
+    where=' WHERE usu_aso.id=%s ' 
+    query= query+where
+    total_subarea= Usuario_asovac.objects.raw(query,[id])
+    
+    total=0
+    for item in total_subarea:
+        total=total+1
+
+    for item in query_result:
+        subarea={'id':item.id,'nombre': item.nombre }
+
+    if request.method == 'POST':
+
+        print "para eliminar subarea total: ", total
+        if total > 1:
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE id={}".format(subarea['id'])
+            query= query+where
+            # query_result= Usuario_asovac.objects.raw(query,[subarea['id']])
+            
+            cursor = connection.cursor()
+            cursor.execute(query)
+        
+            data['status']= 200
+            data['message']="La subárea se ha eliminado de forma exitosa."
+        else:
+            data['status']= 200
+            data['message']="El árbitro debe tener al menos 1 subárea asociada."
+
+    else:
+
+        data['status']= 200
+        context={
+            'tipo':"removeSubareaArbitro",
+            'id':id,
+            'subarea':subarea,
+        }
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+    return JsonResponse(data)

@@ -80,7 +80,10 @@ urlpatterns = [
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/editUsuario/(?P<id>\d+)$',views.editUsuario,name='editarUsuario'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/removeUsuario/(?P<id>\d+)$',views.removeUsuario,name='eliminarUsuario'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/changeRol/(?P<id>\d+)$',views.changeRol,name='cambiarRol'),
-    
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)$',views.usersAdminArea,name='usersAdminArea'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)/changeAreaUser$',views.changeAreaUser,name='changeAreaUser'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)/deleteSubAreaUser/(?P<subarea>\d+)$',views.deleteSubAreaUser,name='deleteSubAreaUser'),
+
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
     url(r'^usuario/cambiar-clave/$',views.changepassword_modal,name='changepassword_modal'),
