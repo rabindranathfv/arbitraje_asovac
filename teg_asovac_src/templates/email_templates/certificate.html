@@ -2,7 +2,12 @@
 {% load static %}
 
 {% block title %}
-Sistema ASOVAC: Certificado de {{rol}}
+Sistema ASOVAC:
+{% if letter %} 
+    Carta de {{tipo_carta}}
+{% else %}
+    Certificado de {{rol}}
+{% endif %}
 {% endblock %}
 
 
@@ -11,7 +16,12 @@ Sistema ASOVAC: Certificado de {{rol}}
     <td style="padding: 10px 0 10px 0; font-family: Avenir, sans-serif; font-size: 16px;">
         <!-- Email text goes here-->
         <p style="text-align: justify;">
-            Buenas{% if usuario  %} <strong>{{ usuario }}</strong>{% endif %}, le agradecemos por su participación en el sistema asovac <strong>{{ sistema.nombre}}</strong>. Adjunto se encuentra el certificado que acrédita su participación como <strong>{{rol}}</strong>{% if titulo_trabajo %} en el trabajo <strong>{{titulo_trabajo}}</strong>{% endif %}, gracias por ser parte de nuestra convención.
+            Buenas{% if usuario  %} <strong>{{ usuario }}</strong>{% endif %}, le agradecemos por su participación en el sistema asovac <strong>{{ sistema.nombre}}</strong>. 
+            {% if letter %}
+                Adjunto se encuentra el pdf que acrédita su carta de {{tipo_carta}}, por el trabajo {{titulo_trabajo}}, gracias por ser parte de nuestra convención.
+            {% else %}
+                Adjunto se encuentra el certificado que acrédita su participación como <strong>{{rol}}</strong>{% if titulo_trabajo %} en el trabajo <strong>{{titulo_trabajo}}</strong>{% endif %}, gracias por ser parte de nuestra convención.
+            {% endif %}
         </p>
     </td>
 </tr>

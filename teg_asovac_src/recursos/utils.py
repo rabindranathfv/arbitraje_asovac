@@ -77,7 +77,7 @@ class LetterGenerator:
         story.append(Spacer(1, 12))
 
         # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
-        if self.context["sex"] == 'F':
+        if self.context["sex"] == 'Femenino':
             ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % self.context["full_name"].strip()
         else:
             ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % self.context["full_name"].strip()

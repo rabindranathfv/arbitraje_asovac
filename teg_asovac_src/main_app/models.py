@@ -192,6 +192,7 @@ class Sistema_asovac(models.Model):
         default='Universidad Central de Venezuela'
     )
 
+
     def __str__(self):
         return self.nombre.encode('utf-8', errors='replace')
 
