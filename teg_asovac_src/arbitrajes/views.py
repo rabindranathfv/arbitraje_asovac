@@ -5,11 +5,12 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.shortcuts import render
 from django.db import connection
-
 from datetime import date
+from decouple import config
+
 import random, string,xlrd,os,sys,xlwt,datetime
 from autores.models import Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area,Usuario_rol_in_sistema
@@ -28,7 +29,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import ArbitroForm, RefereeCommentForm
+from .utils import *
 from main_app.decorators import user_is_arbitraje
+from recursos.utils import LetterGenerator
 
 # Create your views here.
 @login_required
@@ -1348,21 +1351,64 @@ def changeStatus(request, id):
     if not arbitrajes_guard(estado, rol_id):
         raise PermissionDenied
 
-
+    sistema_asovac = arbitraje
     response= dict()
     # print "Cambio de estatus del trabajo"
     # Detalle del trabajo
     trabajo = Trabajo.objects.get( id = id)
     area=trabajo.subareas.all()[0].area.nombre
     subarea=trabajo.subareas.all()[0].nombre
-    
+    autores_trabajos = Autores_trabajos.objects.filter(trabajo=trabajo)
+    autores = map( lambda autor_trabajo: autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0], autores_trabajos )
 
     if request.method == 'POST':
+        today = date.today()
+        context_letter = {
+            'header_url': arbitraje.cabecera,
+            'city': arbitraje.ciudad,
+            'day': today.day,
+            'month': month_in_spanish(today.month),
+            'year': today.year,
+            'roman_number': arbitraje.numero_romano,
+            'work_title': trabajo.titulo_espanol,
+            'authors': autores,
+            'work_code': trabajo.codigo,
+            'start_date': arbitraje.fecha_inicio_arbitraje.strftime('%d/%m/%Y'),
+            'finish_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y'),
+            'convention_place': arbitraje.sedes,
+            'convention_saying': arbitraje.slogan,
+            'completed_work_form_link': trabajo.url_trabajo,
+            'max_info_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y')            
+        }
+
+        print ("POST cambio de estado para lel trabajo")
+        #try:
+       
         
-        print "POST cambio de estado para lel trabajo"
-        try:
-            
-            if request.POST.get("status") == "Rechazado" or request.POST.get("status") == "Aceptado con observaciones":
+        if request.POST.get("status") == "Rechazado" or request.POST.get("status") == "Aceptado con observaciones":
+            # Para obtener el resultado de las evaluaciones
+            query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
+            where=' WHERE t.id= %s '
+            query= query+where
+
+            data= Trabajo.objects.raw(query,[id])
+
+            for arbitraje in data:
+                arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
+                if arbitraje.fin_arbitraje == False:
+                    arbitraje_result.fin_arbitraje= True
+                    arbitraje_result.save()
+
+            trabajo.estatus=request.POST.get("status")
+            trabajo.observaciones=request.POST.get("comment").strip()
+            if request.POST.get("status") == "Aceptado con observaciones":
+                trabajo.requiere_arbitraje=True
+
+
+            # print request.POST.get("comment").strip()
+        else:
+            status=request.POST.get("status")
+            if status == "Aceptado":
                 # Para obtener el resultado de las evaluaciones
                 query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
                 where=' WHERE t.id= %s '
@@ -1376,36 +1422,44 @@ def changeStatus(request, id):
                         arbitraje_result.fin_arbitraje= True
                         arbitraje_result.save()
 
-                trabajo.estatus=request.POST.get("status")
-                trabajo.observaciones=request.POST.get("comment").strip()
-                if request.POST.get("status") == "Aceptado con observaciones":
-                    trabajo.requiere_arbitraje=True
-                # print request.POST.get("comment").strip()
-            else:
-                status=request.POST.get("status")
-                if status == "Aceptado":
-                    # Para obtener el resultado de las evaluaciones
-                    query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
-                    where=' WHERE t.id= %s '
-                    query= query+where
+            trabajo.estatus=request.POST.get("status")
+            trabajo.observaciones=""
+            """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. Falta
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    Falta
+            """
+            letter_generator = LetterGenerator()
+            for autor_trabajo in autores_trabajos:
+                context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                context_letter['sex'] = autor_trabajo.autor.genero
+                context_letter['footer_content'] = ""
+                filename = "Carta_Aprobacion_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                    context_letter["roman_number"])
+                certificate = letter_generator.get_approval_letter(filename, context_letter)
+                
+                context_email = {
+                    'sistema': sistema_asovac,
+                    'titulo_trabajo': trabajo.titulo_espanol,
+                    'tipo_carta': 'Aprobación',
+                    'letter': True
+                }
+                msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
 
-                    data= Trabajo.objects.raw(query,[id])
+                email_msg = EmailMultiAlternatives('Carta de aprobación', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
 
-                    for arbitraje in data:
-                        arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
-                        if arbitraje.fin_arbitraje == False:
-                            arbitraje_result.fin_arbitraje= True
-                            arbitraje_result.save()
 
-                trabajo.estatus=request.POST.get("status")
-                trabajo.observaciones=""
-
-            trabajo.save()
-            response['status']= 200
-            response['message']= "El estatus se ha cambiado de manera exitosa."
+        trabajo.save()
+        response['status']= 200
+        response['message']= "El estatus se ha cambiado de manera exitosa."
+        """
         except:
             response['status']= 400
             response['message']= "No se ha podido cambiar el estatus del trabajo."
+        """
             
     else:
        
