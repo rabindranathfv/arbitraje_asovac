@@ -5,11 +5,12 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
 from django.shortcuts import render
 from django.db import connection
-
 from datetime import date
+from decouple import config
+
 import random, string,xlrd,os,sys,xlwt,datetime
 from autores.models import Autores_trabajos
 from main_app.models import Rol,Sistema_asovac,Usuario_asovac, Sub_area,Area,Usuario_rol_in_sistema
@@ -28,7 +29,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 from .forms import ArbitroForm, RefereeCommentForm
+from .utils import *
 from main_app.decorators import user_is_arbitraje
+from recursos.utils import LetterGenerator
 
 # Create your views here.
 @login_required
@@ -406,7 +409,7 @@ def list_arbitros(request):
                 # where=' WHERE au.first_name LIKE %s'
                 query_count=query+group_by
                 query= query+where+group_by
-                print query_count
+                # print query_count
 
         order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
         query= query + " ORDER BY " + order_by
@@ -446,7 +449,7 @@ def list_arbitros(request):
             else:
                 if rol_user == 3:
                     where=' WHERE a.id in ({}) AND asa.sistema_asovac_id={} and ris.sistema_asovac_id={} '.format(area,arbitraje_id,arbitraje_id)
-                    query= "SELECT DISTINCT arb.id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id {} group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular,arb.id ".format(where)
+                    query= "SELECT DISTINCT ua.usuario_id, au.first_name,au.last_name, au.email,ua.id, au.username, STRING_AGG (distinct(a.nombre), ', ') nombre, arb.genero, arb.cedula_pasaporte,arb.titulo, arb.linea_investigacion, arb.telefono_habitacion_celular FROM main_app_usuario_asovac AS ua INNER JOIN auth_user AS au ON ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area AS uasa ON uasa.usuario_asovac_id= ua.id INNER JOIN main_app_sub_area AS sa ON sa.id= uasa.sub_area_id INNER JOIN main_app_area AS a ON a.id = sa.area_id INNER JOIN main_app_usuario_rol_in_sistema AS ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro AS arb ON arb.usuario_id = ua.id INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS asa ON asa.arbitro_id = arb.id {} group by ua.usuario_id,au.first_name,au.last_name,au.email,ua.id,au.username,arb.genero,arb.cedula_pasaporte,arb.titulo,arb.linea_investigacion,arb.telefono_habitacion_celular ".format(where)
 
             order_by="au."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
             query_count=query
@@ -1155,14 +1158,14 @@ def list_arbitrajes(request):
             query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query
             search= search+'%'
-            where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
+            where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
             query= query+where
         else:
             if rol_user == 3:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
-                where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado'".format(area)
+                where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado'".format(area)
                 query= query+where
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -1197,12 +1200,12 @@ def list_arbitrajes(request):
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
                 query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
+                where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
                 query= query+where
             else:
                 if rol_user == 3:
                     query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
-                    where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' ".format(area)
+                    where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' ".format(area)
                     query= query+where
             
             if sort=="nombre":
@@ -1247,7 +1250,7 @@ def list_arbitrajes(request):
                 list_autores= list_autores+aut.autor.nombres+" "+aut.autor.apellidos+", "
             contador= contador+1
 
-        if item.estatus == "Aceptado":
+        if item.estatus == "Aceptado" or item.estatus == "Aceptado con observaciones":
             estatus= '<span class="label label-success">'+item.estatus +'</span>'
         else:
             if item.estatus == "Rechazado":
@@ -1348,23 +1351,121 @@ def changeStatus(request, id):
     if not arbitrajes_guard(estado, rol_id):
         raise PermissionDenied
 
-
+    sistema_asovac = arbitraje
     response= dict()
     # print "Cambio de estatus del trabajo"
     # Detalle del trabajo
     trabajo = Trabajo.objects.get( id = id)
     area=trabajo.subareas.all()[0].area.nombre
     subarea=trabajo.subareas.all()[0].nombre
+    autores_trabajos = Autores_trabajos.objects.filter(trabajo=trabajo)
+    autores = map( lambda autor_trabajo: autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0], autores_trabajos )
     
-
     if request.method == 'POST':
+        today = date.today()
+        context_letter = {
+            'header_url': arbitraje.cabecera,
+            'city': arbitraje.ciudad,
+            'day': today.day,
+            'month': month_in_spanish(today.month),
+            'year': today.year,
+            'roman_number': arbitraje.numero_romano,
+            'work_title': trabajo.titulo_espanol,
+            'authors': autores,
+            'work_code': trabajo.codigo,
+            'start_date': arbitraje.fecha_inicio_arbitraje.strftime('%d/%m/%Y'),
+            'finish_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y'),
+            'convention_place': arbitraje.sedes,
+            'convention_saying': arbitraje.slogan,
+            'completed_work_form_link': trabajo.url_trabajo,
+            'max_info_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y')            
+        }
+        letter_generator = LetterGenerator()
+        print ("POST cambio de estado para lel trabajo")
+        #try:
+       
         
-        print "El metodo es post"
-        print "Parametros enviados"
+        if request.POST.get("status") == "Rechazado" or request.POST.get("status") == "Aceptado con observaciones":
+            # Para obtener el resultado de las evaluaciones
+            query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
+            where=' WHERE t.id= %s '
+            query= query+where
 
-        try:
-            
-            if request.POST.get("status") == "Rechazado":
+            data= Trabajo.objects.raw(query,[id])
+
+            for arbitraje in data:
+                arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
+                if arbitraje.fin_arbitraje == False:
+                    arbitraje_result.fin_arbitraje= True
+                    arbitraje_result.save()
+
+            trabajo.estatus=request.POST.get("status")
+            trabajo.observaciones=request.POST.get("comment").strip()
+            if request.POST.get("status") == "Aceptado con observaciones":
+                trabajo.requiere_arbitraje=True
+                """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. 
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
+                - context["observations"] = Lista de Strings
+                """
+                for autor_trabajo in autores_trabajos:
+                    context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                    context_letter['sex'] = autor_trabajo.autor.genero
+                    context_letter['footer_content'] = ""
+                    context_letter['observations'] = trabajo.observaciones.split('\n')
+                    
+                    filename = "Carta_Aprobado_con_observaciones_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                        context_letter["roman_number"])
+                    certificate = letter_generator.get_approval_letter_w_obs(filename, context_letter)
+                    
+                    context_email = {
+                        'sistema': sistema_asovac,
+                        'titulo_trabajo': trabajo.titulo_espanol,
+                        'tipo_carta': 'aprobado con observaciones',
+                        'letter': True
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                    msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
+
+                    email_msg = EmailMultiAlternatives('Carta de aprobado con observaciones', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
+            else:
+                """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta.
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.
+                - context["deficient_areas"] = Lista de Strings con los nombres de las areas.
+                - context["observations"] = Lista de Strings
+                """
+                for autor_trabajo in autores_trabajos:
+                    context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                    context_letter['sex'] = autor_trabajo.autor.genero
+                    context_letter['footer_content'] = ""
+                    context_letter['deficient_areas'] = [trabajo.subareas.all().first().area.nombre]
+                    context_letter['observations'] = trabajo.observaciones.split('\n')
+                    filename = "Carta_Rechazo_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                        context_letter["roman_number"])
+                    certificate = letter_generator.get_rejection_letter_w_obs(filename, context_letter)
+                    
+                    context_email = {
+                        'sistema': sistema_asovac,
+                        'titulo_trabajo': trabajo.titulo_espanol,
+                        'tipo_carta': 'rechazo',
+                        'letter': True
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                    msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
+
+                    email_msg = EmailMultiAlternatives('Carta de rechazo', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
+
+            # print request.POST.get("comment").strip()
+        else:
+            status=request.POST.get("status")
+            if status == "Aceptado":
                 # Para obtener el resultado de las evaluaciones
                 query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
                 where=' WHERE t.id= %s '
@@ -1378,34 +1479,43 @@ def changeStatus(request, id):
                         arbitraje_result.fin_arbitraje= True
                         arbitraje_result.save()
 
-                trabajo.estatus=request.POST.get("status")
-                trabajo.observaciones=request.POST.get("comment").strip()
-                print request.POST.get("comment").strip()
-            else:
-                status=request.POST.get("status")
-                if status == "Aceptado":
-                    # Para obtener el resultado de las evaluaciones
-                    query= "SELECT ta.* FROM trabajos_trabajo AS t INNER JOIN trabajos_trabajo_arbitro AS ta ON ta.trabajo_id=t.id INNER JOIN arbitrajes_arbitro AS a ON a.id= ta.arbitro_id"
-                    where=' WHERE t.id= %s '
-                    query= query+where
+            trabajo.estatus=request.POST.get("status")
+            trabajo.observaciones=""
+            """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. 
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
+            """
+            for autor_trabajo in autores_trabajos:
+                context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                context_letter['sex'] = autor_trabajo.autor.genero
+                context_letter['footer_content'] = ""
+                filename = "Carta_Aprobacion_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                    context_letter["roman_number"])
+                certificate = letter_generator.get_approval_letter(filename, context_letter)
+                
+                context_email = {
+                    'sistema': sistema_asovac,
+                    'titulo_trabajo': trabajo.titulo_espanol,
+                    'tipo_carta': 'Aprobación',
+                    'letter': True
+                }
+                msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
 
-                    data= Trabajo.objects.raw(query,[id])
+                email_msg = EmailMultiAlternatives('Carta de aprobación', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                email_msg.attach(filename, certificate.content, 'application/pdf')
+                email_msg.attach_alternative(msg_html, "text/html")
+                email_msg.send()
 
-                    for arbitraje in data:
-                        arbitraje_result=Trabajo_arbitro.objects.get(id=arbitraje.id)
-                        if arbitraje.fin_arbitraje == False:
-                            arbitraje_result.fin_arbitraje= True
-                            arbitraje_result.save()
 
-                trabajo.estatus=request.POST.get("status")
-                trabajo.observaciones=""
-
-            trabajo.save()
-            response['status']= 200
-            response['message']= "El estatus se ha cambiado de manera exitosa."
+        trabajo.save()
+        response['status']= 200
+        response['message']= "El estatus se ha cambiado de manera exitosa."
+        """
         except:
             response['status']= 400
             response['message']= "No se ha podido cambiar el estatus del trabajo."
+        """
             
     else:
        

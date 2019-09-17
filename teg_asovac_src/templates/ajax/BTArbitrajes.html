@@ -10,7 +10,7 @@
     </div>
     
     <div class="modal-body">
-        <div class="col-md-12 text-left" style="font-size: 16px;">
+        <!-- <div class="col-md-12 text-left" style="font-size: 16px;">
             <span>
                 <b>Titulo:</b> {{trabajo.titulo_espanol}}   
             </span>
@@ -34,12 +34,13 @@
             <span >
                 <strong>Resumen:</strong> {{trabajo.resumen}}
             </span>
-        </div>
+        </div> -->
         <div class="col-md-12">
              <br>
             <select name="status" id="status" class=" form-control" >
                 <option selected value="">Seleccione</option>
                 <option value="Aceptado">Aceptado</option>
+                <option value="Aceptado con observaciones">Aceptado con observaciones</option>
                 <option value="Rechazado">Rechazado</option>
             </select>
             <br>
@@ -69,10 +70,10 @@
     $(document).ready(function () {
         $("#cke_comment").hide();
         CKEDITOR.instances.comment.on('change', function() {
-            console.log("TEST");
+            // console.log("TEST");
             var comment= CKEDITOR.instances.comment.getData().trim();
             // console.log(CKEDITOR.instances.comment.getData());
-            console.log(comment);
+            // console.log(comment);
             if(comment == ""){
                 $(".sendGenericForm").prop('disabled', true);
             }else{
@@ -83,23 +84,23 @@
 
         $("#status").change(function (e) { 
             var status= $(this).val();
-            console.log("El estatus es: "+status);
-            if (status == "Rechazado") {
+            // console.log("El estatus es: "+status);
+            if (status == "Rechazado" || status == "Aceptado con observaciones") {
                 $("#cke_comment").show();
                 // $("#comment").show();
                 $(".sendGenericForm").prop('disabled', true);
-                console.log("El estatus es rechazado");
+                // console.log("El estatus es rechazado");
             }else{
                 if (status == "Aceptado") {
-                    console.log("El estatus es aceptado");
+                    // console.log("El estatus es aceptado");
                     $(".sendGenericForm").prop('disabled', false);
                     $("#cke_comment").hide();
                     // $("#comment").hide();
                 }else{
-                    console.log("El estatus es pendiente");
+                    // console.log("El estatus es pendiente");
                     $("#cke_comment").hide();
                     // $("#comment").hide();
-                    $(".sendGenericForm").prop('disabled', false);
+                    $(".sendGenericForm").prop('disabled', true);
                 }
             }
             
@@ -165,7 +166,7 @@
                 
                 <div class="modal-body">
                     <div class="col-md-12">
-                        <label for="observaciones">Indique las corecciones para la nueva versión:</label>
+                        <label for="observaciones">Indique las correcciones para la nueva versión:</label>
                         <textarea name="observaciones" id="observaciones" rows="4" class="form-control" style="display:block;">
                         </textarea>
                     </div>

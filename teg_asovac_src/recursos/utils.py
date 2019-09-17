@@ -77,7 +77,7 @@ class LetterGenerator:
         story.append(Spacer(1, 12))
 
         # Añadimos el saludo a la izquierda dependiendo del genero del autor a quien va dirigido.
-        if self.context["sex"] == 'F':
+        if self.context["sex"] == 'Femenino':
             ptext = '<font size=10><b>Estimada Investigadora:<br/>%s,</b></font>' % self.context["full_name"].strip()
         else:
             ptext = '<font size=10><b>Estimado Investigador:<br/>%s,</b></font>' % self.context["full_name"].strip()
@@ -266,10 +266,14 @@ class LetterGenerator:
             story.append(Spacer(1, 3))
         story.append(Spacer(1, 21))
 
-        ptext = '<font size=10>Le agradecemos suministrar la nueva versión del resumen a más tardar\
-         en <b>tres (3) días</b>, a partir de la fecha de envío de esta comunicación, mediante el\
+        """
+        , mediante el\
          <font color=blue><u><link href="%s">Formulario de registro de la versión final del resumen\
          (haga click para abrir el formulario)</link></u></font>.</font>' % self.context["completed_work_form_link"]
+        """
+        
+        ptext = '<font size=10>Le agradecemos suministrar la nueva versión del resumen a más tardar\
+         en <b>tres (3) días</b>, a partir de la fecha de envío de esta comunicación.</font>'
         story.append(Paragraph(ptext, self.styles["Justify"]))
         story.append(Spacer(1, 12))
 

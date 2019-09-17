@@ -22,54 +22,101 @@ def load_default_data(apps, schema_editor):
 
     # Carga de contenido para el area 1
     Area.objects.get_or_create(id=1, nombre="Biociencias", descripcion="-", codigo="BC")
-
-    Sub_area.objects.get_or_create(nombre="Parasitología", descripcion="-", area_id=1, codigo="PAR")
+    
+    Sub_area.objects.get_or_create(nombre="Acuicultura", descripcion="-", area_id=1, codigo="ACUI")
+    Sub_area.objects.get_or_create(nombre="Agronomía", descripcion="-", area_id=1, codigo="AGRO")
+    Sub_area.objects.get_or_create(nombre="Antropología", descripcion="-", area_id=1, codigo="ANT")
+    Sub_area.objects.get_or_create(nombre="Arqueología", descripcion="-", area_id=1, codigo="ARQ")
+    Sub_area.objects.get_or_create(nombre="Biofísica", descripcion="-", area_id=1, codigo="BIOF")
+    Sub_area.objects.get_or_create(nombre="Biología Celular", descripcion="-", area_id=1, codigo="BCEL")
     Sub_area.objects.get_or_create(nombre="Biología Molecular", descripcion="-", area_id=1, codigo="BMOL")
     Sub_area.objects.get_or_create(nombre="Bioquímica", descripcion="-", area_id=1, codigo="BQM")
-    Sub_area.objects.get_or_create(nombre="Tecnología de Alimentos", descripcion="-", area_id=1, codigo="TCA")
-    Sub_area.objects.get_or_create(nombre="Ecología", descripcion="-", area_id=1, codigo="ECO")
-    Sub_area.objects.get_or_create(nombre="Medicina", descripcion="-", area_id=1, codigo="MED")
-    Sub_area.objects.get_or_create(nombre="Inmunología", descripcion="-", area_id=1, codigo="INM")
-    Sub_area.objects.get_or_create(nombre="Microbiología", descripcion="-", area_id=1, codigo="MICB")
+    Sub_area.objects.get_or_create(nombre="Biotecnología", descripcion="-", area_id=1, codigo="BTEC")
+    Sub_area.objects.get_or_create(nombre="Botánica", descripcion="-", area_id=1, codigo="BOT")
+    Sub_area.objects.get_or_create(nombre="Ecología Animal", descripcion="-", area_id=1, codigo="ECOA")
+    Sub_area.objects.get_or_create(nombre="Ecología Vegetal", descripcion="-", area_id=1, codigo="ECOV")
+    Sub_area.objects.get_or_create(nombre="Espeología", descripcion="-", area_id=1, codigo="ESP")
+    Sub_area.objects.get_or_create(nombre="Estudios Ambientales", descripcion="-", area_id=1, codigo="EAMB")
     Sub_area.objects.get_or_create(nombre="Farmacología", descripcion="-", area_id=1, codigo="FMC")
+    Sub_area.objects.get_or_create(nombre="Fisiología", descripcion="-", area_id=1, codigo="FIS")
+    Sub_area.objects.get_or_create(nombre="Genética", descripcion="-", area_id=1, codigo="GEN")
+    Sub_area.objects.get_or_create(nombre="Histología y Morfología Celular", descripcion="-", area_id=1, codigo="HMC")
+    Sub_area.objects.get_or_create(nombre="Inmunología", descripcion="-", area_id=1, codigo="INM")
+    Sub_area.objects.get_or_create(nombre="Mastozoología", descripcion="-", area_id=1, codigo="MTZ")
+    Sub_area.objects.get_or_create(nombre="Medicina", descripcion="-", area_id=1, codigo="MED")
+    Sub_area.objects.get_or_create(nombre="Micología", descripcion="-", area_id=1, codigo="MCLG")
+    Sub_area.objects.get_or_create(nombre="Microbiología", descripcion="-", area_id=1, codigo="MICB")
+    Sub_area.objects.get_or_create(nombre="Neurociencia", descripcion="-", area_id=1, codigo="NEUC")
+    Sub_area.objects.get_or_create(nombre="Nutrición", descripcion="-", area_id=1, codigo="NUT")
+    Sub_area.objects.get_or_create(nombre="Odontología", descripcion="-", area_id=1, codigo="ODON")
+    Sub_area.objects.get_or_create(nombre="Parasitología", descripcion="-", area_id=1, codigo="PAR")
+    Sub_area.objects.get_or_create(nombre="Salud Pública", descripcion="-", area_id=1, codigo="SP")
+    Sub_area.objects.get_or_create(nombre="Tecnología de Alimentos", descripcion="-", area_id=1, codigo="TCA")
+    
+    
+    
+    
 
     # Para cargar contenido para el area 2
     Area.objects.get_or_create(id=2, nombre="Ciencias Exactas", descripcion="-", codigo="CE")
 
     Sub_area.objects.get_or_create(nombre="Matemática", descripcion="-", area_id=2, codigo="MAT")
-    Sub_area.objects.get_or_create(nombre="Química Organometálica", descripcion="-", area_id=2, codigo="OM")
-    Sub_area.objects.get_or_create(nombre="Productos Naturales", descripcion="-", area_id=2, codigo="PN")
-    Sub_area.objects.get_or_create(nombre="Farmacología", descripcion="-", area_id=2, codigo="FMC")
-    Sub_area.objects.get_or_create(nombre="Nanosistemas", descripcion="-", area_id=2, codigo="NS")
+
+    Sub_area.objects.get_or_create(nombre="Física de Materiales", descripcion="-", area_id=2, codigo="FMAT")
+    Sub_area.objects.get_or_create(nombre="Astronomía", descripcion="-", area_id=2, codigo="ASTM")
+    Sub_area.objects.get_or_create(nombre="Física Nuclear", descripcion="-", area_id=2, codigo="FNUC")
+    Sub_area.objects.get_or_create(nombre="Física de Particulas", descripcion="-", area_id=2, codigo="FPAR")
+    Sub_area.objects.get_or_create(nombre="Física Teórica", descripcion="-", area_id=2, codigo="FT")
+    Sub_area.objects.get_or_create(nombre="Óptica y Plasmas", descripcion="-", area_id=2, codigo="OYP")
+    Sub_area.objects.get_or_create(nombre="Física del Espacio", descripcion="-", area_id=2, codigo="FE")
+    Sub_area.objects.get_or_create(nombre="Física Médica", descripcion="-", area_id=2, codigo="FMED")
+    Sub_area.objects.get_or_create(nombre="Física General", descripcion="-", area_id=2, codigo="FG")
+    Sub_area.objects.get_or_create(nombre="Cosmología", descripcion="-", area_id=2, codigo="COS")
+    Sub_area.objects.get_or_create(nombre="Instrumentacion", descripcion="-", area_id=2, codigo="INST")
+
+    Sub_area.objects.get_or_create(nombre="Nanosistemas", descripcion="-", area_id=2, codigo="NSIS")
+    Sub_area.objects.get_or_create(nombre="Organometálica", descripcion="-", area_id=2, codigo="OMET")
+    Sub_area.objects.get_or_create(nombre="Productos Naturales", descripcion="-", area_id=2, codigo="PNAT")
+    Sub_area.objects.get_or_create(nombre="Química Analítica", descripcion="-", area_id=2, codigo="QAN")
+    Sub_area.objects.get_or_create(nombre="Química Orgánica", descripcion="-", area_id=2, codigo="QOR")
+    Sub_area.objects.get_or_create(nombre="Geoquímica", descripcion="-", area_id=2, codigo="GEOQ")
+    Sub_area.objects.get_or_create(nombre="Polímeros", descripcion="-", area_id=2, codigo="POL")
+    Sub_area.objects.get_or_create(nombre="Petróleo", descripcion="-", area_id=2, codigo="FIST")
 
     # Para cargar contenido para el area 3
     Area.objects.get_or_create(id=3,nombre="Tecnología",descripcion="-",codigo="TEC")
 
+    Sub_area.objects.get_or_create(nombre="Arquitectura y Urbanismo",descripcion="-",area_id=3,codigo="AYU")
+    Sub_area.objects.get_or_create(nombre="Ciencias de los Materiales",descripcion="-",area_id=3,codigo="CMAT")
+    Sub_area.objects.get_or_create(nombre="Ciencias de la Tierra",descripcion="-",area_id=3,codigo="CT")
     Sub_area.objects.get_or_create(nombre="Computación",descripcion="-",area_id=3,codigo="COMP")
-    Sub_area.objects.get_or_create(nombre="Ingeniería Electrónica y Biomédica",descripcion="-",area_id=3,codigo="IEB")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Ambiental",descripcion="-",area_id=3,codigo="IAMB")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Biomédica",descripcion="-",area_id=3,codigo="IBME")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Civil",descripcion="-",area_id=3,codigo="ICIV")
+    Sub_area.objects.get_or_create(nombre="Ingeniería de Materiales",descripcion="-",area_id=3,codigo="IMAT")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Eléctrica",descripcion="-",area_id=3,codigo="IE")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Electrónica",descripcion="-",area_id=3,codigo="IET")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Industrial",descripcion="-",area_id=3,codigo="IIND")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Mecánica",descripcion="-",area_id=3,codigo="IMEC")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Química",descripcion="-",area_id=3,codigo="IQUI")
+    Sub_area.objects.get_or_create(nombre="Ingeniería Metalúrgica",descripcion="-",area_id=3,codigo="IMET")
+    Sub_area.objects.get_or_create(nombre="Polímeros",descripcion="-",area_id=3,codigo="POLI")
+    Sub_area.objects.get_or_create(nombre="Sismología",descripcion="-",area_id=3,codigo="SISM")
 
     # Para cargar contenido para el area 4
-    Area.objects.get_or_create(id=4,nombre="Ciencias Sociales",descripcion="-",codigo="CS")
+    Area.objects.get_or_create(id=4,nombre="Ciencias Sociales y Humanísticas",descripcion="-",codigo="CSH")
 
-    Sub_area.objects.get_or_create(nombre="Ciencias Sociales 1",descripcion="-",area_id=4,codigo="CS1")
-    Sub_area.objects.get_or_create(nombre="Educación 1",descripcion="-",area_id=4,codigo="EDU1")
-
-    # Para cargar contenido para el area 5
-    Area.objects.get_or_create(id=5,nombre="Congreso de la Sociedad Venezolana de Física",descripcion="-",codigo="CF")
-
-    Sub_area.objects.get_or_create(nombre="Física General",descripcion="-",area_id=5,codigo="FGEN")
-    Sub_area.objects.get_or_create(nombre="Óptica y Plasmas",descripcion="-",area_id=5,codigo="OPP")
-    Sub_area.objects.get_or_create(nombre="Astronomía",descripcion="-",area_id=5,codigo="AST")
-    Sub_area.objects.get_or_create(nombre="Física de Partículas Virtual",descripcion="-",area_id=5,codigo="FPART-V")
-    Sub_area.objects.get_or_create(nombre="Cosmología",descripcion="-",area_id=5,codigo="COSM")
-    Sub_area.objects.get_or_create(nombre="Materia Condensada Teórica",descripcion="-",area_id=5,codigo="MCT")
-    Sub_area.objects.get_or_create(nombre="Instrumentación",descripcion="-",area_id=5,codigo="INST")
-    Sub_area.objects.get_or_create(nombre="Física Médica",descripcion="-",area_id=5,codigo="FMED")
-    Sub_area.objects.get_or_create(nombre="Física Nuclear",descripcion="-",area_id=5,codigo="FNU")
-    Sub_area.objects.get_or_create(nombre="Física de los Materiales",descripcion="-",area_id=5,codigo="FMAT")
-    Sub_area.objects.get_or_create(nombre="Física Teórica",descripcion="-",area_id=5,codigo="FTEO")
-    Sub_area.objects.get_or_create(nombre="Física del Espacio",descripcion="-",area_id=5,codigo="FESP")
-
+    Sub_area.objects.get_or_create(nombre="Administración",descripcion="-",area_id=4,codigo="ADM")
+    Sub_area.objects.get_or_create(nombre="Administración de Ciencias y Tecnología",descripcion="-",area_id=4,codigo="ACYT")
+    Sub_area.objects.get_or_create(nombre="Ciencias Políticas",descripcion="-",area_id=4,codigo="CPOL")
+    Sub_area.objects.get_or_create(nombre="Ciencias Sociales",descripcion="-",area_id=4,codigo="CS")
+    Sub_area.objects.get_or_create(nombre="Economía",descripcion="-",area_id=4,codigo="ECNM")
+    Sub_area.objects.get_or_create(nombre="Educación",descripcion="-",area_id=4,codigo="EDU")
+    Sub_area.objects.get_or_create(nombre="Historia",descripcion="-",area_id=4,codigo="HIST")
+    Sub_area.objects.get_or_create(nombre="Lingüística",descripcion="-",area_id=4,codigo="LING")
+    Sub_area.objects.get_or_create(nombre="Literatura",descripcion="-",area_id=4,codigo="LIT")
+    Sub_area.objects.get_or_create(nombre="Psicología",descripcion="-",area_id=4,codigo="PSI")
+    Sub_area.objects.get_or_create(nombre="Turismo y Hotelería",descripcion="-",area_id=4,codigo="TYH")
 
 class Migration(migrations.Migration):
 

@@ -1,2 +1,15 @@
-Sistema ASOVAC: Certificado de árbitro
-Hola {{ arbitro.nombres }} {{ arbitro.apellidos }}, le agradecemos por su participación en el sistema asovac {{ sistema.nombre}}. Adjunto se encuentra el pdf de su certificado como arbitro, gracias por ser parte de nuestra convención.
+Sistema ASOVAC:
+{% if letter %} 
+    Carta de {{tipo_carta}}
+{% else %}
+    Certificado de {{rol}}
+{% endif %}
+
+
+
+Buenas{% if usuario  %} {{ usuario }} {% endif %}, le agradecemos por su participación en el sistema asovac {{ sistema.nombre}}.
+{% if letter %}
+    Adjunto se encuentra el pdf que acrédita su carta de {{tipo_carta}}, por el trabajo {{titulo_trabajo}}, gracias por ser parte de nuestra convención.
+{% else %}
+    Adjunto se encuentra el certificado que acrédita su participación como {{rol}} {% if titulo_trabajo %} en el trabajo {{titulo_trabajo}}{% endif %}, gracias por ser parte de nuestra convención.
+{% endif %}

@@ -16,7 +16,7 @@
 					<div class="col-sm-4">
 						<a data-url="{% url 'recursos:load_nametag_recipients_modal' %}"
 						   class="show-form btn btn-primary btn-block btn-lg" type="button">
-							<i class="fa fa-file-excel" style="color:white"></i> Generación Masiva de Portanombres
+							<i class="fa fa-file-excel" style="color:white"></i> Generación Masiva
 						</a>
 					</div>
 				</div>
@@ -32,7 +32,7 @@
 							{% csrf_token %}
 							{% include "success_messages.html" %}
 							{% include "errors_form.html" %}
-							<div class="container" id="form-container">
+							<div id="form-container">
 								<h5><b>Tipo de Portanombres:</b></h5>
 								<div class="row">
 									<div class="col-sm-6 form-group">
@@ -44,7 +44,7 @@
 								<div class="row" style="margin-top: 30px; margin-bottom: 50px">
 			                        <h5 class="col-sm-12"><b>Lista de destinatarios:</b></h5>
 			                        <div class="col-sm-12">
-			                            <div class="container" id="form-container">
+			                            <div id="form-container">
 			                                <div class="row">
 			                                    <div class="col-sm-6 form-group">
 			                                        <div class="controls">
@@ -60,7 +60,7 @@
 			                            </div>
 			                            <br>
 			                            <div class="row">
-			                                <div class="container" align="center">
+			                                <div align="center">
 			                                    <button type="submit" class="btn btn-primary btn-lg col-sm-offset-9 col-sm-3" id="question" >
 			                                        <span>Enviar</span>
 			                                    </button>
@@ -72,6 +72,7 @@
 			                                    </button>
 			                                </div>
 			                            </div>
+										
 			                        </div>
 			                    </div>
 							</div>

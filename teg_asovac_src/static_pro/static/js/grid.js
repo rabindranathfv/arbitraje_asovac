@@ -94,7 +94,10 @@ $.ajaxSetup({
             '</a>  ',
             '<a class="changeRol" href="javascript:void(0)" title="Roles" >', 
                 '<i class="fas fa-users"></i>', 
-            '</a>' 
+            '</a> ',
+            '<a class="usersAdminArea" href="javascript:void(0)" title="Detalle Área">',
+            '<i class="fas fa-exchange-alt"></i>',
+            '</a>  ' ,
         ].join('');
         // '<a class="removeUsuario" href="javascript:void(0)" title="Eliminar">',
         //     '<i class="fa fa-trash"></i>',
@@ -144,7 +147,7 @@ $.ajaxSetup({
             var actions='<a class="viewArbitraje" href="javascript:void(0)" title="Ver"><i class="far fa-eye"></i></a>  ';
             actions= actions+'<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus"><i class="fas fa-file-signature"></i></a>  ';
             actions= actions+'<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje"><i class="fas fa-history"></i></a>  ';
-            actions= actions+'<a class="newArbitraje" href="javascript:void(0)" title="Asignar nueva revisión"><i class="fas fa-exchange-alt"></i></a>  ';
+            // actions= actions+'<a class="newArbitraje" href="javascript:void(0)" title="Asignar nueva revisión"><i class="fas fa-exchange-alt"></i></a>  ';
 
         }else{
             var actions='<a class="viewArbitraje" href="javascript:void(0)" title="Ver"><i class="far fa-eye"></i></a>  ';
@@ -179,6 +182,22 @@ $.ajaxSetup({
         return [
             '<a class="removeSubareaArbitro" href="javascript:void(0)" title="Eliminar">',
             '<i class="fa fa-trash"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
+    function operateChangeAreaUser(value, row, index) {
+        return [
+            '<a class="changeAreaUser" href="javascript:void(0)" title="Cambiar Área">',
+            '<i class="fas fa-edit"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
+    function operateDeleteAreaUser(value, row, index) {
+        return [
+            '<a class="deleteSubAreaUser" href="javascript:void(0)" title="Cambiar Área">',
+            '<i class="fas fa-trash"></i>',
             '</a>  ' ,
         ].join('');
     }
@@ -383,6 +402,11 @@ $.ajaxSetup({
                 }
             });
         },
+        'click .usersAdminArea': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            location.href=route;
+        },
         'click .editArbitro': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
             console.log(route);
@@ -457,7 +481,44 @@ $.ajaxSetup({
             });
         
         },
+        'click .deleteSubAreaUser': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
         'click .changeAreaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class");
+            console.log(route+row.id);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                    $('#originArea').val(row.id);  
+                }
+            });
+        
+        },
+        'click .changeAreaUser': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+"/"+$(this).attr("class");
             console.log(route+row.id);
             $.ajax({

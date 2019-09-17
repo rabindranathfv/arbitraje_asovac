@@ -90,6 +90,8 @@ class DataBasicForm(forms.ModelForm):
             'descripcion',
             'fecha_inicio_arbitraje',
             'fecha_fin_arbitraje',
+            'porcentaje_iva',
+            'monto_pagar_trabajo',
             'cabecera',
             'color_fondo_pie',
             'color_letras_pie',
@@ -100,17 +102,21 @@ class DataBasicForm(forms.ModelForm):
             'logo',
             'ciudad',
             'numero_romano',
-            'sedes'
+            'sedes',
+            'slogan'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
             'fecha_fin_arbitraje': forms.DateInput(format=my_date_format),
-            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'})
+            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'}),
+            'slogan': forms.Textarea(attrs={'rows':2, 'placeholder':'La casa que vence la sombra'}),
         }
         labels = {
             'descripcion': 'Descripción',
             'fecha_fin_arbitraje': 'Fecha de Culminación',
             'fecha_inicio_arbitraje': 'Fecha de Inicio',
+            'porcentaje_iva': 'IVA',
+            'monto_pagar_trabajo': 'Costo de postulación',
             'cabecera': 'URL de Imagen Cabecera',
             'color_fondo_pie': 'Color de Pie de Página',
             'color_letras_pie': 'Color Texto de Pie de Página',
@@ -138,6 +144,8 @@ class DataBasicForm(forms.ModelForm):
             Field('descripcion', rows="4"),
             'fecha_inicio_arbitraje',
             'fecha_fin_arbitraje',
+            'porcentaje_iva',
+            'monto_pagar_trabajo',
             HTML("""<h3 style="margin-left:30px; margin-top:40px">Personalización de Correos</h3><hr>""", ),
             'cabecera',
             Div(
@@ -169,6 +177,7 @@ class DataBasicForm(forms.ModelForm):
             'ciudad',
             'numero_romano',
             'sedes',
+            'slogan',
             'autoridad1',
             'firma1',
             Div(

@@ -20,7 +20,13 @@ def datos_basicos_guard(estado, rol_id):
     else:
         return False
 
-def usuarios_guard(rol_id):
+def usuarios_guard(rol_id, estado):
+    if rol_id == 1 or (rol_id == 2 and estado >= 2):
+        return True
+    else:
+        return False
+
+def assign_CG_guard(rol_id):
     if rol_id == 1:
         return True
     else:
