@@ -1557,6 +1557,7 @@ def add_new_version_to_job(request, last_version_trabajo_id):
             
             #Se conecta la nueva versión del trabajo con su "padre"
             trabajo.trabajo_version = job_new_version
+            trabajo.se_carga_correccion = True
             trabajo.save()
 
             #Se actualiza la tabla autores_trabajos con la última versión del trabajo
