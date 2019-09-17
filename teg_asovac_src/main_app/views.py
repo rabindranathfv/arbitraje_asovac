@@ -397,6 +397,12 @@ def register(request):
         form2=SubAreaRegistForm(request.POST)
         if form.is_valid():
             user= form.save()
+
+            if user.id == 1: #EL primer usuario creado en el sistema será admin
+                user.is_staff = True 
+                user.is_superuser= True
+                user.save()
+            
             usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
             # Para crear instancia de arbitro
             arbitro =Arbitro()
