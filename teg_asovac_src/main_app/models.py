@@ -191,7 +191,10 @@ class Sistema_asovac(models.Model):
         max_length=255,
         default='Universidad Central de Venezuela'
     )
-
+    slogan = models.TextField(
+        max_length = 255,
+        default='La casa que vence la sombra'
+    )
 
     def __str__(self):
         return self.nombre.encode('utf-8', errors='replace')

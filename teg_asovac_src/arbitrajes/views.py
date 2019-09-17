@@ -1351,7 +1351,7 @@ def changeStatus(request, id):
     if not arbitrajes_guard(estado, rol_id):
         raise PermissionDenied
 
-
+    sistema_asovac = arbitraje
     response= dict()
     # print "Cambio de estatus del trabajo"
     # Detalle del trabajo
@@ -1376,7 +1376,7 @@ def changeStatus(request, id):
             'start_date': arbitraje.fecha_inicio_arbitraje.strftime('%d/%m/%Y'),
             'finish_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y'),
             'convention_place': arbitraje.sedes,
-            'convention_saying': 'La casa que vence la sombra',
+            'convention_saying': arbitraje.slogan,
             'completed_work_form_link': trabajo.url_trabajo,
             'max_info_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y')            
         }
@@ -1433,12 +1433,12 @@ def changeStatus(request, id):
                 context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
                 context_letter['sex'] = autor_trabajo.autor.genero
                 context_letter['footer_content'] = ""
-                filename = "Carta_Aprobacion_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0],
+                filename = "Carta_Aprobacion_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
                                                                     context_letter["roman_number"])
                 certificate = letter_generator.get_approval_letter(filename, context_letter)
-
+                
                 context_email = {
-                    'sistema': arbitraje,
+                    'sistema': sistema_asovac,
                     'titulo_trabajo': trabajo.titulo_espanol,
                     'tipo_carta': 'Aprobación',
                     'letter': True
