@@ -18,7 +18,7 @@ Sistema ASOVAC:
         <p style="text-align: justify;">
             Buenas{% if usuario  %} <strong>{{ usuario }}</strong>{% endif %}, le agradecemos por su participación en el sistema asovac <strong>{{ sistema.nombre}}</strong>. 
             {% if letter %}
-                Adjunto se encuentra el pdf que acrédita su carta de {{tipo_carta}}, por el trabajo {{titulo_trabajo}}, gracias por ser parte de nuestra convención.
+                Adjunto se encuentra el pdf que acrédita su carta de {{tipo_carta}}, por el trabajo <strong>{{titulo_trabajo}}</strong>, gracias por ser parte de nuestra convención.
             {% else %}
                 Adjunto se encuentra el certificado que acrédita su participación como <strong>{{rol}}</strong>{% if titulo_trabajo %} en el trabajo <strong>{{titulo_trabajo}}</strong>{% endif %}, gracias por ser parte de nuestra convención.
             {% endif %}

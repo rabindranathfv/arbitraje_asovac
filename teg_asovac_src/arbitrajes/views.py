@@ -1403,6 +1403,34 @@ def changeStatus(request, id):
             trabajo.observaciones=request.POST.get("comment").strip()
             if request.POST.get("status") == "Aceptado con observaciones":
                 trabajo.requiere_arbitraje=True
+                """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. 
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
+                - context["observations"] = Lista de Strings
+                """
+                letter_generator = LetterGenerator()
+                for autor_trabajo in autores_trabajos:
+                    context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                    context_letter['sex'] = autor_trabajo.autor.genero
+                    context_letter['footer_content'] = ""
+                    context_letter['observations'] = [trabajo.observaciones]
+                    filename = "Carta_Aprobado_con_observaciones_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                        context_letter["roman_number"])
+                    certificate = letter_generator.get_approval_letter_w_obs(filename, context_letter)
+                    
+                    context_email = {
+                        'sistema': sistema_asovac,
+                        'titulo_trabajo': trabajo.titulo_espanol,
+                        'tipo_carta': 'aprobado con observaciones',
+                        'letter': True
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                    msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
+
+                    email_msg = EmailMultiAlternatives('Carta de aprobado con observaciones', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
 
 
             # print request.POST.get("comment").strip()
@@ -1425,8 +1453,8 @@ def changeStatus(request, id):
             trabajo.estatus=request.POST.get("status")
             trabajo.observaciones=""
             """
-                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. Falta
-                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    Falta
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. 
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
             """
             letter_generator = LetterGenerator()
             for autor_trabajo in autores_trabajos:
