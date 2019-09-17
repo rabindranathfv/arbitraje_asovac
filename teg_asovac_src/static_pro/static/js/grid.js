@@ -194,6 +194,14 @@ $.ajaxSetup({
         ].join('');
     }
 
+    function operateDeleteAreaUser(value, row, index) {
+        return [
+            '<a class="deleteSubAreaUser" href="javascript:void(0)" title="Cambiar Área">',
+            '<i class="fas fa-trash"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+
 /*-----------------------------------------------------------------------------------------*/
 /*                  Para capturar el evento de los botones de las tablas                   */
 /*-----------------------------------------------------------------------------------------*/
@@ -456,6 +464,24 @@ $.ajaxSetup({
             location.href=route;
         },
         'click .removeSubareaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
+        'click .deleteSubAreaUser': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({
