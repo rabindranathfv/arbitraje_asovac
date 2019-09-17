@@ -1360,7 +1360,7 @@ def changeStatus(request, id):
     subarea=trabajo.subareas.all()[0].nombre
     autores_trabajos = Autores_trabajos.objects.filter(trabajo=trabajo)
     autores = map( lambda autor_trabajo: autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0], autores_trabajos )
-
+    print(trabajo.observaciones.split('\n'))
     if request.method == 'POST':
         today = date.today()
         context_letter = {
@@ -1380,7 +1380,7 @@ def changeStatus(request, id):
             'completed_work_form_link': trabajo.url_trabajo,
             'max_info_date': arbitraje.fecha_fin_arbitraje.strftime('%d/%m/%Y')            
         }
-
+        letter_generator = LetterGenerator()
         print ("POST cambio de estado para lel trabajo")
         #try:
        
@@ -1408,12 +1408,12 @@ def changeStatus(request, id):
                 - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
                 - context["observations"] = Lista de Strings
                 """
-                letter_generator = LetterGenerator()
                 for autor_trabajo in autores_trabajos:
                     context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
                     context_letter['sex'] = autor_trabajo.autor.genero
                     context_letter['footer_content'] = ""
-                    context_letter['observations'] = [trabajo.observaciones]
+                    context_letter['observations'] = trabajo.observaciones.split('\n')
+                    
                     filename = "Carta_Aprobado_con_observaciones_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
                                                                         context_letter["roman_number"])
                     certificate = letter_generator.get_approval_letter_w_obs(filename, context_letter)
@@ -1431,7 +1431,36 @@ def changeStatus(request, id):
                     email_msg.attach(filename, certificate.content, 'application/pdf')
                     email_msg.attach_alternative(msg_html, "text/html")
                     email_msg.send()
+            else:
+                """
+                - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta.
+                - context["full_name"] = String con el nombre completo a quien va dirigida la carta.
+                - context["deficient_areas"] = Lista de Strings con los nombres de las areas.
+                - context["observations"] = Lista de Strings
+                """
+                for autor_trabajo in autores_trabajos:
+                    context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
+                    context_letter['sex'] = autor_trabajo.autor.genero
+                    context_letter['footer_content'] = ""
+                    context_letter['deficient_areas'] = [trabajo.subareas.all().first().area.nombre]
+                    context_letter['observations'] = trabajo.observaciones.split('\n')
+                    filename = "Carta_Rechazo_%s_Convencion_Asovac_%s.pdf" % ( autor_trabajo.autor.nombres.split(' ')[0] + '_' + autor_trabajo.autor.apellidos.split(' ')[0],
+                                                                        context_letter["roman_number"])
+                    certificate = letter_generator.get_rejection_letter_w_obs(filename, context_letter)
+                    
+                    context_email = {
+                        'sistema': sistema_asovac,
+                        'titulo_trabajo': trabajo.titulo_espanol,
+                        'tipo_carta': 'rechazo',
+                        'letter': True
+                    }
+                    msg_plain = render_to_string('../templates/email_templates/certificate.txt', context_email)
+                    msg_html = render_to_string('../templates/email_templates/certificate.html', context_email)
 
+                    email_msg = EmailMultiAlternatives('Carta de rechazo', msg_plain, config('EMAIL_HOST_USER'), [autor_trabajo.autor.correo_electronico])
+                    email_msg.attach(filename, certificate.content, 'application/pdf')
+                    email_msg.attach_alternative(msg_html, "text/html")
+                    email_msg.send()
 
             # print request.POST.get("comment").strip()
         else:
@@ -1456,7 +1485,6 @@ def changeStatus(request, id):
                 - context["sex"] = Un caracter 'M' o 'F' indicando el genero de a quien va dirigida la carta. 
                 - context["full_name"] = String con el nombre completo a quien va dirigida la carta.    
             """
-            letter_generator = LetterGenerator()
             for autor_trabajo in autores_trabajos:
                 context_letter['full_name'] = autor_trabajo.autor.nombres + ' ' + autor_trabajo.autor.apellidos
                 context_letter['sex'] = autor_trabajo.autor.genero
