@@ -21,7 +21,7 @@ def datos_basicos_guard(estado, rol_id):
         return False
 
 def usuarios_guard(rol_id, estado):
-    if rol_id == 1 or (rol_id == 2 and estado >= 2):
+    if rol_id == 1 or (rol_id == 2 and estado >= 1):
         return True
     else:
         return False

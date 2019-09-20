@@ -95,7 +95,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify_estado_arbitrajes_option (This one is always true...)
     sidebar_options.append("arbitration_state")
     # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
-    if ((1 == rol_id or (2 == rol_id and estado >= 2)) and item_active == 1):
+    if ((1 == rol_id or (2 == rol_id and estado >= 1)) and item_active == 1):
         sidebar_options.append("users")
     if (1 >= rol_id and item_active == 1):
         sidebar_options.append("assing_general_coordinator")
