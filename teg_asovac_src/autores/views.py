@@ -715,7 +715,7 @@ def postular_trabajo(request, trabajo_id):
     if not trabajos_guard(estado, rol_id):
         raise PermissionDenied
 
-    item_active = 0
+    item_active = 4
     items = validate_rol_status(estado,rol_id,item_active,event_id)
 
     route_conf = get_route_configuracion(estado,rol_id,event_id)

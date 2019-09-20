@@ -675,3 +675,8 @@ input:checked + .slider:before {
     line-height: 0px !important;
     float: right !important;
 }
+
+/*Estilos para item_active navbar */
+.active{
+    color:white;
+}
