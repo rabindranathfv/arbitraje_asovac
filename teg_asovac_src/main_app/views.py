@@ -1845,7 +1845,7 @@ def load_users_arbitraje_modal(request, arbitraje_id):
     data= dict()
     # consulta mas completa
     query= "SELECT distinct ua.id,au.first_name,au.last_name,au.email FROM main_app_usuario_asovac as ua INNER JOIN auth_user as au on ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area as uasa on uasa.usuario_asovac_id = ua.id INNER JOIN main_app_sub_area as sa on sa.id = uasa.sub_area_id INNER JOIN main_app_area as a on a.id = sa.area_id LEFT JOIN main_app_usuario_rol_in_sistema as ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro as arb on arb.usuario_id = ua.id "
-    where = " WHERE ua.id not in (select main_app_usuario_rol_in_sistema.usuario_asovac_id from  main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.sistema_asovac_id={}) order by ua.id desc ".format(arbitraje_id)
+    where = " WHERE ua.id not in (select distinct main_app_usuario_rol_in_sistema.usuario_asovac_id from  main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.sistema_asovac_id={}) and ua.id not in (select distinct main_app_usuario_rol_in_sistema.usuario_asovac_id from main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.rol_id = 1) order by ua.id desc ".format(arbitraje_id)
     query= query+where
     query_count=query
     list_users= User.objects.raw(query)
