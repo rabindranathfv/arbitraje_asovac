@@ -95,7 +95,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify_estado_arbitrajes_option (This one is always true...)
     sidebar_options.append("arbitration_state")
     # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
-    if ((1 == rol_id or (2 == rol_id and estado >= 2)) and item_active == 1):
+    if ((1 == rol_id or (2 == rol_id and estado >= 1)) and item_active == 1):
         sidebar_options.append("users")
     if (1 >= rol_id and item_active == 1):
         sidebar_options.append("assing_general_coordinator")
@@ -397,6 +397,12 @@ def register(request):
         form2=SubAreaRegistForm(request.POST)
         if form.is_valid():
             user= form.save()
+
+            if user.id == 1: #EL primer usuario creado en el sistema será admin
+                user.is_staff = True 
+                user.is_superuser= True
+                user.save()
+            
             usuario_asovac= Usuario_asovac.objects.get(usuario_id=user.id)
             # Para crear instancia de arbitro
             arbitro =Arbitro()

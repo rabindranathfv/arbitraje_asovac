@@ -102,12 +102,14 @@ class DataBasicForm(forms.ModelForm):
             'logo',
             'ciudad',
             'numero_romano',
-            'sedes'
+            'sedes',
+            'slogan'
         )
         widgets = {
             'fecha_inicio_arbitraje': forms.DateInput(format=my_date_format),
             'fecha_fin_arbitraje': forms.DateInput(format=my_date_format),
-            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'})
+            'sedes': forms.Textarea(attrs={'rows':2, 'placeholder':'Universidad1, Universidad2'}),
+            'slogan': forms.Textarea(attrs={'rows':2, 'placeholder':'La casa que vence la sombra'}),
         }
         labels = {
             'descripcion': 'Descripción',
@@ -175,6 +177,7 @@ class DataBasicForm(forms.ModelForm):
             'ciudad',
             'numero_romano',
             'sedes',
+            'slogan',
             'autoridad1',
             'firma1',
             Div(

@@ -259,6 +259,7 @@ def recursos_pag(request):
         raise PermissionDenied
     context = create_common_context(request)
     context['nombre_vista'] = 'Recursos'
+    context['item_active'] = 3
     return render(request, 'recursos.html', context)
 
 

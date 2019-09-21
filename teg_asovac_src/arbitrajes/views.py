@@ -1360,7 +1360,7 @@ def changeStatus(request, id):
     subarea=trabajo.subareas.all()[0].nombre
     autores_trabajos = Autores_trabajos.objects.filter(trabajo=trabajo)
     autores = map( lambda autor_trabajo: autor_trabajo.autor.nombres.split(' ')[0] + ' ' + autor_trabajo.autor.apellidos.split(' ')[0], autores_trabajos )
-    print(trabajo.observaciones.split('\n'))
+    
     if request.method == 'POST':
         today = date.today()
         context_letter = {
