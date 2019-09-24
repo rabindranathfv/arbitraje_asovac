@@ -9,7 +9,7 @@ def trabajos_seguimiento_guard(estado, rol_id):
 
 
 def trabajos_guard(estado, rol_id):
-    if((estado == 3 or estado == 5 ) and 5 >= rol_id):
+    if((estado == 3 or estado == 5 or estado == 8 ) and 5 >= rol_id):
         return True
     else:
         return False
