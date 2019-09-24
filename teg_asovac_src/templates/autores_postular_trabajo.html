@@ -23,7 +23,12 @@
 
 				<div id ="toolbar">
 					{% if autor_trabajo.es_autor_principal == True and autor_trabajo.pagado == False %}
-						{% if estado == 3 or autor_trabajo.esperando_modificacion_pago == True %}
+						{% if estado == 3 %}
+							<div class="btn-group">
+								<a data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id  1 %}" class="show-form btn btn-primary btn-block" type="button"><i class="fas fa-money-bill-alt" style="color:white"></i> Añadir Pago</a>
+						 	</div>
+						{% endif %}
+						{% if estado == 5 and autor_trabajo.esperando_modificacion_pago == True %}
 							<div class="btn-group">
 								<a data-url="{% url 'autores:postular_trabajo_pagador_modal' autor_trabajo.id  1 %}" class="show-form btn btn-primary btn-block" type="button"><i class="fas fa-money-bill-alt" style="color:white"></i> Añadir Pago</a>
 						 	</div>

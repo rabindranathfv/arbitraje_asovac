@@ -766,7 +766,7 @@ def postular_trabajo_pagador_modal(request, autor_trabajo_id,step):
     estado = arbitraje.estado_arbitraje
     rol_id=get_roles(request.user.id , event_id)
 
-    if not trabajos_guard(estado, rol_id):
+    if ((estado != 3 and estado !=5)):
         raise PermissionDenied
 
     data = dict()
