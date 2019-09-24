@@ -853,14 +853,14 @@ def list_pagos(request,id):
     # consulta mas completa
     
     query= "SELECT aut_trab.numero_postulacion AS aut_numero_postulacion, aut_fac.numero_postulacion AS fac_numero_postulacion, aut_fac.id, aut_fac.status, aut_dat_pgd.nombres, aut_dat_pgd.apellidos, aut_dat_pgd.cedula, aut_pag.fecha_pago,aut_dat_pgd.telefono_oficina, aut_dat_pgd.telefono_habitacion_celular, aut_pag.comprobante_pago FROM autores_autores_trabajos AS aut_trab INNER JOIN autores_pagador AS aut_pgd ON aut_pgd.autor_trabajo_id = aut_trab.id INNER JOIN autores_factura AS aut_fac ON aut_fac.pagador_id = aut_pgd.id INNER JOIN autores_pago AS aut_pag ON aut_pag.id= aut_fac.pago_id INNER JOIN autores_datos_pagador AS aut_dat_pgd ON aut_dat_pgd.id= aut_pgd.datos_pagador_id "
-    where=' WHERE aut_trab.trabajo_id= %s'
+    where=' WHERE aut_trab.trabajo_id= {}'
     query= query+where
     
     query_count=query
     query= query + " ORDER BY aut_fac.status" 
     
-    data= Factura.objects.raw(query,id)
-    data_count= Factura.objects.raw(query_count,id)
+    data= Factura.objects.raw(query.format(id))
+    data_count= Factura.objects.raw(query_count.format(id))
     
     total=0
     for item in data_count:
