@@ -77,10 +77,10 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 == rol_id) or ((estado != 6 and estado != 8) and 3 == rol_id) or ((estado != 8 and estado != 6) and 4 == rol_id) or (estado != 6 and 5 == rol_id)):
         top_nav_options.append('result')
     # verify job
-    if ((estado in [3,5] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
+    if ((estado in [3,5,8] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
         top_nav_options.append('jobs')
     # verify trabajo_options
-    if((estado == 3 or estado == 5 )and 5 >= rol_id):
+    if((estado == 3 or estado == 5 or estado == 8)and 5 >= rol_id):
         top_nav_options.append('job_options')
 
     items['top_nav_options'] = top_nav_options
@@ -95,7 +95,7 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     # verify_estado_arbitrajes_option (This one is always true...)
     sidebar_options.append("arbitration_state")
     # verify_usuario_option & verify_asignacion_coordinador_general_option (same condition)
-    if ((1 == rol_id or (2 == rol_id and estado >= 2)) and item_active == 1):
+    if ((1 == rol_id or (2 == rol_id and estado >= 1)) and item_active == 1):
         sidebar_options.append("users")
     if (1 >= rol_id and item_active == 1):
         sidebar_options.append("assing_general_coordinator")
@@ -486,7 +486,7 @@ def home(request):
             allow_entry_list.append(True)
         elif 4 >= rol_id and arb.estado_arbitraje in [5,6,8]:
             allow_entry_list.append(True)
-        elif 5 >= rol_id and arb.estado_arbitraje in [3,5,6]:
+        elif 5 >= rol_id and arb.estado_arbitraje in [3,5,8]:
             allow_entry_list.append(True)
         else:
             allow_entry_list.append(False)
@@ -1845,7 +1845,7 @@ def load_users_arbitraje_modal(request, arbitraje_id):
     data= dict()
     # consulta mas completa
     query= "SELECT distinct ua.id,au.first_name,au.last_name,au.email FROM main_app_usuario_asovac as ua INNER JOIN auth_user as au on ua.usuario_id = au.id INNER JOIN main_app_usuario_asovac_sub_area as uasa on uasa.usuario_asovac_id = ua.id INNER JOIN main_app_sub_area as sa on sa.id = uasa.sub_area_id INNER JOIN main_app_area as a on a.id = sa.area_id LEFT JOIN main_app_usuario_rol_in_sistema as ris ON ris.usuario_asovac_id = ua.id INNER JOIN arbitrajes_arbitro as arb on arb.usuario_id = ua.id "
-    where = " WHERE ua.id not in (select main_app_usuario_rol_in_sistema.usuario_asovac_id from  main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.sistema_asovac_id={}) order by ua.id desc ".format(arbitraje_id)
+    where = " WHERE ua.id not in (select distinct main_app_usuario_rol_in_sistema.usuario_asovac_id from  main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.sistema_asovac_id={}) and ua.id not in (select distinct main_app_usuario_rol_in_sistema.usuario_asovac_id from main_app_usuario_rol_in_sistema where main_app_usuario_rol_in_sistema.rol_id = 1) order by ua.id desc ".format(arbitraje_id)
     query= query+where
     query_count=query
     list_users= User.objects.raw(query)

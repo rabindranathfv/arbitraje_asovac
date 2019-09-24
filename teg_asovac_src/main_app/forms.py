@@ -331,7 +331,7 @@ class ArbitrajeAssignCoordGenForm(forms.Form):
         # usuarios_test = Usuario_asovac.objects.exclude(id__in=user_search )
         # list_users= Usuario_asovac.objects.exclude(id__in=user_search ).order_by('usuario__first_name')
         self.fields['coordinador_general'] = forms.ModelChoiceField(  
-                                                queryset = Usuario_rol_in_sistema.objects.all().filter(sistema_asovac = self.sistema_id ).order_by('id'),
+                                                queryset = Usuario_rol_in_sistema.objects.all().filter(sistema_asovac = self.sistema_id ).distinct('usuario_asovac_id').order_by('usuario_asovac_id'),
                                                 required=True,
                                                 label="",
                                                 widget=forms.Select(attrs={'class':'form-control'}))

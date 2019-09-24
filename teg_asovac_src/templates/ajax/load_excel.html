@@ -24,7 +24,13 @@
             <a href="{{ format_url }}" class="btn btn-info btn-lg" type="button" id="download-button-modal"> Descargar Formato</a>
         {% endif %}
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal" id = "cancel-button-modal">Cancelar</button>
-        <button type="submit" class="btn btn-lg btn-primary" id = "confirm-button-modal">Enviar certificados</button>
+        <button type="submit" class="btn btn-lg btn-primary" id = "confirm-button-modal">
+            {% if rol == "autores" %}
+                Cargar
+            {% else %}
+                Enviar certificados
+            {% endif %}
+        </button>
     </div>
 </form>
 

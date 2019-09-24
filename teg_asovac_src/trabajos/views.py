@@ -55,7 +55,7 @@ def trabajos(request):
     if(not trabajos_guard(estado, rol_id)):
         raise PermissionDenied
 
-    item_active = 1
+    item_active = 4
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
    
     route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
@@ -251,7 +251,7 @@ def edit_trabajo(request, trabajo_id):
     if(not trabajos_guard(estado, rol_id)):
         raise PermissionDenied
 
-    item_active = 2
+    item_active = 4
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
     route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
@@ -374,7 +374,7 @@ def detalles_trabajo(request, trabajo_id):
     if(not trabajos_guard(estado, rol_id)):
         raise PermissionDenied
     
-    item_active = 2
+    item_active = 4
     items=validate_rol_status(estado,rol_id,item_active, arbitraje_id)
 
     route_conf= get_route_configuracion(estado,rol_id, arbitraje_id)
