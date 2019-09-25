@@ -884,6 +884,8 @@ def state_arbitration(request, arbitraje_id):
                             [autor_trabajo_principal.autor.correo_electronico],               #destinatario
                             html_message=msg_html,              #mensaje en html
                             )
+            
+            return redirect(reverse('main_app:arbitration_state', kwargs={'arbitraje_id':arbitraje_id}))
         else:
             messages.error(request, 'El sistema no tiene un coordinador general asignado, \
                 por favor asigne uno para poder cambiar de estado.')
