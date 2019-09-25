@@ -65,35 +65,32 @@
                     {% if "jobs" in items.top_nav_options %}
                         {% if "job_options" in items.top_nav_options %}
                             <li>
-                                {% if not request.session.is_author_created %}
-                                    <a class="show-form" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >
-                                        <span class="hidden-sm hidden-md">
-                                            <i class="fas fa-book"></i> Trabajos
-                                        </span>
-                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item">
-                                            <i class="fas fa-book"></i> Trabajos
-                                        </span>
-                                    </a>
-                                {% else %}
-                                    <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                                        <span class="hidden-sm hidden-md {% if item_active == 4 %}active-navbar{% endif %}">
-                                            <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
-                                        </span>
-                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 4 %}active-navbar{% endif %}">
-                                            <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu" style="z-index:2">
+                                <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
+                                    <span class="hidden-sm hidden-md {% if item_active == 4 %}active-navbar{% endif %}">
+                                        <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
+                                    </span>
+                                    <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 4 %}active-navbar{% endif %}">
+                                        <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu" style="z-index:2">
+                                    {% if not request.session.is_author_created %}
+                                        <li>
+                                            <a class="show-form" data-url ="{% url 'main_app:create_autor_instance_modal' user.id %}" >
+                                                Lista de trabajos
+                                            </a>
+                                        </li>
+                                    {% else %}
                                         <li>
                                             <a class="dropdown-item" href="{% url 'trabajos:trabajos' %}">Lista de trabajos</a>
                                         </li>
-                                        {% if rol_id < 5  and rol_id != 1 and estado == 5 %}
-                                            <li>
-                                                <a class="dropdown-item" href="{% url 'arbitrajes:jobs_for_review' %}">Lista de trabajos por arbitrar</a>
-                                            </li>
-                                        {% endif %}
-                                    </ul>
-                                {% endif %}
+                                    {% endif %}
+                                    {% if rol_id < 5  and rol_id != 1 and estado == 5 %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'arbitrajes:jobs_for_review' %}">Lista de trabajos por arbitrar</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
                             </li>
                         {% else %}
                             <li><a href="{% url 'trabajos:trabajos_evaluados' %}">
