@@ -959,7 +959,8 @@ def adminAddareas(request,id):
         data['message']= "Se han actualizado las subáreas de forma exitosa."
 
     else:
-
+        for area in areas:
+            print(area.nombre.encode('UTF-8'))
         context= {
             'tipo': 'addAreaArbitro',
             'areas': areas,
