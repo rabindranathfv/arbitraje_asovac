@@ -10,31 +10,34 @@
     </div>
     
     <div class="modal-body">
-
-        <table class="table table-bordered">
-            <thead>
-                <th>Nombre</th>
-                <th>Correo electrónico</th>
-                <th style="text-align: center" >Asignar</th>
-            </thead>
-            {% for arbitro in arbitros %}
-            <tr>
-                <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
-                <td>{{arbitro.correo_electronico}} </td>
-                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
-                <td class="text-center" style="text-align: center">
-                    <label class="contentCheck">
-                        {% if arbitro.trabajo_id == trabajo_id %}
-                            <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
-                        {% else %}
-                            <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
-                        {% endif %}
-                        <span class="checkmark"></span>
-                    </label>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% if arbitros_size > 0 %}
+            <table class="table table-bordered">
+                <thead>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th style="text-align: center" >Asignar</th>
+                </thead>
+                {% for arbitro in arbitros %}
+                <tr>
+                    <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
+                    <td>{{arbitro.correo_electronico}} </td>
+                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                    <td class="text-center" style="text-align: center">
+                        <label class="contentCheck">
+                            {% if arbitro.trabajo_id == trabajo_id %}
+                                <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
+                            {% else %}
+                                <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
+                            {% endif %}
+                            <span class="checkmark"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            No hay arbitros asignados para el subárea de: <strong>{{ subarea_trabajo }}</strong>.
+        {% endif %}
     </div>
     
     <div class="modal-footer">

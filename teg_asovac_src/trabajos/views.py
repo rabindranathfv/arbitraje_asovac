@@ -1199,11 +1199,14 @@ def selectArbitro(request,id):
             # response['status']= 404
             
     else:
-       
+        trabajo = Trabajo.objects.get(id = id)
         response['status']= 200
+        print(total)
         context={
             'tipo':"select",
             'arbitros':datafilter,
+            'arbitros_size':total,
+            'subarea_trabajo': trabajo.subareas.first(),
             'trabajo_id':int(id),
         }
         response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
