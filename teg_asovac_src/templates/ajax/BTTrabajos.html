@@ -10,31 +10,34 @@
     </div>
     
     <div class="modal-body">
-
-        <table class="table table-bordered">
-            <thead>
-                <th>Nombre</th>
-                <th>Correo electrónico</th>
-                <th style="text-align: center" >Asignar</th>
-            </thead>
-            {% for arbitro in arbitros %}
-            <tr>
-                <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
-                <td>{{arbitro.correo_electronico}} </td>
-                <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
-                <td class="text-center" style="text-align: center">
-                    <label class="contentCheck">
-                        {% if arbitro.trabajo_id == trabajo_id %}
-                            <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
-                        {% else %}
-                            <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
-                        {% endif %}
-                        <span class="checkmark"></span>
-                    </label>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
+        {% if arbitros_size > 0 %}
+            <table class="table table-bordered">
+                <thead>
+                    <th>Nombre</th>
+                    <th>Correo electrónico</th>
+                    <th style="text-align: center" >Asignar</th>
+                </thead>
+                {% for arbitro in arbitros %}
+                <tr>
+                    <td>{{arbitro.nombres}} {{arbitro.apellidos}} </td>
+                    <td>{{arbitro.correo_electronico}} </td>
+                    <!-- <td>{{arbitro.correo_electronico}} {{arbitro.trabajo_id}} {{trabajo_id}} </td> -->
+                    <td class="text-center" style="text-align: center">
+                        <label class="contentCheck">
+                            {% if arbitro.trabajo_id == trabajo_id %}
+                                <input name="arbitro_value[]" data-status="on" type="checkbox" id="{{arbitro.id}}" >
+                            {% else %}
+                                <input name="arbitro_value[]" data-status="off" type="checkbox" id="{{arbitro.id}}" >
+                            {% endif %}
+                            <span class="checkmark"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            No hay arbitros asignados para el subárea de: <strong>{{ subarea_trabajo }}</strong>.
+        {% endif %}
     </div>
     
     <div class="modal-footer">
@@ -68,45 +71,47 @@
     </div>
 
     <div class="modal-body">
-		
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Correo electrónico</th>
-                    <!-- <th>Arbitraje</th> -->
-                    <th style="text-align: center">Invitación</th>
-                    <!-- <th>Comentario</th> -->
-                </tr>
-            </thead>
-    
-            <tbody>
-                {% for item in arbitros %}
+		{% if arbitros_size > 0 %}
+            <table class="table table-bordered">
+                <thead>
                     <tr>
-                        <td>{{item.nombres}} {{item.apellidos}}</td>
-                        <td>{{item.correo_electronico}}</td>
-                        
-                        {% if item.fin_arbitraje == False %}
-                            <!-- <td>Pendiente</td> -->
-                        {% else %}
-                            <!-- <td>{{item.arbitraje_resultado}}</td> -->
-                        {% endif%}
-                        {% if item.invitacion == False %}
-                            <!-- <td style="text-align: center">Pendiente</td> -->
-                            <td style="text-align: center"><span class="label label-warning">Pendiente</span></td> 
-                        {% else %}
-                            <!-- <td style="text-align: center">Aceptada</td> -->
-                            <td style="text-align: center"><span class="label label-success">Aceptada</span></td> 
-                        {% endif%}
-
-                        <!-- <td>{{item.comentario_autor}}</td> -->
-            
+                        <th>Nombre</th>
+                        <th>Correo electrónico</th>
+                        <!-- <th>Arbitraje</th> -->
+                        <th style="text-align: center">Invitación</th>
+                        <!-- <th>Comentario</th> -->
                     </tr>
-                {% endfor %}
+                </thead>
+        
+                <tbody>
+                    {% for item in arbitros %}
+                        <tr>
+                            <td>{{item.nombres}} {{item.apellidos}}</td>
+                            <td>{{item.correo_electronico}}</td>
+                            
+                            {% if item.fin_arbitraje == False %}
+                                <!-- <td>Pendiente</td> -->
+                            {% else %}
+                                <!-- <td>{{item.arbitraje_resultado}}</td> -->
+                            {% endif%}
+                            {% if item.invitacion == False %}
+                                <!-- <td style="text-align: center">Pendiente</td> -->
+                                <td style="text-align: center"><span class="label label-warning">Pendiente</span></td> 
+                            {% else %}
+                                <!-- <td style="text-align: center">Aceptada</td> -->
+                                <td style="text-align: center"><span class="label label-success">Aceptada</span></td> 
+                            {% endif%}
 
-            </tbody>
-        </table>
+                            <!-- <td>{{item.comentario_autor}}</td> -->
+                
+                        </tr>
+                    {% endfor %}
 
+                </tbody>
+            </table>
+        {% else %}
+            <p> No hay arbitros asignados para este trabajo.   
+        {% endif %}
     </div>
 
     <div class="modal-footer">
