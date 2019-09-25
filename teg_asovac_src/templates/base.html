@@ -31,10 +31,10 @@
 
                     {% if "configuration" in items.top_nav_options %}
                         <li><a href="{{ route_conf }}">
-                            <span class="hidden-sm hidden-md {% if item_active == 1 %}active{% endif %}">
+                            <span class="hidden-sm hidden-md {% if item_active == 1 %}active-navbar{% endif %}">
                                 <i class="fas fa-cogs"></i> Configuración
                             </span>
-                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 1 %}active{% endif %}">
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 1 %}active-navbar{% endif %}">
                                 <i class="fas fa-cogs"></i> Configuración
                             </span>
                         </a></li>
@@ -42,10 +42,10 @@
 
                     {% if "arbitration" in items.top_nav_options %}
                         <li><a href="{{ route_seg }}">
-                            <span class="hidden-sm hidden-md {% if item_active == 2 %}active{% endif %}">
+                            <span class="hidden-sm hidden-md {% if item_active == 2 %}active-navbar{% endif %}">
                                 <i class="fas fa-eye"></i> Seguimiento
                             </span>
-                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 2 %}active{% endif %}">
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 2 %}active-navbar{% endif %}">
                                 <i class="fas fa-eye"></i> Seguimiento
                             </span>
                         </a></li>
@@ -53,10 +53,10 @@
 
                     {% if "result" in items.top_nav_options %}
                         <li><a href="{% url 'recursos:recursos' %}">
-                            <span class="hidden-sm hidden-md {% if item_active == 3 %}active{% endif %}">
+                            <span class="hidden-sm hidden-md {% if item_active == 3 %}active-navbar{% endif %}">
                                 <i class="fas fa-chart-area"></i> Resultados
                             </span>
-                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 3 %}active{% endif %}">
+                            <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 3 %}active-navbar{% endif %}">
                                 <i class="fas fa-chart-area"></i> Resultados
                             </span>
                         </a></li>
@@ -76,10 +76,10 @@
                                     </a>
                                 {% else %}
                                     <a role="button" id="dropdownMenuButton" data-toggle="dropdown">
-                                        <span class="hidden-sm hidden-md {% if item_active == 4 %}active{% endif %}">
+                                        <span class="hidden-sm hidden-md {% if item_active == 4 %}active-navbar{% endif %}">
                                             <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
                                         </span>
-                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 4 %}active{% endif %}">
+                                        <span class="visible-sm-inline-block visible-md-inline-block small-menu-item {% if item_active == 4 %}active-navbar{% endif %}">
                                             <i class="fas fa-book"></i> Trabajos <i class="fas fa-caret-down"></i>
                                         </span>
                                     </a>

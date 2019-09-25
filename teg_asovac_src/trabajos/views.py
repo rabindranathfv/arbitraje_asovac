@@ -1318,7 +1318,11 @@ def viewEstatus(request,id):
     query= query + " ORDER BY " + order_by
     
     arbitros= Arbitro.objects.raw(query,[str(id)])
+    total = 0
+    for item in arbitros:
+        total += 1
 
+    #arbitros_size = len(arbitros)
     if request.method == 'POST':
       
         response['status']= 200
@@ -1330,6 +1334,7 @@ def viewEstatus(request,id):
         context={
             'tipo':"status",
             'arbitros':arbitros,
+            'arbitros_size': total,
         }
         response['content']= render_to_string('ajax/BTTrabajos.html',context,request=request)
     return JsonResponse(response)
