@@ -106,12 +106,15 @@ class ChartData(APIView):
         areas_colores = []
         areas_labels_splited = []
         for item in areas_info:
-            areas_labels.append(item["nombre"])
+            
             areas_labels_splited.append(abreviate_if_neccesary(item["nombre"]))
             areas_trabajos_aceptados.append(item["trabajos_aceptados"])
             areas_trabajos_rechazados.append(item["trabajos_rechazados"])
-            areas_autores.append(len(item["autores_id"]))
-            areas_colores.append(generate_random_color())
+
+            if(len(item["autores_id"]) > 0):
+                areas_labels.append(item["nombre"])
+                areas_autores.append(len(item["autores_id"]))
+                areas_colores.append(generate_random_color())
 
         #El siguiente codigo es para obtener los datos necesarios para la grafica de niveles de intruccion de los autores
         usuarios_autor = Usuario_rol_in_sistema.objects.filter(rol = 5, sistema_asovac = arbitraje_id, status = True)
