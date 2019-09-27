@@ -256,36 +256,42 @@
                     </div>
                     <div class="modal-body">
                         <div class="col-md-12 text-left" style="font-size: 16px;">
-                            <table class="table table-bordered">
-                                <thead>
-                                        <th>Nombre</th>
-                                        <th>Fecha presentación</th>
-                                        <th>Hora inicio</th>
-                                        <th>Agregar</th>
-                                </thead>
-                                    {% for item in sesiones %}
-                                        <tr>
-                                            <td>{{item.nombre_sesion}}</td>
-                                            <td>{{item.fecha_sesion}}</td>
-                                            <td>{{item.hora_inicio}}</td>
-                                            <td class="text-center" >
-                                                <label class="contentCheck">
-                                                {% if item.id == asig %}
-                                                    <input name="sesion" type="radio" data-status="on" id="{{item.id}}" value="{{item.id}}">
-                                                {% else %}
-                                                    <input name="sesion" type="radio" data-status="off" id="{{item.id}}" value="{{item.id}}">
-                                                {% endif %}
-                                                <span class="checkmark"></span>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                            </table>
+                            {% if total_sesions > 0%}
+                                <table class="table table-bordered">
+                                    <thead>
+                                            <th>Nombre</th>
+                                            <th>Fecha presentación</th>
+                                            <th>Hora inicio</th>
+                                            <th>Agregar</th>
+                                    </thead>
+                                        {% for item in sesiones %}
+                                            <tr>
+                                                <td>{{item.nombre_sesion}}</td>
+                                                <td>{{item.fecha_sesion}}</td>
+                                                <td>{{item.hora_inicio}}</td>
+                                                <td class="text-center" >
+                                                    <label class="contentCheck">
+                                                    {% if item.id == asig %}
+                                                        <input name="sesion" type="radio" data-status="on" id="{{item.id}}" value="{{item.id}}">
+                                                    {% else %}
+                                                        <input name="sesion" type="radio" data-status="off" id="{{item.id}}" value="{{item.id}}">
+                                                    {% endif %}
+                                                    <span class="checkmark"></span>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                </table>
+                            {% else %}
+                                No hay sesiones creadas para este sistema.
+                            {% endif %}
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                        {% if total_sesions > 0 %}
+                            <button type="button" class="sendGenericForm btn btn-primary btn-lg">Guardar</button>
+                        {% endif %}
                     </div>
                 </form>
                 <script>

@@ -1837,8 +1837,9 @@ def asigSesion(request,id):
         raise PermissionDenied
 
     listSesion= Sesion.objects.filter(sistema=arbitraje)
+    total_sesions = len(listSesion)
     trabajo= Trabajo.objects.get(id = id)
-    print trabajo.sesion_id
+    print (trabajo.sesion_id)
 
     if request.method == 'POST':
 
@@ -1853,11 +1854,13 @@ def asigSesion(request,id):
     else:
 
         data['status']= 200
+        
         context={
             'tipo':"asigSesion",
             'trabajo_id':id,
             'asig': trabajo.sesion_id,
             'sesiones': listSesion,
+            'total_sesions': total_sesions
         }
         data['content']= render_to_string('ajax/BTArbitrajes.html',context,request=request)
     return JsonResponse(data)
