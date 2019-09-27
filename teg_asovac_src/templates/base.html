@@ -199,14 +199,15 @@
                                 </span>
                             </a>
                             <ul class="dropdown-menu" style ="z-index:2">
-                                {% if rol_id and rol_id != 5 %}
+                                {% if rol_id and rol_id != 5 and rol_id != 1 %}
                                     <li>
                                         <a class="dropdown-item show-form" data-url="{% url 'main_app:edit_personal_data' %}" >
                                             <i class="fas fa-user"></i> Editar datos personales
                                         </a>
                                     </li>
                                 {% endif %}
-                                {% if not events_app and rol_id and request.session.is_author_created %}
+                                {% if not events_app and rol_id and rol_id != 1 and request.session.is_author_created %}
+                                
                                     <li>
                                         <a class="dropdown-item show-form" data-url="{% url 'autores:author_edit_modal' user.id %}" >
                                             <i class="fas fa-edit"></i> Editar datos de autor

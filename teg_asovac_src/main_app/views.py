@@ -77,10 +77,10 @@ def validate_rol_status(estado,rol_id,item_active, arbitraje_id):
     if not ( ((estado !=6 and estado != 7 and estado != 8) and 2 == rol_id) or ((estado != 6 and estado != 8) and 3 == rol_id) or ((estado != 8 and estado != 6) and 4 == rol_id) or (estado != 6 and 5 == rol_id)):
         top_nav_options.append('result')
     # verify job
-    if ((estado in [3,5,8] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)):
+    if (((estado in [3,5,8] and 5 >= rol_id) or (estado == 5 and 4 >= rol_id)) and rol_id != 1):
         top_nav_options.append('jobs')
     # verify trabajo_options
-    if((estado == 3 or estado == 5 or estado == 8)and 5 >= rol_id):
+    if((estado == 3 or estado == 5 or estado == 8) and 5 >= rol_id and rol_id != 1):
         top_nav_options.append('job_options')
 
     items['top_nav_options'] = top_nav_options
