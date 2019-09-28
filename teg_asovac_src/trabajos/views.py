@@ -1269,8 +1269,8 @@ def viewTrabajo(request, id):
 
 
 
-@login_required
-@user_is_arbitraje
+# @login_required
+# @user_is_arbitraje
 def invitacion(request, uidb64, token):
     try:
         invitacion_id = force_text(urlsafe_base64_decode(uidb64))
