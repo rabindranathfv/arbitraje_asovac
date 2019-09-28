@@ -3111,7 +3111,7 @@ def viewUsuario(request,id,arbitraje_id):
     estado = request.session['estado']
     arbitraje_id = request.session['arbitraje_id']
     rol_id=get_roles(request.user.id,arbitraje_id)
-    if not usuarios_guard(rol_id):
+    if not usuarios_guard(rol_id, estado):
         raise PermissionDenied
 
     data= dict()
