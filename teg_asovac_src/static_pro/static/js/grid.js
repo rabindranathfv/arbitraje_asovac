@@ -85,7 +85,9 @@ $.ajaxSetup({
 
     function operateUsuarios(value, row, index) {
         return [
-            
+            '<a class="generatePassword" href="javascript:void(0)" title="Generar clave">',
+            '<i class="fa fa-key"></i>',
+            '</a>  ',
             '<a class="viewUsuario" href="javascript:void(0)" title="Ver">',
             '<i class="far fa-eye"></i>',
             '</a>  ',
@@ -319,6 +321,25 @@ $.ajaxSetup({
                     // });
                 }
             });
+        },
+        'click .generatePassword': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    //console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+
+
         },
         'click .viewUsuario': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
