@@ -83,6 +83,7 @@ urlpatterns = [
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)$',views.usersAdminArea,name='usersAdminArea'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)/changeAreaUser$',views.changeAreaUser,name='changeAreaUser'),
     url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/usersAdminArea/(?P<id>\d+)/deleteSubAreaUser/(?P<subarea>\d+)$',views.deleteSubAreaUser,name='deleteSubAreaUser'),
+    url(r'^(?P<arbitraje_id>\d+)/usuarios/listar-usuarios/generatePassword/(?P<usuario_asovac_id>\d+)$',views.generate_password,name='generate_password'),
 
     #Rutas para modales ajax
     url(r'^usuario/crear$',views.create_user_modal,name='crear_usuario'),
@@ -94,6 +95,7 @@ urlpatterns = [
     url(r'^usuario/(?P<user_id>\d+)/crear-autor/$',views.create_autor_instance_modal,name='create_autor_instance_modal'),
     url(r'^usuario/(?P<arbitraje_id>\d+)/registrar-en-sistema/$',views.register_user_in_sistema,name='register_user_in_sistema'),
     url(r'^usuario/editar$',views.edit_personal_data,name='edit_personal_data'),
+    
 
     url(r'^cargar/(?P<id>\d+)/subarea$',views.get_subareas,name='cargar_subareas'),
     url(r'^validar/acceso$',views.validate_access_modal,name='validar_acceso'),
