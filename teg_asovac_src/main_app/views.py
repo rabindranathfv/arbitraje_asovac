@@ -3574,6 +3574,10 @@ def deleteSubAreaUser(request,arbitraje_id,id,subarea):
 @login_required
 @user_is_arbitraje
 def generate_password(request, arbitraje_id, usuario_asovac_id):
+
+    if(not usuarios_guard):
+        raise PermissionDenied
+        
     data= dict()
     usuario_asovac = Usuario_asovac.objects.get(id = usuario_asovac_id)
 
