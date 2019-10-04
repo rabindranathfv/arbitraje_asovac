@@ -3569,3 +3569,48 @@ def deleteSubAreaUser(request,arbitraje_id,id,subarea):
         }
         data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
     return JsonResponse(data)
+
+
+@login_required
+@user_is_arbitraje
+def generate_password(request, arbitraje_id, usuario_asovac_id):
+
+    if(not usuarios_guard):
+        raise PermissionDenied
+        
+    data= dict()
+    usuario_asovac = Usuario_asovac.objects.get(id = usuario_asovac_id)
+
+    if request.method == 'POST':
+        password = User.objects.make_random_password()
+        usuario_asovac.usuario.set_password(password)
+        usuario_asovac.usuario.save()
+        context = {
+        'password': password,
+        }
+        msg_plain = render_to_string('../templates/email_templates/user_password_generator.txt', context)
+        msg_html = render_to_string('../templates/email_templates/user_password_generator.html', context)
+
+        value = send_mail(
+            'Asignación de contraseña',         #titulo
+            msg_plain,                          #mensaje txt
+            config('EMAIL_HOST_USER'),          #email de envio
+            [usuario_asovac.usuario.email],               #destinatario
+            html_message=msg_html,              #mensaje en html
+        )
+
+        print(password)
+        if(value == 1):
+            messages.success(request, "Contraseña enviada con éxito")
+        else:
+            messages.error(request, "Error al hacer envío de contraseña al usuario, por favor generela de nuevo")
+        return redirect(reverse('main_app:users_list', kwargs= {'arbitraje_id': arbitraje_id}))
+
+
+    context={
+        'tipo': "generar_password",
+        'arbitraje_id': arbitraje_id,
+        'usuario_asovac': usuario_asovac
+    }
+    data['content']= render_to_string('ajax/generate_user_password.html',context,request=request)
+    return JsonResponse(data)
