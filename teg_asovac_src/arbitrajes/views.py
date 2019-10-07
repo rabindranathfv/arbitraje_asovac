@@ -504,8 +504,8 @@ def list_areas_arbitros(request,id):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     estado = Sistema_asovac.objects.get(id = event_id).estado_arbitraje
-    if not referee_guard(estado, rol_user):
-        raise PermissionDenied
+    # if not referee_guard(estado, rol_user):
+    #     raise PermissionDenied
 
     # print "El rol del usuario logueado es: ",rol_user
     response = {}
@@ -575,8 +575,8 @@ def list_subareas_arbitros(request,id):
     event_id = request.session['arbitraje_id']
     rol_user=get_roles(request.user.id,event_id)
     estado = Sistema_asovac.objects.get(id = event_id).estado_arbitraje
-    if not referee_guard(estado, rol_user):
-        raise PermissionDenied
+    # if not referee_guard(estado, rol_user):
+    #     raise PermissionDenied
     # print "El rol del usuario logueado es: ",rol_user
     response = {}
     response['query'] = []
@@ -847,8 +847,8 @@ def adminAddSubareas(request,id):
     estado = arbitraje.estado_arbitraje
     rol_id = get_roles(request.user.id, arbitraje_id)
 
-    if not referee_guard(estado, rol_id):
-        raise PermissionDenied
+    # if not referee_guard(estado, rol_id):
+    #     raise PermissionDenied
 
     data= dict()
     user= get_object_or_404(User,id=id)
@@ -923,8 +923,8 @@ def adminAddareas(request,id):
     estado = arbitraje.estado_arbitraje
     rol_id = get_roles(request.user.id, arbitraje_id)
 
-    if not referee_guard(estado, rol_id):
-        raise PermissionDenied
+    # if not referee_guard(estado, rol_id):
+    #     raise PermissionDenied
 
     data= dict()
     user= get_object_or_404(User,id=id)

@@ -3439,7 +3439,7 @@ def usersAdminArea(request, arbitraje_id,id):
         'route_trabajos_navbar': route_trabajos_navbar,
         'route_resultados': route_resultados,
         'user_id':id,
-        'user':user
+        'userArea':user
     }
     return render(request, "main_app_admin_areas.html", context)
 
