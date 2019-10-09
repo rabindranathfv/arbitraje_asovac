@@ -3159,18 +3159,22 @@ def editUsuario(request,id,arbitraje_id):
     if request.method == 'POST':
         
         # print "edit post"
-        form= PerfilForm(request.POST,instance=user)
+        form= PerfilForm(request.POST,instance=user, user_id = user.id)
         if form.is_valid():
-            print "Se guarda el valor del formulario"
             form.save()
+            messages.success(request,"Se guarda el valor del formulario")
             data['status']= 200
         else:
+            messages.error(request, "Nombre de usuario o correo electrónico ya en uso por otro usuario.")
             data['status']= 404
+
+        data['redirect'] = 1
+        data['url'] =  reverse('main_app:users_list', kwargs = { 'arbitraje_id': arbitraje_id })
     else:
        
         data['status']= 200
         data['title']=user.username
-        form= PerfilForm(instance=user)
+        form= PerfilForm(instance=user, user_id = user.id)
         context={
             'user':user,
             'arbitraje_id':arbitraje_id,
