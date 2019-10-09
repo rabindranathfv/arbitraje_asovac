@@ -7,12 +7,13 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout, Submit, Div, HTML, Row, Column
 
 from django import forms
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm,PasswordResetForm
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.forms import CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _ #usado para personalizar las etiquetas de los formularios
-from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema
+from .models import Sistema_asovac, Usuario_asovac, Rol, Area, Sub_area,Usuario_rol_in_sistema, User
 from .validators import valid_extension
 from django.core.exceptions import ValidationError
 
@@ -300,6 +301,20 @@ class PerfilForm(forms.ModelForm):
     class Meta:
         model= User
         fields=['username','first_name','last_name','email',]
+
+    def __init__(self, *args, **kwargs):
+		self.user_id = kwargs.pop('user_id',None)
+		super(PerfilForm,self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+
+        user = User.objects.filter(email = email)
+        if(user.exists()):
+            if user.first().id != self.user_id:
+                print(user.first().id, self.user_id)
+                raise forms.ValidationError(_("No se pudieron guardar los cambios, ya hay un usuario con el correo electrónico indicado."), code="email_duplicated")
+        return email
 
 class AssingRolForm(forms.ModelForm):
 
