@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^listArbitrajes$', views.list_arbitrajes, name='list_arbitrajes'),
     url(r'^listTrabajosAceptados$', views.list_trabajos_aceptados, name='list_trabajos_aceptados'),
     url(r'^listAreasArbitros/(?P<id>\d+)$', views.list_areas_arbitros, name='list_areas_arbitros'),
+    url(r'^listAreasUsuarios/(?P<id>\d+)$', views.list_areas_usuarios, name='list_areas_usuarios'),
     url(r'^listSubAreasArbitros/(?P<id>\d+)$',
         views.list_subareas_arbitros, name='list_subareas_arbitros'),
     url(r'^getSubareas/(?P<id>\d+)$', views.getSubareas, name='getSubareas'),

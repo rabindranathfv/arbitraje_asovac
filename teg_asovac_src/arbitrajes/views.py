@@ -495,6 +495,76 @@ def list_arbitros(request):
     return JsonResponse(response)
 
 #---------------------------------------------------------------------------------#
+#            Carga el contenido de la tabla de áreas para usuarios                #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def list_areas_usuarios(request,id):
+    print "listado de areas para usuarios"
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    estado = Sistema_asovac.objects.get(id = event_id).estado_arbitraje
+    # if not referee_guard(estado, rol_user):
+    #     raise PermissionDenied
+
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    # search= request.POST['search']
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
+
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+
+    print "Consulta Normal"
+    arbitraje_id = request.session['arbitraje_id']
+
+    # consulta mas completa
+    query= "select distinct ar.id,ar.nombre,ar.codigo,ar.descripcion from main_app_usuario_asovac as usu_aso inner join main_app_usuario_rol_in_sistema as ur_sis on ur_sis.usuario_asovac_id = usu_aso.id inner join main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id inner join main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id inner join main_app_area as ar on ar.id = sub_a.area_id"
+    where=' WHERE ur_sis.sistema_asovac_id =%s AND usu_aso.id=%s '
+    # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
+    query= query+where
+    query_count=query
+
+    if sort != "pk":
+        order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+
+    data= Arbitro.objects.raw(query,[event_id,id])
+    data_count= Arbitro.objects.raw(query_count,[event_id,id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+
+    for item in data:
+        nombre= item.nombre
+        codigo= item.codigo
+        descripcion= item.descripcion
+        response['query'].append({'id':item.id,'nombre': nombre ,'codigo':codigo ,'descripcion':descripcion  })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+#---------------------------------------------------------------------------------#
 #            Carga el contenido de la tabla de áreas para árbitros                #
 #---------------------------------------------------------------------------------#
 @login_required
