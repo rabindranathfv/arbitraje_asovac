@@ -147,24 +147,82 @@ class ChartData(APIView):
         if(mode == '1'):
             response = HttpResponse(content_type='application/ms-excel')
             response['Content-Disposition'] = 'attachment; filename=convencion_asovac_resultados.xls'
-            style_detail = xlwt.easyxf('align: wrap on, vert center, horiz center; border : bottom thin,right thin,top thin,left thin;')
+            style_detail = xlwt.easyxf('align: wrap on, horiz center; border : bottom thin,right thin,top thin,left thin;')
             workbook = xlwt.Workbook()
             worksheet = workbook.add_sheet("Resultados")
             # Para agregar los titulos de cada columna
             row_num = 1
             col_num = 1
-            columns = ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado']
+            columns = ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato / Educación Media', 'Educación Técnico / Profesional', 'Universidad', 'Postgrado']
             columns_data = [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
 
+
+            #Tabla para autores según nivel de instrucción
             worksheet.write_merge(0,0,0,len(columns), 'Autores según nivel de instrucción' , style_detail)
             worksheet.write(row_num, 0, '', style_detail)
-            worksheet.write(row_num+1, 0, 'Autores', style_detail)
+            worksheet.write(row_num + 1, 0, 'Autores', style_detail)
             for column_number in range(len(columns)):
                 worksheet.write(row_num, col_num, columns[column_number], style_detail)
                 worksheet.write(row_num+1, col_num, columns_data[column_number], style_detail)
                 col_num += 1
-            workbook.save(response)
+            
 
+            #Tabla para resultados de trabajos
+            col_num += 2
+            second_col = col_num
+            columns = ["Aceptados", "Rechazados", "Pendientes"]
+            columns_data = [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
+
+            worksheet.write_merge(0,0,col_num, col_num + len(columns), 'Resultados de trabajos' , style_detail)
+            worksheet.write(row_num, col_num, '', style_detail)
+            worksheet.write(row_num + 1, col_num, 'Trabajos', style_detail)
+            col_num += 1
+
+            for column_number in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[column_number], style_detail)
+                worksheet.write(row_num + 1, col_num, columns_data[column_number], style_detail)
+                col_num+= 1
+
+            #Tabla para resultados de arbitrajes
+            row_num += 4
+            col_num = 0
+            columns = ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes']
+            columns_data = [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
+
+            worksheet.write_merge(row_num,row_num, col_num, len(columns), 'Resultados de arbitrajes', style_detail)
+            worksheet.write(row_num + 1, col_num, '', style_detail)
+            worksheet.write(row_num + 2, col_num, 'Cantidad', style_detail)
+            col_num += 1
+
+            for column_number  in range(len(columns)):
+                worksheet.write(row_num + 1, col_num, columns[column_number], style_detail)
+                worksheet.write(row_num + 2, col_num, columns_data[column_number], style_detail)
+                col_num += 1
+
+            #Tabla para resultados según áreas
+            col_num = second_col
+            columns = areas_labels_splited
+            columns_aceptados = areas_trabajos_aceptados
+            columns_rechazados = areas_trabajos_rechazados
+
+            worksheet.write_merge(row_num, row_num, col_num, col_num + 2, 'Resultados por área', style_detail)
+
+            row_num += 1
+            worksheet.write(row_num, col_num, '', style_detail)
+            worksheet.write(row_num, col_num + 1, 'Aprobados', style_detail)
+            worksheet.write(row_num, col_num + 2, 'Rechazados', style_detail)
+
+            row_num += 1
+            for column_number in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[column_number], style_detail)
+                worksheet.write(row_num, col_num + 1, columns_aceptados[column_number], style_detail)
+                worksheet.write(row_num, col_num + 2, columns_rechazados[column_number], style_detail)
+                row_num += 1
+            
+            
+                
+
+            workbook.save(response)
             return response
 
         else:
