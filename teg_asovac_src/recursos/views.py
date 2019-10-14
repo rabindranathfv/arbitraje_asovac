@@ -59,7 +59,7 @@ class ChartData(APIView):
     authentication_classes = ()
     permission_classes = ()
 
-    def get(self, request, format=None):
+    def get(self, request, mode, format=None):
         arbitraje_id = request.session['arbitraje_id']
         #El siguiente codigo es para obtener los datos necesarios para la grafica de resultados de trabajos
         trabajos_aceptados = Autores_trabajos.objects.filter(sistema_asovac = arbitraje_id, pagado = True, es_autor_principal = True, trabajo__estatus = "Aceptado").count()
@@ -142,32 +142,57 @@ class ChartData(APIView):
             except: 
                 pass
 
+        
+        # Para definir propiedades del documento de excel
+        if(mode == '1'):
+            response = HttpResponse(content_type='application/ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=convencion_asovac_resultados.xls'
+            style_detail = xlwt.easyxf('align: wrap on, vert center, horiz center; border : bottom thin,right thin,top thin,left thin;')
+            workbook = xlwt.Workbook()
+            worksheet = workbook.add_sheet("Resultados")
+            # Para agregar los titulos de cada columna
+            row_num = 1
+            col_num = 1
+            columns = ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado']
+            columns_data = [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
 
-        data = {
-            "trabajos": {
-                "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
-                "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
-            },
-            "arbitros": {
-                "labels": ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
-                "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
-            },
-            "autores": {
-                "labels": ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado'],
-                "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
-            },
-            "area":{
-                "labels": areas_labels_splited,
-                "data_aceptados": areas_trabajos_aceptados,
-                "data_rechazados": areas_trabajos_rechazados,
-            },
-            "autoresArea":{
-                "labels": areas_labels,
-                "data": areas_autores,
-                "colores": areas_colores
-            },
-        }   
-        return Response(data)
+            worksheet.write_merge(0,0,0,len(columns), 'Autores según nivel de instrucción' , style_detail)
+            worksheet.write(row_num, 0, '', style_detail)
+            worksheet.write(row_num+1, 0, 'Autores', style_detail)
+            for column_number in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[column_number], style_detail)
+                worksheet.write(row_num+1, col_num, columns_data[column_number], style_detail)
+                col_num += 1
+            workbook.save(response)
+
+            return response
+
+        else:
+            data = {
+                "trabajos": {
+                    "labels": ["Trabajos Aceptados", "Trabajos Rechazados", "Trabajos Pendientes"],
+                    "data": [trabajos_aceptados, trabajos_rechazados, trabajos_pendientes]
+                },
+                "arbitros": {
+                    "labels": ['Total árbitros', 'Invitaciones aceptadas', 'Invitaciones pendientes'],
+                    "data": [total_arbitros, invitaciones_aceptadas, invitaciones_pendientes]
+                },
+                "autores": {
+                    "labels": ['Educación Básica Primaria', 'Educación Básica Secundaria', 'Bachillerato/Educación Media', 'Educación Técnico/Profesional', 'Universidad', 'Postgrado'],
+                    "data": [educacion_primaria, educacion_secundaria, bachillerato, tecnico, universidad, postgrado]
+                },
+                "area":{
+                    "labels": areas_labels_splited,
+                    "data_aceptados": areas_trabajos_aceptados,
+                    "data_rechazados": areas_trabajos_rechazados,
+                },
+                "autoresArea":{
+                    "labels": areas_labels,
+                    "data": areas_autores,
+                    "colores": areas_colores
+                },
+            }   
+            return Response(data)
 
 
 # Funcion de ayuda que genera un contexto comun para todas las vistas/views
