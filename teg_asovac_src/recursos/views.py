@@ -219,8 +219,27 @@ class ChartData(APIView):
                 worksheet.write(row_num, col_num + 2, columns_rechazados[column_number], style_detail)
                 row_num += 1
             
-            
-                
+
+            #Tabla para autores por área
+
+            row_num += 1
+            col_num = 0
+
+            columns = areas_labels
+            columns_data = areas_autores
+
+            worksheet.write_merge(row_num, row_num, col_num, len(columns), 'Autores por área', style_detail)
+
+            row_num += 1
+            worksheet.write(row_num, col_num, '', style_detail)
+            worksheet.write(row_num + 1, col_num, 'Cantidad', style_detail)
+
+            col_num += 1
+            for column_number in range(len(columns)):
+                worksheet.write(row_num, col_num, columns[column_number], style_detail)
+                worksheet.write(row_num + 1, col_num, columns_data[column_number], style_detail)
+                col_num += 1
+
 
             workbook.save(response)
             return response
