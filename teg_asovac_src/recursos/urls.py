@@ -44,7 +44,7 @@ urlpatterns = [
     url(r'^documentos/asovac/portanombres$', views.create_name_tags, name='create_name_tags'),
 
     url(r'^api/data/$', views.get_data, name='get_data'),
-    url(r'^api/chart/data/$', views.ChartData.as_view(), name='chart_data'),
+    url(r'^api/chart/data/(?P<mode>\d+)/$', views.ChartData.as_view(), name='chart_data'),
 
 
     url(r'^format-participants/(?P<option>\d+)/$', views.format_import_participants,

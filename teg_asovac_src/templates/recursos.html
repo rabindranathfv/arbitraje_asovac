@@ -10,6 +10,7 @@
                 <a href="#resultados-arbitrajes" class="btn btn-primary" title="Resultados de arbitrajes"><i class="fa fa-chart-bar"></i> Arbitrajes</a>
                 <a href="#resultados-areas" class="btn btn-primary"title="Resultados según áreas"><i class="fa fa-align-left"></i> Resultados por área</a>
                 <a href="#autores-area" class="btn btn-primary" title="Cantidad de autores por área"><i class="fa fa-chart-pie"></i> Autores por área</a>
+                <a href="{% url 'recursos:chart_data' '1' %}" class="btn btn-primary" title="Cantidad de autores por área"><i class="fa fa-download"></i> Descargar</a>
             </div>
         </div>
     </div>
@@ -97,7 +98,7 @@
 {% block js_extra %}
 {% load static %}
     <script>
-        var endpoint = "{% url 'recursos:chart_data' %}"
+        var endpoint = "{% url 'recursos:chart_data' '0' %}"
         var defaultData = []
         var labels = []
         $.ajax({
