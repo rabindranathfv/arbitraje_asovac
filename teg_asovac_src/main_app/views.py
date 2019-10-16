@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password
 from decouple import config
 from django.core import serializers
 from django.contrib import messages
+from django.db import connection
 from django.contrib.auth import update_session_auth_hash, authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -3516,6 +3517,64 @@ def changeAreaUser(request,arbitraje_id,id):
         data['content']=render_to_string('ajax/BTArbitros.html',context,request=request)
 
     return JsonResponse(data)
+
+@login_required
+@user_is_arbitraje
+def deleteSubAreaUserConf(request,arbitraje_id,id,subarea):
+
+    arbitraje_id = request.session['arbitraje_id']
+    arbitraje = Sistema_asovac.objects.get(pk=arbitraje_id)
+    estado = arbitraje.estado_arbitraje
+    rol_id = get_roles(request.user.id, arbitraje_id)
+
+    data= dict()
+    query= " select  usu_sub_a.id as id, sub_a.nombre as nombre from main_app_usuario_asovac as usu_aso inner join main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id inner join main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id inner join main_app_area as ar on ar.id = sub_a.area_id"
+    where=' WHERE usu_sub_a.id =%s ' 
+    query= query+where
+    query_result= Usuario_asovac.objects.raw(query,[subarea])
+
+    # Para contar subareas 
+    query= " select  usu_sub_a.id as id, sub_a.nombre as nombre from main_app_usuario_asovac as usu_aso inner join main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id inner join main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id inner join main_app_area as ar on ar.id = sub_a.area_id"
+    where=' WHERE usu_aso.id=%s ' 
+    query= query+where
+    total_subarea= Usuario_asovac.objects.raw(query,[id])
+    
+    total=0
+    for item in total_subarea:
+        total=total+1
+
+    for item in query_result:
+        subarea={'id':item.id,'nombre': item.nombre }
+
+    if request.method == 'POST':
+
+        # print "para eliminar subarea total: ", total
+        if total > 1:
+            query= "DELETE FROM main_app_usuario_asovac_sub_area "
+            where="WHERE id={}".format(subarea['id'])
+            query= query+where
+            # query_result= Usuario_asovac.objects.raw(query,[subarea['id']])
+            
+            cursor = connection.cursor()
+            cursor.execute(query)
+        
+            data['status']= 200
+            data['message']="La subárea se ha eliminado de forma exitosa."
+        else:
+            data['status']= 200
+            data['message']="El usuario debe tener al menos 1 subárea asociada."
+
+    else:
+        data['status']= 200
+        context={
+            'tipo':"removeSubareaUser",
+            'arbitraje_id':arbitraje_id,
+            'id':id,
+            'subarea':subarea,
+        }
+        data['content']= render_to_string('ajax/BTArbitros.html',context,request=request)
+    return JsonResponse(data)
+
 
 
 @login_required
