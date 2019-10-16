@@ -417,21 +417,19 @@ var SaveAñadirPagoForm= function(){
             success: function(data){
                 // console.log(data);
                 if(data.status == 200 ){
-                    if(data.redirect == 1)
-                    {
-                        window.location.replace(data.url)
-                    }
                     // $('#bootstrapTableModal .modal-body').html("Se ha actualizado el registro de forma exitosa.");
                     // $('#modal-user').modal('hide');
                 }else{
                     // console.log('error en la actualizacion')
                     // $('#bootstrapTableModal .modal-body').html(data.body)
-                    console.log('error');
-                    if(data.redirect == 1)
-                    {
-                        window.location.replace(data.url)
-                    }
+                    console.log('error');      
                 }
+                
+                if(data.redirect == 1)
+                {
+                    window.location.replace(data.url)
+                }
+
             }
         });
 
