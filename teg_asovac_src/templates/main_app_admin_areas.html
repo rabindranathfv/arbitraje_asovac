@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <!-- data table -->
-                        <input type="hidden" id="listAreas" name="list" data-url="{% url 'arbitrajes:list_areas_arbitros' user_id %}">
+                        <input type="hidden" id="listAreas" name="list" data-url="{% url 'arbitrajes:list_areas_usuarios' user_id %}">
                       
                         <div id="toolbar">
                                 <a data-url="{% url 'arbitrajes:adminAddAreas' user_id %}" id="addArea" class="btn btn-default"><i class="fas fa-plus-circle"></i> Agregar Área</a>
@@ -56,7 +56,7 @@
                 <!-- Lista de subareas -->
                     <div class="col-md-12">
                         <!-- data table -->
-                        <input type="hidden" id="listSubareas" name="list" data-url="{% url 'arbitrajes:list_subareas_arbitros' user_id %}">
+                        <input type="hidden" id="listSubareas" name="list" data-url="{% url 'arbitrajes:list_subareas_usuarios' user_id %}">
                         <div id="toolbar2">
                                 <a data-url="{% url 'arbitrajes:adminAddSubareas' user_id %}" id="addSubarea" class="btn btn-default"><i class="fas fa-plus-circle"></i> Agregar Subárea</a href="#" id="addSubarea">
                         </div>
@@ -79,7 +79,7 @@
                                     <th data-field="nombre" data-sortable="true">Subárea</th>
                                     <th data-field="codigo" data-sortable="true">Código</th>
                                     <th data-field="descripcion" data-sortable="true">Descripción</th>
-                                    <th data-field="operate" data-events="operateEvents" data-formatter="operateDeleteAreaUser" data-align="center">Acciones</th>
+                                    <th data-field="operate" data-events="operateEvents" data-formatter="operateDeleteSubAreaUser" data-align="center">Acciones</th>
                                 </tr>
                             </thead>
                         </table>

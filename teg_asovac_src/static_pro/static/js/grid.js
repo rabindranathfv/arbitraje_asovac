@@ -198,7 +198,15 @@ $.ajaxSetup({
 
     function operateDeleteAreaUser(value, row, index) {
         return [
-            '<a class="deleteSubAreaUser" href="javascript:void(0)" title="Cambiar Área">',
+            '<a class="deleteSubAreaUser" href="javascript:void(0)" title="Eliminar Subárea">',
+            '<i class="fas fa-trash"></i>',
+            '</a>  ' ,
+        ].join('');
+    }
+    
+    function operateDeleteSubAreaUser(value, row, index) {
+        return [
+            '<a class="deleteSubAreaUserConf" href="javascript:void(0)" title="Eliminar Subárea">',
             '<i class="fas fa-trash"></i>',
             '</a>  ' ,
         ].join('');
@@ -485,6 +493,24 @@ $.ajaxSetup({
             location.href=route;
         },
         'click .removeSubareaArbitro': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                beforeSend: function(){
+                    $('#bootstrapTableModal').modal('show');  
+                },
+                success: function (data){
+                    // console.log(data);
+                    $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        
+        },
+        'click .deleteSubAreaUserConf': function (e, value, row, index) {
             var route=e.currentTarget.baseURI+"/"+$(this).attr("class")+"/"+row.id;
             console.log(route);
             $.ajax({

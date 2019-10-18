@@ -495,6 +495,76 @@ def list_arbitros(request):
     return JsonResponse(response)
 
 #---------------------------------------------------------------------------------#
+#            Carga el contenido de la tabla de áreas para usuarios                #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def list_areas_usuarios(request,id):
+    print "listado de areas para usuarios"
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    estado = Sistema_asovac.objects.get(id = event_id).estado_arbitraje
+    # if not referee_guard(estado, rol_user):
+    #     raise PermissionDenied
+
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    # search= request.POST['search']
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
+
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+
+    print "Consulta Normal"
+    arbitraje_id = request.session['arbitraje_id']
+
+    # consulta mas completa
+    query= "select distinct ar.id,ar.nombre,ar.codigo,ar.descripcion from main_app_usuario_asovac as usu_aso inner join main_app_usuario_rol_in_sistema as ur_sis on ur_sis.usuario_asovac_id = usu_aso.id inner join main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id inner join main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id inner join main_app_area as ar on ar.id = sub_a.area_id"
+    where=' WHERE ur_sis.sistema_asovac_id =%s AND usu_aso.id=%s '
+    # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
+    query= query+where
+    query_count=query
+
+    if sort != "pk":
+        order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+
+    data= Arbitro.objects.raw(query,[event_id,id])
+    data_count= Arbitro.objects.raw(query_count,[event_id,id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+
+    for item in data:
+        nombre= item.nombre
+        codigo= item.codigo
+        descripcion= item.descripcion
+        response['query'].append({'id':item.id,'nombre': nombre ,'codigo':codigo ,'descripcion':descripcion  })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+#---------------------------------------------------------------------------------#
 #            Carga el contenido de la tabla de áreas para árbitros                #
 #---------------------------------------------------------------------------------#
 @login_required
@@ -605,6 +675,78 @@ def list_subareas_arbitros(request,id):
     # consulta mas completa
     query= "SELECT usu_sub_a.id, sub_a.nombre,sub_a.codigo,sub_a.descripcion FROM arbitrajes_arbitro AS arb INNER JOIN "+'"arbitrajes_arbitro_Sistema_asovac"'+" AS sis_aso on sis_aso.arbitro_id = arb.id INNER JOIN main_app_usuario_asovac AS usu_aso on usu_aso.id = arb.usuario_id INNER JOIN main_app_usuario_asovac_sub_area AS usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id INNER JOIN main_app_sub_area AS sub_a on sub_a.id = usu_sub_a.sub_area_id INNER JOIN main_app_area AS ar on ar.id= sub_a.area_id"
     where=' WHERE sis_aso.sistema_asovac_id =%s AND usu_aso.id=%s '
+    # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
+    query= query+where
+    query_count=query
+
+    if sort != "pk":
+        order_by="ar."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+    else:
+        order_by="ar.id"+" " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init)
+        query= query + " ORDER BY " + order_by
+
+    data= Arbitro.objects.raw(query,[event_id,id])
+    data_count= Arbitro.objects.raw(query_count,[event_id,id])
+
+    total=0
+    for item in data_count:
+        total=total+1
+
+    for item in data:
+        nombre= item.nombre
+        codigo= item.codigo
+        descripcion= item.descripcion
+       
+        response['query'].append({'id':item.id,'nombre': nombre ,'codigo':codigo ,'descripcion':descripcion  })
+
+
+    response={
+        'total': total,
+        'query': response,
+    }
+
+    return JsonResponse(response)
+#---------------------------------------------------------------------------------#
+#          Carga el contenido de la tabla de subáreas para usuarios               #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def list_subareas_usuarios(request,id):
+
+    event_id = request.session['arbitraje_id']
+    rol_user=get_roles(request.user.id,event_id)
+    estado = Sistema_asovac.objects.get(id = event_id).estado_arbitraje
+    # if not referee_guard(estado, rol_user):
+    #     raise PermissionDenied
+    # print "El rol del usuario logueado es: ",rol_user
+    response = {}
+    response['query'] = []
+
+    sort= request.POST['sort']
+    order= request.POST['order']
+    # search= request.POST['search']
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('offset', False) != False:
+        init= int(request.POST['offset'])
+
+    # Se verifica la existencia del parametro
+    if request.POST.get('limit', False) != False:
+        # limit= int(request.POST['limit'])+init
+        limit= int(request.POST['limit'])
+
+    if request.POST.get('export',False) != False:
+        export= request.POST.get('export')
+    else:
+        export= ""
+
+    print "Consulta Normal"
+    arbitraje_id = request.session['arbitraje_id']
+
+    # consulta mas completa
+    query= "select usu_sub_a.id, sub_a.nombre, sub_a.codigo, sub_a.descripcion from main_app_usuario_asovac as usu_aso inner join main_app_usuario_rol_in_sistema as ur_sis on ur_sis.usuario_asovac_id = usu_aso.id inner join main_app_usuario_asovac_sub_area as usu_sub_a on usu_sub_a.usuario_asovac_id = usu_aso.id inner join main_app_sub_area as sub_a on sub_a.id = usu_sub_a.sub_area_id inner join main_app_area as ar on ar.id = sub_a.area_id"
+    where=' WHERE ur_sis.sistema_asovac_id =%s AND usu_aso.id=%s '
     # where=' WHERE sis_aso.sistema_asovac_id =1 and arb.id=8 '
     query= query+where
     query_count=query
@@ -1650,19 +1792,21 @@ def list_trabajos_aceptados(request):
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         if rol_user == 1 or rol_user == 2:
-            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+            group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query
             search= search+'%'
             where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.estatus='+"'Aceptado' "
-            query= query+where
+            query= query+where+group_by
         else:
             if rol_user == 3:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query
                 search= search+'%'
                 where=' WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.estatus='+"'Aceptado' "
                 where=where.format(area)
-                query= query+where
+                query= query+where+group_by
         if sort == "nombre":
             order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
         else:
@@ -1696,14 +1840,16 @@ def list_trabajos_aceptados(request):
 
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' "
-                query= query+where
+                query= query+where+group_by
             else:
                 if rol_user == 3:
-                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,aut.nombres,aut.apellidos,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                     where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(area)
-                    query= query+where
+                    query= query+where+group_by
             
             if sort=="nombre":
                 order_by="main_a."+ str(sort)+ " " + order + " LIMIT " + str(limit) + " OFFSET "+ str(init) 
@@ -1733,19 +1879,19 @@ def list_trabajos_aceptados(request):
 
     for item in data:
 
-        autores= Autores_trabajos.objects.filter(trabajo=item.id)
-        total_autores= autores.count()
-        contador=0
+        # autores= Autores_trabajos.objects.filter(trabajo=item.id)
+        # total_autores= autores.count()
+        # contador=0
         # print total_autores
         # print "Autores Para el trabajo ", item.id
-        list_autores=""
-        for aut in autores:
-            # print ( "Datos del autor {0} {1}".format(aut.autor.nombres,aut.autor.apellidos))
-            if (contador+1) == total_autores: 
-                list_autores= list_autores+aut.autor.nombres+" "+aut.autor.apellidos+" "
-            else:
-                list_autores= list_autores+aut.autor.nombres+" "+aut.autor.apellidos+", "
-            contador= contador+1
+        # list_autores=""
+        # for aut in autores:
+        #     # print ( "Datos del autor {0} {1}".format(aut.autor.nombres,aut.autor.apellidos))
+        #     if (contador+1) == total_autores: 
+        #         list_autores= list_autores+aut.autor.nombres+" "+aut.autor.apellidos+" "
+        #     else:
+        #         list_autores= list_autores+aut.autor.nombres+" "+aut.autor.apellidos+", "
+        #     contador= contador+1
 
 
         if item.estatus == "Aceptado":
@@ -1760,7 +1906,7 @@ def list_trabajos_aceptados(request):
         presentacion= item.forma_presentacion 
         observaciones = item.observaciones
         # autor_principal=item.nombres+' '+item.apellidos
-        autor_principal=list_autores
+        autor_principal=item.lista_autores
         area = item.nombre
         subarea=item.subarea
         
