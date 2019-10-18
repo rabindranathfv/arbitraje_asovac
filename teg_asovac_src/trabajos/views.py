@@ -93,15 +93,31 @@ def trabajos(request):
     else:
         form = TrabajoForm()
 
-    trabajos_list = Autores_trabajos.objects.filter(autor = autor, sistema_asovac = sistema_asovac)
- 
-    autores_trabajo_list = []
+    query = """
+        SELECT trabajo.*, STRING_AGG (distinct(concat(autor.nombres,' ',autor.apellidos)), ', ') authors_list, STRING_AGG (distinct(concat(autores_trabajo.autor_id,'-',autores_trabajo.es_autor_principal )), ' ') permission_list, autores_trabajo.pagado
+        FROM 	(	
+                SELECT trabajo.id
+                FROM trabajos_trabajo as trabajo INNER JOIN autores_autores_trabajos as autores_trabajo ON trabajo.id = autores_trabajo.trabajo_id INNER JOIN autores_autor as autor ON autores_trabajo.autor_id = autor.id
+                WHERE  autores_trabajo.sistema_asovac_id = %s AND autor.id = %s
+            ) AS trabajos_actual_autor, 
+            trabajos_trabajo as trabajo INNER JOIN autores_autores_trabajos as autores_trabajo ON trabajo.id = autores_trabajo.trabajo_id INNER JOIN autores_autor as autor ON autores_trabajo.autor_id = autor.id
+        WHERE trabajos_actual_autor.id = trabajo.id
+        GROUP BY trabajo.id, autores_trabajo.pagado
+        """
+    trabajos_query = Trabajo.objects.raw(query, [arbitraje_id, autor.id])
+    es_autor_principal_list = [] 
+    for trabajo in trabajos_query:
+        permission_list_splitted = trabajo.permission_list.split(' ')
+        for permission in permission_list_splitted:
+            permission_splitted = permission.split('-')
+            if(int(permission_splitted[0]) == autor.id):
+                if(permission_splitted[1] == 't'):
+                    es_autor_principal_list.append(True)
+                else:
+                    es_autor_principal_list.append(False)
 
-    for autor_trabajo in trabajos_list:
-        autores_trabajo_list.append(Autores_trabajos.objects.filter(sistema_asovac = sistema_asovac, trabajo = autor_trabajo.trabajo))
 
-    
-    job_data = zip(trabajos_list, autores_trabajo_list)
+    job_data = zip(trabajos_query, es_autor_principal_list)
  
     areas= Area.objects.all().order_by('nombre')
     subarea_list = []

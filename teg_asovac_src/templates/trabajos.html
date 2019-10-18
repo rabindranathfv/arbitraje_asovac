@@ -35,60 +35,57 @@
                         </thead>
                         <tbody class="searchable">
 
-                            {% for trabajo, autor_list in job_data %}
+                            {% for trabajo, es_autor_principal in job_data %}
                             <tr>
                                 <td class="text-center">
-                                    {% if trabajo.trabajo.estatus == "Pendiente" %}
+                                    {% if trabajo.estatus == "Pendiente" %}
                                         <span class="label label-warning">Pendiente</span>
-                                    {% elif trabajo.trabajo.estatus == "Aceptado" %}
+                                    {% elif trabajo.estatus == "Aceptado" %}
                                         <span class="label label-success">Aceptado</span>
-                                    {% elif trabajo.trabajo.estatus == "Aceptado con observaciones" %}
+                                    {% elif trabajo.estatus == "Aceptado con observaciones" %}
                                         <span class="label label-success">Aceptado con observaciones</span>
-                                    {% elif trabajo.trabajo.estatus == "Rechazado" %}
+                                    {% elif trabajo.estatus == "Rechazado" %}
                                         <span class="label label-danger">Rechazado</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-center">{{trabajo.trabajo.subareas.first.area}}</td>
-                                <td class="text-center">{{trabajo.trabajo.subareas.first.nombre}}</td>
-                                <td class="text-center">{{trabajo.trabajo.titulo_espanol}}</td>                                
+                                <td class="text-center">{{trabajo.subareas.first.area}}</td>
+                                <td class="text-center">{{trabajo.subareas.first.nombre}}</td>
+                                <td class="text-center">{{trabajo.titulo_espanol}}</td>                                
                                 <td class="text-center">
-                                    {% for autor in autor_list %}
-                                        {{autor.autor.nombres}} {{autor.autor.apellidos}}
-                                        </br>
-                                    {% endfor %}
+                                    {{trabajo.authors_list}}
                                 </td>
                                 
                                 <td class="text-center">
-                                    {% if trabajo.pagado == False and trabajo.es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
+                                    {% if trabajo.pagado == False and es_autor_principal and sistema_asovac.estado_arbitraje == 3 %}<!-- Esto es para corroborar que el trabajo no ha sido postulado-->
 										<a class="show-form" data-url="{% url 'trabajos:add_author_to_job' trabajo.id %}" title="Añadir autor" role="button">
 											<i class="fas fa-user"></i>
                                         </a>
 
 
-										<a href="{% url 'trabajos:edit_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+										<a href="{% url 'trabajos:edit_trabajo' trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Editar">
 											<i class="fas fa-edit"></i>
 										</a>
                                         
 										<!-- Esto es lo que hay que verificar -->
-										<a class="show-form" data-url="{% url 'trabajos:delete_job' trabajo.trabajo.id %}" title="Borrar" role="button">
+										<a class="show-form" data-url="{% url 'trabajos:delete_job' trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
                                         </a>
-									{% elif sistema_asovac.estado_arbitraje == 5 and trabajo.es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
+									{% elif sistema_asovac.estado_arbitraje == 5 and es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
 
-                                        <a class="show-form" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
+                                        <a class="show-form" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
                                             <i class="fas fa-book"></i>
                                         </a>
 
                                     {% endif %}
-                                    {% if trabajo.trabajo.observaciones %}
-                                        <a class="show-form" data-url="{% url 'trabajos:view_referee_observation' trabajo.trabajo.id %}" title="Ver observaciones del arbitro" role="button">
+                                    {% if trabajo.observaciones %}
+                                        <a class="show-form" data-url="{% url 'trabajos:view_referee_observation' trabajo.id %}" title="Ver observaciones del arbitro" role="button">
                                             <i class="fas fa-flag"></i>
                                         </a>
                                     {% endif %}
-                                    <a href="{% url 'autores:postular_trabajo' trabajo.trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Pagos de postulación">
+                                    <a href="{% url 'autores:postular_trabajo' trabajo.id %}" role="button" data-toggle="tooltip" data-placement="top" title="Pagos de postulación">
                                         <i class="far fa-newspaper"></i>
                                     </a>
-                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo.trabajo.id %}" role="button" title="Ver trabajo">
+                                    <a href="{% url 'trabajos:detalles_trabajo' trabajo.id %}" role="button" title="Ver trabajo">
 										<i class="fas fa-eye"></i>
 									</a>
 
