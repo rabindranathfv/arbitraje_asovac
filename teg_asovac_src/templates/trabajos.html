@@ -70,7 +70,7 @@
 										<a class="show-form" data-url="{% url 'trabajos:delete_job' trabajo.id %}" title="Borrar" role="button">
 											<i class="fas fa-times"></i>
                                         </a>
-									{% elif sistema_asovac.estado_arbitraje == 5 and es_autor_principal and trabajo.trabajo.requiere_arbitraje %}
+									{% elif sistema_asovac.estado_arbitraje == 5 and es_autor_principal and trabajo.requiere_arbitraje %}
 
                                         <a class="show-form" data-url="{% url 'trabajos:add_new_version_to_job' trabajo.id %}" title="Crear nueva versión del trabajo" role="button">
                                             <i class="fas fa-book"></i>
