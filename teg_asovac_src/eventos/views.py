@@ -368,6 +368,7 @@ def event_place_delete(request, locacion_id):
 
 @login_required
 def event_place_detail(request, locacion_id):
+    data = dict()
     locacion = get_object_or_404(Locacion_evento, id = locacion_id)
     
     context = {
@@ -376,7 +377,9 @@ def event_place_detail(request, locacion_id):
         'locacion': locacion,
         'events_app': True,
     }
-    return render(request, 'eventos_locacion_details.html', context)
+    data['html_form'] = render_to_string('ajax/location_details.html',context,request=request)
+    
+    return JsonResponse(data)
 
 
 
