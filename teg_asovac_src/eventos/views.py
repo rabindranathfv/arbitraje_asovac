@@ -117,6 +117,7 @@ def event_create(request):
     else:
         form = CreateEventForm()
     context = {
+        'nombre_vista' : 'Eventos',
         'username' : request.user.username,
         'form' : form,
         'events_app': True,
@@ -221,6 +222,7 @@ def organizer_create(request):
             return redirect(reverse('eventos:organizer_list')) 
     
     context = {
+        'nombre_vista' : 'Organizadores',
         'username' : request.user.username,
         'form' : form,
         'events_app': True,
@@ -235,6 +237,7 @@ def organizer_list(request):
     organizer_data = Organizador.objects.all().order_by('-id')
     usuario_asovac = Usuario_asovac.objects.get(usuario = request.user)
     context = {        
+                'nombre_vista' : 'Organizadores',
                 'username' : request.user.username,
                 'organizer_data': organizer_data,
                 'usuario_asovac':usuario_asovac,
@@ -305,7 +308,7 @@ def event_place_create(request):
     else: 
         form = CreateLocacionForm()
     context = {
-        'nombre_vista' : 'Crear locación de evento',
+        'nombre_vista' : 'Locaciones',
         'username': request.user.username,
         'form': form,
         'events_app': True,
@@ -318,6 +321,7 @@ def event_place_create(request):
 def event_place_list(request):
     event_place_data = Locacion_evento.objects.all().order_by('id')
     context = {        
+                'nombre_vista' : 'Locaciones',
                 'username' : request.user.username,
                 'event_place_data': event_place_data,
                 'events_app': True,
@@ -337,7 +341,7 @@ def event_place_edit(request, locacion_id):
     else:
         form = CreateLocacionForm(instance = locacion)   
     context = {
-        'nombre_vista' : 'Locación',
+        'nombre_vista' : 'Locaciones',
         'username': request.user.username,
         'form':form,
         'events_app': True,
@@ -367,7 +371,7 @@ def event_place_detail(request, locacion_id):
     locacion = get_object_or_404(Locacion_evento, id = locacion_id)
     
     context = {
-        'nombre_vista' : 'Locación',
+        'nombre_vista' : 'Locaciones',
         'username': request.user.username,
         'locacion': locacion,
         'events_app': True,
@@ -393,7 +397,7 @@ def add_organizer_to_event(request, evento_id):
     else:
         form = AddOrganizerToEventForm(event = evento) 
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Eventos',
         'username': request.user.username,
         'evento':evento,
         'form':form
@@ -417,7 +421,7 @@ def add_observations_to_event(request, evento_id):
     else:
         form = AddObservationsForm(initial={'observaciones': evento.observaciones}) 
         context = {
-            'nombre_vista' : 'Autores',
+            'nombre_vista' : 'Eventos',
             'username': request.user.username,
             'evento':evento,
             'form':form
@@ -441,7 +445,7 @@ def add_observations_to_event_place(request, locacion_id):
     else:
         form = AddObservationsForm(initial={'observaciones': locacion.observaciones}) 
         context = {
-            'nombre_vista' : 'Autores',
+            'nombre_vista' : 'Eventos',
             'username': request.user.username,
             'locacion':locacion,
             'form':form
@@ -465,7 +469,7 @@ def add_observations_to_organizer(request, organizador_id):
     else:
         form = AddObservationsForm(initial={'observaciones': organizador.observaciones}) 
         context = {
-            'nombre_vista' : 'Autores',
+            'nombre_vista' : 'Eventos',
             'username': request.user.username,
             'organizador':organizador,
             'form':form
