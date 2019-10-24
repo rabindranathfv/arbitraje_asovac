@@ -9,22 +9,67 @@
         <h3 class="modal-title" >Eliminar evento</h3>
     </div>
     <div class="modal-body">
-        <p class ="text-center"> Confirme si desea eliminar el siguiente evento:</p>
-        <strong>Nombre:</strong> <p>{{ evento.nombre }}</p>
-        <strong>Categoria:</strong> <p>{{ evento.categoria }}</p>
-        <strong>Descripcion:</strong> <p>{{ evento.descripcion }}</p>
-        <strong>Tipo:</strong> <p>{{ evento.tipo }}</p>
-        <strong>Fecha de inicio:</strong> <p>{{ evento.fecha_inicio }}</p> 
-        <strong>Fecha de fin:</strong> <p> {{ evento.fecha_fin }} </p> 
-        <strong>Día Asignado:</strong> <p>{{ evento.dia_asignado }}</p>
-        <strong>Duración:</strong> <p>{{ evento.duracion }}</p>
-        <strong>Horario Preferido:</strong> <p> {{ evento.horario_preferido }}</p>
-        <strong>Fecha preferida:</strong> <p>{{ evento.fecha_preferida }}</p>
-        <strong>Observaciones:</strong> <p>{{ evento.observaciones }}</p>
-        <strong>URL anuncio de evento:</strong> <p>{{ evento.url_anuncio_evento }}</p>
+            <table class="table table-bordered">
+                <thead>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Nombre</th>
+                        <td>{{ evento.nombre }}</td>
+                    </tr>     
+                    <tr>
+                        <th>Categoría</th>
+                        <td>{{ evento.categoria }}</td>
+                    </tr>   
+                    <tr>
+                        <th>Descripción</th>
+                        <td>{{ evento.descripcion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo</th>
+                        <td>{{ evento.tipo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de inicio</th>
+                        <td>{{ evento.fecha_inicio }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de fin</th>
+                        <td>{{ evento.fecha_fin }}</td>
+                    </tr>
+                    <tr>
+                        <th>Día asignado</th>
+                        <td>{{ evento.dia_asignado }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duración</th>
+                        <td>{{ evento.duracion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Horario preferido</th>
+                        <td>{{ evento.horario_preferido }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha preferida</th>
+                        <td>{{ evento.fecha_preferida }}</td>
+                    </tr>
+                    <tr>
+                        <th>URL anuncio de evento</th>
+                        <td>{{ evento.url_anuncio_evento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Observaciones</th>
+                        <td>{{ evento.observaciones }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
+        
     </div>
     <div class="modal-footer">
+        <strong>
+            <p class ="text-center"> Confirme si desea eliminar el evento</p>
+        </strong>
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-lg btn-primary">Eliminar</button>
     </div>

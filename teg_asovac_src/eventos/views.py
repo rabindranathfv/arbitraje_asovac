@@ -193,6 +193,7 @@ def event_delete(request, evento_id):
 
 @login_required
 def event_detail(request, evento_id):
+    data = dict()
     evento = get_object_or_404(Evento, id = evento_id)
     organizador_evento_list = Organizador_evento.objects.filter(evento = evento)
     context = {
@@ -202,7 +203,8 @@ def event_detail(request, evento_id):
         'organizador_evento_list': organizador_evento_list,
         'events_app': True,
     }
-    return render(request, 'eventos_event_detail.html',context)  
+    data['html_form'] = render_to_string('ajax/event_details.html',context,request=request)
+    return JsonResponse(data) 
 
 
 
@@ -378,7 +380,7 @@ def event_place_detail(request, locacion_id):
         'events_app': True,
     }
     data['html_form'] = render_to_string('ajax/location_details.html',context,request=request)
-    
+
     return JsonResponse(data)
 
 
