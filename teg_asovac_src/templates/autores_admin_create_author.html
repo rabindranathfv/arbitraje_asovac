@@ -10,6 +10,7 @@
 			<div class="jumbotron RLcard">
 
 				<h2 class="text-left">Datos del autor</h2>
+				<br>
 				{% include "errors_form.html" %}
 				<form id="admin-create-author-form" method="post">
 					{% csrf_token %}
@@ -36,7 +37,7 @@
 					    	<a role="button" class="btn btn-danger btn-block btn-lg" href="{% url 'autores:authors_list' %}">Cancelar</a>
 					    </div>
 					    <div class="col-sm-2">
-					    	<button type="submit" class="btn btn-success btn-lg btn-block">Añadir</button>
+					    	<button type="submit" class="btn btn-primary btn-lg btn-block">Añadir</button>
 					    </div>
 					</div>
 				</form>
