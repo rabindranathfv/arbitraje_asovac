@@ -9,22 +9,10 @@
                 {% include "success_messages.html" %}
                 <h2 class="text-left">Lista de Organizadores</h2>
                 <div id="toolbar">
-                    <form>
-                        <div class="btn-group pull-right">
-                            <button class="btn btn-block dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-file-excel"></i> Exportar tabla</a>
-                                </li>
-                                <li>
-                                    <a href="#" type="button" data-toggle="modal" data-target="#ModalTrabajosExcel"><i class="fa fa-upload"></i> Importar datos</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </form>
+
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="organizer-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="nombres" data-show-export="true" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
+                    <table class="table table-bordered" id="organizer-list" data-toggle="table" data-toolbar="#toolbar" data-toolbar-align="right" data-search="true" data-sort-name="nombres" data-pagination="true" data-page-size="10" data-page-list="[5,10,25,50,100, 200]"
                         data-show-toggle="true" data-show-columns="true">
                         {% if organizer_data %}
                         <thead>
