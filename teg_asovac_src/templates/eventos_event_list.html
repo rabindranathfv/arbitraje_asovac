@@ -50,25 +50,25 @@
                                 <td class="text-center vertical-middle-align">{{ evt_data.duracion }}</td>
                                 <td class="text-center vertical-middle-align">{{ evt_data.url_anuncio_evento }}</td>
                                 <td class="text-center vertical-middle-align">
-                                    <button class="btn btn-info btn-sm show-form" data-url="{% url 'eventos:add_organizer_to_event' evt_data.id %}" title="Añadir Organizador al Evento">
+                                    <a class="show-form" data-url="{% url 'eventos:add_organizer_to_event' evt_data.id %}" title="Añadir Organizador al Evento">
                                         <i class="fas fa-user"></i>
-                                    </button>
+                                    </a>
 
-                                    <a href="{% url 'eventos:event_edit' evt_data.id %}" class="btn btn-info btn-sm" role="button" title="Editar Evento">
+                                    <a href="{% url 'eventos:event_edit' evt_data.id %}" role="button" title="Editar Evento">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <button class="btn btn-info btn-sm show-form" data-url="{% url 'eventos:event_delete' evt_data.id %}" title="Eliminar Evento">
+                                    <a class="show-form" data-url="{% url 'eventos:event_delete' evt_data.id %}" title="Eliminar Evento">
                                         <i class="fas fa-times"></i>
-                                    </button>
+                                    </a>
 
-                                    <a href="{% url 'eventos:event_detail' evt_data.id %}" class="btn btn-info btn-sm" role="button" title="Ver Detalles del Evento">
+                                    <a href="{% url 'eventos:event_detail' evt_data.id %}" role="button" title="Ver Detalles del Evento">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-info btn-sm show-form" data-url="{% url 'eventos:add_observations_to_event' evt_data.id %}" title="Añadir observaciones">
+                                    <a class="show-form" data-url="{% url 'eventos:add_observations_to_event' evt_data.id %}" title="Añadir observaciones">
                                         <i class="fas fa-comment"></i>
-                                    </button>
+                                    </a>
 
                                 </td>
                             </tr>

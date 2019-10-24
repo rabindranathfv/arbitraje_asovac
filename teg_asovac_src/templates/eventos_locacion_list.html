@@ -56,21 +56,21 @@
                                 <td class="text-center">{{ place_data.equipo_requerido }}</td>
                                 <td class="text-center">{{ place_data.observaciones }}</td>
                                 <td class="text-center">
-                                    <a href="{% url 'eventos:event_place_edit' place_data.id %}" class="btn btn-info" role="button" title="Editar Organizador">
+                                    <a href="{% url 'eventos:event_place_edit' place_data.id %}" role="button" title="Editar Locación">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <button class="btn btn-info show-form" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar Evento">
+                                    <a class="show-form" data-url="{% url 'eventos:event_place_delete' place_data.id %}" title="Eliminar locación">
                                         <i class="fas fa-times"></i>
-                                    </button>
+                                    </a>
 
-                                    <a href="{% url 'eventos:event_place_detail' place_data.id %}" class="btn btn-info" role="button" title="Ver Detalles Organizador">
+                                    <a href="{% url 'eventos:event_place_detail' place_data.id %}" role="button" title="Ver Detalles de locación">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <button class="btn btn-info show-form" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
+                                    <a class="show-form" data-url="{% url 'eventos:add_observations_to_event_place' place_data.id %}" title="Añadir observaciones">
                                         <i class="fas fa-comment"></i>
-                                    </button>
+                                    </a>
 
                                 </td>
                             </tr>

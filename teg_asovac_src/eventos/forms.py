@@ -93,10 +93,10 @@ class CreateOrganizerForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("<a href=\"{% url 'eventos:organizer_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-offset-7 col-sm-2'),
+                css_class='col-sm-offset-6 col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block'),
+                    Submit('submit', 'Crear Organizador', css_class='btn btn-primary btn-lg btn-block'),
                 css_class='col-sm-3'),
             css_class='row')
         )
@@ -202,9 +202,9 @@ class CreateEventForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("<a href=\"{% url 'eventos:event_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-offset-7 col-sm-2'),
+                css_class='col-sm-offset-6 col-sm-2'),
                 Div(
-                    Submit('submit', 'Crear Evento', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
+                    Submit('submit', 'Crear Evento', css_class='btn btn-primary btn-lg btn-block', css_id='btn-modal-success'),
                 css_class='col-sm-3'),
                 css_class='row')
         )
@@ -304,8 +304,8 @@ class CreateLocacionForm(forms.ModelForm):
                 css_class='col-sm-offset-6 col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Crear Locacion de Eventos ', css_class='btn-success btn-lg btn-block', css_id='btn-modal-success'),
-                css_class='col-sm-4'),
+                    Submit('submit', 'Guardar', css_class='btn btn-primary btn-lg btn-block', css_id='btn-modal-success'),
+                css_class='col-sm-2'),
             css_class='row')
         )
     def clean_capacidad_de_asistentes(self):
@@ -402,10 +402,10 @@ class EditOrganizerForm(forms.ModelForm):
             Div(
                 Div(
                     HTML("<a href=\"{% url 'eventos:organizer_list' %}\" class=\"btn btn-danger btn-block btn-lg\">Cancelar</a>"),
-                css_class='col-sm-offset-7 col-sm-2'),
+                css_class='col-sm-offset-6 col-sm-2'),
 
                 Div(
-                    Submit('submit', 'Crear Organizador', css_class='btn-success btn-lg btn-block'),
+                    Submit('submit', 'Crear Organizador', css_class='btn btn-primary btn-lg btn-block'),
                 css_class='col-sm-3'),
             css_class='row')
         )
