@@ -9,33 +9,84 @@
         <h3 class="modal-title" >Eliminar organizador</h3>
     </div>
     <div class="modal-body">
-        <p class ="text-center"> Confirme si desea eliminar el siguiente organizador:</p>
-        <strong>Nombres:</strong> <p>{{ organizador.nombres }}</p>
-        <strong>Apellidos:</strong> <p>{{ organizador.apellidos }}</p>
-        <strong>Genero:</strong> 
-                                {% if organizador.genero == 0 %}
-                                    <p>Masculino</p>
-                                {% else %}
-                                    <p>Femenino</p>
-                                {% endif %}
-        <strong>Cedula/Pasaporte:</strong> <p>{{ organizador.cedula_o_pasaporte }}</p>
-        <strong>Correo electrónico:</strong> <p>{{ organizador.correo_electronico }}</p> 
-        <strong>Institución:</strong> <p> {{ organizador.institucion }} </p> 
-        <strong>Telefono de oficina:</strong> <p>{{ organizador.telefono_oficina}}</p>
-        <strong>Dirección de correspondencia:</strong> <p>{{ organizador.direccion_correspondencia }}</p>
-        <strong>¿Es miembro Asovac?:</strong> 
-                                {% if organizador.es_miembro_asovac %}
-                                    <p>Si</p>
-                                {% else %}
-                                    <p>No</p>
-                                {% endif %}
-        <strong>Capítulo Asovac:</strong> <p>{{ organizador.capitulo_asovac }}</p>
-        <strong>Cargo en institución:</strong> <p>{{ organizador.cargo_en_institucion }}</p>
-        <strong>URL de organizador:</strong> <p>{{ organizador.url_organizador }}</p>
-        <strong>Observaciones:</strong> <p>{{ organizador.url_observaciones }}</p>
+        
+        <table class="table table-bordered">
+            <thead>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Nombres</th>
+                    <td>{{ organizador.nombres }}</td>
+                </tr>
+                <tr>
+                    <th>Apellidos</th>
+                    <td>{{ organizador.apellidos }}</td>
+                </tr>
+                <tr>
+                    <th>Género</th>
+                    <td>
+                        {% if organizador.genero == 0 %}
+                            Masculino
+                        {% else %}
+                            Femenino
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Cédula/Pasaporte</th>
+                    <td>{{ organizador.cedula_o_pasaporte }}</td>
+                </tr>
+                <tr>
+                    <th>Correo Electrónico</th>
+                    <td>{{ organizador.correo_electronico }}</td>
+                </tr>
+                <tr>
+                    <th>Institución</th>
+                    <td>{{ organizador.institucion }}</td>
+                </tr>
+                <tr>
+                    <th>Teléfono de oficina</th>
+                    <td>{{ organizador.telefono_oficina }}</td>
+                </tr>
+                <tr>
+                    <th>Dirección de correspondencia</th>
+                    <td>{{ organizador.direccion_correspondencia }}</td>
+                </tr>
+                <tr>
+                    <th>¿Es miembro AsoVAC?</th>
+                    <td>
+                        {% if organizador.es_miembro_asovac %}
+                            Si
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Capítulo AsoVAC</th>
+                    <td>{{ organizador.capitulo_asovac }}</td>
+                </tr>
+                <tr>
+                    <th>Cargo en institución</th>
+                    <td>{{ organizador.cargo_en_institucion }}</td>
+                </tr>
+                <tr>
+                    <th>URL de organizador</th>
+                    <td>{{ organizador.url_organizador }}</td>
+                </tr>
+                <tr>
+                    <th>Observaciones</th>
+                    <td>{{ organizador.url_observaciones }}</td>
+                </tr>
+                
+            </tbody>
+        </table>
 
     </div>
     <div class="modal-footer">
+        <strong>
+            <p class ="text-center">Confirme si desea eliminar al organizador</p>
+        </strong>
         <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn btn-lg btn-primary">Eliminar</button>
     </div>
