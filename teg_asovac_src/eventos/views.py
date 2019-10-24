@@ -165,7 +165,7 @@ def event_edit(request, evento_id):
 
     form = EditEventForm(instance = evento)   
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Eventos',
         'username': request.user.username,
         'form':form,
         'events_app': True,
@@ -195,7 +195,7 @@ def event_detail(request, evento_id):
     evento = get_object_or_404(Evento, id = evento_id)
     organizador_evento_list = Organizador_evento.objects.filter(evento = evento)
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Eventos',
         'username': request.user.username,
         'evento': evento,
         'organizador_evento_list': organizador_evento_list,
@@ -255,7 +255,7 @@ def organizer_edit(request, organizador_id):
     else:
         form = EditOrganizerForm(organizer = organizador,instance = organizador)   
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Organizadores',
         'username': request.user.username,
         'form':form,
         'events_app': True,
@@ -337,7 +337,7 @@ def event_place_edit(request, locacion_id):
     else:
         form = CreateLocacionForm(instance = locacion)   
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Locación',
         'username': request.user.username,
         'form':form,
         'events_app': True,
@@ -367,7 +367,7 @@ def event_place_detail(request, locacion_id):
     locacion = get_object_or_404(Locacion_evento, id = locacion_id)
     
     context = {
-        'nombre_vista' : 'Autores',
+        'nombre_vista' : 'Locación',
         'username': request.user.username,
         'locacion': locacion,
         'events_app': True,
