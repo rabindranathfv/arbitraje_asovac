@@ -156,6 +156,8 @@ $.ajaxSetup({
             actions= actions+'<a class="changeStatus" href="javascript:void(0)" title="Cambiar Estatus"><i class="fas fa-file-signature"></i></a>  ';
             actions= actions+'<a class="statusArbitraje" href="javascript:void(0)" title="Estatus Arbitraje"><i class="fas fa-history"></i></a>  ';
         }
+        
+        actions= actions+'<a class="download-job" href="javascript:void(0)" title="Descargar trabajo" download=""><i class="fas fa-file-download"></i></a>';
         return [
             actions
         ].join('');
@@ -653,6 +655,21 @@ $.ajaxSetup({
                 success: function (data){
                     // console.log(data);
                     $('#bootstrapTableModal .modal-content').html(data.content);
+                }
+            });
+        },
+        'click .download-job': function (e, value, row, index) {
+            var route=e.currentTarget.baseURI+$(this).attr("class")+"/"+row.id;
+            console.log(route);
+            $.ajax({
+                url: route,
+                type: 'get',
+                data: row.id,
+                dataType: 'json',
+                success: function(data){
+
+                    var win = window.open('/media/'+ data.url, '_blank');
+                    win.focus();
                 }
             });
         },

@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^listado-trabajos/detalles/(?P<id_trabajo>\d+)$',
         views.detalles_resumen, name='detalles_resumen'),
     url(r'^estatus-trabajos/$', views.estatus_trabajos, name='listado'),
+    url(r'^estatus-trabajos/download-job/(?P<trabajo_id>\d+)$', views.descargar_trabajo, name='descargar_trabajo'),
     url(r'^listado-trabajos/detalles/$', views.detalles_resumen, name='detalles_resumen'),
     url(r'^$', views.arbitrajes_pag, name='arbitrajes'),
     url(r'^asignar-sesion/$', views.asignacion_de_sesion, name='asignacion_de_sesion'),

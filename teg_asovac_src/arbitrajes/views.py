@@ -1298,16 +1298,16 @@ def list_arbitrajes(request):
         # total= len(data)
         # data=User.objects.all().filter( Q(username__contains=search) | Q(first_name__contains=search) | Q(last_name__contains=search) | Q(email__contains=search) ).order_by(order)#[:limit]
         if rol_user == 1 or rol_user == 2:
-            group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
-            query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+            group_by=' group by trab.id, trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+            query= "SELECT DISTINCT(trab.id), trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
             query_count=query+group_by
             search= search+'%'
             where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
             query= query+where+group_by
         else:
             if rol_user == 3:
-                group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                group_by=' group by trab.id, trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                query= "SELECT DISTINCT(trab.id), trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 query_count=query+group_by
                 search= search+'%'
                 where=" WHERE (trab.estatus like %s or trab.titulo_espanol like %s or trab.forma_presentacion like %s or trab.observaciones like %s or main_a.nombre like %s or main_sarea.nombre like %s ) AND sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = true) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado'".format(area)
@@ -1344,14 +1344,14 @@ def list_arbitrajes(request):
 
             # consulta mas completa
             if rol_user == 1 or rol_user == 2:
-                group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
-                query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                group_by=' group by trab.id, trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                query= "SELECT DISTINCT(trab.id), trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                 where=" WHERE sis_aso.id= %s AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' "
                 query= query+where+group_by
             else:
                 if rol_user == 3:
-                    group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
-                    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
+                    group_by=' group by trab.id, trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre'
+                    query= "SELECT DISTINCT(trab.id), trab.archivo_trabajo, trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,main_sarea.nombre as subarea,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id"
                     where=" WHERE sis_aso.id= %s AND main_a.id in ({}) AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false) or (trab.se_carga_correccion = false and trab.requiere_arbitraje = true)) AND aut_trab.pagado=true AND trab.confirmacion_pago='Aceptado' ".format(area)
                     query= query+where+group_by
             
@@ -1424,7 +1424,7 @@ def list_arbitrajes(request):
                 else:
                     revision="Con correcciones"
     
-        response['query'].append({'id':item.id,'estatus': estatus ,'nombre':area,'titulo_espanol':titulo ,'forma_presentacion':presentacion, 'observaciones':observaciones,'revision':revision, 'autor_principal':autor_principal,'subarea':subarea })
+        response['query'].append({'id':item.id,'archivo_trabajo': item.archivo_trabajo ,'estatus': estatus ,'nombre':area,'titulo_espanol':titulo ,'forma_presentacion':presentacion, 'observaciones':observaciones,'revision':revision, 'autor_principal':autor_principal,'subarea':subarea })
 
 
     response={
@@ -2115,4 +2115,14 @@ def review_job(request, trabajo_id):
             'trabajo': trabajo,
         }
         data['html_form'] = render_to_string('ajax/review_job.html',context,request=request)
+    return JsonResponse(data)
+
+
+def descargar_trabajo(request, trabajo_id):
+
+    data = dict()
+
+    media_root = settings.MEDIA_ROOT
+    trabajo = Trabajo.objects.get(id = trabajo_id)
+    data['url'] = str(trabajo.archivo_trabajo)
     return JsonResponse(data)
