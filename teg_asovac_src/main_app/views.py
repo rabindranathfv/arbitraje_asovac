@@ -2091,7 +2091,6 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
     data= dict()
     data['status']=400
     data['message']="La estructura del archivo no es correcta"
-
     if extension == "xlsx" or extension == "xls":
         print "Formato xls/xlsx"
         book = xlrd.open_workbook(filename)   
@@ -2100,8 +2099,9 @@ def validate_load_users(filename,extension,arbitraje_id,rol):
          
             print "El numero de hojas es mayor a 0 "
             sh = book.sheet_by_index(0)
-
-            if sh.ncols == 17:
+            if sh.nrows == 1:
+                data['message'] = 'No hay ninguna fila para hacer import, por favor introduzca en el excel al menos 1 fila con datos.'
+            elif sh.ncols == 17:
                 print "El archivo tiene 17 columnas"
                 data['status']=200
                 data['message']="Se cargaron los usuarios de manera exitosa"
