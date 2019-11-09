@@ -60,6 +60,27 @@
         </tbody>
     </table>
 
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>
+                    Nombre de organizadores
+                </th>
+                <th>
+                    Lugares preferidos
+                </th>
+            </tr>
+            {% for organizador_evento in organizador_evento_list%}
+                <tr>
+                    <td>  {{organizador_evento.organizador.nombres}} {{organizador_evento.organizador.apellidos}}  </td>
+                    <td>{{ organizador_evento.locacion_preferida }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cerrar</button>
