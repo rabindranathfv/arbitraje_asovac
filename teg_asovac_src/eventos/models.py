@@ -97,7 +97,7 @@ Organizador_evento Model
 
 class Organizador_evento(models.Model):
 
-	evento = models.ForeignKey(Evento,related_name='Eventos')
+	evento = models.ForeignKey(Evento,related_name='Eventos',on_delete=models.CASCADE)
 	organizador = models.ForeignKey(Organizador,related_name='Organizadores')
 
 	locacion_preferida = models.CharField(max_length=50)
