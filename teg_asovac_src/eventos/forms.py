@@ -157,7 +157,7 @@ class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
-        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento']
+        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento', 'sistema_asovac']
     email_organizador = forms.EmailField()
     locacion_preferida = forms.CharField(max_length=50)
     def __init__(self, *args, **kwargs):
@@ -186,6 +186,7 @@ class CreateEventForm(forms.ModelForm):
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper1.layout = Layout( # the order of the items in this layout is important
             Field('nombre', placeholder="Ejemplo: Asovac 2018"),
+            Field('sistema_asovac'),
             Field('categoria', placeholder="Ejemplo: Fisica"),
             Field('descripcion', placeholder="Introduzca su descripción aquí"),
             Field('tipo', placeholder="Ejemplo: Recreacional"),
@@ -224,7 +225,7 @@ class EditEventForm(forms.ModelForm):
     class Meta:
         model = Evento
         fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
-        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento']
+        'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento', 'sistema_asovac']
 
     def __init__(self, *args, **kwargs):
         super(EditEventForm, self).__init__(*args, **kwargs)
@@ -252,6 +253,7 @@ class EditEventForm(forms.ModelForm):
         #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
         self.helper.layout = Layout( # the order of the items in this layout is important
             Field('nombre', placeholder="Ejemplo: Asovac 2018"),
+            Field('sistema_asovac'),
             Field('categoria', placeholder="Ejemplo: Fisica"),
             Field('descripcion', placeholder="Introduzca su descripción aquí"),
             Field('tipo', placeholder="Ejemplo: Recreacional"),

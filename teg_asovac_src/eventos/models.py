@@ -70,6 +70,7 @@ class Evento(models.Model):
 
 	organizador_id = models.ManyToManyField(Organizador, through ='Organizador_evento',related_name='Organizador_eventos')
 	locacion_evento = models.ForeignKey(Locacion_evento,related_name='locacion_eventos')
+	sistema_asovac = models.ForeignKey('main_app.Sistema_asovac')
 
 	nombre = models.CharField(max_length=150)
 	categoria = models.CharField(max_length=50, choices = CHOICES_CATEGORIA_EVENTO)
