@@ -474,6 +474,32 @@ var SaveAñadirPagoForm= function(){
             processData: false
         });
     }
+    //  Para procesar archivos genericos
+    var processGenericFilePDF =function(e){
+        e.preventDefault();
+        var input = document.getElementById('id_file');
+        //console.log("File Seleccionado : ", input.files[0]);
+
+        var form= $(this).parent().parent();
+        // var formData = new FormData(form);
+        var formData = new FormData();
+        formData.append('file',input.files[0]);
+
+        $.ajax({
+            url:  form.attr('data-url'),
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                // window.location.replace("portada");
+                // Para cargar la vista previa del documento
+                // window.location.replace("portadaPreviewPDF/"+data.arbitraje_id);
+                // Fin  cargar la vista previa del documento
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
     // Para procesar formularios genericos
     var processGenericForm = function(){
         console.log("metodo para enviar");
@@ -722,6 +748,7 @@ var SaveAñadirPagoForm= function(){
     $('.showAreasForm').click(ShowForm);
     $('#modal-user').on('click','.cargarAreas',processGenericFile);
     $('#modal-user').on('click','.cargarSubareas',processGenericFile);
+    // $('.generatePDF').click(processGenericFilePDF);
     $('.showSubAreasForm').click(ShowForm);
     $('.showUsersForm').click(ShowForm);
 

@@ -14,3 +14,11 @@ class Recurso(models.Model):
 
     def __str__(self):
         return self.nombre 
+
+class Resumen (models.Model):
+
+    sistema= models.ForeignKey('main_app.Sistema_asovac',blank=True,null=True)
+    url_portada= models.CharField(max_length=200,blank=True,null=True)
+    url_patrocinadores= models.CharField(max_length=200,blank=True,null=True)
+    comision_organizadora= models.TextField(blank=True,null=True)
+    pie_pagina= models.TextField(blank=True,null=True)

@@ -1,0 +1,68 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row ">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-center">Patrocinadores</h2>
+				{% include "success_messages.html" %}
+				{% include "errors_form.html" %}
+				<!-- Inicio de formulario -->
+				{% load crispy_forms_tags %}
+					<form enctype="multipart/form-data" action="" id="loadPortada" method="post" class="loadPortada" data-url="{% url 'recursos:patrocinadores' %}">
+						{% csrf_token %}
+						
+						<div class="form-group">
+							{% include "errors_form.html" %}
+							{{  form | crispy }}
+						</div>
+						
+						<div class="form-group text-center" >
+							<button type="submit" disabled="disabled" class="generatePDF btn btn-primary btn-lg">Cargar</button>
+							<a target="_blanck" href="{% url 'recursos:patrocinadoresPreviewPDF' arbitraje_id %}" class="btn btn-info btn-lg">Vista Previa</a>
+						</div>
+					</form>
+				<!-- Fin de formulario -->
+
+				<!-- Inicio vista previa documento generado -->
+					<div class="row">
+						<div class="col-md-12" id="previewPDF">
+							
+						</div>
+					</div>
+					<!-- <embed style="min-height: 600px;" src="http://localhost:8000/media/trabajos/1_7MiQdwb.pdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+			
+				<!-- Fin vista previa documento generado -->
+
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block js_extra %}
+{% load static %}
+<script>
+	$(document).ready(function () {
+
+		$('input[type=file]').change(function (e) { 
+			e.preventDefault();
+			console.log("Change");
+			console.log($('#id_file').val() );
+			if($('#id_file').val() == ""){
+				$('.generatePDF').attr("disabled",true);
+			}else{
+				$('.generatePDF').attr("disabled",false);
+
+			}
+		});
+	});
+
+
+</script>
+{% endblock %}

@@ -43,8 +43,27 @@ from .utils import (
 from .forms import (
     CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
     MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
-    MultipleRecipientsWithRoleForm
+    MultipleRecipientsWithRoleForm,UploadFileForm
 )
+
+from .models import Resumen
+from reportlab.pdfgen import canvas
+from io import BytesIO
+
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, Image,Spacer,Table
+from reportlab.platypus import BaseDocTemplate, Frame, NextPageTemplate, PageBreak, PageTemplate
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.enums import TA_LEFT,TA_RIGHT,TA_CENTER
+
+# Importamos clase de hoja de estilo de ejemplo.
+# Se importa el tamaño de la hoja.
+from reportlab.lib.pagesizes import A3
+from reportlab.lib.pagesizes import A4
+from datetime import datetime
+from functools import partial
 
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
@@ -1279,6 +1298,18 @@ def handle_uploaded_file(file, filename):
         for chunk in file.chunks():
             destination.write(chunk)
 
+#---------------------------------------------------------------------------------#
+#                Guarda el archivo en la carpeta de recursos                      #
+#---------------------------------------------------------------------------------#
+def save_resorce_file(file, filename):
+    if not os.path.exists('static_env/media_root/memorias/'):
+        os.mkdir('static_env/media_root/memorias/')
+
+    # print "Nombre del archivo a guardar: ",filename
+    with open('static_env/media_root/memorias/' + filename, 'wb+') as destination:
+        for chunk in file.chunks():
+            destination.write(chunk)
+
 @login_required
 @user_is_arbitraje
 # Para guardar el archivo recibido del formulario
@@ -1770,3 +1801,410 @@ def format_nametag_recipients(request):
 
     workbook.save(response)
     return response
+
+
+# Para guardar el archivo recibido del formulario  
+def save_file_memorias(requestFileName,type_load,arbitraje_id):
+
+    # name= str(request.FILES.get('file')).decode('UTF-8')
+    name= str(requestFileName).decode('UTF-8')
+    file_name=''
+
+    if type_load == "portada":   
+        extension = name.split('.')        	
+        file_name= "portada-"+arbitraje_id+"."+extension[1]
+        # Permite guardar el archivo y asignarle un nombre
+        save_resorce_file(requestFileName, file_name)
+        route= "memorias/"+file_name
+    else:
+        if type_load == "patrocinadores":   
+            extension = name.split('.')        	
+            file_name= "patrocinadores-"+arbitraje_id+"."+extension[1]
+            # Permite guardar el archivo y asignarle un nombre
+            save_resorce_file(requestFileName, file_name)
+            route= "memorias/"+file_name
+    
+    # print "Ruta del archivo: ",route
+    return route
+
+
+#---------------------------------------------------------------------------------#
+#                     Vista principal para crear las memorias                     #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def memorias(request):
+    context = create_common_context(request)
+    context['nombre_vista'] = 'Recursos'
+    return render(request, 'recursos_asovac_memorias.html', context)
+
+
+#---------------------------------------------------------------------------------#
+#                             Para guardar la portada en BD                       #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def portada(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Cargar portada el metodo es post y el archivo es vliádo'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # Para guardar el archivo de forma local
+            requestFileName=request.FILES.get('file')
+            file_name= save_file_memorias(requestFileName,"portada",arbitraje_id)
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if(resumen == True):
+                resumen=Resumen.objects.filter(sistema_id=arbitraje_id)
+                resumen.url_portada=file_name
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.url_portada=file_name
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'La imagen fue cargada de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            return redirect('recursos:portada')
+            return render(request, 'recursos_memorias_portada.html', context)
+        
+
+    form= UploadFileForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_portada.html', context)
+
+#---------------------------------------------------------------------------------#
+#                      Para generar vista previa de la portada                    #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def portadaPreviewPDF(request,arbitraje):
+    # Validaciones previas
+    context = create_common_context(request)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        portada=Resumen.objects.get(sistema_id=arbitraje)
+        archivo_imagen = settings.MEDIA_ROOT+'/'+portada.url_portada
+
+    # Para generar el PDF
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=1)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page, onPage=on_first_page)])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    if(resumen == True):
+        img = Image(archivo_imagen,600, 843)
+        page_content.append(img)
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+    # Version funcional con canvas
+    # context = create_common_context(request)
+    # resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    # if(resumen == True):
+    #     portada=Resumen.objects.get(sistema_id=arbitraje)
+    #     archivo_imagen = settings.MEDIA_ROOT+'/'+portada.url_portada
+    
+    # # Para generar el pdf de la imagen de la portada
+    # #Indicamos el tipo de contenido a devolver, en este caso un pdf
+    # response = HttpResponse(content_type='application/pdf')
+    # # para descarg el pdf
+    # # response['Content-Disposition'] = 'attachment; filename="some_file.pdf"'
+    # #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+    # buffer = BytesIO()
+    # #Canvas nos permite hacer el reporte con coordenadas X y Y
+    # pdf = canvas.Canvas(buffer)
+    # #Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+    # #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+    # #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+    # if(resumen == True):
+    #     pdf.drawImage(archivo_imagen, 0,0, 595, 843,preserveAspectRatio=False)
+    # #Con show page hacemos un corte de página para pasar a la siguiente
+    # pdf.showPage()
+    # pdf.save()
+    # pdf = buffer.getvalue()
+    # buffer.close()
+    # response.write(pdf)
+    # return response
+    
+
+#---------------------------------------------------------------------------------#
+#                  Para generar sección de los patrocinadores                     #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def patrocinadores(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Cargar portada el metodo es post y el archivo es vliádo'
+        form= UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # Para guardar el archivo de forma local
+            requestFileName=request.FILES.get('file')
+            file_name= save_file_memorias(requestFileName,"patrocinadores",arbitraje_id)
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if(resumen == True):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.url_patrocinadores=file_name
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.url_patrocinadores=file_name
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'La imagen fue cargada de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            return redirect('recursos:portada')
+            return render(request, 'recursos_memorias_patrocinadores.html', context)
+        
+
+    form= UploadFileForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_patrocinadores.html', context)
+
+#---------------------------------------------------------------------------------#
+#                Para generar la configuración de las páginas                     #
+#---------------------------------------------------------------------------------#
+def add_page_number(canvas, doc):
+     canvas.saveState()
+     canvas.setFont('Times-Roman', 10)
+     page_number_text = "%d" % (doc.page)
+     canvas.drawCentredString(
+         0.75 * inch,
+         0.75 * inch,
+         page_number_text
+     )
+     canvas.restoreState()
+
+
+def on_first_page(canvas,doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman',19)
+    canvas.drawString(inch, 0.75 * inch, "Page %d" % doc.page)
+    canvas.restoreState()
+
+def on_remaining_pages(canvas,doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman',9)
+    canvas.drawString(inch, 0.75 * inch, "Page %d" % doc.page)
+    canvas.restoreState()
+
+def header_footer(canvas, doc,arbitraje):
+        
+        sistema= Sistema_asovac.objects.get(pk=arbitraje_id)
+        # Save the state of our canvas so we can draw on it
+        canvas.saveState()
+        styles = getSampleStyleSheet()
+        print arbitraje
+        # Estilos para el footer
+        footer = getSampleStyleSheet()
+        
+        styleF1 = footer['Normal']
+        styleF1.fontSize = 8
+        styleF1.alignment = TA_LEFT
+        
+        styleF2 = footer['Normal']
+        styleF2.fontSize = 8
+        styleF2.alignment = TA_LEFT
+
+        now = datetime.now()
+
+        # Header
+        # header = Paragraph('This is a multi-line header.  It goes on every page.   ' * 5, styles['Code'])
+        # w, h = header.wrap(doc.width, doc.topMargin)
+        # header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - h)
+        contentFooter='https://www.asovac.org/blogroll-memorias-convenciones-anuales     https://www.facebook.com/ConvencionAsovac'+str(now.year)
+        contentFooter2='(0212) 753-5802 convencion.asovac'+str(now.year)+'@gmail.com'
+        contentFooter3=str(doc.page)
+        
+        # Contenido del Footer
+        footer = Paragraph(contentFooter, styleF1)
+        footer2 = Paragraph(contentFooter2, styleF2)
+        pagina = Paragraph(contentFooter3, styleF2)
+
+        w, h = footer.wrap(doc.width, doc.bottomMargin)
+        w, h = footer2.wrap(doc.width, doc.bottomMargin)
+        w, h = pagina.wrap(doc.width, doc.bottomMargin)
+
+        footer.drawOn(canvas, doc.leftMargin, h*4)
+        footer2.drawOn(canvas, doc.leftMargin, h*3)
+        pagina.drawOn(canvas, (doc.leftMargin*7)+10, h*3)
+        
+        # Release the canvas
+        canvas.restoreState()
+#---------------------------------------------------------------------------------#
+#              Para generar vista previa de los patrocinadores                    #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def patrocinadoresPreviewPDF(request,arbitraje):
+    
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=1)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    # page_content.apspend(Paragraph("Frame first page!",styles['Normal']))
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    page_content.append(PageBreak()) # This will force a page break so you are guarented to get the next PageTemplate/Frame
+    page_content.append(Paragraph("Frame remaining pages!,  "*200,styles['Normal']))
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+#---------------------------------------------------------------------------------#
+#                Versiones de ejemplo de uso de la libreria                       #
+#---------------------------------------------------------------------------------#
+    # Version usando BaseDocTempalte
+    # response = HttpResponse(content_type='application/pdf')
+    # buffer = BytesIO()
+    # logo="https://i.imgur.com/G1PXYZU.jpg"
+    # img = Image(logo,595, 829.88976378)
+    # img = Image(logo,600, 843)
+    # # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    # doc = BaseDocTemplate(buffer,showBoundary=1)
+    # # create the frames. Here you can adjust the margins
+    # # frame_first_page = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='first')
+    # print doc.width
+    # print doc.height
+    # # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    # frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
+    # frame_remaining_pages = Frame(doc.leftMargin + 1*inch, doc.bottomMargin + 1*inch, doc.width - 2*inch, doc.height - 2*inch, id='remaining')
+    # # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    # doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page, onPage=on_first_page),
+    #                     PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=on_remaining_pages),
+    #                     ])
+    # styles=getSampleStyleSheet()
+    # # start the story...
+    # Elements=[]
+    # Elements.append(img)
+    # # Elements.apspend(Paragraph("Frame first page!",styles['Normal']))
+    # Elements.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    # Elements.append(PageBreak()) # This will force a page break so you are guarented to get the next PageTemplate/Frame
+    # Elements.append(Paragraph("Frame remaining pages!,  "*200,styles['Normal']))
+    # #start the construction of the pdf
+    # doc.build(Elements)
+
+    # doc = buffer.getvalue()
+    # buffer.close()
+    # response.write(doc)
+    # return response
+
+    # # Version usando SimpleDocTemplate 
+    # response = HttpResponse(content_type='application/pdf')
+    # buffer = BytesIO()
+    # c = SimpleDocTemplate(buffer,
+    #                     rightMargin=0,leftMargin=0,
+    #                     topMargin=0,bottomMargin=0)
+    # sample_style_sheet = getSampleStyleSheet()
+
+    # flowables = []
+    # logo="https://i.imgur.com/G1PXYZU.jpg"
+    # im = Image(logo,595, 829.88976378)
+    # flowables.append(im)
+
+    # paragraph_1 = Paragraph("El título del texto", sample_style_sheet['Heading1'])
+    # paragraph_2 = Paragraph(
+    #     " texto de prueba para verificar como es el funcionamiento de los parrafos con esta libreria, limita automaticamente el contenido",
+    #     sample_style_sheet['BodyText']
+    # )
+    # flowables.append(paragraph_1)
+    # flowables.append(paragraph_2)
+    # c.build(flowables,onLaterPages=add_page_number,)
+    
+    # c = buffer.getvalue()
+    # buffer.close()
+    # response.write(c)
+    # return response
+
+    # # Inicio version con canvas 
+    # context = create_common_context(request)
+    # resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+    # sistema=Sistema_asovac.objects.get(id=arbitraje)
+
+    # if(resumen == True):
+    #     portada=Resumen.objects.get(sistema_id=arbitraje)
+    #     # patrocinadores_imagen = settings.MEDIA_ROOT+'/'+portada.url_patrocinadores
+    #     cabecera_imagen = sistema.cabecera
+    
+    # # Para generar el pdf de la imagen de la portada
+    # #Indicamos el tipo de contenido a devolver, en este caso un pdf
+    # response = HttpResponse(content_type='application/pdf')
+    # # para descarg el pdf
+    # # response['Content-Disposition'] = 'attachment; filename="some_file.pdf"'
+    # #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+    # buffer = BytesIO()
+    # #Canvas nos permite hacer el reporte con coordenadas X y Y
+    # pdf = canvas.Canvas(buffer,pagesize = A4)
+    # #Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+    # #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+    # #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+    # pdf.rect(50, 740, 500, 70)
+    # if(resumen == True):
+    #     pdf.drawImage(cabecera_imagen, 50,740, 500, 70,preserveAspectRatio=False)
+    #     # pdf.drawImage(patrocinadores_imagen, 0,0, 595, 843,preserveAspectRatio=False)
+    # #drawString(x,y, texto)
+    # pdf.drawString(70,250,"Este es un ejemplo de parrafo en un PDF con la libreria reportlab y python! limite de contenido ")
+    #     #Con show page hacemos un corte de página para pasar a la siguiente
+    # pdf.showPage()
+    # pdf.save()
+    # pdf = buffer.getvalue()
+    # buffer.close()
+    # response.write(pdf)
+    # return response

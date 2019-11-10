@@ -213,3 +213,6 @@ class MultipleRecipientsWithRoleForm(forms.Form):
 
         # create a new recipients_event_name blank field
         
+class UploadFileForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': 'image/png, image/jpeg, image/gif'}))
