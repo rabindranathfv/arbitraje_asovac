@@ -5,9 +5,23 @@
             {% include "success_messages.html" %}
             {% include "toggle_title.html" %}
             <div class="jumbotron RLcard">
-                <h2 class="text-left">Lista de organizadores de evento: {{event.nombre}}</h2>
+                <div class="row">
+                    <h2 class="text-left col-sm-8">Lista de organizadores de evento: {{event.nombre}}</h2>
+                    <div class="col-sm-offset-2 col-sm-2">
+                        <a class="btn btn-danger btn-lg col-sm-12" href="{% url 'eventos:event_list' %}">Atrás</a>
+                    </div>
+                </div>
                 <div id="toolbar">
+                    <button class="btn btn-default dropdown-toggle text-left" data-toggle="dropdown" data-hover="dropdown">Acciones <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
 
+                        <li>
+                            <a class="show-form" data-url="{% url 'eventos:add_organizer_to_event' event.id %}">
+                                <i class="fas fa-user"></i> Añadir Organizador al Evento
+                            </a>
+                        </li>
+                            
+                    </ul>
                 </div>
                 <div class="table-responsive">
 
@@ -36,6 +50,9 @@
                                                 <i class="fas fa-times"></i>
                                             </a>
                                         {% endif %}
+                                        <a class="show-form" data-url="{% url 'eventos:event_edit_organizer' event_organizer.id %}" title="Cambiar locación preferida de organizador">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             {% endfor %}

@@ -460,3 +460,26 @@ class EditOrganizerForm(forms.ModelForm):
 		if Organizador.objects.filter(correo_electronico=correo_electronico).exists() and self.organizer.correo_electronico != correo_electronico:
 			raise forms.ValidationError(_("Dirección de correo ya está en uso por otro organizador, por favor escoja otra."),code="invalid")
 		return correo_electronico
+
+
+class EditOrganizerEventForm(forms.ModelForm):
+
+    class Meta:
+        model = Organizador_evento
+        fields = ['locacion_preferida']
+
+    def __init__(self, *args, **kwargs):
+        super(EditOrganizerEventForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'create-organizer-form'
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-sm-3'
+        self.helper.field_class = 'col-sm-8'
+        self.fields['locacion_preferida'].label = "Locación preferida"
+        #self.helper.form_action = reverse('/') # <-- CHANGE THIS LINE TO THE NAME OF LOGIN VIEW
+        #self.helper.add_input(Submit('submit', 'Crear', css_class='btn-success btn-lg pull-right'))
+        self.helper.layout = Layout( # the order of the items in this layout is important
+            Field('locacion_preferida',placeholder="Ejemplo: Caracas"),
+        )
+
