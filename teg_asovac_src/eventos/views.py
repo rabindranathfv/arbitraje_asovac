@@ -207,6 +207,36 @@ def event_detail(request, evento_id):
     return JsonResponse(data) 
 
 
+@login_required
+def event_organizer_list(request, evento_id):
+    event = get_object_or_404(Evento, id = evento_id)
+    event_organizers = Organizador_evento.objects.filter(evento = evento_id)
+    #for data in event_data:
+        #print("nombre " + data.nombre)
+    context = {
+        'nombre_vista' : 'Organizadores de evento',
+        'username': request.user.username,
+        'event_organizers': event_organizers,
+        'organizer_number': len(event_organizers),
+        'event': event,
+        'events_app': True,
+    }
+    return render(request, 'eventos_event_admin_organizers.html', context)
+
+@login_required
+def event_delete_organizer(request, organizador_evento_id):
+    data = dict()
+    organizer_event = get_object_or_404(Organizador_evento, id = organizador_evento_id)
+    if request.method == "POST":
+        organizer_event.delete()
+        return redirect(reverse('eventos:event_organizer_list', kwargs = { 'evento_id' : organizer_event.evento.id })) 
+    else:
+        context = {
+            'organizer_event':organizer_event,
+        }
+        data['html_form'] = render_to_string('ajax/event_delete_organizer_of_event.html',context,request=request)
+    return JsonResponse(data)
+
 
 ##################### Organizer Views ###########################
 @login_required

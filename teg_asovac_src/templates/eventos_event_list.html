@@ -36,6 +36,9 @@
                                 <td class="text-center vertical-middle-align">{{ evt_data.duracion }}</td>
                                 <td class="text-center vertical-middle-align">{{ evt_data.url_anuncio_evento }}</td>
                                 <td class="text-center vertical-middle-align">
+                                    <a href="{% url 'eventos:event_organizer_list' evt_data.id %}" title="Administrar organizadores de Evento">
+                                        <i class="fas fa-user"></i>
+                                    </a>
                                     <a class="show-form" data-url="{% url 'eventos:add_organizer_to_event' evt_data.id %}" title="Añadir Organizador al Evento">
                                         <i class="fas fa-user"></i>
                                     </a>
