@@ -1905,7 +1905,7 @@ def portadaPreviewPDF(request,arbitraje):
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
     # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
-    doc = BaseDocTemplate(buffer,showBoundary=1)
+    doc = BaseDocTemplate(buffer,showBoundary=0)
     # create the frames. Here you can adjust the margins
     # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
     frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
@@ -2034,11 +2034,11 @@ def on_remaining_pages(canvas,doc):
 
 def header_footer(canvas, doc,arbitraje):
         
-        sistema= Sistema_asovac.objects.get(pk=arbitraje_id)
+        sistema= Sistema_asovac.objects.get(pk=arbitraje)
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
-        print arbitraje
+
         # Estilos para el footer
         footer = getSampleStyleSheet()
         
@@ -2052,23 +2052,51 @@ def header_footer(canvas, doc,arbitraje):
 
         now = datetime.now()
 
-        # Header
-        # header = Paragraph('This is a multi-line header.  It goes on every page.   ' * 5, styles['Code'])
-        # w, h = header.wrap(doc.width, doc.topMargin)
-        # header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - h)
+        # Contenido del Header
+        
+        header = Image(sistema.cabecera,450, 60)
+        img_table = Table(data=[[header]],colWidths=452,style=[
+            # The two (0, 0) in each attribute represent the range of table cells that the style applies to. Since there's only one cell at (0, 0), it's used for both start and end of the range
+            ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+            ('TOPPADDING',(0,0),(-1,-1),0),
+            ('BOTTOMPADDING',(0,0),(-1,-1),0),
+            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#000000')), # The fourth argument to this style attribute is the border width
+            ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
+            ]
+        )
+        w, h = header.wrap(doc.width, doc.topMargin)
+        w, h = img_table.wrap(doc.width, doc.topMargin)
+
+        # header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin-5)
+        img_table.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin-10)
+
+
+        # Footer 
         contentFooter='https://www.asovac.org/blogroll-memorias-convenciones-anuales     https://www.facebook.com/ConvencionAsovac'+str(now.year)
         contentFooter2='(0212) 753-5802 convencion.asovac'+str(now.year)+'@gmail.com'
         contentFooter3=str(doc.page)
+        linea= Paragraph('',styleF2)
+        line = Table(data=[[linea]],colWidths=452,style=[
+            # The two (0, 0) in each attribute represent the range of table cells that the style applies to. Since there's only one cell at (0, 0), it's used for both start and end of the range
+            ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+            ('TOPPADDING',(0,0),(-1,-1),0),
+            ('BOTTOMPADDING',(0,0),(-1,-1),0),
+            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#000000')), # The fourth argument to this style attribute is the border width
+            ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
+            ]
+        )
         
         # Contenido del Footer
         footer = Paragraph(contentFooter, styleF1)
         footer2 = Paragraph(contentFooter2, styleF2)
         pagina = Paragraph(contentFooter3, styleF2)
 
+        w, h = line.wrap(doc.width, doc.bottomMargin)
         w, h = footer.wrap(doc.width, doc.bottomMargin)
         w, h = footer2.wrap(doc.width, doc.bottomMargin)
         w, h = pagina.wrap(doc.width, doc.bottomMargin)
 
+        line.drawOn(canvas, doc.leftMargin, h*5.5)
         footer.drawOn(canvas, doc.leftMargin, h*4)
         footer2.drawOn(canvas, doc.leftMargin, h*3)
         pagina.drawOn(canvas, (doc.leftMargin*7)+10, h*3)
@@ -2082,11 +2110,18 @@ def header_footer(canvas, doc,arbitraje):
 @user_is_arbitraje
 def patrocinadoresPreviewPDF(request,arbitraje):
     
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        patrocinadores=Resumen.objects.get(sistema_id=arbitraje)
+        archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
   
     # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
-    doc = BaseDocTemplate(buffer,showBoundary=1)
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
     # create the frames. Here you can adjust the margins
     # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
     frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
@@ -2095,10 +2130,56 @@ def patrocinadoresPreviewPDF(request,arbitraje):
     styles=getSampleStyleSheet()
     # start the story...
     page_content=[]
-    # page_content.apspend(Paragraph("Frame first page!",styles['Normal']))
     page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    page_content.append(PageBreak()) # This will force a page break so you are guarented to get the next PageTemplate/Frame
-    page_content.append(Paragraph("Frame remaining pages!,  "*200,styles['Normal']))
+    
+    page_content.append(Spacer(1,50))
+    # Estilos para el titulo de la convencion
+    styleNombre= styles['Heading1']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.fontSize=30
+    styleNombre.alignment=TA_CENTER
+
+    page_content.append(Paragraph(sistema.numero_romano,styleNombre))
+    page_content.append(Paragraph(sistema.nombre,styleNombre))
+
+    # Estilos para el lema
+    styleLema= styles['Heading1']
+    styleLema.fontName="Times-Roman"
+    styleLema.fontSize=18
+    styleLema.alignment=TA_CENTER
+    # styleLema.spaceBefore = 15
+
+    page_content.append(Paragraph(sistema.slogan,styleLema))
+    page_content.append(Spacer(1,100))
+    
+    styleTitulo= styles['Heading1']
+    styleTitulo.fontName="Times-Roman"
+    styleTitulo.fontSize=40
+    styleTitulo.alignment=TA_CENTER
+    # styleTitulo.spaceBefore = 50
+    styleTitulo.textColor = colors.HexColor('#0080ff')
+
+    page_content.append(Paragraph('Memorias',styleLema))
+
+    # Para cargar los patrocinadores
+    page_content.append(Spacer(1,100))
+    if(resumen == True):
+        img = Image(archivo_imagen,445, 200)
+        page_content.append(img)
+
+    # Estilos para el fechas
+    styleFecha= styles['Heading1']
+    styleFecha.fontName="Times-Roman"
+    styleFecha.fontSize=12
+    styleFecha.alignment=TA_CENTER
+    styleTitulo.textColor = colors.HexColor('#000000')
+
+    # Para agregar fecha de la creacion del libro
+    now = datetime.now()
+    fecha=str (MONTH_NAMES[now.month - 1])+' - '+str(now.year)
+    page_content.append(Spacer(1,50))
+    page_content.append(Paragraph(fecha,styleFecha))
+
     #start the construction of the pdf
     doc.build(page_content)
 
