@@ -1,0 +1,85 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<style type="text/css">
+	/* Minimal styling to center the editor in this sample */
+	.cke_contents cke_reset{
+		min-height: 385px !important;
+	}
+	#cke_content{
+		width: 100% !important;
+	}
+</style>
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row ">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-center">Comisión organizadora</h2>
+				{% include "success_messages.html" %}
+				{% include "errors_form.html" %}
+				<!-- Inicio de formulario -->
+				{% load crispy_forms_tags %}
+					<form enctype="multipart/form-data" action="" id="loadPortada" method="post" class="loadPortada" data-url="{% url 'recursos:portada' %}">
+						{% csrf_token %}
+						
+						<div class="form-group">
+							{% include "errors_form.html" %}
+							{{  form | crispy }}
+						</div>
+						
+						<div class="form-group text-center" >
+							<button type="submit" disabled="disabled" class="generatePDF btn btn-primary btn-lg">Cargar</button>
+							<a target="_blanck" href="{% url 'recursos:comisionPreviewPDF' arbitraje_id %}" class="btn btn-info btn-lg">Vista Previa</a>
+						</div>
+					</form>
+				<!-- Fin de formulario -->
+	
+				<!-- Inicio vista previa documento generado -->
+					<div class="row">
+						<div class="col-md-12" id="previewPDF">
+							
+						</div>
+					</div>
+					<!-- <embed style="min-height: 600px;" src="http://localhost:8000/media/trabajos/1_7MiQdwb.pdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+			
+				<!-- Fin vista previa documento generado -->
+
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block js_extra %}
+{% load static %}
+
+
+<script>
+
+	CKEDITOR.replace( 'content',{
+		toolbar: [
+			{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+			{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+			
+		],
+		width: '70%',
+      	height: 370
+	} );
+	CKEDITOR.instances.content.on('change', function() {
+				// console.log("TEST");
+				var comment= CKEDITOR.instances.content.getData().trim();
+				// console.log(CKEDITOR.instances.comment.getData());
+				// console.log(comment);
+				if(comment == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						$("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+		});
+</script>
+{% endblock %}

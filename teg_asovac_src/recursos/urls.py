@@ -23,11 +23,19 @@ urlpatterns = [
     url(r'^certificado/arbitro-certificado/$', views.resources_referee, name='resources_referee'),
     url(r'^certificado/organizador-certificado/$', views.resources_organizer, name='resources_organizer'),
     url(r'^certificado/conferencista-certificado/$', views.resources_lecturer, name='resources_lecturer'),
+    # Para generar el libro resumen
     url(r'^memorias$', views.memorias, name='memorias'),
     url(r'^memorias/portada$', views.portada, name='portada'),
     url(r'^memorias/portadaPreviewPDF/(?P<arbitraje>\d+)/$', views.portadaPreviewPDF, name='portadaPreviewPDF'),
     url(r'^memorias/patrocinadores$', views.patrocinadores, name='patrocinadores'),
     url(r'^memorias/patrocinadoresPreviewPDF/(?P<arbitraje>\d+)/$', views.patrocinadoresPreviewPDF, name='patrocinadoresPreviewPDF'),
+    url(r'^memorias/comisionOrganizadora$', views.comisionOrganizadora, name='comisionOrganizadora'),
+    url(r'^memorias/comisionPreviewPDF/(?P<arbitraje>\d+)/$', views.comisionPreviewPDF, name='comisionPreviewPDF'),
+    url(r'^memorias/invitacion$', views.invitacion, name='invitacion'),
+    url(r'^memorias/invitacionPreviewPDF/(?P<arbitraje>\d+)/$', views.invitacionPreviewPDF, name='invitacionPreviewPDF'),
+    url(r'^memorias/palabras$', views.palabras, name='palabras'),
+    url(r'^memorias/palabrasPreviewPDF/(?P<arbitraje>\d+)/$', views.palabrasPreviewPDF, name='palabrasPreviewPDF'),
+    
 
     url(r'^conferencista-importar-excel/$', views.load_lecturers_modal,
         name='load_lecturers_modal'),

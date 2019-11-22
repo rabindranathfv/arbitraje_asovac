@@ -216,3 +216,17 @@ class MultipleRecipientsWithRoleForm(forms.Form):
 class UploadFileForm(forms.Form):
     # title = forms.CharField(max_length=100)
     file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': 'image/png, image/jpeg, image/gif'}))
+
+     
+class resumenContentForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    content = forms.CharField(label="Contenido para el PDF",widget=forms.Textarea(attrs={'cols': 80, 'rows': 20, 'id':"content"}))
+
+class resumenPalabrasForm(forms.Form):
+    presidenteNombre = forms.CharField(label="Introduzca su nombre",max_length=200)
+    presidenteCargo = forms.CharField(label="Introduzca su cargo",max_length=200)
+    presidenteContenido = forms.CharField(label="Introduzca unas breves palabras",widget=forms.Textarea(attrs={'cols': 80, 'rows': 20, 'id':"presidenteContenido"}))
+    cabecera = forms.CharField(label="Introduzca el texto de la cabecera",required=False,widget=forms.Textarea(attrs={'cols': 80, 'rows': 10, 'id':"cabecera"}))
+    secretarioNombre = forms.CharField(label="Introduzca su nombre",max_length=200,required=False)
+    secretarioCargo = forms.CharField(label="Introduzca su cargo",required=False,max_length=200)
+    secretarioContenido = forms.CharField(label="Introduzca unas breves palabras",required=False,widget=forms.Textarea(attrs={'cols': 80, 'rows': 20, 'id':"secretarioContenido"}))

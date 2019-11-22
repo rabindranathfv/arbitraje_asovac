@@ -1,0 +1,188 @@
+{% extends "content_wrapper_with_sidebar.html" %}
+
+{% block inner_content %}
+<style type="text/css">
+	/* Minimal styling to center the editor in this sample */
+	.cke_contents cke_reset{
+		min-height: 385px !important;
+	}
+	#cke_content{
+		width: 100% !important;
+	}
+</style>
+<div class="container" id="content-wrapper">
+
+	{% include "toggle_title.html" %}
+
+	<div class="row ">
+		<div class="col-sm-12">
+			<div class="jumbotron RLcard">
+				
+				<h2 class="text-center">Palabras</h2>
+				{% include "success_messages.html" %}
+				{% include "errors_form.html" %}
+				<!-- Inicio de formulario -->
+				{% load crispy_forms_tags %}
+					<form enctype="multipart/form-data" action="" id="loadPortada" method="post" class="loadPortada" data-url="{% url 'recursos:palabras' %}">
+						{% csrf_token %}
+						
+						<div class="form-group">
+							{% include "errors_form.html" %}
+							{{  form | crispy }}
+						</div>
+						
+						<div class="form-group text-center" >
+							<button type="submit" disabled="disabled" class="generatePDF btn btn-primary btn-lg">Cargar</button>
+							<a target="_blanck" href="{% url 'recursos:palabrasPreviewPDF' arbitraje_id %}" class="btn btn-info btn-lg">Vista Previa</a>
+						</div>
+					</form>
+				<!-- Fin de formulario -->
+	
+				<!-- Inicio vista previa documento generado -->
+					<div class="row">
+						<div class="col-md-12" id="previewPDF">
+							
+						</div>
+					</div>
+					<!-- <embed style="min-height: 600px;" src="http://localhost:8000/media/trabajos/1_7MiQdwb.pdf" width="100%" height="100%" alt="pdf" pluginspage="http://www.adobe.com/products/acrobat/readstep2.html"> -->
+			
+				<!-- Fin vista previa documento generado -->
+
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+{% block js_extra %}
+{% load static %}
+
+
+<script>
+
+	CKEDITOR.replace( 'presidenteContenido',{
+		toolbar: [
+			{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+			{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+			
+		],
+		width: '100%',
+      	height: 370
+	} );
+	CKEDITOR.instances.presidenteContenido.on('change', function() {
+				var comment= CKEDITOR.instances.presidenteContenido.getData().trim();
+				var nombre=$("#id_presidenteNombre").val();
+				var cargo=$("#id_presidenteCargo").val();
+				// console.log(CKEDITOR.instances.comment.getData());
+		
+				if(comment == "" || cargo == "" || nombre == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+		});
+
+		$("#id_presidenteNombre").change(function (e) { 
+			var comment= CKEDITOR.instances.presidenteContenido.getData().trim();
+			var nombre=$("#id_presidenteNombre").val();
+			var cargo=$("#id_presidenteCargo").val();
+			if(comment == "" || cargo == "" || nombre == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+			
+		});
+		
+		$("#id_presidenteCargo").change(function (e) { 
+			var comment= CKEDITOR.instances.presidenteContenido.getData().trim();
+			var nombre=$("#id_presidenteNombre").val();
+			var cargo=$("#id_presidenteCargo").val();
+			if(comment == "" || cargo == "" || nombre == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+			
+		});
+		
+		/* Para validar campos del secretario general*/
+
+		CKEDITOR.replace( 'secretarioContenido',{
+		toolbar: [
+			{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+			{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+			
+		],
+		width: '100%',
+      	height: 370
+	} );
+	CKEDITOR.instances.secretarioContenido.on('change', function() {
+				var comment= CKEDITOR.instances.secretarioContenido.getData().trim();
+				var nombre=$("#id_secretarioNombre").val();
+				var cargo=$("#id_secretarioCargo").val();
+
+				var comment_presi= CKEDITOR.instances.presidenteContenido.getData().trim();
+				var nombre_presi=$("#id_presidenteNombre").val();
+				var cargo_presi=$("#id_presidenteCargo").val();
+				// console.log(CKEDITOR.instances.comment.getData());
+		
+				if(comment == "" || comment_presi == "" || cargo == "" || cargo_presi == "" || nombre == "" || nombre_presi == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+		});
+
+		$("#id_secretarioNombre").change(function (e) { 
+			var comment= CKEDITOR.instances.secretarioContenido.getData().trim();
+			var nombre=$("#id_secretarioNombre").val();
+			var cargo=$("#id_secretarioCargo").val();
+
+			var comment_presi= CKEDITOR.instances.presidenteContenido.getData().trim();
+			var nombre_presi=$("#id_presidenteNombre").val();
+			var cargo_presi=$("#id_presidenteCargo").val();
+
+			if(comment == "" || comment_presi == "" || cargo == "" || cargo_presi == "" || nombre == "" || nombre_presi == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+			
+		});
+		
+		$("#id_secretarioCargo").change(function (e) { 
+			var comment= CKEDITOR.instances.secretarioContenido.getData().trim();
+			var nombre=$("#id_secretarioNombre").val();
+			var cargo=$("#id_secretarioCargo").val();
+			
+			var comment_presi= CKEDITOR.instances.presidenteContenido.getData().trim();
+			var nombre_presi=$("#id_presidenteNombre").val();
+			var cargo_presi=$("#id_presidenteCargo").val();
+			
+			if(comment == "" || comment_presi == "" || cargo == "" || cargo_presi == "" || nombre == "" || nombre_presi == ""){
+						$(".generatePDF").prop('disabled', true);
+				}else{
+						// $("#comment").val(comment);
+						$(".generatePDF").prop('disabled', false);
+				}
+			
+		});
+
+		CKEDITOR.replace( 'cabecera',{
+			toolbar: [
+				{ name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+				{ name: 'paragraph', items: [ 'NumberedList', 'BulletedList' ] },
+				
+			],
+			width: '100%',
+			height: 200
+		} );
+
+</script>
+{% endblock %}

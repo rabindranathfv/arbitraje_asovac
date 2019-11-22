@@ -21,4 +21,15 @@ class Resumen (models.Model):
     url_portada= models.CharField(max_length=200,blank=True,null=True)
     url_patrocinadores= models.CharField(max_length=200,blank=True,null=True)
     comision_organizadora= models.TextField(blank=True,null=True)
-    pie_pagina= models.TextField(blank=True,null=True)
+    invitacion= models.TextField(blank=True,null=True)
+    cabecera= models.TextField(blank=True,null=True)
+    presidente_nombre= models.CharField(max_length=200,blank=True,null=True)
+    presidente_cargo= models.CharField(max_length=200,blank=True,null=True)
+    presidente_contenido= models.TextField(blank=True,null=True)
+    secretario_nombre= models.CharField(max_length=200,blank=True,null=True)
+    secretario_cargo= models.CharField(max_length=200,blank=True,null=True)
+    secretario_contenido=models.TextField(blank=True,null=True)
+    
+
+
+

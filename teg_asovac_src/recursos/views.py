@@ -43,7 +43,7 @@ from .utils import (
 from .forms import (
     CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
     MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
-    MultipleRecipientsWithRoleForm,UploadFileForm
+    MultipleRecipientsWithRoleForm,UploadFileForm,resumenContentForm,resumenPalabrasForm
 )
 
 from .models import Resumen
@@ -56,7 +56,7 @@ from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.lib.enums import TA_LEFT,TA_RIGHT,TA_CENTER
+from reportlab.lib.enums import TA_LEFT,TA_RIGHT,TA_CENTER,TA_JUSTIFY
 
 # Importamos clase de hoja de estilo de ejemplo.
 # Se importa el tamaño de la hoja.
@@ -2188,6 +2188,524 @@ def patrocinadoresPreviewPDF(request,arbitraje):
     response.write(doc)
     return response
 
+
+#---------------------------------------------------------------------------------#
+#                  Para generar sección de los patrocinadores                     #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def comisionOrganizadora(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Para guardar texto para la comision organizadora'
+        form= resumenContentForm(request.POST)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            print request.POST['content']
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if (resumen == True ):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.comision_organizadora=request.POST['content']
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.comision_organizadora=request.POST['content']
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'La comisión fue cargada de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            return redirect('recursos:portada')
+            return render(request, 'recursos_memorias_comision_organizadora.html', context)
+        
+
+    form= resumenContentForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_comision_organizadora.html', context)
+
+
+#---------------------------------------------------------------------------------#
+#          Para generar vista previa de la comisión organizadora                  #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def comisionPreviewPDF(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    
+    page_content.append(Spacer(1,15))
+
+    # Estilos para el titulo de la convencion
+    styleNombre= styles['Heading1']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.fontSize=15
+    styleNombre.alignment=TA_CENTER
+    styleNombre.spaceAfter = 0
+
+    page_content.append(Paragraph("<b>COMISIÓN ORGANIZADORA</b>",styleNombre))
+
+    page_content.append(Paragraph(("<b>"+sistema.numero_romano+" "+sistema.nombre.upper()+"</b>"),styleNombre))
+
+    # Estilos para el linea de separacion
+    styleNombre= styles['Normal']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.spaceBefore = 0
+    styleNombre.spaceAfter = 15
+    # Para agregar linea despues del título
+    page_content.append(Paragraph("_"*87,styles['Normal']))
+
+    # Estilos para el titulo de la convencion
+    # Estilos para el titulo de la convencion
+    styleComision= styles['Normal']
+    styleComision.fontName="Times-Roman"
+    styleComision.alignment=TA_CENTER
+    styleComision.spaceBefore = 10
+    styleComision.spaceAfter = 0
+
+    
+    # result = str(queryResumen.comision_organizadora).replace('\n',' <br/> ')
+    # page_content.append(Paragraph(result, styleComision)) 
+
+    # page_content.append(Paragraph(queryResumen.comision_organizadora,styleComision))
+    section=""
+    for content in queryResumen.comision_organizadora:
+        section= section + content
+        if (section.find("</p>") >= 0 ): 
+            # print section.replace('<br />','')
+            # section=section.replace('<br />','')
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+    # page_content.append(Paragraph(queryResumen.comision_organizadora,styles['Normal']))
+    # page_content.append(Spacer(1,100))
+    
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+
+#---------------------------------------------------------------------------------#
+#                  Para generar sección de las invitaciones                       #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def invitacion(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Para guardar texto para la comision organizadora'
+        form= resumenContentForm(request.POST)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if (resumen == True ):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.invitacion=request.POST['content']
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.invitacion=request.POST['content']
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'El mensaje de invitación fue cargado de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            return render(request, 'recursos_memorias_invitacion.html', context)
+        
+
+    form= resumenContentForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_invitacion.html', context)
+
+
+#---------------------------------------------------------------------------------#
+#              Para generar vista previa de las invitaciones                      #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def invitacionPreviewPDF(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    
+    page_content.append(Spacer(1,15))
+
+    # Estilos para el titulo de la convencion
+    styleNombre= styles['Heading1']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.fontSize=13
+    styleNombre.alignment=TA_CENTER
+    styleNombre.spaceAfter = 0
+    
+    page_content.append(Paragraph(("<b>"+sistema.numero_romano+" "+sistema.nombre.upper()+"</b>"),styleNombre))
+
+    # Estilos para el slogan
+    styleSlogan= styles['Heading1']
+    styleSlogan.fontName="Times-Roman"
+    styleSlogan.fontSize=17
+    styleSlogan.alignment=TA_CENTER
+    styleSlogan.spaceAfter = 0
+
+    # Para generar el título 
+    page_content.append(Paragraph("<b>"+sistema.slogan+"</b>",styleSlogan))
+
+    # Estilos para las sedes y fecha de inicio y fin 
+    styleSede= styles['Heading1']
+    styleSede.fontName="Times-Roman"
+    styleSede.fontSize=12
+    styleSede.alignment=TA_CENTER
+    styleSede.spaceAfter = 0
+    styleSede.spaceBefore = 0
+    # styleSede.leading = 20
+
+    page_content.append(Paragraph(sistema.sedes,styleSede))
+    # Para agregar fecha
+    inicio_dia= datetime.strftime(sistema.fecha_inicio_arbitraje,'%d')
+    fin_dia= datetime.strftime(sistema.fecha_fin_arbitraje,'%d')
+    mes= datetime.strftime(sistema.fecha_fin_arbitraje,'%m')
+    year= datetime.strftime(sistema.fecha_fin_arbitraje,'%Y')
+   
+    date_event = '%s al %s de %s de %s' % (inicio_dia,fin_dia, MONTH_NAMES[int(mes) - 1], year)
+    
+    page_content.append(Paragraph(date_event,styleSede))
+
+    # Estilos para la invitación
+    styleInvitacion= styles['Heading1']
+    styleInvitacion.fontName="Times-Roman"
+    styleInvitacion.fontSize=15
+    styleInvitacion.alignment=TA_CENTER
+    styleInvitacion.spaceAfter = 0
+
+    page_content.append(Paragraph("<b>INVITACIÓN</b>",styleInvitacion))
+
+
+    # Estilos para el linea de separacion
+    styleNombre= styles['Normal']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.spaceBefore = 0
+    styleNombre.spaceAfter = 15
+    # Para agregar linea despues del título
+    page_content.append(Paragraph("_"*87,styles['Normal']))
+
+    # Estilos para el titulo de la convencion
+    # Estilos para el titulo de la convencion
+    styleComision= styles['Normal']
+    styleComision.fontName="Times-Roman"
+    styleComision.alignment=TA_JUSTIFY
+    
+    # Para dar formato al texto ingresado
+    section=""
+    for content in queryResumen.invitacion:
+        section= section + content
+        if (section.find("</p>") >= 0 ): 
+            # print section.replace('<br />','')
+            section=section.replace('<br />','')
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+    
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+#---------------------------------------------------------------------------------#
+#                    Para generar sección de las palabras                         #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def palabras(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Para guardar texto para la comision organizadora'
+        form= resumenPalabrasForm(request.POST)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # print request.POST.get('presidenteNombre')
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if (resumen == True ):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.presidente_nombre=request.POST.get('presidenteNombre')
+                resumen.presidente_cargo=request.POST.get('presidenteCargo')
+                resumen.presidente_contenido=request.POST.get('presidenteContenido')
+                resumen.secretario_nombre=request.POST.get('secretarioNombre')
+                resumen.secretario_cargo=request.POST.get('secretarioCargo')
+                resumen.secretario_contenido=request.POST.get('secretarioContenido')
+                resumen.cabecera=request.POST.get('cabecera')
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.presidente_nombre=request.POST.get('presidenteNombre')
+                resumen.presidente_cargo=request.POST.get('presidenteCargo')
+                resumen.presidente_contenido=request.POST.get('presidenteContenido')
+                resumen.secretario_nombre=request.POST.get('secretarioNombre')
+                resumen.secretario_cargo=request.POST.get('secretarioCargo')
+                resumen.secretario_contenido=request.POST.get('secretarioContenido')
+                resumen.sistema_id=arbitraje_id
+                resumen.cabecera=request.POST.get('cabecera')
+                resumen.save()
+
+            messages.success(request, 'Las palabras de apertura del evento fueron cargadas de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            return render(request, 'recursos_memorias_invitacion.html', context)
+        
+
+    form= resumenPalabrasForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_palabras.html', context)
+
+#---------------------------------------------------------------------------------#
+#              Para generar vista previa de las invitaciones                      #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def palabrasPreviewPDF(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    
+    # page_content.append(Spacer(1,5))
+
+    # Para agregar cabecera personalizada
+    if(queryResumen.cabecera != ""):
+        # Estilos para la cabecera
+        styleCabecera= styles['BodyText']
+        styleCabecera.fontName="Times-Roman"
+        styleCabecera.fontSize=12
+        styleCabecera.alignment=TA_CENTER
+        # styleCabecera.spaceAfter = 0
+        # styleCabecera.spaceBefore=0 
+
+        # Para dar formato al texto ingresado
+        sectionCabecera=""
+        cont=0
+        # print queryResumen.cabecera
+        for content in queryResumen.cabecera :
+            sectionCabecera= sectionCabecera + content
+            if (sectionCabecera.find("</p>") >= 0 ): 
+                cont= cont+1
+                # print sectionCabecera.replace('<br />','')
+                # sectionCabecera=sectionCabecera.replace('<br />','')
+                page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                sectionCabecera="" 
+        if cont == 0:
+            page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+        page_content.append(Spacer(1,10))
+    
+    # Estilos para la invitación
+    styleInvitacion= styles['Heading1']
+    styleInvitacion.fontName="Times-Roman"
+    styleInvitacion.fontSize=15
+    styleInvitacion.alignment=TA_CENTER
+    styleInvitacion.spaceAfter = 0
+
+    page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
+
+    page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
+    page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
+
+
+    # Estilos para el linea de separacion
+    styleNombre= styles['Normal']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.spaceBefore = 0
+    styleNombre.spaceAfter = 15
+    # Para agregar linea despues del título
+    page_content.append(Paragraph("_"*87,styles['Normal']))
+
+    # Estilos para el titulo de la convencion
+    # Estilos para el titulo de la convencion
+    styleComision= styles['Normal']
+    styleComision.fontName="Times-Roman"
+    styleComision.alignment=TA_JUSTIFY
+    
+    # Para dar formato al texto ingresado
+    section=""
+    for content in queryResumen.presidente_contenido:
+        section= section + content
+        if (section.find("</p>") >= 0 ): 
+            # print section.replace('<br />','')
+            section=section.replace('<br />','')
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+    
+    if queryResumen.secretario_nombre != "":
+        # Para cargar informacion del secretario
+        page_content.append(NextPageTemplate('remaining_pages'))
+        page_content.append(PageBreak())
+
+        # page_content.append(Spacer(1,15))
+        # Para agregar cabecera personalizada
+        if(queryResumen.cabecera != ""):
+            # Estilos para la cabecera
+            styleCabecera= styles['BodyText']
+            styleCabecera.fontName="Times-Roman"
+            styleCabecera.fontSize=12
+            styleCabecera.alignment=TA_CENTER
+            # styleCabecera.spaceAfter = 0
+            # styleCabecera.spaceBefore=0 
+
+            # Para dar formato al texto ingresado
+            sectionCabecera=""
+            cont=0
+            # print queryResumen.cabecera
+            for content in queryResumen.cabecera :
+                sectionCabecera= sectionCabecera + content
+                if (sectionCabecera.find("</p>") >= 0 ): 
+                    cont= cont+1
+                    # print sectionCabecera.replace('<br />','')
+                    # sectionCabecera=sectionCabecera.replace('<br />','')
+                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                    sectionCabecera="" 
+            if cont == 0:
+                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+            page_content.append(Spacer(1,10))
+
+        # Estilos para la invitación
+        styleInvitacion= styles['Heading1']
+        styleInvitacion.fontName="Times-Roman"
+        styleInvitacion.fontSize=15
+        styleInvitacion.alignment=TA_CENTER
+        styleInvitacion.spaceAfter = 0
+
+        page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
+
+        page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
+        page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
+
+
+        # Estilos para el linea de separacion
+        styleNombre= styles['Normal']
+        styleNombre.fontName="Times-Roman"
+        styleNombre.spaceBefore = 0
+        styleNombre.spaceAfter = 15
+        # Para agregar linea despues del título
+        page_content.append(Paragraph("_"*87,styles['Normal']))
+
+        # Estilos para el titulo de la convencion
+        # Estilos para el titulo de la convencion
+        styleComision= styles['Normal']
+        styleComision.fontName="Times-Roman"
+        styleComision.alignment=TA_JUSTIFY
+        
+        # Para dar formato al texto ingresado
+        section=""
+        for content in queryResumen.presidente_contenido:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
+
+
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
 
 #---------------------------------------------------------------------------------#
 #                Versiones de ejemplo de uso de la libreria                       #
