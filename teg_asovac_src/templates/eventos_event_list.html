@@ -7,7 +7,7 @@
             <div class="jumbotron RLcard">
                 <h2 class="text-left">Lista de Eventos</h2>
                 <div id="toolbar">
-
+                    
                 </div>
                 <div class="table-responsive">
 
@@ -36,9 +36,10 @@
                                 <td class="text-center vertical-middle-align">{{ evt_data.duracion }}</td>
                                 <td class="text-center vertical-middle-align">{{ evt_data.url_anuncio_evento }}</td>
                                 <td class="text-center vertical-middle-align">
-                                    <a class="show-form" data-url="{% url 'eventos:add_organizer_to_event' evt_data.id %}" title="Añadir Organizador al Evento">
+                                    <a href="{% url 'eventos:event_organizer_list' evt_data.id %}" title="Administrar organizadores de Evento">
                                         <i class="fas fa-user"></i>
                                     </a>
+                                    
 
                                     <a href="{% url 'eventos:event_edit' evt_data.id %}" role="button" title="Editar Evento">
                                         <i class="fas fa-edit"></i>

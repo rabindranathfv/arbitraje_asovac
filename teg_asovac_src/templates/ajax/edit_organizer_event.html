@@ -1,0 +1,17 @@
+{% load crispy_forms_tags %}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3 class="modal-title" >Editar locación de organizador {{ organizer_event.organizador.nombres }} {{ organizer_event.organizador.apellidos }} en evento {{organizer_event.evento}}</h3>
+</div>
+<form method="POST" action="{% url 'eventos:event_edit_organizer' organizer_event.id %}">
+    <div class="modal-body">
+        {% csrf_token %}
+        {{ form | crispy }}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-lg btn-primary">Confirmar</button>
+    </div>
+</form>

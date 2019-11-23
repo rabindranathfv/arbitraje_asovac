@@ -23,6 +23,9 @@ urlpatterns = [
     url(r'^crear-evento/$',views.event_create,name='event_create'),
     url(r'^detalles-evento/(?P<evento_id>\d+)/$',views.event_detail,name='event_detail'),
     url(r'^eliminar-evento/(?P<evento_id>\d+)/$',views.event_delete,name='event_delete'),
+    url(r'^organizadores-evento/(?P<evento_id>\d+)/$',views.event_organizer_list,name='event_organizer_list'),
+    url(r'^organizadores-evento/eliminar-organizador/(?P<organizador_evento_id>\d+)/$',views.event_delete_organizer,name='event_delete_organizer'),
+    url(r'^organizadores-evento/editar-organizador/(?P<organizador_evento_id>\d+)/$',views.event_edit_organizer,name='event_edit_organizer'),
 
     url(r'^crear-organizador/$',views.organizer_create,name='organizer_create'),
     url(r'^listar-organizadores/$',views.organizer_list,name='organizer_list'),

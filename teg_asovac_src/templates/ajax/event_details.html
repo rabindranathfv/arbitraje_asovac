@@ -12,10 +12,14 @@
             <tr>
                 <th>Nombre</th>
                 <td>{{ evento.nombre }}</td>
-            </tr>     
+            </tr>
+            <tr>
+                <th>Sistema asoVAC</th>
+                <td>{{ evento.sistema_asovac }}</td>
+            </tr>       
             <tr>
                 <th>Categoría</th>
-                <td>{{ evento.categoria }}</td>
+                <td>{{ evento.get_categoria_display }}</td>
             </tr>   
             <tr>
                 <th>Descripción</th>
@@ -57,6 +61,27 @@
                 <th>Observaciones</th>
                 <td>{{ evento.observaciones }}</td>
             </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-bordered">
+        <thead>
+        </thead>
+        <tbody>
+            <tr>
+                <th>
+                    Nombre de organizadores
+                </th>
+                <th>
+                    Lugares preferidos
+                </th>
+            </tr>
+            {% for organizador_evento in organizador_evento_list%}
+                <tr>
+                    <td>  {{organizador_evento.organizador.nombres}} {{organizador_evento.organizador.apellidos}}  </td>
+                    <td>{{ organizador_evento.locacion_preferida }}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 

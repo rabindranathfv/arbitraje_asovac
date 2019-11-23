@@ -14,7 +14,7 @@ from main_app.models import Usuario_asovac, Sistema_asovac,Rol
 from main_app.views import get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar, get_roles, get_route_configuracion, get_route_seguimiento, validate_rol_status
 
 #Import forms
-from .forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm
+from .forms import EditOrganizerForm,CreateOrganizerForm,CreateEventForm,CreateLocacionForm, EditEventForm, AddOrganizerToEventForm, AddObservationsForm, EditOrganizerEventForm
 
 #Import Models
 from .models import Organizador,Organizador_evento,Evento,Locacion_evento
@@ -207,6 +207,54 @@ def event_detail(request, evento_id):
     return JsonResponse(data) 
 
 
+@login_required
+def event_organizer_list(request, evento_id):
+    event = get_object_or_404(Evento, id = evento_id)
+    event_organizers = Organizador_evento.objects.filter(evento = evento_id)
+    #for data in event_data:
+        #print("nombre " + data.nombre)
+    context = {
+        'nombre_vista' : 'Organizadores de evento',
+        'username': request.user.username,
+        'event_organizers': event_organizers,
+        'organizer_number': len(event_organizers),
+        'event': event,
+        'events_app': True,
+    }
+    return render(request, 'eventos_event_admin_organizers.html', context)
+
+@login_required
+def event_delete_organizer(request, organizador_evento_id):
+    data = dict()
+    organizer_event = get_object_or_404(Organizador_evento, id = organizador_evento_id)
+    if request.method == "POST":
+        organizer_event.delete()
+        return redirect(reverse('eventos:event_organizer_list', kwargs = { 'evento_id' : organizer_event.evento.id })) 
+    else:
+        context = {
+            'organizer_event':organizer_event,
+        }
+        data['html_form'] = render_to_string('ajax/event_delete_organizer_of_event.html',context,request=request)
+    return JsonResponse(data)
+
+
+@login_required
+def event_edit_organizer(request, organizador_evento_id):
+    data = dict()
+    organizer_event = get_object_or_404(Organizador_evento, id = organizador_evento_id)
+    if request.method == "POST":
+        form = EditOrganizerEventForm(request.POST, instance = organizer_event)
+        form.save()
+        return redirect(reverse('eventos:event_organizer_list', kwargs = { 'evento_id' : organizer_event.evento.id })) 
+    else:
+        form = EditOrganizerEventForm(instance = organizer_event)
+        context = {
+            'organizer_event':organizer_event,
+            'form': form
+        }
+        data['html_form'] = render_to_string('ajax/edit_organizer_event.html',context,request=request)
+    return JsonResponse(data)
+
 
 ##################### Organizer Views ###########################
 @login_required
@@ -397,7 +445,7 @@ def add_organizer_to_event(request, evento_id):
             organizador_evento = Organizador_evento(organizador = organizador, evento = evento, locacion_preferida = form_data['locacion_preferida'])
             organizador_evento.save()
             messages.success(request, 'El organizador fue añadido con éxito al evento.')
-            data['url'] = reverse('eventos:event_list')
+            data['url'] = reverse('eventos:event_organizer_list', kwargs = { 'evento_id' : evento.id })
             data['form_is_valid'] = True
     else:
         form = AddOrganizerToEventForm(event = evento) 

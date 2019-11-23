@@ -978,8 +978,9 @@ def validate_load_users(filename,extension,arbitraje_id):
         if book.nsheets > 0:
 
             excel_file = book.sheet_by_index(0)
-
-            if excel_file.ncols == 20:
+            if excel_file.nrows == 1:
+                data['message'] = 'No hay ninguna fila para hacer import, por favor introduzca en el excel al menos 1 fila con datos de autor.'
+            elif excel_file.ncols == 20:
                 data['status']=200
                 data['message']=""
 
