@@ -43,7 +43,7 @@ from .utils import (
 from .forms import (
     CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
     MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
-    MultipleRecipientsWithRoleForm,UploadFileForm,resumenContentForm,resumenPalabrasForm
+    MultipleRecipientsWithRoleForm,UploadFileForm,resumenContentForm,resumenPalabrasForm,UploadAficheForm
 )
 
 from .models import Resumen
@@ -1823,6 +1823,13 @@ def save_file_memorias(requestFileName,type_load,arbitraje_id):
             # Permite guardar el archivo y asignarle un nombre
             save_resorce_file(requestFileName, file_name)
             route= "memorias/"+file_name
+        else: 
+            if type_load == "afiche":  
+                extension = name.split('.')        	
+                file_name= "afiche-"+arbitraje_id+"."+extension[1]
+                # Permite guardar el archivo y asignarle un nombre
+                save_resorce_file(requestFileName, file_name)
+                route= "memorias/"+file_name
     
     # print "Ruta del archivo: ",route
     return route
@@ -2536,7 +2543,7 @@ def palabras(request):
     return render(request, 'recursos_memorias_palabras.html', context)
 
 #---------------------------------------------------------------------------------#
-#              Para generar vista previa de las invitaciones                      #
+#              Para generar vista previa de las palabras                          #
 #---------------------------------------------------------------------------------#
 @login_required
 @user_is_arbitraje
@@ -2699,6 +2706,108 @@ def palabrasPreviewPDF(request,arbitraje):
                 section="" 
 
 
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+#---------------------------------------------------------------------------------#
+#                              Para guardar el afiche en BD                       #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def afiche(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Cargar portada el metodo es post y el archivo es vliádo'
+        form= UploadAficheForm(request.POST, request.FILES)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # Para guardar el archivo de forma local
+            requestFileName=request.FILES.get('file')
+            file_name= save_file_memorias(requestFileName,"afiche",arbitraje_id)
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if(resumen == True):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.url_afiche=file_name
+                resumen.afiche_titulo=request.POST.get('afiche_titulo')
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.afiche_titulo=file_name
+                resumen.afiche_titulo=request.POST.get('afiche_titulo')
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'La imagen fue cargada de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            # return redirect('recursos:portada')
+            return render(request, 'recursos_memorias_afiche.html', context)
+        
+
+    form= UploadAficheForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_afiche.html', context)
+
+
+#---------------------------------------------------------------------------------#
+#                      Para generar vista previa del afiche                       #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def afichePreviewPDF(request,arbitraje):
+    # Validaciones previas
+    context = create_common_context(request)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        afiche=Resumen.objects.get(sistema_id=arbitraje)
+        archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
+
+    # Para generar el PDF
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_first_page =Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='first')
+    
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page)])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+
+    # Estilos para la invitación
+    styleAfiche= styles['Heading1']
+    styleAfiche.fontName="Times-Roman"
+    styleAfiche.fontSize=12
+    styleAfiche.alignment=TA_CENTER
+    styleAfiche.spaceAfter = 0
+
+    page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
+    
+    if(resumen == True):
+        img = Image(archivo_imagen,460, 655)
+        # img = Image(archivo_imagen,460, 685)
+        page_content.append(img)
     #start the construction of the pdf
     doc.build(page_content)
 

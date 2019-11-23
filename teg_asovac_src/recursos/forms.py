@@ -230,3 +230,8 @@ class resumenPalabrasForm(forms.Form):
     secretarioNombre = forms.CharField(label="Introduzca su nombre",max_length=200,required=False)
     secretarioCargo = forms.CharField(label="Introduzca su cargo",required=False,max_length=200)
     secretarioContenido = forms.CharField(label="Introduzca unas breves palabras",required=False,widget=forms.Textarea(attrs={'cols': 80, 'rows': 20, 'id':"secretarioContenido"}))
+
+class UploadAficheForm(forms.Form):
+    # title = forms.CharField(max_length=100)
+    afiche_titulo = forms.CharField(label="Introduzca el título para el afiche",required=True,max_length=200)
+    file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': 'image/png, image/jpeg, image/gif'}))

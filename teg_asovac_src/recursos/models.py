@@ -19,6 +19,7 @@ class Resumen (models.Model):
 
     sistema= models.ForeignKey('main_app.Sistema_asovac',blank=True,null=True)
     url_portada= models.CharField(max_length=200,blank=True,null=True)
+    url_afiche= models.CharField(max_length=200,blank=True,null=True)
     url_patrocinadores= models.CharField(max_length=200,blank=True,null=True)
     comision_organizadora= models.TextField(blank=True,null=True)
     invitacion= models.TextField(blank=True,null=True)
@@ -29,6 +30,7 @@ class Resumen (models.Model):
     secretario_nombre= models.CharField(max_length=200,blank=True,null=True)
     secretario_cargo= models.CharField(max_length=200,blank=True,null=True)
     secretario_contenido=models.TextField(blank=True,null=True)
+    afiche_titulo= models.CharField(max_length=200,blank=True,null=True)
     
 
 
