@@ -87,7 +87,7 @@ def home(request):
 # Create your views here.
 def event_create(request):
     if request.method == 'POST':
-        form = CreateEventForm(request.POST)
+        form = CreateEventForm(request.POST, request.FILES)
         
         if form.is_valid():
             fecha_inicio = form.cleaned_data['fecha_inicio']
@@ -145,7 +145,7 @@ def event_list(request):
 def event_edit(request, evento_id):
     evento = get_object_or_404(Evento,id = evento_id)
     if request.method == 'POST':
-        form = EditEventForm(request.POST, instance = evento)
+        form = EditEventForm(request.POST, request.FILES,instance = evento)
         if form.is_valid():
             fecha_inicio = form.cleaned_data['fecha_inicio']
             fecha_fin = form.cleaned_data['fecha_fin']
@@ -163,8 +163,8 @@ def event_edit(request, evento_id):
                     if dia_asignado < fecha_inicio or fecha_fin < dia_asignado:
                         messages.error(request, "El día asignado está fuera del rango del evento")
                 
-
-    form = EditEventForm(instance = evento)   
+    else:
+        form = EditEventForm(instance = evento, initial = { 'hora_inicio': evento.hora_inicio.strftime("%I:%M %p"), 'hora_fin': evento.hora_fin.strftime("%I:%M %p")})   
     context = {
         'nombre_vista' : 'Eventos',
         'username': request.user.username,
