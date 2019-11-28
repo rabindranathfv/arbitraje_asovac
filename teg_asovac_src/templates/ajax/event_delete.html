@@ -31,15 +31,23 @@
                     </tr>
                     <tr>
                         <th>Fecha de inicio</th>
-                        <td>{{ evento.fecha_inicio }}</td>
+                        <td>{{ evento.fecha_inicio| date:'d-m-Y' }}</td>
                     </tr>
                     <tr>
                         <th>Fecha de fin</th>
-                        <td>{{ evento.fecha_fin }}</td>
+                        <td>{{ evento.fecha_fin| date:'d-m-Y' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Hora de inicio</th>
+                        <td>{{ evento.hora_inicio| date:'g:i A'  }}</td>
+                    </tr>
+                    <tr>
+                        <th>Hora de fin</th>
+                        <td>{{ evento.hora_fin| date:'g:i A'  }}</td>
                     </tr>
                     <tr>
                         <th>Día asignado</th>
-                        <td>{{ evento.dia_asignado }}</td>
+                        <td>{{ evento.dia_asignado| date:'d-m-Y' }}</td>
                     </tr>
                     <tr>
                         <th>Duración</th>
@@ -51,7 +59,7 @@
                     </tr>
                     <tr>
                         <th>Fecha preferida</th>
-                        <td>{{ evento.fecha_preferida }}</td>
+                        <td>{{ evento.fecha_preferida| date:'d-m-Y' }}</td>
                     </tr>
                     <tr>
                         <th>URL anuncio de evento</th>
