@@ -5,7 +5,7 @@ import os, re, random, string,xlrd,sys,xlwt
 from openpyxl import Workbook
 import datetime
 from decouple import config
-
+from django.contrib.auth.models import User
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -24,11 +24,12 @@ from rest_framework import authentication, permissions
 from .guards import *
 
 from arbitrajes.models import Arbitro
+from arbitrajes.views import list_trabajos_aceptados
 from autores.forms import ImportFromExcelForm
 from autores.models import Autores_trabajos, Autor
 from autores.views import get_extension_file, validate_alpha
 from main_app.forms import UploadFileForm
-from main_app.models import Usuario_rol_in_sistema, Sistema_asovac, Area
+from main_app.models import Usuario_rol_in_sistema, Sistema_asovac, Area,Sub_area
 from main_app.views import (
     get_route_resultados, get_route_trabajos_navbar, get_route_trabajos_sidebar,
     get_roles, get_route_configuracion, get_route_seguimiento,
@@ -43,7 +44,7 @@ from .utils import (
 from .forms import (
     CertificateToRefereeForm, CertificateToAuthorsForm, MultipleRecipientsForm,
     MultipleRecipientsWithDateForm, MultipleRecipientsWithDateAndSubjectForm,
-    MultipleRecipientsWithRoleForm,UploadFileForm,resumenContentForm,resumenPalabrasForm,UploadAficheForm
+    MultipleRecipientsWithRoleForm,UploadFileForm,resumenContentForm,resumenPalabrasForm,UploadAficheForm,comisionAcademicaForm
 )
 
 from .models import Resumen
@@ -2164,7 +2165,7 @@ def patrocinadoresPreviewPDF(request,arbitraje):
     styleTitulo.fontSize=40
     styleTitulo.alignment=TA_CENTER
     # styleTitulo.spaceBefore = 50
-    styleTitulo.textColor = colors.HexColor('#0080ff')
+    styleTitulo.textColor = colors.HexColor('#004275')
 
     page_content.append(Paragraph('Memorias',styleLema))
 
@@ -2808,6 +2809,212 @@ def afichePreviewPDF(request,arbitraje):
         img = Image(archivo_imagen,460, 655)
         # img = Image(archivo_imagen,460, 685)
         page_content.append(img)
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+#---------------------------------------------------------------------------------#
+#                              Para guardar el afiche en BD                       #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def resumenesTrabajos(request):
+    context = create_common_context(request)
+
+    if request.method == 'POST':
+        print 'Para guardar texto para la comision organizadora'
+        form= comisionAcademicaForm(request.POST)
+        if form.is_valid():
+            arbitraje_id = request.session['arbitraje_id']
+            data= dict()
+
+            # Para guardar ruta para la imagen de la portada
+            resumen=Resumen.objects.filter(sistema_id=arbitraje_id).exists()
+            if (resumen == True ):
+                resumen=Resumen.objects.get(sistema_id=arbitraje_id)
+                resumen.coordinadores_area=request.POST['coordinadores_area']
+                resumen.titulo_comision=request.POST['titulo_comision']
+                resumen.miembros_comision=request.POST['miembros_comision']
+                resumen.save()
+            else:
+                resumen= Resumen()
+                resumen.coordinadores_area=request.POST['coordinadores_area']
+                resumen.titulo_comision=request.POST['titulo_comision']
+                resumen.miembros_comision=request.POST['miembros_comision']
+                resumen.sistema_id=arbitraje_id
+                resumen.save()
+
+            messages.success(request, 'La comisión fue cargada de forma correcta.')
+        else:
+            messages.error(request, 'Ha ocurrido un error procesando su solicitud.')
+            # print pdf
+            # file_name= save_file_memorias(response["Content-Disposition"],"portada",arbitraje_id)
+          
+            context['nombre_vista'] = 'Recursos'
+            context['form'] = form
+            context['arbitraje']=arbitraje_id
+            # return redirect('recursos:portada')
+            return render(request, 'recursos_memorias_comision_academica.html', context)
+        
+
+    form= comisionAcademicaForm()
+    context['nombre_vista'] = 'Recursos'
+    context['form'] = form
+    return render(request, 'recursos_memorias_comision_academica.html', context)
+
+
+
+#---------------------------------------------------------------------------------#
+#                       Para calcular los trabajos aceptados                      #
+#---------------------------------------------------------------------------------#
+@login_required
+def getTrabajosSesion(request):
+
+    arbitraje_id = request.session['arbitraje_id']
+    group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,uni.nombre,uni.facultad,uni.escuela,main_sarea.nombre'
+    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_ingles,trab.codigo,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,trab.resumen,main_a.nombre,trab.observaciones,uni.nombre as universidad,uni.facultad,uni.escuela,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id inner join autores_universidad as uni on uni.id= aut.universidad_id "
+    where=" WHERE sis_aso.id= {} AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(arbitraje_id)
+    query= query+where+group_by
+
+    data= User.objects.raw(query)
+    total=0
+    return data
+#---------------------------------------------------------------------------------#
+#          Para generar vista previa de la comisión organizadora                  #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def resumenesPreviewPDF(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    
+    page_content.append(Spacer(1,15))
+
+    # Estilos para el titulo de la convencion
+    styleNombre= styles['Heading1']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.fontSize=15
+    styleNombre.alignment=TA_CENTER
+    styleNombre.spaceAfter = 0
+
+    page_content.append(Paragraph("<center><b>COMISIÓN ACADÉMICA</b></center>",styleNombre))
+    page_content.append(Paragraph("<b>Coordinadores por Área</b>",styleNombre))
+
+    # Estilos para el titulo de la convencion
+    # Estilos para el titulo de la convencion
+    styleComision= styles['Normal']
+    styleComision.fontName="Times-Roman"
+    styleComision.alignment=TA_JUSTIFY
+    styleComision.spaceBefore = 10
+    styleComision.spaceAfter = 0
+
+    section=""
+    for content in queryResumen.coordinadores_area:
+        section= section + content
+        if (section.find("</p>") >= 0 ): 
+            # print section.replace('<br />','')
+            # section=section.replace('<br />','')
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+    
+     # Estilos para el titulo de los miembros de la comision
+    styleMiembros= styles['Heading1']
+    styleMiembros.fontName="Times-Roman"
+    styleMiembros.fontSize=13
+    styleMiembros.alignment=TA_CENTER
+    styleMiembros.spaceAfter = 0
+    
+    page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
+
+    section=""
+    for content in queryResumen.miembros_comision:
+        section= section + content
+        if (section.find("</p>") >= 0 ): 
+            # print section.replace('<br />','')
+            # section=section.replace('<br />','')
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+
+    # Para obtener lsitado de areas, subareas y trabajos aceptados
+    areas_list = list (Area.objects.all().order_by('nombre'))
+    subAreas_list = list (Sub_area.objects.all().order_by('nombre'))
+    trabajos_list=getTrabajosSesion(request)
+    trabajos_array=[]
+    areas_check=[]
+    subareas_check=[]
+
+    # Para generar arreglo con el resultado de la consulta
+    
+    for trabajo in trabajos_list:
+        trabajos_array.append(trabajo)
+
+
+    # areas_list.pop("test")
+    # Para recorrer el listado de areas, subareas y cargar la información de cada trabajo
+    for area in areas_list:
+        for subarea in subAreas_list:
+            for trabajo in trabajos_array:
+                if (subarea.nombre == trabajo.subarea) and (area.nombre == trabajo.nombre):
+
+                    if (area.nombre not in areas_check):
+                        # print "area sin cargar {}".format(area.nombre)
+                        areas_check.append(area.nombre)
+                        # Para cargar nueva pagina
+                        page_content.append(NextPageTemplate('remaining_pages'))
+                        page_content.append(PageBreak())
+                        
+                        styleArea= styles['Heading1']
+                        styleArea.fontName="Times-Roman"
+                        styleArea.fontSize=50
+                        styleArea.alignment=TA_RIGHT
+                        # styleArea.spaceBefore = 50
+                        styleArea.textColor = colors.HexColor('#004275')
+                        page_content.append(Spacer(1,250))
+                        page_content.append(Paragraph('<b> Área</b> <br /> <br /><b>'+area.nombre+'</b>',styleArea))
+
+                    styleResumen= styles['Normal']
+                    styleResumen.fontName="Times-Roman"
+                    styleResumen.alignment=TA_CENTER
+                    styleResumen.spaceBefore = 0
+                    styleResumen.spaceAfter = 0
+                    indice= trabajos_array.index(trabajo)
+                    # Para cargar nueva pagina
+                    page_content.append(NextPageTemplate('remaining_pages'))
+                    page_content.append(PageBreak())
+                    # Para cargar contenido de la pagina
+                    page_content.append(Paragraph("<b>("+trabajo.codigo+") "+trabajo.titulo_espanol.upper()+"</b>",styleResumen))
+                    page_content.append(Paragraph("<b>("+trabajo.titulo_ingles+")</b>",styleResumen))
+                    page_content.append(Paragraph(trabajo.lista_autores,styleResumen))
+                    page_content.append(Spacer(1,15))
+                    page_content.append(Paragraph(trabajo.universidad+" "+trabajo.facultad+" "+trabajo.escuela,styleResumen))
+                    
+                    page_content.append(Paragraph(trabajo.resumen,styleResumen))
+                    trabajos_array.pop(indice) 
+    
     #start the construction of the pdf
     doc.build(page_content)
 

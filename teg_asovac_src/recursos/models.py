@@ -31,6 +31,9 @@ class Resumen (models.Model):
     secretario_cargo= models.CharField(max_length=200,blank=True,null=True)
     secretario_contenido=models.TextField(blank=True,null=True)
     afiche_titulo= models.CharField(max_length=200,blank=True,null=True)
+    coordinadores_area=models.TextField(blank=True,null=True)
+    titulo_comision= models.CharField(max_length=200,blank=True,null=True)
+    miembros_comision=models.TextField(blank=True,null=True)
     
 
 

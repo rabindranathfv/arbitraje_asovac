@@ -235,3 +235,10 @@ class UploadAficheForm(forms.Form):
     # title = forms.CharField(max_length=100)
     afiche_titulo = forms.CharField(label="Introduzca el título para el afiche",required=True,max_length=200)
     file = forms.FileField(label="Archivo",widget=forms.FileInput(attrs={'accept': 'image/png, image/jpeg, image/gif'}))
+
+
+class comisionAcademicaForm(forms.Form):
+    coordinadores_area = forms.CharField(label="Introduzca el nombre de los coordinadores de área",widget=forms.Textarea(attrs={'cols': 80, 'rows': 10, 'id':"coordinadoresArea"}))
+    titulo_comision = forms.CharField(label="Introduzca el título para los miembros de la comisión",required=True,max_length=200)
+    miembros_comision = forms.CharField(label="Introduzca el nombre de los miembros de la comisión",widget=forms.Textarea(attrs={'cols': 80, 'rows': 15, 'id':"miembrosComision"}))
+    
