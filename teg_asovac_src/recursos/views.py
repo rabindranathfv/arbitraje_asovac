@@ -2068,7 +2068,7 @@ def header_footer(canvas, doc,arbitraje):
             ('ALIGN', (0, 0), (0, 0), 'CENTER'),
             ('TOPPADDING',(0,0),(-1,-1),0),
             ('BOTTOMPADDING',(0,0),(-1,-1),0),
-            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#000000')), # The fourth argument to this style attribute is the border width
+            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#e6e6e6')), # The fourth argument to this style attribute is the border width
             ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
             ]
         )
@@ -2876,7 +2876,7 @@ def getTrabajosSesion(request):
 
     arbitraje_id = request.session['arbitraje_id']
     group_by=' group by trab.id,trab.estatus,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,main_a.nombre,trab.observaciones,uni.nombre,uni.facultad,uni.escuela,main_sarea.nombre'
-    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.titulo_ingles,trab.codigo,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,trab.resumen,main_a.nombre,trab.observaciones,uni.nombre as universidad,uni.facultad,uni.escuela,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id inner join autores_universidad as uni on uni.id= aut.universidad_id "
+    query= "SELECT DISTINCT(trab.id),trab.estatus,trab.palabras_clave,trab.titulo_ingles,trab.codigo,trab.requiere_arbitraje,trab.titulo_espanol,trab.forma_presentacion,trab.resumen,main_a.nombre,trab.observaciones,uni.nombre as universidad,uni.facultad,uni.escuela,STRING_AGG (distinct(concat(aut.nombres,' ',aut.apellidos)), ', ') lista_autores,main_sarea.nombre as subarea FROM trabajos_trabajo AS trab INNER JOIN autores_autores_trabajos AS aut_trab ON aut_trab.trabajo_id = trab.id INNER JOIN autores_autor AS aut ON aut.id = aut_trab.autor_id INNER JOIN main_app_sistema_asovac AS sis_aso ON sis_aso.id = aut_trab.sistema_asovac_id INNER JOIN trabajos_trabajo_subareas AS trab_suba ON trab_suba.trabajo_id = trab.id INNER JOIN main_app_sub_area AS main_sarea on main_sarea.id = trab_suba.sub_area_id INNER JOIN main_app_area AS main_a ON main_a.id= main_sarea.area_id inner join autores_universidad as uni on uni.id= aut.universidad_id "
     where=" WHERE sis_aso.id= {} AND ((trab.requiere_arbitraje = false) or (trab.padre<>0 and trab.requiere_arbitraje = false)) AND aut_trab.pagado=true AND trab.estatus='Aceptado' AND trab.confirmacion_pago='Aceptado' ".format(arbitraje_id)
     query= query+where+group_by
 
@@ -2904,25 +2904,52 @@ def resumenesPreviewPDF(request,arbitraje):
     doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
     # create the frames. Here you can adjust the margins
     # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
     frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
     # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer,arbitraje=arbitraje))])
     doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
     styles=getSampleStyleSheet()
     # start the story...
     page_content=[]
+
+    # Para generar título de resumenes de trabajos libres
+    page_content.append(NextPageTemplate('resTrabLib'))
+    
+    styleArea= styles['Heading1']
+    styleArea.fontName="Times-Roman"
+    styleArea.fontSize=50
+    styleArea.alignment=TA_RIGHT
+    # styleArea.spaceBefore = 50
+    styleArea.textColor = colors.HexColor('#004275')
+    page_content.append(Spacer(1,250))
+    page_content.append(Paragraph('<b> Resúmenes</b> <br /> <br /><b>Trabajos Libres</b>',styleArea))
+
+    page_content.append(PageBreak())
+
+    # Para generar la sección de comisión académica 
     page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
     
-    page_content.append(Spacer(1,15))
+    page_content.append(Spacer(1,0))
 
     # Estilos para el titulo de la convencion
-    styleNombre= styles['Heading1']
+    styleNombre= styles['Title']
     styleNombre.fontName="Times-Roman"
     styleNombre.fontSize=15
     styleNombre.alignment=TA_CENTER
     styleNombre.spaceAfter = 0
+    styleNombre.spaceBefore = 0
+    styleNombre.textColor = colors.HexColor('#000000')
 
-    page_content.append(Paragraph("<center><b>COMISIÓN ACADÉMICA</b></center>",styleNombre))
-    page_content.append(Paragraph("<b>Coordinadores por Área</b>",styleNombre))
+    page_content.append(Paragraph("<b>COMISIÓN ACADÉMICA</b>",styleNombre))
+
+     # Estilos para los coordinadores de la comision
+    styleCoordinadores= styles['Title']
+    styleCoordinadores.fontName="Times-Roman"
+    styleCoordinadores.fontSize=13
+    styleCoordinadores.alignment=TA_CENTER
+    styleCoordinadores.spaceAfter = 0
+    page_content.append(Paragraph("<b>Coordinadores por Área</b>",styleCoordinadores))
 
     # Estilos para el titulo de la convencion
     # Estilos para el titulo de la convencion
@@ -2942,7 +2969,7 @@ def resumenesPreviewPDF(request,arbitraje):
             section="" 
     
      # Estilos para el titulo de los miembros de la comision
-    styleMiembros= styles['Heading1']
+    styleMiembros= styles['Title']
     styleMiembros.fontName="Times-Roman"
     styleMiembros.fontSize=13
     styleMiembros.alignment=TA_CENTER
@@ -2966,7 +2993,7 @@ def resumenesPreviewPDF(request,arbitraje):
     trabajos_array=[]
     areas_check=[]
     subareas_check=[]
-
+    trabajos_check=[]
     # Para generar arreglo con el resultado de la consulta
     
     for trabajo in trabajos_list:
@@ -2976,10 +3003,13 @@ def resumenesPreviewPDF(request,arbitraje):
     # areas_list.pop("test")
     # Para recorrer el listado de areas, subareas y cargar la información de cada trabajo
     for area in areas_list:
+        # print area.nombre
         for subarea in subAreas_list:
+            # print subarea.nombre
             for trabajo in trabajos_array:
+    
                 if (subarea.nombre == trabajo.subarea) and (area.nombre == trabajo.nombre):
-
+                    # Para agregar página con el título del área de los trabajos a cargar
                     if (area.nombre not in areas_check):
                         # print "area sin cargar {}".format(area.nombre)
                         areas_check.append(area.nombre)
@@ -2996,25 +3026,66 @@ def resumenesPreviewPDF(request,arbitraje):
                         page_content.append(Spacer(1,250))
                         page_content.append(Paragraph('<b> Área</b> <br /> <br /><b>'+area.nombre+'</b>',styleArea))
 
-                    styleResumen= styles['Normal']
-                    styleResumen.fontName="Times-Roman"
-                    styleResumen.alignment=TA_CENTER
-                    styleResumen.spaceBefore = 0
-                    styleResumen.spaceAfter = 0
-                    indice= trabajos_array.index(trabajo)
+                    
+                    
                     # Para cargar nueva pagina
                     page_content.append(NextPageTemplate('remaining_pages'))
                     page_content.append(PageBreak())
+                    # # Para agregar título de cada subarea
+                    if (subarea.nombre not in subareas_check):
+                        subareas_check.append(subarea.nombre)
+                        # Estilos para las subáreas
+                        styleSubAreas= styles['Title']
+                        styleSubAreas.fontName="Times-Roman"
+                        styleSubAreas.fontSize=19
+                        styleSubAreas.alignment=TA_CENTER
+                        styleSubAreas.spaceAfter = 0
+                        styleSubAreas.spaceBefore = 0
+                        styleSubAreas.textColor = colors.HexColor('#000000')
+                        page_content.append(Paragraph("Sesión <b> "+subarea.nombre+"</b>",styleSubAreas))
+                        # Estilos para el linea de separacion
+                        styleNombre= styles['Normal']
+                        styleNombre.fontName="Times-Roman"
+                        # styleNombre.spaceBefore = 0
+                        # styleNombre.spaceAfter = 0
+                        # Para agregar linea despues del título
+                        page_content.append(Paragraph("_"*87,styles['Normal']))
+                        page_content.append(Spacer(1,15))
+
                     # Para cargar contenido de la pagina
+
+                    styleResumen= styles['Title']
+                    styleResumen.fontName="Times-Roman"
+                    styleResumen.fontSize=9
+                    styleResumen.alignment=TA_CENTER
+                    styleResumen.spaceAfter = 0
+                    styleResumen.spaceBefore = 0
+
                     page_content.append(Paragraph("<b>("+trabajo.codigo+") "+trabajo.titulo_espanol.upper()+"</b>",styleResumen))
-                    page_content.append(Paragraph("<b>("+trabajo.titulo_ingles+")</b>",styleResumen))
+                    if trabajo.titulo_ingles != "":
+                        page_content.append(Paragraph("<b>("+trabajo.titulo_ingles+")</b>",styleResumen))
                     page_content.append(Paragraph(trabajo.lista_autores,styleResumen))
-                    page_content.append(Spacer(1,15))
                     page_content.append(Paragraph(trabajo.universidad+" "+trabajo.facultad+" "+trabajo.escuela,styleResumen))
                     
-                    page_content.append(Paragraph(trabajo.resumen,styleResumen))
-                    trabajos_array.pop(indice) 
-    
+                    page_content.append(Spacer(1,15))
+                    styleContent= styles['Normal']
+                    styleContent.fontName="Times-Roman"
+                    styleContent.alignment=TA_JUSTIFY
+                    styleContent.spaceBefore = 0
+                    styleContent.spaceAfter = 0
+                    page_content.append(Paragraph(trabajo.resumen,styleContent))
+                    if trabajo.palabras_clave != "":
+                        page_content.append(Spacer(1,15))
+                        page_content.append(Paragraph("<b>Palabras clave: </b>"+trabajo.palabras_clave,styleContent))
+
+                    trabajos_check.append(trabajo)
+                
+            
+            # eliminar trabajos ya asignados para reducir el recorrido del ciclo for
+            for check in trabajos_check:
+                trabajos_array.remove(check) 
+            trabajos_check=[] 
+
     #start the construction of the pdf
     doc.build(page_content)
 
