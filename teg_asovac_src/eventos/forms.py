@@ -156,7 +156,7 @@ class CreateEventForm(forms.ModelForm):
     
     class Meta:
         model = Evento
-        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
+        fields = ['nombre','categoria', 'descripcion', 'imagen','tipo','fecha_inicio','fecha_fin','hora_inicio', 'hora_fin', 'dia_asignado',
         'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento', 'sistema_asovac']
     email_organizador = forms.EmailField()
     locacion_preferida = forms.CharField(max_length=50)
@@ -174,7 +174,8 @@ class CreateEventForm(forms.ModelForm):
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
-        
+        self.fields['hora_inicio'].input_formats = ('%I:%M %p',)
+        self.fields['hora_fin'].input_formats = ('%I:%M %p',)
         #Helper 1 para crear evento
         self.helper1 = FormHelper()
         self.helper1.form_id = 'create-event-form'
@@ -189,9 +190,12 @@ class CreateEventForm(forms.ModelForm):
             Field('sistema_asovac'),
             Field('categoria', placeholder="Ejemplo: Fisica"),
             Field('descripcion', placeholder="Introduzca su descripción aquí"),
+            Field('imagen'),
             Field('tipo', placeholder="Ejemplo: Recreacional"),
             Field('fecha_inicio', placeholder="Formato: DD/MM/AAAA"),
             Field('fecha_fin', placeholder="Formato: DD/MM/AAAA"),
+            Field('hora_inicio', placeholder="8:00 AM"),
+            Field('hora_fin', placeholder="7:00 pm"),
             Field('dia_asignado', placeholder="Formato: DD/MM/AAAA"),
             Field('duracion', placeholder="Ejemplo: 1 mes"),
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
@@ -217,14 +221,28 @@ class CreateEventForm(forms.ModelForm):
         return correo_electronico
 
     
-
+    def clean_hora_fin(self):
+        try: 
+            hora_inicio = self.cleaned_data['hora_inicio'].strftime("%H:%M")
+        except:
+            hora_inicio = "00:00"
+        
+        try:
+            hora_fin = self.cleaned_data['hora_fin'].strftime("%H:%M")
+        except:
+            hora_fin = "23:59"
+            raise forms.ValidationError(_("Formato de la hora fin es incorrecta"), code = "Hora incorrecta")
+        print(hora_inicio, hora_fin)
+        if hora_inicio >= hora_fin:
+            raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
+        return hora_fin
 
 
 class EditEventForm(forms.ModelForm):
     
     class Meta:
         model = Evento
-        fields = ['nombre','categoria', 'descripcion', 'tipo','fecha_inicio','fecha_fin','dia_asignado',
+        fields = ['nombre','categoria', 'descripcion', 'imagen', 'tipo','fecha_inicio','fecha_fin', 'hora_inicio', 'hora_fin','dia_asignado',
         'duracion','horario_preferido','fecha_preferida','url_anuncio_evento','locacion_evento', 'sistema_asovac']
 
     def __init__(self, *args, **kwargs):
@@ -241,7 +259,8 @@ class EditEventForm(forms.ModelForm):
         self.fields['fecha_preferida'].label = 'Fecha Preferida'
         self.fields['url_anuncio_evento'].label = 'Enlace del Evento'
         self.fields['locacion_evento'].label = 'Localizacion del Evento'
-        
+        self.fields['hora_inicio'].input_formats = ('%I:%M %p',)
+        self.fields['hora_fin'].input_formats = ('%I:%M %p',)
         #Helper para editar evento
         self.helper = FormHelper()
         self.helper.form_id = 'edit-event-form'
@@ -256,9 +275,12 @@ class EditEventForm(forms.ModelForm):
             Field('sistema_asovac'),
             Field('categoria', placeholder="Ejemplo: Fisica"),
             Field('descripcion', placeholder="Introduzca su descripción aquí"),
+            Field('imagen'),
             Field('tipo', placeholder="Ejemplo: Recreacional"),
             Field('fecha_inicio', placeholder="Formato: DD/MM/AAAA"),
             Field('fecha_fin', placeholder="Formato: DD/MM/AAAA"),
+            Field('hora_inicio', placeholder="8:00 AM"),
+            Field('hora_fin', placeholder="7:00 pm"),
             Field('dia_asignado', placeholder="Formato: DD/MM/AAAA"),
             Field('duracion', placeholder="Ejemplo: 1 mes"),
             Field('horario_preferido', placeholder="Ejemplo: Diurno"),
@@ -275,7 +297,21 @@ class EditEventForm(forms.ModelForm):
                 css_class='row')
         )
 
-
+    def clean_hora_fin(self):
+        try: 
+            hora_inicio = self.cleaned_data['hora_inicio'].strftime("%H:%M")
+        except:
+            hora_inicio = "00:00"
+        
+        try:
+            hora_fin = self.cleaned_data['hora_fin'].strftime("%H:%M")
+        except:
+            hora_fin = "23:59"
+            raise forms.ValidationError(_("Formato de la hora fin es incorrecta"), code = "Hora incorrecta")
+        print(hora_inicio, hora_fin)
+        if hora_inicio >= hora_fin:
+            raise forms.ValidationError(_("La hora de inicio debe ser antes de la hora de fin."), code = "Horas incorrectas")
+        return hora_fin
 
 class CreateLocacionForm(forms.ModelForm):
 
