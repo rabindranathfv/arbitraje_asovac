@@ -16,6 +16,7 @@ from django.http import JsonResponse,HttpResponse
 from django.shortcuts import render,redirect, reverse
 from django.template.loader import render_to_string
 from django.utils.timezone import now as timezone_now
+from django.utils.encoding import smart_str, smart_unicode
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -48,6 +49,7 @@ from .forms import (
 )
 
 from .models import Resumen
+from eventos.models import Evento,Locacion_evento,Organizador
 from reportlab.pdfgen import canvas
 from io import BytesIO
 
@@ -69,6 +71,8 @@ from functools import partial
 
 MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
                'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+
+DAY_NAMES= ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo']
 
 TOP_NAVBAR_OPTIONS = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': True},
                       {'title':'Monitoreo', 'icon': 'fa-eye', 'active': False},
@@ -3085,6 +3089,165 @@ def resumenesPreviewPDF(request,arbitraje):
             for check in trabajos_check:
                 trabajos_array.remove(check) 
             trabajos_check=[] 
+
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+
+
+#---------------------------------------------------------------------------------#
+#              Para generar vista previa de seccion de eventos                    #
+#---------------------------------------------------------------------------------#
+@login_required
+@user_is_arbitraje
+def eventosPreviewPDF(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    eventos=Evento.objects.filter(sistema_asovac=arbitraje).exists()
+
+    if(eventos == True):
+        queryEventos=Evento.objects.filter(sistema_asovac=arbitraje).order_by('fecha_inicio','hora_inicio')
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer,arbitraje=arbitraje))])
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+
+    # Para generar título de resumenes de trabajos libres
+    page_content.append(NextPageTemplate('resTrabLib'))
+    
+    styleArea= styles['Heading1']
+    styleArea.fontName="Times-Roman"
+    styleArea.fontSize=50
+    styleArea.alignment=TA_RIGHT
+    # styleArea.spaceBefore = 50
+    styleArea.textColor = colors.HexColor('#004275')
+    page_content.append(Spacer(1,250))
+    page_content.append(Paragraph('<b> Programa de </b> <br /> <br /><b> Eventos</b> <br /> <br /><b> Especiales</b>',styleArea))
+
+    page_content.append(PageBreak())
+
+    # Para generar la sección de comisión académica 
+    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    
+    page_content.append(Spacer(1,0))
+
+    # Estilos para el titulo de los eventos
+    styleNombre= styles['Title']
+    styleNombre.fontName="Times-Roman"
+    styleNombre.fontSize=20
+    styleNombre.alignment=TA_CENTER
+    styleNombre.spaceAfter = 0
+    styleNombre.spaceBefore = 0
+    styleNombre.textColor = colors.HexColor('#000000')
+
+    page_content.append(Paragraph("<b>Programa General de Eventos Especiales</b>",styleNombre))
+    page_content.append(Spacer(1,20))
+    # print queryEventos[0].fecha_inicio
+    # print queryEventos[0].fecha_inicio.weekday()
+    # print DAY_NAMES[queryEventos[0].fecha_inicio.weekday()]
+    day_before=''
+
+    # Estilos para el titulo para la fecha de los eventos
+    styleTitleTable= styles['BodyText']
+    styleTitleTable.fontName="Times-Roman"
+    styleTitleTable.fontSize=10
+    styleTitleTable.alignment=TA_JUSTIFY
+    styleTitleTable.spaceAfter = 0
+    styleTitleTable.spaceBefore = 0
+    styleTitleTable.textColor = colors.HexColor('#ffffff')
+
+    styleContentTable= styles['Normal']
+    styleContentTable.fontName="Times-Roman"
+    styleContentTable.fontSize=10
+    styleContentTable.alignment=TA_JUSTIFY
+    styleContentTable.spaceAfter = 0
+    styleContentTable.spaceBefore = 0
+
+    table_title=[]
+    table_content=[]
+    contItem=0
+    has_title=False
+    for event in queryEventos:
+        actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
+        actual_day= str (event.fecha_inicio.day)
+        actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
+        
+        if (contItem+1) < len(queryEventos):
+            day_next=queryEventos[contItem+1].fecha_inicio
+            
+        else:
+            day_next=''
+        
+        if day_next == event.fecha_inicio:
+            # Para agregar el titulo al inicio de la tabla
+            if has_title == False:
+                # Para cargar el título de la tabla
+                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                table_content.append([t1, t2, t3])
+                has_title=True
+            
+            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+            horario= Paragraph((horario).encode('utf-8'), styleContentTable)
+            ubicacion=Paragraph((event.nombre).encode('utf-8'), styleContentTable)
+            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+
+            table_content.append([horario,ubicacion,descripcion])
+        else:
+            page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
+            page_content.append(Spacer(1,5))
+
+            # Para agregar el titulo al inicio de la tabla
+            if has_title == False:
+                # Para cargar el título de la tabla
+                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                table_content.append([t1, t2, t3])
+
+            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+            horario=Paragraph((horario).encode('utf-8'), styleContentTable)
+            ubicacion=Paragraph((event.nombre).encode('utf-8'), styleContentTable)
+            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+
+            table_content.append([horario,ubicacion,descripcion])
+
+            tabla = Table(data = table_content,colWidths=(150,150,150),
+                        style = [
+                                ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
+                                ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
+                                ('BOX',(0,0),(-1,-1),2,colors.white),
+                                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
+                                ]
+                        )
+            
+            page_content.append(tabla)
+            page_content.append(Spacer(1,10))
+            table_content=[]
+            has_title= False
+
+        
+        # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
+        day_before=event.fecha_inicio
+        contItem=contItem+1
+        # Para agregar contenido de la tabla
 
     #start the construction of the pdf
     doc.build(page_content)
