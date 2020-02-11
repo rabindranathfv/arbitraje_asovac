@@ -3188,6 +3188,7 @@ def eventosPreviewPDF(request,arbitraje):
         actual_day= str (event.fecha_inicio.day)
         actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
         
+        print event.locacion_evento.lugar
         if (contItem+1) < len(queryEventos):
             day_next=queryEventos[contItem+1].fecha_inicio
             
@@ -3206,7 +3207,7 @@ def eventosPreviewPDF(request,arbitraje):
             
             horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
             horario= Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.nombre).encode('utf-8'), styleContentTable)
+            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
             descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
             table_content.append([horario,ubicacion,descripcion])
@@ -3224,7 +3225,7 @@ def eventosPreviewPDF(request,arbitraje):
 
             horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
             horario=Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.nombre).encode('utf-8'), styleContentTable)
+            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
             descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
             table_content.append([horario,ubicacion,descripcion])

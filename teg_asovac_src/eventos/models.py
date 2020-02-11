@@ -80,7 +80,7 @@ class Evento(models.Model):
 	fecha_fin = models.DateField()
 	hora_inicio = models.TimeField()
 	hora_fin = models.TimeField()
-	imagen = models.ImageField(upload_to='eventos/')
+	imagen = models.ImageField(blank=True,upload_to='eventos/')
 	dia_asignado = models.DateField()
 	duracion = models.CharField(max_length=50)
 	horario_preferido = models.CharField(max_length=50)
@@ -88,7 +88,7 @@ class Evento(models.Model):
 	fecha_preferida = models.DateField()
 	observaciones = models.TextField(max_length=400, blank = True)
     #Agregar blank=True
-	url_anuncio_evento = models.CharField(max_length=200,validators=[URLValidator()])
+	url_anuncio_evento = models.CharField(blank=True,max_length=200,validators=[URLValidator()])
 
 	def __str__(self):
 		return self.nombre#.encode('utf-8', errors='replace')
