@@ -2166,7 +2166,7 @@ def patrocinadoresPreviewPDF(request,arbitraje):
     
     styleTitulo= styles['Heading1']
     styleTitulo.fontName="Times-Roman"
-    styleTitulo.fontSize=40
+    styleTitulo.fontSize=50
     styleTitulo.alignment=TA_CENTER
     # styleTitulo.spaceBefore = 50
     styleTitulo.textColor = colors.HexColor('#004275')
