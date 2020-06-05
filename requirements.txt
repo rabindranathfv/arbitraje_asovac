@@ -1,7 +1,7 @@
 astroid==1.6.5
 backports.functools-lru-cache==1.5
 configparser==3.5.0
-Django==1.11.13
+Django==1.11.29
 django-crispy-forms==1.7.2
 django-heroku==0.3.1
 dj-database-url==0.5.0
