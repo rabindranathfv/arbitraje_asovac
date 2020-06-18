@@ -2127,7 +2127,8 @@ def patrocinadoresPreviewPDF(request,arbitraje):
 
     if(resumen == True):
         patrocinadores=Resumen.objects.get(sistema_id=arbitraje)
-        archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+        if(patrocinadores.url_patrocinadores):
+            archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
 
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
@@ -2176,8 +2177,9 @@ def patrocinadoresPreviewPDF(request,arbitraje):
     # Para cargar los patrocinadores
     page_content.append(Spacer(1,100))
     if(resumen == True):
-        img = Image(archivo_imagen,445, 200)
-        page_content.append(img)
+        if(patrocinadores.url_patrocinadores):
+            img = Image(archivo_imagen,445, 200)
+            page_content.append(img)
 
     # Estilos para el fechas
     styleFecha= styles['Heading1']
@@ -2312,13 +2314,14 @@ def comisionPreviewPDF(request,arbitraje):
 
     # page_content.append(Paragraph(queryResumen.comision_organizadora,styleComision))
     section=""
-    for content in queryResumen.comision_organizadora:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.comision_organizadora):
+        for content in queryResumen.comision_organizadora:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
     # page_content.append(Paragraph(queryResumen.comision_organizadora,styles['Normal']))
     # page_content.append(Spacer(1,100))
     
@@ -2592,16 +2595,17 @@ def palabrasPreviewPDF(request,arbitraje):
         sectionCabecera=""
         cont=0
         # print queryResumen.cabecera
-        for content in queryResumen.cabecera :
-            sectionCabecera= sectionCabecera + content
-            if (sectionCabecera.find("</p>") >= 0 ): 
-                cont= cont+1
-                # print sectionCabecera.replace('<br />','')
-                # sectionCabecera=sectionCabecera.replace('<br />','')
-                page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                sectionCabecera="" 
-        if cont == 0:
-            page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+        if(queryResumen.cabecera):
+            for content in queryResumen.cabecera :
+                sectionCabecera= sectionCabecera + content
+                if (sectionCabecera.find("</p>") >= 0 ): 
+                    cont= cont+1
+                    # print sectionCabecera.replace('<br />','')
+                    # sectionCabecera=sectionCabecera.replace('<br />','')
+                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                    sectionCabecera="" 
+            if cont == 0:
+                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
         page_content.append(Spacer(1,10))
     
     # Estilos para la invitación
@@ -2612,9 +2616,10 @@ def palabrasPreviewPDF(request,arbitraje):
     styleInvitacion.spaceAfter = 0
 
     page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-
-    page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
-    page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
+    if(queryResumen.presidente_nombre):
+        page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
+    if(queryResumen.presidente_cargo):
+        page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
 
 
     # Estilos para el linea de separacion
@@ -2633,13 +2638,14 @@ def palabrasPreviewPDF(request,arbitraje):
     
     # Para dar formato al texto ingresado
     section=""
-    for content in queryResumen.presidente_contenido:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.presidente_contenido):
+        for content in queryResumen.presidente_contenido:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
     
     if queryResumen.secretario_nombre != "":
         # Para cargar informacion del secretario
@@ -2661,16 +2667,17 @@ def palabrasPreviewPDF(request,arbitraje):
             sectionCabecera=""
             cont=0
             # print queryResumen.cabecera
-            for content in queryResumen.cabecera :
-                sectionCabecera= sectionCabecera + content
-                if (sectionCabecera.find("</p>") >= 0 ): 
-                    cont= cont+1
-                    # print sectionCabecera.replace('<br />','')
-                    # sectionCabecera=sectionCabecera.replace('<br />','')
-                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                    sectionCabecera="" 
-            if cont == 0:
-                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+            if(queryResumen.cabecera):
+                for content in queryResumen.cabecera :
+                    sectionCabecera= sectionCabecera + content
+                    if (sectionCabecera.find("</p>") >= 0 ): 
+                        cont= cont+1
+                        # print sectionCabecera.replace('<br />','')
+                        # sectionCabecera=sectionCabecera.replace('<br />','')
+                        page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                        sectionCabecera="" 
+                if cont == 0:
+                    page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
             page_content.append(Spacer(1,10))
 
         # Estilos para la invitación
@@ -2681,9 +2688,10 @@ def palabrasPreviewPDF(request,arbitraje):
         styleInvitacion.spaceAfter = 0
 
         page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-
-        page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
-        page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
+        if(queryResumen.secretario_nombre):
+            page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
+        if(queryResumen.secretario_cargo):
+            page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
 
 
         # Estilos para el linea de separacion
@@ -2702,12 +2710,13 @@ def palabrasPreviewPDF(request,arbitraje):
         
         # Para dar formato al texto ingresado
         section=""
-        for content in queryResumen.presidente_contenido:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
+        if(queryResumen.presidente_contenido):
+            for content in queryResumen.presidente_contenido:
+                section= section + content
+                if (section.find("</p>") >= 0 ): 
+                    # print section.replace('<br />','')
+                    section=section.replace('<br />','')
+                    page_content.append(Paragraph(section, styleComision))
                 section="" 
 
 
@@ -2783,7 +2792,8 @@ def afichePreviewPDF(request,arbitraje):
 
     if(resumen == True):
         afiche=Resumen.objects.get(sistema_id=arbitraje)
-        archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
+        if(afiche.url_afiche):
+            archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
 
     # Para generar el PDF
     response = HttpResponse(content_type='application/pdf')
@@ -2806,13 +2816,14 @@ def afichePreviewPDF(request,arbitraje):
     styleAfiche.fontSize=12
     styleAfiche.alignment=TA_CENTER
     styleAfiche.spaceAfter = 0
-
-    page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
+    if(afiche.afiche_titulo):
+        page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
     
     if(resumen == True):
-        img = Image(archivo_imagen,460, 655)
-        # img = Image(archivo_imagen,460, 685)
-        page_content.append(img)
+        if(afiche.url_afiche):
+            img = Image(archivo_imagen,460, 655)
+            # img = Image(archivo_imagen,460, 685)
+            page_content.append(img)
     #start the construction of the pdf
     doc.build(page_content)
 
@@ -2964,13 +2975,14 @@ def resumenesPreviewPDF(request,arbitraje):
     styleComision.spaceAfter = 0
 
     section=""
-    for content in queryResumen.coordinadores_area:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.coordinadores_area):
+        for content in queryResumen.coordinadores_area:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
     
      # Estilos para el titulo de los miembros de la comision
     styleMiembros= styles['Title']
@@ -2979,16 +2991,18 @@ def resumenesPreviewPDF(request,arbitraje):
     styleMiembros.alignment=TA_CENTER
     styleMiembros.spaceAfter = 0
     
-    page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
+    if(queryResumen.titulo_comision):
+        page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
 
     section=""
-    for content in queryResumen.miembros_comision:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.miembros_comision):
+        for content in queryResumen.miembros_comision:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
 
     # Para obtener lsitado de areas, subareas y trabajos aceptados
     areas_list = list (Area.objects.all().order_by('nombre'))
@@ -3100,6 +3114,149 @@ def resumenesPreviewPDF(request,arbitraje):
 
 
 #---------------------------------------------------------------------------------#
+#              Para generar vista previa de seccion del indice                    #
+#---------------------------------------------------------------------------------#
+
+@login_required
+@user_is_arbitraje
+def memoriasIndice(request,arbitraje):
+    
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
+    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
+
+    if(resumen == True):
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer,arbitraje=arbitraje))])
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+    page_content=[]
+
+    
+    page_content.append(Spacer(1,0))
+
+    section=""
+
+    # Para obtener lsitado de areas, subareas y trabajos aceptados
+    areas_list = list (Area.objects.all().order_by('nombre'))
+    subAreas_list = list (Sub_area.objects.all().order_by('nombre'))
+    trabajos_list=getTrabajosSesion(request)
+    trabajos_array=[]
+    areas_check=[]
+    subareas_check=[]
+    trabajos_check=[]
+    # Para generar arreglo con el resultado de la consulta
+    
+    for trabajo in trabajos_list:
+        trabajos_array.append(trabajo)
+
+
+    # areas_list.pop("test")
+    # Para recorrer el listado de areas, subareas y cargar la información de cada trabajo
+    for area in areas_list:
+        # print area.nombre
+        for subarea in subAreas_list:
+            # print subarea.nombre
+            for trabajo in trabajos_array:
+    
+                if (subarea.nombre == trabajo.subarea) and (area.nombre == trabajo.nombre):
+                    # Para agregar página con el título del área de los trabajos a cargar
+                    if (area.nombre not in areas_check):
+                        # print "area sin cargar {}".format(area.nombre)
+                        areas_check.append(area.nombre)
+                        # Para cargar nueva pagina
+                        page_content.append(NextPageTemplate('remaining_pages'))
+                        page_content.append(PageBreak())
+                        
+                        styleArea= styles['Heading1']
+                        styleArea.fontName="Times-Roman"
+                        styleArea.fontSize=50
+                        styleArea.alignment=TA_RIGHT
+                        # styleArea.spaceBefore = 50
+                        styleArea.textColor = colors.HexColor('#004275')
+                        page_content.append(Spacer(1,250))
+                        page_content.append(Paragraph('<b> Área</b> <br /> <br /><b>'+area.nombre+'</b>',styleArea))
+
+                    
+                    
+                    # Para cargar nueva pagina
+                    page_content.append(NextPageTemplate('remaining_pages'))
+                    page_content.append(PageBreak())
+                    # # Para agregar título de cada subarea
+                    if (subarea.nombre not in subareas_check):
+                        subareas_check.append(subarea.nombre)
+                        # Estilos para las subáreas
+                        styleSubAreas= styles['Title']
+                        styleSubAreas.fontName="Times-Roman"
+                        styleSubAreas.fontSize=19
+                        styleSubAreas.alignment=TA_CENTER
+                        styleSubAreas.spaceAfter = 0
+                        styleSubAreas.spaceBefore = 0
+                        styleSubAreas.textColor = colors.HexColor('#000000')
+                        page_content.append(Paragraph("Sesión <b> "+subarea.nombre+"</b>",styleSubAreas))
+                        # Estilos para el linea de separacion
+                        styleNombre= styles['Normal']
+                        styleNombre.fontName="Times-Roman"
+                        # styleNombre.spaceBefore = 0
+                        # styleNombre.spaceAfter = 0
+                        # Para agregar linea despues del título
+                        page_content.append(Paragraph("_"*87,styles['Normal']))
+                        page_content.append(Spacer(1,15))
+
+                    # Para cargar contenido de la pagina
+
+                    styleResumen= styles['Title']
+                    styleResumen.fontName="Times-Roman"
+                    styleResumen.fontSize=9
+                    styleResumen.alignment=TA_CENTER
+                    styleResumen.spaceAfter = 0
+                    styleResumen.spaceBefore = 0
+
+                    page_content.append(Paragraph("<b>("+trabajo.codigo+") "+trabajo.titulo_espanol.upper()+"</b>",styleResumen))
+                    if trabajo.titulo_ingles != "":
+                        page_content.append(Paragraph("<b>("+trabajo.titulo_ingles+")</b>",styleResumen))
+                    page_content.append(Paragraph(trabajo.lista_autores,styleResumen))
+                    page_content.append(Paragraph(trabajo.universidad+" "+trabajo.facultad+" "+trabajo.escuela,styleResumen))
+                    
+                    page_content.append(Spacer(1,15))
+                    styleContent= styles['Normal']
+                    styleContent.fontName="Times-Roman"
+                    styleContent.alignment=TA_JUSTIFY
+                    styleContent.spaceBefore = 0
+                    styleContent.spaceAfter = 0
+                    page_content.append(Paragraph(trabajo.resumen,styleContent))
+                    if trabajo.palabras_clave != "":
+                        page_content.append(Spacer(1,15))
+                        page_content.append(Paragraph("<b>Palabras clave: </b>"+trabajo.palabras_clave,styleContent))
+
+                    trabajos_check.append(trabajo)
+                
+            
+            # eliminar trabajos ya asignados para reducir el recorrido del ciclo for
+            for check in trabajos_check:
+                trabajos_array.remove(check) 
+            trabajos_check=[] 
+
+    #start the construction of the pdf
+    doc.build(page_content)
+
+    doc = buffer.getvalue()
+    buffer.close()
+    response.write(doc)
+    return response
+#---------------------------------------------------------------------------------#
 #              Para generar vista previa de seccion de eventos                    #
 #---------------------------------------------------------------------------------#
 @login_required
@@ -3111,7 +3268,8 @@ def eventosPreviewPDF(request,arbitraje):
 
     if(eventos == True):
         queryEventos=Evento.objects.filter(sistema_asovac=arbitraje).order_by('fecha_inicio','hora_inicio')
-
+    else:
+        queryEventos=None 
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
   
@@ -3183,72 +3341,73 @@ def eventosPreviewPDF(request,arbitraje):
     table_content=[]
     contItem=0
     has_title=False
-    for event in queryEventos:
-        actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
-        actual_day= str (event.fecha_inicio.day)
-        actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
-        
-        # print event.locacion_evento.lugar
-        if (contItem+1) < len(queryEventos):
-            day_next=queryEventos[contItem+1].fecha_inicio
+    if(queryEventos != None):
+        for event in queryEventos:
+            actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
+            actual_day= str (event.fecha_inicio.day)
+            actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
             
-        else:
-            day_next=''
-        
-        if day_next == event.fecha_inicio:
-            # Para agregar el titulo al inicio de la tabla
-            if has_title == False:
-                # Para cargar el título de la tabla
-                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                table_content.append([t1, t2, t3])
-                has_title=True
+            # print event.locacion_evento.lugar
+            if (contItem+1) < len(queryEventos):
+                day_next=queryEventos[contItem+1].fecha_inicio
+                
+            else:
+                day_next=''
             
-            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-            horario= Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+            if day_next == event.fecha_inicio:
+                # Para agregar el titulo al inicio de la tabla
+                if has_title == False:
+                    # Para cargar el título de la tabla
+                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                    table_content.append([t1, t2, t3])
+                    has_title=True
+                
+                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+                horario= Paragraph((horario).encode('utf-8'), styleContentTable)
+                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
+                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
-            table_content.append([horario,ubicacion,descripcion])
-        else:
-            page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
-            page_content.append(Spacer(1,5))
+                table_content.append([horario,ubicacion,descripcion])
+            else:
+                page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
+                page_content.append(Spacer(1,5))
 
-            # Para agregar el titulo al inicio de la tabla
-            if has_title == False:
-                # Para cargar el título de la tabla
-                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                table_content.append([t1, t2, t3])
+                # Para agregar el titulo al inicio de la tabla
+                if has_title == False:
+                    # Para cargar el título de la tabla
+                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                    table_content.append([t1, t2, t3])
 
-            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-            horario=Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+                horario=Paragraph((horario).encode('utf-8'), styleContentTable)
+                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
+                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
-            table_content.append([horario,ubicacion,descripcion])
+                table_content.append([horario,ubicacion,descripcion])
 
-            tabla = Table(data = table_content,colWidths=(150,150,150),
-                        style = [
-                                ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
-                                ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
-                                ('BOX',(0,0),(-1,-1),2,colors.white),
-                                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
-                                ]
-                        )
+                tabla = Table(data = table_content,colWidths=(150,150,150),
+                            style = [
+                                    ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
+                                    ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
+                                    ('BOX',(0,0),(-1,-1),2,colors.white),
+                                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
+                                    ]
+                            )
+                
+                page_content.append(tabla)
+                page_content.append(Spacer(1,10))
+                table_content=[]
+                has_title= False
+
             
-            page_content.append(tabla)
-            page_content.append(Spacer(1,10))
-            table_content=[]
-            has_title= False
-
-        
-        # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
-        day_before=event.fecha_inicio
-        contItem=contItem+1
-        # Para agregar contenido de la tabla
+            # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
+            day_before=event.fecha_inicio
+            contItem=contItem+1
+            # Para agregar contenido de la tabla
 
     #start the construction of the pdf
     doc.build(page_content)
@@ -3271,7 +3430,29 @@ def memoriasPreviewPDF(request,arbitraje):
 
     if(resumen == True):
         portada=Resumen.objects.get(sistema_id=arbitraje)
-        archivo_imagen = settings.MEDIA_ROOT+'/'+portada.url_portada
+        if(portada.url_portada):
+            archivo_imagen = settings.MEDIA_ROOT+'/'+portada.url_portada
+    else:
+        # Para generar el PDF
+        response = HttpResponse(content_type='application/pdf')
+        buffer = BytesIO()
+        # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+        doc = BaseDocTemplate(buffer,showBoundary=0)
+        # create the frames. Here you can adjust the margins
+        # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+        frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
+        # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+        doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page)])
+        styles=getSampleStyleSheet()
+        # start the story...
+        page_content=[]
+        page_content.append(NextPageTemplate('first_page'))
+        #start the construction of the pdf
+        doc.build(page_content)
+        doc = buffer.getvalue()
+        buffer.close()
+        response.write(doc)
+        return response
 
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
@@ -3297,7 +3478,8 @@ def memoriasPreviewPDF(request,arbitraje):
 
     if(resumen == True):
         patrocinadores=Resumen.objects.get(sistema_id=arbitraje)
-        archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
+        if(patrocinadores.url_patrocinadores):
+            archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
 
     # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
     frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
@@ -3403,13 +3585,14 @@ def memoriasPreviewPDF(request,arbitraje):
 
     # page_content.append(Paragraph(queryResumen.comision_organizadora,styleComision))
     section=""
-    for content in queryResumen.comision_organizadora:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.comision_organizadora):
+        for content in queryResumen.comision_organizadora:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
 
 
     ##############################      Invitación       ###################################
@@ -3491,13 +3674,15 @@ def memoriasPreviewPDF(request,arbitraje):
     
     # Para dar formato al texto ingresado
     section=""
-    for content in queryResumen.invitacion:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section=""
+    if(queryResumen.invitacion):
+
+        for content in queryResumen.invitacion:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section=""
 
 
     ##############################    Breves palabras    ###################################
@@ -3528,17 +3713,19 @@ def memoriasPreviewPDF(request,arbitraje):
         sectionCabecera=""
         cont=0
         # print queryResumen.cabecera
-        for content in queryResumen.cabecera :
-            sectionCabecera= sectionCabecera + content
-            if (sectionCabecera.find("</p>") >= 0 ): 
-                cont= cont+1
-                # print sectionCabecera.replace('<br />','')
-                # sectionCabecera=sectionCabecera.replace('<br />','')
-                page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                sectionCabecera="" 
-        if cont == 0:
-            page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
-        page_content.append(Spacer(1,10))
+        if(queryResumen.cabecera):
+            for content in queryResumen.cabecera :
+                sectionCabecera= sectionCabecera + content
+                if (sectionCabecera.find("</p>") >= 0 ): 
+                    cont= cont+1
+                    # print sectionCabecera.replace('<br />','')
+                    # sectionCabecera=sectionCabecera.replace('<br />','')
+                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                    sectionCabecera="" 
+        if(queryResumen.cabecera):
+            if cont == 0:
+                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+            page_content.append(Spacer(1,10))
     
     # Estilos para la invitación
     styleInvitacion= styles['Heading1']
@@ -3548,9 +3735,11 @@ def memoriasPreviewPDF(request,arbitraje):
     styleInvitacion.spaceAfter = 0
 
     page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-
-    page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
-    page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
+    if(queryResumen.presidente_nombre):
+        page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
+    
+    if(queryResumen.presidente_cargo):
+        page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
 
 
     # Estilos para el linea de separacion
@@ -3569,89 +3758,92 @@ def memoriasPreviewPDF(request,arbitraje):
     
     # Para dar formato al texto ingresado
     section=""
-    for content in queryResumen.presidente_contenido:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
-    
-    if queryResumen.secretario_nombre != "":
-        # Para cargar informacion del secretario
-        page_content.append(NextPageTemplate('remaining_pages'))
-        page_content.append(PageBreak())
-        page_content.append(Spacer(1,15))
-        # page_content.append(Spacer(1,15))
-        # Para agregar cabecera personalizada
-        if(queryResumen.cabecera != ""):
-            # Estilos para la cabecera
-            styleCabecera= styles['BodyText']
-            styleCabecera.fontName="Times-Roman"
-            styleCabecera.fontSize=12
-            styleCabecera.alignment=TA_CENTER
-            # styleCabecera.spaceAfter = 0
-            # styleCabecera.spaceBefore=0 
-
-            # Para dar formato al texto ingresado
-            sectionCabecera=""
-            cont=0
-            # print queryResumen.cabecera
-            for content in queryResumen.cabecera :
-                sectionCabecera= sectionCabecera + content
-                if (sectionCabecera.find("</p>") >= 0 ): 
-                    cont= cont+1
-                    # print sectionCabecera.replace('<br />','')
-                    # sectionCabecera=sectionCabecera.replace('<br />','')
-                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                    sectionCabecera="" 
-            if cont == 0:
-                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
-            page_content.append(Spacer(1,10))
-
-        # Estilos para la invitación
-        styleInvitacion= styles['Heading1']
-        styleInvitacion.fontName="Times-Roman"
-        styleInvitacion.fontSize=15
-        styleInvitacion.alignment=TA_CENTER
-        styleInvitacion.spaceAfter = 0
-
-        page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-
-        page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
-        page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
-
-
-        # Estilos para el linea de separacion
-        styleNombre= styles['Normal']
-        styleNombre.fontName="Times-Roman"
-        styleNombre.spaceBefore = 0
-        styleNombre.spaceAfter = 15
-        # Para agregar linea despues del título
-        page_content.append(Paragraph("_"*87,styles['Normal']))
-
-        # Estilos para el titulo de la convencion
-        # Estilos para el titulo de la convencion
-        styleComision= styles['Normal']
-        styleComision.fontName="Times-Roman"
-        styleComision.alignment=TA_JUSTIFY
-        
-        # Para dar formato al texto ingresado
-        section=""
+    if(queryResumen.presidente_contenido):
         for content in queryResumen.presidente_contenido:
             section= section + content
             if (section.find("</p>") >= 0 ): 
                 # print section.replace('<br />','')
                 section=section.replace('<br />','')
                 page_content.append(Paragraph(section, styleComision))
-                section=""
+                section="" 
+    
+    if(queryResumen.secretario_nombre):
+        if queryResumen.secretario_nombre != "":
+            # Para cargar informacion del secretario
+            page_content.append(NextPageTemplate('remaining_pages'))
+            page_content.append(PageBreak())
+            page_content.append(Spacer(1,15))
+            # page_content.append(Spacer(1,15))
+            # Para agregar cabecera personalizada
+            if(queryResumen.cabecera != ""):
+                # Estilos para la cabecera
+                styleCabecera= styles['BodyText']
+                styleCabecera.fontName="Times-Roman"
+                styleCabecera.fontSize=12
+                styleCabecera.alignment=TA_CENTER
+                # styleCabecera.spaceAfter = 0
+                # styleCabecera.spaceBefore=0 
+
+                # Para dar formato al texto ingresado
+                sectionCabecera=""
+                cont=0
+                # print queryResumen.cabecera
+                for content in queryResumen.cabecera :
+                    sectionCabecera= sectionCabecera + content
+                    if (sectionCabecera.find("</p>") >= 0 ): 
+                        cont= cont+1
+                        # print sectionCabecera.replace('<br />','')
+                        # sectionCabecera=sectionCabecera.replace('<br />','')
+                        page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
+                        sectionCabecera="" 
+                if cont == 0:
+                    page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
+                page_content.append(Spacer(1,10))
+
+            # Estilos para la invitación
+            styleInvitacion= styles['Heading1']
+            styleInvitacion.fontName="Times-Roman"
+            styleInvitacion.fontSize=15
+            styleInvitacion.alignment=TA_CENTER
+            styleInvitacion.spaceAfter = 0
+
+            page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
+
+            page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
+            page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
+
+
+            # Estilos para el linea de separacion
+            styleNombre= styles['Normal']
+            styleNombre.fontName="Times-Roman"
+            styleNombre.spaceBefore = 0
+            styleNombre.spaceAfter = 15
+            # Para agregar linea despues del título
+            page_content.append(Paragraph("_"*87,styles['Normal']))
+
+            # Estilos para el titulo de la convencion
+            # Estilos para el titulo de la convencion
+            styleComision= styles['Normal']
+            styleComision.fontName="Times-Roman"
+            styleComision.alignment=TA_JUSTIFY
+            
+            # Para dar formato al texto ingresado
+            section=""
+            for content in queryResumen.presidente_contenido:
+                section= section + content
+                if (section.find("</p>") >= 0 ): 
+                    # print section.replace('<br />','')
+                    section=section.replace('<br />','')
+                    page_content.append(Paragraph(section, styleComision))
+                    section=""
 
 
     ##############################         Afiche        ###################################
 
     if(resumen == True):
         afiche=Resumen.objects.get(sistema_id=arbitraje)
-        archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
+        if(afiche.url_afiche):
+            archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
 
     # frame_first_page =Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='first')
     
@@ -3671,8 +3863,9 @@ def memoriasPreviewPDF(request,arbitraje):
     styleAfiche.spaceAfter = 0
 
     page_content.append(Spacer(1,16))
-    page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
-    page_content.append(Spacer(1,8))
+    if(afiche.afiche_titulo):
+        page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
+        page_content.append(Spacer(1,8))
     
     if(resumen == True):
         img = Image(archivo_imagen,460, 620)
@@ -3749,72 +3942,73 @@ def memoriasPreviewPDF(request,arbitraje):
     table_content=[]
     contItem=0
     has_title=False
-    for event in queryEventos:
-        actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
-        actual_day= str (event.fecha_inicio.day)
-        actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
-        
-        # print event.locacion_evento.lugar
-        if (contItem+1) < len(queryEventos):
-            day_next=queryEventos[contItem+1].fecha_inicio
+    if(eventos == True):
+        for event in queryEventos:
+            actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
+            actual_day= str (event.fecha_inicio.day)
+            actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
             
-        else:
-            day_next=''
-        
-        if day_next == event.fecha_inicio:
-            # Para agregar el titulo al inicio de la tabla
-            if has_title == False:
-                # Para cargar el título de la tabla
-                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                table_content.append([t1, t2, t3])
-                has_title=True
+            # print event.locacion_evento.lugar
+            if (contItem+1) < len(queryEventos):
+                day_next=queryEventos[contItem+1].fecha_inicio
+                
+            else:
+                day_next=''
             
-            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-            horario= Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+            if day_next == event.fecha_inicio:
+                # Para agregar el titulo al inicio de la tabla
+                if has_title == False:
+                    # Para cargar el título de la tabla
+                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                    table_content.append([t1, t2, t3])
+                    has_title=True
+                
+                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+                horario= Paragraph((horario).encode('utf-8'), styleContentTable)
+                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
+                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
-            table_content.append([horario,ubicacion,descripcion])
-        else:
-            page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
-            page_content.append(Spacer(1,5))
+                table_content.append([horario,ubicacion,descripcion])
+            else:
+                page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
+                page_content.append(Spacer(1,5))
 
-            # Para agregar el titulo al inicio de la tabla
-            if has_title == False:
-                # Para cargar el título de la tabla
-                t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                table_content.append([t1, t2, t3])
+                # Para agregar el titulo al inicio de la tabla
+                if has_title == False:
+                    # Para cargar el título de la tabla
+                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
+                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
+                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
+                    table_content.append([t1, t2, t3])
 
-            horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-            horario=Paragraph((horario).encode('utf-8'), styleContentTable)
-            ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-            descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
+                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
+                horario=Paragraph((horario).encode('utf-8'), styleContentTable)
+                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
+                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
 
-            table_content.append([horario,ubicacion,descripcion])
+                table_content.append([horario,ubicacion,descripcion])
 
-            tabla = Table(data = table_content,colWidths=(150,150,150),
-                        style = [
-                                ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
-                                ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
-                                ('BOX',(0,0),(-1,-1),2,colors.white),
-                                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
-                                ]
-                        )
+                tabla = Table(data = table_content,colWidths=(150,150,150),
+                            style = [
+                                    ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
+                                    ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
+                                    ('BOX',(0,0),(-1,-1),2,colors.white),
+                                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
+                                    ]
+                            )
+                
+                page_content.append(tabla)
+                page_content.append(Spacer(1,10))
+                table_content=[]
+                has_title= False
+
             
-            page_content.append(tabla)
-            page_content.append(Spacer(1,10))
-            table_content=[]
-            has_title= False
-
-        
-        # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
-        day_before=event.fecha_inicio
-        contItem=contItem+1
-        # Para agregar contenido de la tabla
+            # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
+            day_before=event.fecha_inicio
+            contItem=contItem+1
+            # Para agregar contenido de la tabla
 
     ############################## Resúmenes de trabajos ###################################
 
@@ -3878,13 +4072,14 @@ def memoriasPreviewPDF(request,arbitraje):
     styleComision.spaceAfter = 0
 
     section=""
-    for content in queryResumen.coordinadores_area:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.coordinadores_area):
+        for content in queryResumen.coordinadores_area:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
     
      # Estilos para el titulo de los miembros de la comision
     styleMiembros= styles['Title']
@@ -3892,17 +4087,19 @@ def memoriasPreviewPDF(request,arbitraje):
     styleMiembros.fontSize=13
     styleMiembros.alignment=TA_CENTER
     styleMiembros.spaceAfter = 0
-    
-    page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
+
+    if(queryResumen.titulo_comision):
+        page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
 
     section=""
-    for content in queryResumen.miembros_comision:
-        section= section + content
-        if (section.find("</p>") >= 0 ): 
-            # print section.replace('<br />','')
-            # section=section.replace('<br />','')
-            page_content.append(Paragraph(section, styleComision))
-            section="" 
+    if(queryResumen.titulo_comision):
+        for content in queryResumen.miembros_comision:
+            section= section + content
+            if (section.find("</p>") >= 0 ): 
+                # print section.replace('<br />','')
+                # section=section.replace('<br />','')
+                page_content.append(Paragraph(section, styleComision))
+                section="" 
 
     # Para obtener lsitado de areas, subareas y trabajos aceptados
     areas_list = list (Area.objects.all().order_by('nombre'))

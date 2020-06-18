@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^memorias/resumenesPreviewPDF/(?P<arbitraje>\d+)/$', views.resumenesPreviewPDF, name='resumenesPreviewPDF'),
     url(r'^memorias/eventosPreviewPDF/(?P<arbitraje>\d+)/$', views.eventosPreviewPDF, name='eventosPreviewPDF'),
     url(r'^memorias/memoriasPreviewPDF/(?P<arbitraje>\d+)/$', views.memoriasPreviewPDF, name='memoriasPreviewPDF'),
+    url(r'^memorias/memoriasIndice/(?P<arbitraje>\d+)/$', views.memoriasIndice, name='memoriasIndice'),
     
 
     url(r'^conferencista-importar-excel/$', views.load_lecturers_modal,

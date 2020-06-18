@@ -35,6 +35,11 @@ class Resumen (models.Model):
     titulo_comision= models.CharField(max_length=200,blank=True,null=True)
     miembros_comision=models.TextField(blank=True,null=True)
     
+class ResumenIndice (models.Model):
+    
+    sistema= models.ForeignKey('main_app.Sistema_asovac',blank=True,null=True)
+    titulo= models.CharField(max_length=200,blank=True,null=True)
+    pagina=models.IntegerField(blank=True,null=True)
 
 
 
