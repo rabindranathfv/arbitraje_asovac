@@ -39,6 +39,7 @@ class ResumenIndice (models.Model):
     
     sistema= models.ForeignKey('main_app.Sistema_asovac',blank=True,null=True)
     titulo= models.CharField(max_length=200,blank=True,null=True)
+    code= models.CharField(max_length=20,blank=True,null=True)
     pagina=models.IntegerField(blank=True,null=True)
 
 

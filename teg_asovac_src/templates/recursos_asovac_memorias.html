@@ -13,7 +13,7 @@
 				<br>
 				<h4>Libro de resumen:</h4>
 				<div class="row" >
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4 ">
 						<a href="{% url 'recursos:portada' %}"
 						   class="btn btn-block btn-lg btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
@@ -22,7 +22,7 @@
 							Portada
 						</a>
 					</div>
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4 ">
 						<a href="{% url 'recursos:patrocinadores' %}" class="btn btn-block btn-lg btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -30,11 +30,7 @@
 							Patrocinadores
 						</a>
 					</div>
-				</div>
-
-<br><br>
-				<div class="row">
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:comisionOrganizadora' %}" class="btn btn-block btn-lg btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -42,8 +38,11 @@
 							Comisión Organizadora
 						</a>
 					</div>
-					
-					<div class="col-sm-4 col-sm-offset-1">
+				</div>
+
+<br><br>
+				<div class="row">
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:invitacion' %}" class="btn btn-block btn-lg btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -51,10 +50,7 @@
 							Invitación
 						</a>
 					</div>
-				</div>
-<br> <br>
-				<div class="row">
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:palabras' %}" class="btn btn-block btn-lg  btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -62,8 +58,7 @@
 							Palabras
 						</a>
 					</div>
-					
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:afiche' %}" class="btn btn-lg btn-block btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -71,11 +66,11 @@
 							Afiche
 						</a>
 					</div>
-
 				</div>
-<br><br>
+<br> <br>
+
 				<div class="row">
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:eventosPreviewPDF' arbitraje_id %}" class="btn btn-lg btn-block btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -84,7 +79,13 @@
 						</a>
 					</div>
 
-					<div class="col-sm-4 col-sm-offset-1">
+					<div class="col-sm-4">
+						<a target="_blanck" href="{% url 'recursos:memoriasIndice' arbitraje_id %}" class="btn btn-lg btn-block btn-primary" >
+							Índice
+						</a>
+					</div>
+
+					<div class="col-sm-4">
 						<a href="{% url 'recursos:resumenesTrabajos' %}" class="btn btn-lg btn-block btn-primary" >
 							<!-- <div class="row text-center" style="margin-bottom: 15px">
 								<i class="fa fa-address-card fa-2x"></i>
@@ -95,11 +96,8 @@
 				</div>
 <br><br>
 				<div class="row">
-					<div class="col-sm-3 col-sm-offset-4">
-						<a href="{% url 'recursos:memoriasPreviewPDF' arbitraje_id %}" class="btn btn-lg btn-block btn-primary" >
-							<!-- <div class="row text-center" style="margin-bottom: 15px">
-								<i class="fa fa-address-card fa-2x"></i>
-							</div> -->
+					<div class="col-sm-4 col-sm-offset-4">
+						<a target="_blanck" href="{% url 'recursos:memoriasPreviewPDF' arbitraje_id %}" class="btn btn-lg btn-block btn-primary" >
 							Generar resumen
 						</a>
 					</div>

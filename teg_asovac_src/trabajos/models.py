@@ -47,7 +47,7 @@ class Trabajo(models.Model):
 	titulo_ingles = models.CharField(max_length=100, blank = True)
 	palabras_clave = models.CharField(max_length=60, blank = True)
 	forma_presentacion = models.CharField(max_length=20,choices = CHOICES_TIPO_PRESENTACION_TRABAJO)
-	resumen = models.TextField(max_length=255)
+	resumen = models.TextField()
 	documento_inscrito =  models.CharField(max_length=100,blank=True)
 	observaciones = models.TextField(blank = True)
 	url_trabajo = models.URLField(max_length=255,blank=True)

@@ -80,6 +80,8 @@ TOP_NAVBAR_OPTIONS = [{'title':'Configuración', 'icon': 'fa-cogs', 'active': Tr
                       {'title':'Administración', 'icon': 'fa-archive', 'active': False}]
 
 lastPage=0
+actualPage=0
+
 
 class ChartData(APIView):
     authentication_classes = ()
@@ -1857,6 +1859,69 @@ def save_file_memorias(requestFileName,type_load,arbitraje_id):
     # print "Ruta del archivo: ",route
     return route
 
+# Para insertar los registros para crear el indice
+
+def createOrUpdate(title,page,arbitraje_id,code):
+    existTitle=ResumenIndice.objects.filter(sistema_id=arbitraje_id,titulo=title).exists()
+    try:
+        if(existTitle == True):
+            elementIndice=ResumenIndice.objects.filter(sistema_id=arbitraje_id,titulo=title)
+            elementIndice.titulo=title
+            elementIndice.pagina=page
+            elementIndice.code=code
+            elementIndice.save()
+            return True
+        else:
+            elementIndice= ResumenIndice()
+            elementIndice.titulo=title
+            elementIndice.pagina=page
+            elementIndice.code=code
+            elementIndice.sistema_id=arbitraje_id
+            elementIndice.save()
+            return True
+    except:
+            return False
+
+# Para generar cadena para generar el indice
+def generateCadenaIndice(tam,title,page,mult):
+    section=''
+    limit=140
+    rang=140
+    if(tam < limit):
+        print "<----- Caso contenido menor a 160 ----->"
+        print "Tamaño de la cadena "+str(tam)
+        items="<b>"+title+"</b>"+page
+        product=limit-len(items)
+        section='.'*product
+        section= "<b>"+title+"</b>"+" "+section+" "+page
+    else:
+        if(tam == limit):
+            print "<----- Caso contenido igual a 160 ----->"
+            print "Tamaño de la cadena "+str(tam)
+            items="<b>"+title+"</b>"+page
+            product=limit-len(items)
+            section='.'*product
+            section= "<b>"+title+"</b>"+" "+section+" "+page
+        else:
+            if(tam > limit):
+                print "<----- Caso contenido mayor a 160 ----->"
+                print "Tamaño "+str(tam)
+                for i in range(limit*2):
+                    rang=limit
+                    rang=rang*(i+1)
+                    print "Rango "+str(rang)
+                    if(tam <= rang):
+                        items="<b>"+title+"</b>"+page
+                        product=rang-len(items)
+                        section='-'*product
+                        print "section "+str(len(section))
+                        section= "<b>"+title+"</b>"+" "+section+" "+page
+                        break
+
+    print "Se retorna "+section+" con tamaño"+str(len(section))
+    print "<----- Fin del caso ----->"
+    return section
+
 
 #---------------------------------------------------------------------------------#
 #                     Vista principal para crear las memorias                     #
@@ -2066,7 +2131,7 @@ def header_footer(canvas, doc,arbitraje):
         
         sistema= Sistema_asovac.objects.get(pk=arbitraje)
         # Save the state of our canvas so we can draw on it
-        global lastPage
+        global lastPage,actualPage,title
         canvas.saveState()
         styles = getSampleStyleSheet()
 
@@ -2141,6 +2206,7 @@ def header_footer(canvas, doc,arbitraje):
 def header_footer_indice(canvas, doc,arbitraje,canAdd):
         
         sistema= Sistema_asovac.objects.get(pk=arbitraje)
+        global lastPage,actualPage,title
         # Save the state of our canvas so we can draw on it
         canvas.saveState()
         styles = getSampleStyleSheet()
@@ -2178,6 +2244,81 @@ def header_footer_indice(canvas, doc,arbitraje,canAdd):
         contentFooter='https://www.asovac.org/blogroll-memorias-convenciones-anuales     https://www.facebook.com/ConvencionAsovac'+str(now.year)
         contentFooter2='(0212) 753-5802 convencion.asovac'+str(now.year)+'@gmail.com'
         contentFooter3=str(doc.page-lastPage)
+        actualPage=str(doc.page)
+        # print "pagina actual "+str(actualPage)
+        linea= Paragraph('',styleF2)
+        line = Table(data=[[linea]],colWidths=452,style=[
+            # The two (0, 0) in each attribute represent the range of table cells that the style applies to. Since there's only one cell at (0, 0), it's used for both start and end of the range
+            ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+            ('TOPPADDING',(0,0),(-1,-1),0),
+            ('BOTTOMPADDING',(0,0),(-1,-1),0),
+            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#000000')), # The fourth argument to this style attribute is the border width
+            ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
+            ]
+        )
+        
+        # Contenido del Footer
+        footer = Paragraph(contentFooter, styleF1)
+        footer2 = Paragraph(contentFooter2, styleF2)
+        pagina = Paragraph(contentFooter3, styleF2)
+
+        w, h = line.wrap(doc.width, doc.bottomMargin)
+        w, h = footer.wrap(doc.width, doc.bottomMargin)
+        w, h = footer2.wrap(doc.width, doc.bottomMargin)
+        w, h = pagina.wrap(doc.width, doc.bottomMargin)
+
+        line.drawOn(canvas, doc.leftMargin, h*5.5)
+        footer.drawOn(canvas, doc.leftMargin, h*4)
+        footer2.drawOn(canvas, doc.leftMargin, h*3)
+        pagina.drawOn(canvas, (doc.leftMargin*7)+10, h*3)
+        
+        # Release the canvas
+        canvas.restoreState()
+
+
+def header_footer_comision(canvas, doc,arbitraje,canAdd):
+        
+        sistema= Sistema_asovac.objects.get(pk=arbitraje)
+        global lastPage,actualPage,title
+        # Save the state of our canvas so we can draw on it
+        canvas.saveState()
+        styles = getSampleStyleSheet()
+        # Estilos para el footer
+        footer = getSampleStyleSheet()
+        
+        styleF1 = footer['Normal']
+        styleF1.fontSize = 8
+        styleF1.alignment = TA_LEFT
+        
+        styleF2 = footer['Normal']
+        styleF2.fontSize = 8
+        styleF2.alignment = TA_LEFT
+
+        now = datetime.now()
+
+        # Contenido del Header
+        
+        header = Image(sistema.cabecera,450, 60)
+        img_table = Table(data=[[header]],colWidths=452,style=[
+            # The two (0, 0) in each attribute represent the range of table cells that the style applies to. Since there's only one cell at (0, 0), it's used for both start and end of the range
+            ('ALIGN', (0, 0), (0, 0), 'CENTER'),
+            ('TOPPADDING',(0,0),(-1,-1),0),
+            ('BOTTOMPADDING',(0,0),(-1,-1),0),
+            ('BOX', (0, 0), (0, 0), 0.1, colors.HexColor('#e6e6e6')), # The fourth argument to this style attribute is the border width
+            ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
+            ]
+        )
+        w, h = header.wrap(doc.width, doc.topMargin)
+        w, h = img_table.wrap(doc.width, doc.topMargin)
+
+        # header.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin-5)
+        img_table.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin-10)
+        # Footer 
+        contentFooter='https://www.asovac.org/blogroll-memorias-convenciones-anuales     https://www.facebook.com/ConvencionAsovac'+str(now.year)
+        contentFooter2='(0212) 753-5802 convencion.asovac'+str(now.year)+'@gmail.com'
+        contentFooter3=str(doc.page-lastPage)
+        actualPage=str(doc.page)
+        # print "pagina actual "+str(actualPage)
         linea= Paragraph('',styleF2)
         line = Table(data=[[linea]],colWidths=452,style=[
             # The two (0, 0) in each attribute represent the range of table cells that the style applies to. Since there's only one cell at (0, 0), it's used for both start and end of the range
@@ -3015,8 +3156,9 @@ def resumenesPreviewPDF(request,arbitraje):
     frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
     frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
     # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer,arbitraje=arbitraje))])
-    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer_indice,arbitraje=arbitraje,canAdd= 1))])
+    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_remaining_pages, onPage=partial(header_footer_indice,arbitraje=arbitraje,canAdd= 1))])
+    doc.addPageTemplates([PageTemplate(id='comision',frames=frame_remaining_pages, onPage=partial(header_footer_comision,arbitraje=arbitraje,canAdd= 1))])
     styles=getSampleStyleSheet()
     # start the story...
     page_content=[]
@@ -3036,7 +3178,7 @@ def resumenesPreviewPDF(request,arbitraje):
     page_content.append(PageBreak())
 
     # Para generar la sección de comisión académica 
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+    page_content.append(NextPageTemplate('resTrabLib'))  #This will load the next PageTemplate with the adjusted Frame. 
     
     page_content.append(Spacer(1,0))
 
@@ -3125,7 +3267,7 @@ def resumenesPreviewPDF(request,arbitraje):
                         # print "area sin cargar {}".format(area.nombre)
                         areas_check.append(area.nombre)
                         # Para cargar nueva pagina
-                        page_content.append(NextPageTemplate('remaining_pages'))
+                        page_content.append(NextPageTemplate('resTrabLib'))
                         page_content.append(PageBreak())
                         
                         styleArea= styles['Heading1']
@@ -3140,7 +3282,7 @@ def resumenesPreviewPDF(request,arbitraje):
                     
                     
                     # Para cargar nueva pagina
-                    page_content.append(NextPageTemplate('remaining_pages'))
+                    page_content.append(NextPageTemplate('resTrabLib'))
                     page_content.append(PageBreak())
                     # # Para agregar título de cada subarea
                     if (subarea.nombre not in subareas_check):
@@ -3214,683 +3356,30 @@ def resumenesPreviewPDF(request,arbitraje):
 @user_is_arbitraje
 def memoriasIndice(request,arbitraje):
     
-    context = create_common_context(request)
+    global lastPage,actualPage,title
+
+    sistema= Sistema_asovac.objects.get(pk=arbitraje)
     resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
-    request.session['canAdd']= 0
-    request.session['page']= 0
 
     if(resumen == True):
-        portada=Resumen.objects.get(sistema_id=arbitraje)
-        if(portada.url_portada):
-            archivo_imagen = settings.MEDIA_ROOT+'/'+portada.url_portada
-    else:
-        # Para generar el PDF
-        response = HttpResponse(content_type='application/pdf')
-        buffer = BytesIO()
-        # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
-        doc = BaseDocTemplate(buffer,showBoundary=0)
-        # create the frames. Here you can adjust the margins
-        # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
-        frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
-        # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-        doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page)])
-        styles=getSampleStyleSheet()
-        # start the story...
-        page_content=[]
-        page_content.append(NextPageTemplate('first_page'))
-        #start the construction of the pdf
-        doc.build(page_content)
-        doc = buffer.getvalue()
-        buffer.close()
-        response.write(doc)
-        return response
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
 
     response = HttpResponse(content_type='application/pdf')
     buffer = BytesIO()
-    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
-    doc = BaseDocTemplate(buffer,showBoundary=0)
-    # create the frames. Here you can adjust the margins
-    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
-    frame_first_page = Frame(0, 0, 600, 843,0,0,0,0, id='first')
-    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-    doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page, onPage=on_first_page)])
-    styles=getSampleStyleSheet()
-    # start the story...
-    page_content=[]
-    ############################## Para generar la portada #################################
-    
-    if(resumen == True):
-        img = Image(archivo_imagen,600, 843)
-        page_content.append(img)
-
-    ############################## Para cargar patrocinadores ##############################
-    sistema= Sistema_asovac.objects.get(pk=arbitraje)
-    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
-
-    if(resumen == True):
-        patrocinadores=Resumen.objects.get(sistema_id=arbitraje)
-        if(patrocinadores.url_patrocinadores):
-            archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
-
-    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
-    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
-    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
-    styles=getSampleStyleSheet()
-    # start the story...
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    
-    page_content.append(Spacer(1,50))
-    # Estilos para el titulo de la convencion
-    styleNombre= styles['Heading1']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.fontSize=30
-    styleNombre.alignment=TA_CENTER
-
-    page_content.append(Paragraph(sistema.numero_romano,styleNombre))
-    page_content.append(Paragraph(sistema.nombre,styleNombre))
-
-    # Estilos para el lema
-    styleLema= styles['Heading1']
-    styleLema.fontName="Times-Roman"
-    styleLema.fontSize=18
-    styleLema.alignment=TA_CENTER
-    # styleLema.spaceBefore = 15
-
-    page_content.append(Paragraph(sistema.slogan,styleLema))
-    page_content.append(Spacer(1,100))
-    
-    styleTitulo= styles['Heading1']
-    styleTitulo.fontName="Times-Roman"
-    styleTitulo.fontSize=50
-    styleTitulo.alignment=TA_CENTER
-    # styleTitulo.spaceBefore = 50
-    styleTitulo.textColor = colors.HexColor('#004275')
-
-    page_content.append(Paragraph('Memorias',styleLema))
-
-    # Para cargar los patrocinadores
-    page_content.append(Spacer(1,100))
-    if(resumen == True):
-        img = Image(archivo_imagen,445, 200)
-        page_content.append(img)
-
-    # Estilos para el fechas
-    styleFecha= styles['Heading1']
-    styleFecha.fontName="Times-Roman"
-    styleFecha.fontSize=12
-    styleFecha.alignment=TA_CENTER
-    styleTitulo.textColor = colors.HexColor('#000000')
-
-    # Para agregar fecha de la creacion del libro
-    now = datetime.now()
-    fecha=str (MONTH_NAMES[now.month - 1])+' - '+str(now.year)
-    page_content.append(Spacer(1,50))
-    page_content.append(Paragraph(fecha,styleFecha))
-
-    ############################## Comisión Organizadora ###################################
-    page_content.append(PageBreak())
-    sistema= Sistema_asovac.objects.get(pk=arbitraje)
-    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
-
-    if(resumen == True):
-        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
-        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
   
-    styles=getSampleStyleSheet()
-    # start the story...
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    
-    page_content.append(Spacer(1,46))
-
-    # Estilos para el titulo de la convencion
-    styleNombre= styles['Heading1']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.fontSize=15
-    styleNombre.alignment=TA_CENTER
-    styleNombre.spaceAfter = 0
-
-    page_content.append(Paragraph("<b>COMISIÓN ORGANIZADORA</b>",styleNombre))
-
-    page_content.append(Paragraph(("<b>"+sistema.numero_romano+" "+sistema.nombre.upper()+"</b>"),styleNombre))
-
-    # Estilos para el linea de separacion
-    styleNombre= styles['Normal']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.spaceBefore = 0
-    styleNombre.spaceAfter = 15
-    # Para agregar linea despues del título
-    page_content.append(Paragraph("_"*87,styles['Normal']))
-
-    # Estilos para el titulo de la convencion
-    # Estilos para el titulo de la convencion
-    styleComision= styles['Normal']
-    styleComision.fontName="Times-Roman"
-    styleComision.alignment=TA_CENTER
-    styleComision.spaceBefore = 10
-    styleComision.spaceAfter = 0
-
-    
-    # result = str(queryResumen.comision_organizadora).replace('\n',' <br/> ')
-    # page_content.append(Paragraph(result, styleComision)) 
-
-    # page_content.append(Paragraph(queryResumen.comision_organizadora,styleComision))
-    section=""
-    if(queryResumen.comision_organizadora):
-        for content in queryResumen.comision_organizadora:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                # section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
-                section="" 
-
-
-    ##############################      Invitación       ###################################
-    page_content.append(PageBreak())
-
-    sistema= Sistema_asovac.objects.get(pk=arbitraje)
-    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
-
-    if(resumen == True):
-        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
-
-    styles=getSampleStyleSheet()
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    
-    page_content.append(Spacer(1,15))
-
-    # Estilos para el titulo de la convencion
-    styleNombre= styles['Heading1']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.fontSize=13
-    styleNombre.alignment=TA_CENTER
-    styleNombre.spaceAfter = 0
-    
-    page_content.append(Paragraph(("<b>"+sistema.numero_romano+" "+sistema.nombre.upper()+"</b>"),styleNombre))
-
-    # Estilos para el slogan
-    styleSlogan= styles['Heading1']
-    styleSlogan.fontName="Times-Roman"
-    styleSlogan.fontSize=17
-    styleSlogan.alignment=TA_CENTER
-    styleSlogan.spaceAfter = 0
-
-    # Para generar el título 
-    page_content.append(Paragraph("<b>"+sistema.slogan+"</b>",styleSlogan))
-
-    # Estilos para las sedes y fecha de inicio y fin 
-    styleSede= styles['Heading1']
-    styleSede.fontName="Times-Roman"
-    styleSede.fontSize=12
-    styleSede.alignment=TA_CENTER
-    styleSede.spaceAfter = 0
-    styleSede.spaceBefore = 0
-    # styleSede.leading = 20
-
-    page_content.append(Paragraph(sistema.sedes,styleSede))
-    # Para agregar fecha
-    inicio_dia= datetime.strftime(sistema.fecha_inicio_arbitraje,'%d')
-    fin_dia= datetime.strftime(sistema.fecha_fin_arbitraje,'%d')
-    mes= datetime.strftime(sistema.fecha_fin_arbitraje,'%m')
-    year= datetime.strftime(sistema.fecha_fin_arbitraje,'%Y')
-   
-    date_event = '%s al %s de %s de %s' % (inicio_dia,fin_dia, MONTH_NAMES[int(mes) - 1], year)
-    
-    page_content.append(Paragraph(date_event,styleSede))
-
-    # Estilos para la invitación
-    styleInvitacion= styles['Heading1']
-    styleInvitacion.fontName="Times-Roman"
-    styleInvitacion.fontSize=15
-    styleInvitacion.alignment=TA_CENTER
-    styleInvitacion.spaceAfter = 0
-
-    page_content.append(Paragraph("<b>INVITACIÓN</b>",styleInvitacion))
-
-
-    # Estilos para el linea de separacion
-    styleNombre= styles['Normal']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.spaceBefore = 0
-    styleNombre.spaceAfter = 15
-    # Para agregar linea despues del título
-    page_content.append(Paragraph("_"*87,styles['Normal']))
-
-    # Estilos para el titulo de la convencion
-    # Estilos para el titulo de la convencion
-    styleComision= styles['Normal']
-    styleComision.fontName="Times-Roman"
-    styleComision.alignment=TA_JUSTIFY
-    
-    # Para dar formato al texto ingresado
-    section=""
-    if(queryResumen.invitacion):
-
-        for content in queryResumen.invitacion:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
-                section=""
-
-
-    ##############################    Breves palabras    ###################################
-    page_content.append(PageBreak())
-
-    sistema= Sistema_asovac.objects.get(pk=arbitraje)
-    resumen=Resumen.objects.filter(sistema_id=arbitraje).exists()
-
-    if(resumen == True):
-        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
-        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
-
-    styles=getSampleStyleSheet()
-    # start the story...
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    page_content.append(Spacer(1,15))
-    # Para agregar cabecera personalizada
-    if(queryResumen.cabecera != ""):
-        # Estilos para la cabecera
-        styleCabecera= styles['BodyText']
-        styleCabecera.fontName="Times-Roman"
-        styleCabecera.fontSize=12
-        styleCabecera.alignment=TA_CENTER
-        # styleCabecera.spaceAfter = 0
-        # styleCabecera.spaceBefore=0 
-
-        # Para dar formato al texto ingresado
-        sectionCabecera=""
-        cont=0
-        # print queryResumen.cabecera
-        if(queryResumen.cabecera):
-            for content in queryResumen.cabecera :
-                sectionCabecera= sectionCabecera + content
-                if (sectionCabecera.find("</p>") >= 0 ): 
-                    cont= cont+1
-                    # print sectionCabecera.replace('<br />','')
-                    # sectionCabecera=sectionCabecera.replace('<br />','')
-                    page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                    sectionCabecera="" 
-        if(queryResumen.cabecera):
-            if cont == 0:
-                page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
-            page_content.append(Spacer(1,10))
-    
-    # Estilos para la invitación
-    styleInvitacion= styles['Heading1']
-    styleInvitacion.fontName="Times-Roman"
-    styleInvitacion.fontSize=15
-    styleInvitacion.alignment=TA_CENTER
-    styleInvitacion.spaceAfter = 0
-
-    page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-    if(queryResumen.presidente_nombre):
-        page_content.append(Paragraph("<b>"+queryResumen.presidente_nombre+"</b>",styleInvitacion))
-    
-    if(queryResumen.presidente_cargo):
-        page_content.append(Paragraph("<b>"+queryResumen.presidente_cargo+"</b>",styleInvitacion))
-
-
-    # Estilos para el linea de separacion
-    styleNombre= styles['Normal']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.spaceBefore = 0
-    styleNombre.spaceAfter = 15
-    # Para agregar linea despues del título
-    page_content.append(Paragraph("_"*87,styles['Normal']))
-
-    # Estilos para el titulo de la convencion
-    # Estilos para el titulo de la convencion
-    styleComision= styles['Normal']
-    styleComision.fontName="Times-Roman"
-    styleComision.alignment=TA_JUSTIFY
-    
-    # Para dar formato al texto ingresado
-    section=""
-    if(queryResumen.presidente_contenido):
-        for content in queryResumen.presidente_contenido:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
-                section="" 
-    
-    if(queryResumen.secretario_nombre):
-        if queryResumen.secretario_nombre != "":
-            # Para cargar informacion del secretario
-            page_content.append(NextPageTemplate('remaining_pages'))
-            page_content.append(PageBreak())
-            page_content.append(Spacer(1,15))
-            # page_content.append(Spacer(1,15))
-            # Para agregar cabecera personalizada
-            if(queryResumen.cabecera != ""):
-                # Estilos para la cabecera
-                styleCabecera= styles['BodyText']
-                styleCabecera.fontName="Times-Roman"
-                styleCabecera.fontSize=12
-                styleCabecera.alignment=TA_CENTER
-                # styleCabecera.spaceAfter = 0
-                # styleCabecera.spaceBefore=0 
-
-                # Para dar formato al texto ingresado
-                sectionCabecera=""
-                cont=0
-                # print queryResumen.cabecera
-                for content in queryResumen.cabecera :
-                    sectionCabecera= sectionCabecera + content
-                    if (sectionCabecera.find("</p>") >= 0 ): 
-                        cont= cont+1
-                        # print sectionCabecera.replace('<br />','')
-                        # sectionCabecera=sectionCabecera.replace('<br />','')
-                        page_content.append(Paragraph("<b>"+sectionCabecera+"</b>", styleCabecera))
-                        sectionCabecera="" 
-                if cont == 0:
-                    page_content.append(Paragraph("<b>"+queryResumen.cabecera+"</b>", styleCabecera))
-                page_content.append(Spacer(1,10))
-
-            # Estilos para la invitación
-            styleInvitacion= styles['Heading1']
-            styleInvitacion.fontName="Times-Roman"
-            styleInvitacion.fontSize=15
-            styleInvitacion.alignment=TA_CENTER
-            styleInvitacion.spaceAfter = 0
-
-            page_content.append(Paragraph("<b>Palabras</b>",styleInvitacion))
-
-            page_content.append(Paragraph("<b>"+queryResumen.secretario_nombre+"</b>",styleInvitacion))
-            page_content.append(Paragraph("<b>"+queryResumen.secretario_cargo+"</b>",styleInvitacion))
-
-
-            # Estilos para el linea de separacion
-            styleNombre= styles['Normal']
-            styleNombre.fontName="Times-Roman"
-            styleNombre.spaceBefore = 0
-            styleNombre.spaceAfter = 15
-            # Para agregar linea despues del título
-            page_content.append(Paragraph("_"*87,styles['Normal']))
-
-            # Estilos para el titulo de la convencion
-            # Estilos para el titulo de la convencion
-            styleComision= styles['Normal']
-            styleComision.fontName="Times-Roman"
-            styleComision.alignment=TA_JUSTIFY
-            
-            # Para dar formato al texto ingresado
-            section=""
-            for content in queryResumen.presidente_contenido:
-                section= section + content
-                if (section.find("</p>") >= 0 ): 
-                    # print section.replace('<br />','')
-                    section=section.replace('<br />','')
-                    page_content.append(Paragraph(section, styleComision))
-                    section=""
-
-
-    ##############################         Afiche        ###################################
-
-    if(resumen == True):
-        afiche=Resumen.objects.get(sistema_id=arbitraje)
-        if(afiche.url_afiche):
-            archivo_imagen = settings.MEDIA_ROOT+'/'+afiche.url_afiche
-
-    # frame_first_page =Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='first')
-    
-    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-    page_content.append(PageBreak())
-    # doc.addPageTemplates([PageTemplate(id='first_page',frames=frame_first_page)])
-    styles=getSampleStyleSheet()
-    # start the story...
-
-    # page_content.append(NextPageTemplate('first_page'))
-
-    # Estilos para la invitación
-    styleAfiche= styles['Heading1']
-    styleAfiche.fontName="Times-Roman"
-    styleAfiche.fontSize=12
-    styleAfiche.alignment=TA_CENTER
-    styleAfiche.spaceAfter = 0
-
-    page_content.append(Spacer(1,16))
-    if(afiche.afiche_titulo):
-        page_content.append(Paragraph(afiche.afiche_titulo,styleAfiche))
-        page_content.append(Spacer(1,8))
-    
-    if(resumen == True):
-        img = Image(archivo_imagen,460, 620)
-        # img = Image(archivo_imagen,460, 685)
-        page_content.append(img)
-
-    ##############################        Eventos        ###################################
-    eventos=Evento.objects.filter(sistema_asovac=arbitraje).exists()
-
-    if(eventos == True):
-        queryEventos=Evento.objects.filter(sistema_asovac=arbitraje).order_by('fecha_inicio','hora_inicio')
-
-    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
-    frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
-    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
-    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
-    doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer,arbitraje=arbitraje))])
-    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
-    styles=getSampleStyleSheet()
-    # start the story...
-
-    # Para generar título de resumenes de trabajos libres
-    page_content.append(NextPageTemplate('resTrabLib'))
-    
-    styleArea= styles['Heading1']
-    styleArea.fontName="Times-Roman"
-    styleArea.fontSize=50
-    styleArea.alignment=TA_RIGHT
-    # styleArea.spaceBefore = 50
-    styleArea.textColor = colors.HexColor('#004275')
-    page_content.append(Spacer(1,250))
-    page_content.append(Paragraph('<b> Programa de </b> <br /> <br /><b> Eventos</b> <br /> <br /><b> Especiales</b>',styleArea))
-
-    page_content.append(PageBreak())
-
-    # Para generar la sección de comisión académica 
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    
-    page_content.append(Spacer(1,10))
-
-    # Estilos para el titulo de los eventos
-    styleNombre= styles['Title']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.fontSize=20
-    styleNombre.alignment=TA_CENTER
-    styleNombre.spaceAfter = 0
-    styleNombre.spaceBefore = 0
-    styleNombre.textColor = colors.HexColor('#000000')
-
-    page_content.append(Paragraph("<b>Programa General de Eventos Especiales</b>",styleNombre))
-    page_content.append(Spacer(1,20))
-    # print queryEventos[0].fecha_inicio
-    # print queryEventos[0].fecha_inicio.weekday()
-    # print DAY_NAMES[queryEventos[0].fecha_inicio.weekday()]
-    day_before=''
-
-    # Estilos para el titulo para la fecha de los eventos
-    styleTitleTable= styles['BodyText']
-    styleTitleTable.fontName="Times-Roman"
-    styleTitleTable.fontSize=10
-    styleTitleTable.alignment=TA_JUSTIFY
-    styleTitleTable.spaceAfter = 0
-    styleTitleTable.spaceBefore = 0
-    styleTitleTable.textColor = colors.HexColor('#ffffff')
-
-    styleContentTable= styles['Normal']
-    styleContentTable.fontName="Times-Roman"
-    styleContentTable.fontSize=10
-    styleContentTable.alignment=TA_JUSTIFY
-    styleContentTable.spaceAfter = 0
-    styleContentTable.spaceBefore = 0
-
-    table_title=[]
-    table_content=[]
-    contItem=0
-    has_title=False
-    if(eventos == True):
-        for event in queryEventos:
-            actual_weekday= DAY_NAMES[event.fecha_inicio.weekday()]
-            actual_day= str (event.fecha_inicio.day)
-            actual_month= MONTH_NAMES[event.fecha_inicio.month-1]
-            
-            # print event.locacion_evento.lugar
-            if (contItem+1) < len(queryEventos):
-                day_next=queryEventos[contItem+1].fecha_inicio
-                
-            else:
-                day_next=''
-            
-            if day_next == event.fecha_inicio:
-                # Para agregar el titulo al inicio de la tabla
-                if has_title == False:
-                    # Para cargar el título de la tabla
-                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                    table_content.append([t1, t2, t3])
-                    has_title=True
-                
-                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-                horario= Paragraph((horario).encode('utf-8'), styleContentTable)
-                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
-
-                table_content.append([horario,ubicacion,descripcion])
-            else:
-                page_content.append(Paragraph(actual_weekday+" "+actual_day+" de "+actual_month,styles['Normal']))
-                page_content.append(Spacer(1,5))
-
-                # Para agregar el titulo al inicio de la tabla
-                if has_title == False:
-                    # Para cargar el título de la tabla
-                    t1 = Paragraph(('HORARIO').encode('utf-8'), styleTitleTable)
-                    t2 = Paragraph('UBICACIÓN'.encode('utf-8'), styleTitleTable)
-                    t3 = Paragraph('DESCRIPCIÓN'.encode('utf-8'), styleTitleTable)
-                    table_content.append([t1, t2, t3])
-
-                horario= event.hora_inicio.strftime(" %I:%M%p")+'-'+event.hora_fin.strftime(" %I:%M%p")
-                horario=Paragraph((horario).encode('utf-8'), styleContentTable)
-                ubicacion=Paragraph((event.locacion_evento.lugar).encode('utf-8'), styleContentTable)
-                descripcion=Paragraph((event.descripcion).encode('utf-8'), styleContentTable)
-
-                table_content.append([horario,ubicacion,descripcion])
-
-                tabla = Table(data = table_content,colWidths=(150,150,150),
-                            style = [
-                                    ('GRID',(0,0),(-1,-1),0.5,colors.HexColor('#cce0ff')),
-                                    ('ALIGN', (1,1), (-1,-1), 'RIGHT'),
-                                    ('BOX',(0,0),(-1,-1),2,colors.white),
-                                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#99c2ff')),
-                                    ]
-                            )
-                
-                page_content.append(tabla)
-                page_content.append(Spacer(1,10))
-                table_content=[]
-                has_title= False
-
-            
-            # day_before=DAY_NAMES[event.fecha_inicio.weekday()]
-            day_before=event.fecha_inicio
-            contItem=contItem+1
-            # Para agregar contenido de la tabla
-
-    ############################## Resúmenes de trabajos ###################################
-
-    if(resumen == True):
-        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
-        # archivo_imagen = settings.MEDIA_ROOT+'/'+patrocinadores.url_patrocinadores
-
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
     # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
     frame_resTrabLib = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='resTrabLib')
     frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
     # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
     doc.addPageTemplates([PageTemplate(id='resTrabLib',frames=frame_resTrabLib, onPage=partial(header_footer_indice,arbitraje=arbitraje,canAdd= 1))])
-    doc.addPageTemplates([PageTemplate(id='indice',frames=frame_remaining_pages, onPage=partial(header_footer_indice,arbitraje=arbitraje,canAdd= 1))])
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer_indice,arbitraje=arbitraje,canAdd= 1))])
     styles=getSampleStyleSheet()
     # start the story...
-
-    # Para generar título de resumenes de trabajos libres
-    page_content.append(NextPageTemplate('resTrabLib'))
-    
-    styleArea= styles['Heading1']
-    styleArea.fontName="Times-Roman"
-    styleArea.fontSize=50
-    styleArea.alignment=TA_RIGHT
-    # styleArea.spaceBefore = 50
-    styleArea.textColor = colors.HexColor('#004275')
-    page_content.append(Spacer(1,250))
-    page_content.append(Paragraph('<b> Resúmenes</b> <br /> <br /><b>Trabajos Libres</b>',styleArea))
-
-    page_content.append(PageBreak())
-
-    # Para generar la sección de comisión académica 
-    page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
-    
-    page_content.append(Spacer(1,15))
-
-    # Estilos para el titulo de la convencion
-    styleNombre= styles['Title']
-    styleNombre.fontName="Times-Roman"
-    styleNombre.fontSize=15
-    styleNombre.alignment=TA_CENTER
-    styleNombre.spaceAfter = 0
-    styleNombre.spaceBefore = 0
-    styleNombre.textColor = colors.HexColor('#000000')
-
-    page_content.append(Paragraph("<b>COMISIÓN ACADÉMICA</b>",styleNombre))
-
-     # Estilos para los coordinadores de la comision
-    styleCoordinadores= styles['Title']
-    styleCoordinadores.fontName="Times-Roman"
-    styleCoordinadores.fontSize=13
-    styleCoordinadores.alignment=TA_CENTER
-    styleCoordinadores.spaceAfter = 0
-    page_content.append(Paragraph("<b>Coordinadores por Área</b>",styleCoordinadores))
-
-    # Estilos para el titulo de la convencion
-    # Estilos para el titulo de la convencion
-    styleComision= styles['Normal']
-    styleComision.fontName="Times-Roman"
-    styleComision.alignment=TA_JUSTIFY
-    styleComision.spaceBefore = 10
-    styleComision.spaceAfter = 0
-
-    section=""
-    if(queryResumen.coordinadores_area):
-        for content in queryResumen.coordinadores_area:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                # section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
-                section="" 
-    
-     # Estilos para el titulo de los miembros de la comision
-    styleMiembros= styles['Title']
-    styleMiembros.fontName="Times-Roman"
-    styleMiembros.fontSize=13
-    styleMiembros.alignment=TA_CENTER
-    styleMiembros.spaceAfter = 0
-
-    if(queryResumen.titulo_comision):
-        page_content.append(Paragraph("<b>"+queryResumen.titulo_comision+"</b>",styleMiembros))
-
-    section=""
-    if(queryResumen.titulo_comision):
-        for content in queryResumen.miembros_comision:
-            section= section + content
-            if (section.find("</p>") >= 0 ): 
-                # print section.replace('<br />','')
-                # section=section.replace('<br />','')
-                page_content.append(Paragraph(section, styleComision))
-                section="" 
+    page_content=[]
 
     # Para obtener lsitado de areas, subareas y trabajos aceptados
     areas_list = list (Area.objects.all().order_by('nombre'))
@@ -3905,7 +3394,8 @@ def memoriasIndice(request,arbitraje):
     for trabajo in trabajos_list:
         trabajos_array.append(trabajo)
 
-
+    contPage=1
+    ResumenIndice.objects.filter(sistema_id=arbitraje).delete()
     # areas_list.pop("test")
     # Para recorrer el listado de areas, subareas y cargar la información de cada trabajo
     for area in areas_list:
@@ -3920,9 +3410,8 @@ def memoriasIndice(request,arbitraje):
                         # print "area sin cargar {}".format(area.nombre)
                         areas_check.append(area.nombre)
                         # Para cargar nueva pagina
-                        page_content.append(NextPageTemplate('indice'))
-                        page_content.append(PageBreak())
-                        print "la variable global vale "+ str(PAGE)
+                        page_content.append(NextPageTemplate('remaining_pages'))
+                        # page_content.append(PageBreak())
                         
                         styleArea= styles['Heading1']
                         styleArea.fontName="Times-Roman"
@@ -3932,8 +3421,10 @@ def memoriasIndice(request,arbitraje):
                         styleArea.textColor = colors.HexColor('#004275')
                         page_content.append(Spacer(1,250))
                         page_content.append(Paragraph('<b> Área</b> <br /> <br /><b>'+area.nombre+'</b>',styleArea))
-                        # indice.append({'page':numberPage, 'title': '<b> Área</b> <br /> <br /><b>'+area.nombre+'</b>'})
-                        # print indice
+                        # print  "Área "+area.nombre+" pagina "+str(contPage)
+                        createIndice=createOrUpdate("Área "+area.nombre,contPage,arbitraje,'A')
+                        contPage+=1
+                    
                     
                     # Para cargar nueva pagina
                     page_content.append(NextPageTemplate('remaining_pages'))
@@ -3949,8 +3440,9 @@ def memoriasIndice(request,arbitraje):
                         styleSubAreas.spaceAfter = 0
                         styleSubAreas.spaceBefore = 0
                         styleSubAreas.textColor = colors.HexColor('#000000')
-                        page_content.append(Spacer(1,15))
                         page_content.append(Paragraph("Sesión <b> "+subarea.nombre+"</b>",styleSubAreas))
+                        # print  "Sesión "+subarea.nombre+" pagina "+str(contPage)
+                        createIndice=createOrUpdate("Sesión "+subarea.nombre,contPage,arbitraje,'S')
                         # Estilos para el linea de separacion
                         styleNombre= styles['Normal']
                         styleNombre.fontName="Times-Roman"
@@ -3958,8 +3450,7 @@ def memoriasIndice(request,arbitraje):
                         # styleNombre.spaceAfter = 0
                         # Para agregar linea despues del título
                         page_content.append(Paragraph("_"*87,styles['Normal']))
-                        
-                    page_content.append(Spacer(1,15))
+                        page_content.append(Spacer(1,15))
 
                     # Para cargar contenido de la pagina
 
@@ -3971,6 +3462,9 @@ def memoriasIndice(request,arbitraje):
                     styleResumen.spaceBefore = 0
 
                     page_content.append(Paragraph("<b>("+trabajo.codigo+") "+trabajo.titulo_espanol.upper()+"</b>",styleResumen))
+                    # print  "("+trabajo.codigo+") "+trabajo.titulo_espanol.upper()+" pagina "+str(contPage)
+                    createIndice=createOrUpdate("("+trabajo.codigo+") "+trabajo.titulo_espanol.upper(),contPage,arbitraje,'T')
+                    contPage+=1
                     if trabajo.titulo_ingles != "":
                         page_content.append(Paragraph("<b>("+trabajo.titulo_ingles+")</b>",styleResumen))
                     page_content.append(Paragraph(trabajo.lista_autores,styleResumen))
@@ -3993,11 +3487,78 @@ def memoriasIndice(request,arbitraje):
             # eliminar trabajos ya asignados para reducir el recorrido del ciclo for
             for check in trabajos_check:
                 trabajos_array.remove(check) 
-            trabajos_check=[]
+            trabajos_check=[] 
+
+    # para generar el índice
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+  
+    # creation of the BaseDocTempalte. showBoundary=0 to hide the debug borders
+    doc = BaseDocTemplate(buffer,showBoundary=0,topMargin=inch+20)
+    # create the frames. Here you can adjust the margins
+    # Frame(leftMargin,bottomMargin,width,height,leftPadding,rightPadding,topPadding,bottomPadding,id='normal')
+    frame_remaining_pages = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id='remaining')
+    # add the PageTempaltes to the BaseDocTemplate. You can also modify those to adjust the margin if you need more control over the Frames.
+    doc.addPageTemplates([PageTemplate(id='remaining_pages',frames=frame_remaining_pages, onPage=partial(header_footer,arbitraje=arbitraje))])
+    styles=getSampleStyleSheet()
+    # start the story...
+
+    Indice=ResumenIndice.objects.filter(sistema_id=arbitraje).exists()
+
+    if(Indice == True):
+        elementIndice=ResumenIndice.objects.filter(sistema_id=arbitraje).order_by('pagina','code')
+
+        page_content=[]
+        page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+        page_content.append(Spacer(1,15))
+
+        # Estilos para el titulo de la convencion
+        # Estilos para el titulo de la convencion
+        styleNombre= styles['Title']
+        styleNombre.fontName="Times-Roman"
+        styleNombre.fontSize=20
+        styleNombre.alignment=TA_CENTER
+        styleNombre.spaceAfter = 0
+        styleNombre.spaceBefore = 0
+        styleNombre.textColor = colors.HexColor('#000000')
+
+        page_content.append(Paragraph("<b>Índice de Resúmenes</b>",styleNombre))
 
 
+        # Estilos para el titulo de la convencion
+        styleComision= styles['Normal']
+        styleComision.fontName="Times-Roman"
+        styleComision.alignment=TA_JUSTIFY
+        styleComision.spaceBefore = 10
+        styleComision.spaceAfter = 0
 
-    ############################## Para construir el pdf ###################################
+        section=""
+        for content in elementIndice:
+            multi=100
+            if(content.code == 'A'):
+                section='-'*multi
+                section= "<b>"+content.titulo +"</b>"+section+ str(content.pagina)
+                # print len(section)
+                section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
+
+            else:
+                if(content.code == 'S'):
+                    section='-'*multi
+                    section="<b>    "+content.titulo +"</b>"+section+ str(content.pagina)
+                    # print len(section)
+                    section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
+                else:
+                    if(content.code == 'T'):
+                        section='-'*multi
+                        section= content.titulo+section+ str(content.pagina)
+                        # print len(section)
+                        section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
+            
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+
+
+    #start the construction of the pdf
     doc.build(page_content)
 
     doc = buffer.getvalue()
@@ -4762,6 +4323,67 @@ def memoriasPreviewPDF(request,arbitraje):
             day_before=event.fecha_inicio
             contItem=contItem+1
             # Para agregar contenido de la tabla
+
+    ############################## Para generar el índice ###################################
+
+    Indice=ResumenIndice.objects.filter(sistema_id=arbitraje).exists()
+    if(Indice == True):
+        elementIndice=ResumenIndice.objects.filter(sistema_id=arbitraje).order_by('pagina','code')
+
+        page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
+        # page_content.append(Spacer(1,15))
+        page_content.append(Spacer(1,20))
+
+        queryResumen=Resumen.objects.get(sistema_id=arbitraje)
+        aditionalPage=0
+        if(queryResumen.coordinadores_area and queryResumen.titulo_comision ):
+            aditionalPage=1
+
+        # Estilos para el titulo de la convencion
+        # Estilos para el titulo de la convencion
+        styleNombre= styles['Title']
+        styleNombre.fontName="Times-Roman"
+        styleNombre.fontSize=25
+        styleNombre.alignment=TA_CENTER
+        styleNombre.spaceAfter = 0
+        styleNombre.spaceBefore = 0
+        styleNombre.textColor = colors.HexColor('#000000')
+
+        page_content.append(Paragraph("<b>Índice de Resúmenes</b>",styleNombre))
+
+
+        # Estilos para el titulo de la convencion
+        styleComision= styles['Normal']
+        styleComision.fontName="Times-Roman"
+        styleComision.alignment=TA_JUSTIFY
+        styleComision.spaceBefore = 10
+        styleComision.spaceAfter = 0
+
+        section=""
+        for content in elementIndice:
+            multi=100
+            if(content.code == 'A'):
+                section='-'*multi
+                section= "<b>"+content.titulo +"</b>"+section+ str(content.pagina)
+                # print len(section)
+                section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+
+            else:
+                if(content.code == 'S'):
+                    section='-'*multi
+                    section="<b>    "+content.titulo +"</b>"+section+ str(content.pagina)
+                    # print len(section)
+                    section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+                else:
+                    if(content.code == 'T'):
+                        section='-'*multi
+                        section= content.titulo+section+ str(content.pagina)
+                        # print len(section)
+                        section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+            
+            page_content.append(Paragraph(section, styleComision))
+            section="" 
+
 
     ############################## Resúmenes de trabajos ###################################
 
