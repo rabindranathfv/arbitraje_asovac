@@ -4366,20 +4366,20 @@ def memoriasPreviewPDF(request,arbitraje):
                 section='-'*multi
                 section= "<b>"+content.titulo +"</b>"+section+ str(content.pagina)
                 # print len(section)
-                section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+                section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
 
             else:
                 if(content.code == 'S'):
                     section='-'*multi
                     section="<b>    "+content.titulo +"</b>"+section+ str(content.pagina)
                     # print len(section)
-                    section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+                    section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
                 else:
                     if(content.code == 'T'):
                         section='-'*multi
                         section= content.titulo+section+ str(content.pagina)
                         # print len(section)
-                        section= generateCadenaIndice(len(section),content.titulo,str(content.pagina+aditionalPage),multi)
+                        section= generateCadenaIndice(len(section),content.titulo,str(content.pagina),multi)
             
             page_content.append(Paragraph(section, styleComision))
             section="" 
@@ -4405,7 +4405,7 @@ def memoriasPreviewPDF(request,arbitraje):
 
     # Para generar título de resumenes de trabajos libres
     page_content.append(PageBreak())
-    page_content.append(NextPageTemplate('indice'))
+    page_content.append(NextPageTemplate('remaining_pages'))
     
     styleArea= styles['Heading1']
     styleArea.fontName="Times-Roman"
@@ -4420,7 +4420,7 @@ def memoriasPreviewPDF(request,arbitraje):
     # Para generar la sección de comisión académica 
     if(queryResumen.coordinadores_area and queryResumen.titulo_comision ):
         page_content.append(PageBreak())
-        page_content.append(NextPageTemplate('indice'))  #This will load the next PageTemplate with the adjusted Frame. 
+        page_content.append(NextPageTemplate('remaining_pages'))  #This will load the next PageTemplate with the adjusted Frame. 
         page_content.append(Spacer(1,15))
 
     # Estilos para el titulo de la convencion
